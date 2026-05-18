@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//supabase.co" />
         <link rel="preconnect"   href="https://igynbwratioqnijqpsxm.supabase.co" crossOrigin="anonymous" />
       </head>
-      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif' }}>
+      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif', background: '#FCFCFF' }}>
         {children}
         <InstallPrompt />
         <Toaster

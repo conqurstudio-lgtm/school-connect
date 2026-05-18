@@ -410,3 +410,146 @@ article:nth-child(n+6) { animation-delay: 160ms; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================
+   School Connect - Fullscreen Mobile Shell
+   Purpose:
+   - Remove reserved safe-area gaps from the app shell.
+   - Let the feed background and content fill the full mobile screen.
+   - Keep desktop/tablet centered while phones go edge-to-edge.
+   ============================================================ */
+
+:root {
+  --sat: 0px !important;
+  --sab: 0px !important;
+}
+
+html,
+body {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--bg) !important;
+  overflow: hidden !important;
+}
+
+body {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+}
+
+#__next,
+main {
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+/* Paint behind iOS status/home indicator areas so no white seam appears. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: var(--bg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::before { top: 0; }
+body::after  { bottom: 0; }
+
+.app-root {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  padding: 0 !important;
+  background: var(--bg) !important;
+  overflow: hidden !important;
+}
+
+/* Mobile: true edge-to-edge. */
+@media (max-width: 640px) {
+  .app-root {
+    left: 0 !important;
+    right: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .topbar {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--bg) !important;
+  }
+
+  .feed-scroll {
+    height: 100% !important;
+    min-height: 100% !important;
+    padding-top: 0 !important;
+    padding-bottom: 72px !important;
+    background: var(--bg) !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .fab {
+    bottom: 14px !important;
+  }
+}
+
+/* Larger screens: keep the app preview nicely centered. */
+@media (min-width: 641px) {
+  .app-root {
+    max-width: 520px !important;
+    margin: 0 auto !important;
+  }
+}
+
+@supports (height: 100svh) {
+  body,
+  .app-root {
+    height: 100svh !important;
+    min-height: 100svh !important;
+  }
+}
+
+@supports (height: 100dvh) {
+  body,
+  .app-root {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+}
+
+/* Prevent mobile tap/focus outlines from creating black borders. */
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+button:focus-visible,
+a:focus,
+a:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
