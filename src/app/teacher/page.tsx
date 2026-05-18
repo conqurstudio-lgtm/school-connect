@@ -1,22 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 
 const T = {
   ink: '#1A1A1A',
-  ink2: '#4A4A4A',
   ink3: '#9A9A9A',
   bg: '#FCFCFF',
   border: 'rgba(0,0,0,0.07)',
 }
 
-export default function TeacherLinkBridgePage() {
+function TeacherLinkBridgeInner() {
   const router = useRouter()
   const params = useSearchParams()
   const token = params.get('token')
-  const [message, setMessage] = useState(token ? 'Opening your class dashboard…' : 'Need your teacher link')
+  const [message, setMessage] = useState(
+    token ? 'Opening your class dashboard…' : 'Need your teacher link'
+  )
 
   useEffect(() => {
     if (!token) return
@@ -39,7 +40,9 @@ export default function TeacherLinkBridgePage() {
         if (!cancelled) setMessage('Could not open teacher link')
       })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [token, router])
 
   return (
@@ -99,5 +102,13 @@ export default function TeacherLinkBridgePage() {
         </p>
       </section>
     </main>
+  )
+}
+
+export default function TeacherLinkBridgePage() {
+  return (
+    <Suspense fallback={null}>
+      <TeacherLinkBridgeInner />
+    </Suspense>
   )
 }
