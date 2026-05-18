@@ -1049,3 +1049,83 @@ body {
     background: var(--bg) !important;
   }
 }
+
+/* ============================================================
+   School Connect - Feed Bottom Breathing Space
+   Direction:
+   - Do not fight the iPhone/PWA bottom system area.
+   - Keep feed posts comfortably above it.
+   - Make the bottom feel intentional instead of cut off.
+   - No bottom menu, no sticky footer.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html,
+  body,
+  .app-root {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+  }
+
+  /* Reset older negative-bottom experiments so the viewport is stable. */
+  .app-root {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* The feed scrolls normally, but keeps its last content above the iOS bottom
+     area/home indicator. This prevents posts/images/reactions from looking cut. */
+  .feed-scroll,
+  [data-scroll-container] {
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding-top: 8px !important;
+    padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+    margin-bottom: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+    scroll-padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* A same-background tail inside the feed. It is not a menu bar. It only gives
+     the last post room to finish before the bottom system area. */
+  .feed-scroll::after,
+  [data-scroll-container]::after {
+    content: "" !important;
+    display: block !important;
+    height: calc(44px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 100% !important;
+    background: var(--bg) !important;
+    pointer-events: none !important;
+  }
+
+  /* Keep the FAB independent from bottom spacing. */
+  .fab {
+    bottom: auto !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+    scroll-padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .feed-scroll::after,
+  [data-scroll-container]::after {
+    height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
