@@ -18,13 +18,20 @@ export function FilterBar({ active, onChange, newPosts }: {
 }) {
   return (
     <div style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 5,
+      background: '#FCFCFF',
       borderBottom: '1px solid rgba(0,0,0,0.06)',
       marginTop:    16,
       marginBottom: 24,
     }}>
       <div style={{
         display: 'flex',
+        alignItems: 'center',
+        height: 42,
         overflowX: 'auto',
+        overflowY: 'hidden',
         WebkitOverflowScrolling: 'touch' as any,
         msOverflowStyle: 'none' as any,
         scrollbarWidth: 'none' as any,
