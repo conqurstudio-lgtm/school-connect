@@ -2,7 +2,7 @@ const withPWA = require('next-pwa')({
   dest:        'public',
   register:    true,
   skipWaiting: true,
-  disable:     process.env.NODE_ENV === 'development',
+  disable:     true, // Disabled — re-enable when ready for production PWA
   buildExcludes: [/middleware-manifest\.json$/],
   runtimeCaching: [
     // Supabase images — cache first, serve instantly on repeat visits
