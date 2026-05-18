@@ -1,11 +1,10 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { X, Check, ChevronDown, UserX, BookOpen } from 'lucide-react'
+import { X, Plus, Copy, Eye, EyeOff, RefreshCw, Trash2, UserRound } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { Teacher, PostType } from '@/lib/types'
 
 interface TeacherPanelProps {
   schoolId: string
@@ -21,320 +20,521 @@ const T = {
   border: 'rgba(0,0,0,0.07)',
   bg:     '#F7F7F7',
   white:  '#FFFFFF',
-  green:  '#22C55E',
+  green:  '#16A34A',
   red:    '#E8281E',
+  blue:   '#78A6FE',
 }
 
-const ALL_TYPES: { type: PostType; label: string }[] = [
-  { type: 'update',   label: 'Updates'   },
-  { type: 'moment',   label: 'Moments'   },
-  { type: 'event',    label: 'Events'    },
-  { type: 'document', label: 'Documents' },
-]
+type Teacher = {
+  id: string
+  school_id: string
+  name: string
+  email?: string | null
+  photo_url?: string | null
+  grade: string
+  class_name?: string | null
+  access_token: string
+  status: 'active' | 'inactive' | string
+  last_seen_at?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+function token() {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID().replaceAll('-', '')
+  }
+  return `${Date.now()}${Math.random().toString(36).slice(2)}`
+}
+
+function inviteUrl(t: Teacher) {
+  if (typeof window === 'undefined') return ''
+  const base = window.location.origin
+  const token = encodeURIComponent(t.access_token || '')
+  return `${base}/teachers/${t.id}?edit=1&token=${token}`
+}
+
+function initials(name: string) {
+  return name.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'T'
+}
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { bg: string; color: string }> = {
-    pending:  { bg: '#FFF7ED', color: '#C2410C' },
-    approved: { bg: '#F0FFF4', color: '#15803D' },
-    rejected: { bg: '#FFF1F2', color: '#BE123C' },
-  }
-  const s = map[status] ?? map.pending
+  const active = status === 'active'
   return (
     <span style={{
-      fontSize: 11, fontWeight: 600, padding: '2px 8px',
-      borderRadius: 20, background: s.bg, color: s.color,
+      fontSize: 11,
+      fontWeight: 700,
+      padding: '3px 8px',
+      borderRadius: 999,
+      background: active ? '#F0FFF4' : '#FFF1F2',
+      color: active ? '#15803D' : '#BE123C',
       textTransform: 'capitalize',
     }}>
-      {status}
+      {active ? 'Active' : 'Inactive'}
     </span>
   )
 }
 
-function PermissionsEditor({
-  teacher, onSave,
-}: { teacher: Teacher; onSave: (types: PostType[]) => void }) {
-  const [selected, setSelected] = useState<PostType[]>(teacher.allowed_types || [])
-  const [saving,   setSaving]   = useState(false)
-
-  const toggle = (t: PostType) => {
-    setSelected(prev =>
-      prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]
-    )
-  }
-
-  const save = async () => {
-    setSaving(true)
-    await onSave(selected)
-    setSaving(false)
-  }
-
-  return (
-    <div style={{
-      marginTop: 10, padding: '12px 14px',
-      background: T.bg, borderRadius: 12, border: `1px solid ${T.border}`,
-    }}>
-      <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
-                  textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 10px' }}>
-        Allowed post types
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-        {ALL_TYPES.map(({ type, label }) => {
-          const on = selected.includes(type)
-          return (
-            <button key={type} onClick={() => toggle(type)} style={{
-              padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 500,
-              border: `1px solid ${on ? T.ink : T.border}`,
-              background: on ? T.ink : T.white,
-              color: on ? T.white : T.ink2,
-              cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
-            }}>
-              {label}
-            </button>
-          )
-        })}
-      </div>
-      <button onClick={save} disabled={saving} style={{
-        width: '100%', padding: '9px 0', borderRadius: 10,
-        background: saving ? '#CCC' : T.ink, color: T.white,
-        border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
-        fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
-      }}>
-        {saving ? 'Saving…' : 'Save permissions'}
-      </button>
-    </div>
-  )
-}
-
 export function TeacherPanel({ schoolId, onClose }: TeacherPanelProps) {
-  const [teachers,  setTeachers]  = useState<Teacher[]>([])
-  const [loading,   setLoading]   = useState(true)
-  const [expanded,  setExpanded]  = useState<string | null>(null)
-  const [tab,       setTab]       = useState<'pending' | 'approved' | 'all'>('pending')
+  const [teachers, setTeachers] = useState<Teacher[]>([])
+  const [loading, setLoading] = useState(true)
+  const [tab, setTab] = useState<'active' | 'inactive' | 'all'>('active')
+  const [showAdd, setShowAdd] = useState(false)
 
-  const fetch = useCallback(async () => {
+  const fetchTeachers = useCallback(async () => {
     setLoading(true)
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('teachers')
-      .select('*, profile:profiles(*)')
+      .select('*')
       .eq('school_id', schoolId)
-      .order('created_at', { ascending: false })
-    setTeachers((data as Teacher[]) || [])
+      .order('grade', { ascending: true })
+      .order('class_name', { ascending: true })
+      .order('name', { ascending: true })
+
+    if (error) {
+      toast.error('Could not load teachers')
+      setTeachers([])
+    } else {
+      setTeachers((data as Teacher[]) || [])
+    }
     setLoading(false)
   }, [schoolId])
 
-  useEffect(() => { fetch() }, [fetch])
+  useEffect(() => { fetchTeachers() }, [fetchTeachers])
 
-  const approve = async (teacher: Teacher) => {
-    const { error } = await supabase.from('teachers').update({
-      status:      'approved',
-      approved_at: new Date().toISOString(),
-      allowed_types: ['moment', 'update'], // default permissions
-    }).eq('id', teacher.id)
+  const filtered = useMemo(() => {
+    if (tab === 'all') return teachers
+    return teachers.filter(t => t.status === tab)
+  }, [teachers, tab])
 
-    if (error) { toast.error('Failed to approve'); return }
+  const activeCount = teachers.filter(t => t.status === 'active').length
+  const inactiveCount = teachers.filter(t => t.status !== 'active').length
 
-    // Update profile role to teacher
-    await supabase.from('profiles')
-      .update({ role: 'teacher' })
-      .eq('id', teacher.profile_id)
-
-    toast.success(`${teacher.profile?.full_name ?? 'Teacher'} approved`)
-    fetch()
+  const copyInvite = async (teacher: Teacher) => {
+    const url = inviteUrl(teacher)
+    try {
+      await navigator.clipboard.writeText(url)
+      toast.success('Teacher link copied')
+    } catch {
+      toast.error('Could not copy link')
+    }
   }
 
-  const reject = async (teacher: Teacher) => {
-    await supabase.from('teachers').update({ status: 'rejected' }).eq('id', teacher.id)
-    await supabase.from('profiles').update({ role: 'parent' }).eq('id', teacher.profile_id)
-    toast.success('Teacher rejected')
-    fetch()
-  }
-
-  const revoke = async (teacher: Teacher) => {
-    if (!confirm('Revoke teacher access?')) return
-    await supabase.from('teachers').update({ status: 'rejected' }).eq('id', teacher.id)
-    await supabase.from('profiles').update({ role: 'parent' }).eq('id', teacher.profile_id)
-    toast.success('Access revoked')
-    fetch()
-  }
-
-  const savePermissions = async (teacher: Teacher, types: PostType[]) => {
-    await supabase.from('teachers')
-      .update({ allowed_types: types })
+  const setStatus = async (teacher: Teacher, status: 'active' | 'inactive') => {
+    const { error } = await supabase
+      .from('teachers')
+      .update({ status, updated_at: new Date().toISOString() })
       .eq('id', teacher.id)
-    toast.success('Permissions updated')
-    fetch()
+
+    if (error) {
+      toast.error('Could not update teacher')
+      return
+    }
+    toast.success(status === 'active' ? 'Teacher activated' : 'Teacher hidden')
+    fetchTeachers()
   }
 
-  const filtered = teachers.filter(t =>
-    tab === 'all' ? true : t.status === tab
-  )
+  const resetLink = async (teacher: Teacher) => {
+    if (!confirm('Create a new teacher link? The old link will stop working.')) return
+    const { error } = await supabase
+      .from('teachers')
+      .update({ access_token: token(), updated_at: new Date().toISOString() })
+      .eq('id', teacher.id)
 
-  const pendingCount = teachers.filter(t => t.status === 'pending').length
+    if (error) {
+      toast.error('Could not reset link')
+      return
+    }
+    toast.success('New teacher link created')
+    fetchTeachers()
+  }
+
+  const removeTeacher = async (teacher: Teacher) => {
+    if (!confirm(`Remove ${teacher.name}? This will hide their class access.`)) return
+    await setStatus(teacher, 'inactive')
+  }
 
   return (
     <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 70,
+      position: 'fixed',
+      inset: 0,
+      zIndex: 70,
       background: 'rgba(0,0,0,0.4)',
-      display: 'flex', alignItems: 'center',
-      justifyContent: 'center', padding: 20,
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
     }}>
-
       <div onClick={e => e.stopPropagation()} style={{
-        width: '100%', maxWidth: 480,
-        background: T.white, borderRadius: 20,
-        maxHeight: '88dvh', display: 'flex', flexDirection: 'column',
-        animation: 'popUp 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+        width: '100%',
+        maxWidth: 520,
+        maxHeight: '92dvh',
+        background: T.white,
+        borderRadius: '24px 24px 0 0',
+        display: 'flex',
+        flexDirection: 'column',
+        animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
       }}>
-        {/* Header */}
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}`, flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '18px 20px 14px',
+          borderBottom: `1px solid ${T.border}`,
+          flexShrink: 0,
         }}>
           <div>
-            <p style={{ fontSize: 15, fontWeight: 600, color: T.ink,
-                        letterSpacing: '-0.02em', margin: '0 0 2px' }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
               Teachers
             </p>
-            <p style={{ fontSize: 12, color: T.ink3, margin: 0 }}>
-              {teachers.length} total · {pendingCount} pending
+            <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0' }}>
+              {activeCount} active · {inactiveCount} inactive
             </p>
           </div>
-          <button onClick={onClose} style={{
-            width: 30, height: 30, borderRadius: 8,
-            border: `1px solid ${T.border}`, background: T.bg,
-            cursor: 'pointer', color: T.ink3,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <X style={{ width: 14, height: 14 }} />
-          </button>
+
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => setShowAdd(true)} style={{
+              height: 34,
+              padding: '0 13px',
+              borderRadius: 999,
+              border: 'none',
+              background: T.ink,
+              color: T.white,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}>
+              <Plus size={14} strokeWidth={2.4} />
+              Add
+            </button>
+
+            <button onClick={onClose} aria-label="Close" style={{
+              width: 34,
+              height: 34,
+              borderRadius: 10,
+              border: `1px solid ${T.border}`,
+              background: T.bg,
+              color: T.ink3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}>
+              <X size={16} strokeWidth={1.8} />
+            </button>
+          </div>
         </div>
 
-        {/* Tabs */}
         <div style={{
-          display: 'flex', gap: 0, padding: '0 20px',
-          borderBottom: `1px solid ${T.border}`, flexShrink: 0,
+          display: 'flex',
+          gap: 8,
+          padding: '12px 20px',
+          borderBottom: `1px solid ${T.border}`,
+          flexShrink: 0,
         }}>
-          {(['pending', 'approved', 'all'] as const).map(t => (
+          {(['active', 'inactive', 'all'] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              padding: '10px 16px', fontSize: 13, fontWeight: tab === t ? 600 : 400,
-              color: tab === t ? T.ink : T.ink3,
-              background: 'none', border: 'none', cursor: 'pointer',
-              borderBottom: `2px solid ${tab === t ? T.ink : 'transparent'}`,
-              fontFamily: 'inherit', textTransform: 'capitalize', transition: 'all 0.15s',
+              padding: '7px 13px',
+              borderRadius: 999,
+              border: tab === t ? 'none' : `1px solid ${T.border}`,
+              background: tab === t ? T.ink : T.white,
+              color: tab === t ? T.white : T.ink3,
+              fontSize: 12,
+              fontWeight: 700,
+              textTransform: 'capitalize',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
             }}>
-              {t}{t === 'pending' && pendingCount > 0 ? ` (${pendingCount})` : ''}
+              {t}
             </button>
           ))}
         </div>
 
-        {/* List */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '12px 16px 20px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 22px' }}>
           {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: T.ink3, fontSize: 13 }}>
-              Loading…
+            <div style={{ padding: '42px 0', textAlign: 'center', color: T.ink3, fontSize: 13 }}>
+              Loading teachers…
             </div>
           ) : filtered.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <BookOpen style={{ width: 28, height: 28, color: '#DDD', margin: '0 auto 10px', display: 'block' }} strokeWidth={1.4} />
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
-                {tab === 'pending' ? 'No pending requests' : 'No teachers yet'}
+            <div style={{
+              padding: '42px 20px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 16,
+              background: T.bg,
+            }}>
+              <UserRound size={28} color={T.ink3} strokeWidth={1.4}
+                style={{ margin: '0 auto 10px', display: 'block' }} />
+              <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 5px' }}>
+                No teachers here yet
+              </p>
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+                Add teachers and share their private class link.
               </p>
             </div>
           ) : (
-            filtered.map(teacher => (
-              <div key={teacher.id} style={{
-                marginBottom: 8, background: T.bg,
-                borderRadius: 14, border: `1px solid ${T.border}`, overflow: 'hidden',
-              }}>
-                {/* Teacher row */}
-                <div style={{ padding: '12px 14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    {/* Avatar */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              {filtered.map(teacher => (
+                <div key={teacher.id} style={{
+                  background: T.bg,
+                  border: `1px solid ${T.border}`,
+                  borderRadius: 16,
+                  padding: 12,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
                     <div style={{
-                      width: 38, height: 38, borderRadius: '50%', flexShrink: 0,
-                      background: '#E8E8E8', display: 'flex', alignItems: 'center',
-                      justifyContent: 'center', fontSize: 15, fontWeight: 600, color: T.ink3,
+                      width: 42,
+                      height: 42,
+                      borderRadius: 14,
+                      overflow: 'hidden',
+                      background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#ECECF0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: T.ink2,
+                      fontSize: 14,
+                      fontWeight: 800,
+                      flexShrink: 0,
                     }}>
-                      {(teacher.profile?.full_name ?? 'T').charAt(0).toUpperCase()}
+                      {!teacher.photo_url && initials(teacher.name)}
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 14, fontWeight: 500, color: T.ink }}>
-                          {teacher.profile?.full_name ?? 'Unknown'}
-                        </span>
+                        <p style={{
+                          fontSize: 14,
+                          fontWeight: 700,
+                          color: T.ink,
+                          margin: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {teacher.name}
+                        </p>
                         <StatusBadge status={teacher.status} />
                       </div>
-                      {teacher.subject && (
-                        <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-                          {teacher.subject}
-                        </p>
-                      )}
-                      {teacher.status === 'approved' && teacher.allowed_types?.length > 0 && (
-                        <p style={{ fontSize: 11, color: T.ink3, margin: '3px 0 0' }}>
-                          {teacher.allowed_types.join(' · ')}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                      {teacher.status === 'pending' && (
-                        <>
-                          <button onClick={() => approve(teacher)} style={{
-                            width: 30, height: 30, borderRadius: 8,
-                            background: '#F0FFF4', border: '1px solid #BBF7D0',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          }}>
-                            <Check style={{ width: 14, height: 14, color: T.green }} />
-                          </button>
-                          <button onClick={() => reject(teacher)} style={{
-                            width: 30, height: 30, borderRadius: 8,
-                            background: '#FFF1F2', border: '1px solid #FECDD3',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          }}>
-                            <X style={{ width: 14, height: 14, color: T.red }} />
-                          </button>
-                        </>
-                      )}
-                      {teacher.status === 'approved' && (
-                        <>
-                          <button onClick={() => setExpanded(expanded === teacher.id ? null : teacher.id)} style={{
-                            width: 30, height: 30, borderRadius: 8,
-                            background: T.white, border: `1px solid ${T.border}`,
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          }}>
-                            <ChevronDown style={{
-                              width: 14, height: 14, color: T.ink3,
-                              transform: expanded === teacher.id ? 'rotate(180deg)' : 'none',
-                              transition: 'transform 0.2s',
-                            }} />
-                          </button>
-                          <button onClick={() => revoke(teacher)} style={{
-                            width: 30, height: 30, borderRadius: 8,
-                            background: '#FFF1F2', border: '1px solid #FECDD3',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          }}>
-                            <UserX style={{ width: 14, height: 14, color: T.red }} />
-                          </button>
-                        </>
-                      )}
+                      <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0' }}>
+                        {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+                        {teacher.email ? ` · ${teacher.email}` : ''}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Permissions editor */}
-                  {expanded === teacher.id && (
-                    <PermissionsEditor
-                      teacher={teacher}
-                      onSave={(types) => savePermissions(teacher, types)}
-                    />
-                  )}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 8,
+                    marginTop: 12,
+                  }}>
+                    <button onClick={() => copyInvite(teacher)} style={actionBtn}>
+                      <Copy size={13} strokeWidth={2} />
+                      Copy link
+                    </button>
+
+                    <button onClick={() => resetLink(teacher)} style={actionBtn}>
+                      <RefreshCw size={13} strokeWidth={2} />
+                      New link
+                    </button>
+
+                    {teacher.status === 'active' ? (
+                      <button onClick={() => setStatus(teacher, 'inactive')} style={actionBtn}>
+                        <EyeOff size={13} strokeWidth={2} />
+                        Hide
+                      </button>
+                    ) : (
+                      <button onClick={() => setStatus(teacher, 'active')} style={actionBtn}>
+                        <Eye size={13} strokeWidth={2} />
+                        Activate
+                      </button>
+                    )}
+
+                    <button onClick={() => removeTeacher(teacher)} style={{ ...actionBtn, color: T.red }}>
+                      <Trash2 size={13} strokeWidth={2} />
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
+
+        {showAdd && (
+          <AddTeacherSheet
+            schoolId={schoolId}
+            onClose={() => setShowAdd(false)}
+            onCreated={() => {
+              setShowAdd(false)
+              fetchTeachers()
+            }}
+          />
+        )}
       </div>
     </div>
+  )
+}
+
+const actionBtn: any = {
+  height: 34,
+  borderRadius: 10,
+  border: `1px solid ${T.border}`,
+  background: T.white,
+  color: T.ink2,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 6,
+  fontSize: 12,
+  fontWeight: 700,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+function AddTeacherSheet({ schoolId, onClose, onCreated }: any) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [grade, setGrade] = useState('')
+  const [className, setClassName] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const create = async () => {
+    if (!name.trim() || !grade.trim()) {
+      toast.error('Name and grade are required')
+      return
+    }
+
+    setSaving(true)
+    const { error } = await supabase.from('teachers').insert({
+      school_id: schoolId,
+      name: name.trim(),
+      email: email.trim() || null,
+      grade: grade.trim(),
+      class_name: className.trim() || null,
+      access_token: token(),
+      status: 'active',
+    })
+
+    setSaving(false)
+
+    if (error) {
+      toast.error(error.message || 'Could not add teacher')
+      return
+    }
+
+    toast.success('Teacher added')
+    onCreated()
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 120,
+      background: 'rgba(0,0,0,0.35)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        background: T.white,
+        borderRadius: '22px 22px 0 0',
+        padding: '20px',
+        animation: 'slideUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 16,
+        }}>
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
+              Add teacher
+            </h3>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0' }}>
+              A private class link will be created.
+            </p>
+          </div>
+          <button onClick={onClose} style={{
+            width: 34,
+            height: 34,
+            borderRadius: 10,
+            border: `1px solid ${T.border}`,
+            background: T.bg,
+            color: T.ink3,
+            cursor: 'pointer',
+          }}>
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <Input label="Teacher name" value={name} onChange={setName} placeholder="Mrs Dlamini" autoFocus />
+          <Input label="Email optional" value={email} onChange={setEmail} placeholder="teacher@school.co.za" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <Input label="Grade" value={grade} onChange={setGrade} placeholder="Grade R" />
+            <Input label="Class" value={className} onChange={setClassName} placeholder="Blue" />
+          </div>
+        </div>
+
+        <button onClick={create} disabled={saving} style={{
+          width: '100%',
+          marginTop: 14,
+          padding: '14px',
+          borderRadius: 14,
+          background: saving ? '#CFCFD4' : T.ink,
+          color: T.white,
+          border: 'none',
+          fontSize: 15,
+          fontWeight: 800,
+          cursor: saving ? 'wait' : 'pointer',
+          fontFamily: 'inherit',
+        }}>
+          {saving ? 'Adding…' : 'Add teacher'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function Input({ label, value, onChange, placeholder, autoFocus = false }: any) {
+  return (
+    <label style={{ display: 'block' }}>
+      <span style={{
+        display: 'block',
+        fontSize: 11,
+        fontWeight: 800,
+        color: T.ink3,
+        letterSpacing: '0.06em',
+        textTransform: 'uppercase',
+        marginBottom: 6,
+      }}>
+        {label}
+      </span>
+      <input
+        autoFocus={autoFocus}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: '100%',
+          boxSizing: 'border-box',
+          padding: '12px 13px',
+          borderRadius: 13,
+          border: `1px solid ${T.border}`,
+          background: '#FAFAFC',
+          color: T.ink,
+          fontSize: 16,
+          outline: 'none',
+          fontFamily: 'inherit',
+        }}
+      />
+    </label>
   )
 }

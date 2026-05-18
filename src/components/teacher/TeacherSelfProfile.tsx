@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
   Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone
@@ -27,6 +27,8 @@ interface Props { teacherId: string }
 
 export function TeacherSelfProfile({ teacherId }: Props) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()
   const [session,  setSession]  = useState<any>(null)
   const [loading,  setLoading]  = useState(true)
   const [tab,      setTab]      = useState<Tab>('class')
@@ -37,7 +39,8 @@ export function TeacherSelfProfile({ teacherId }: Props) {
 
   const load = async () => {
     try {
-      const res = await fetch('/api/teacher-session')
+      const token = searchParams.get('token')
+      const res = await fetch(token ? `/api/teacher-session?token=${encodeURIComponent(token)}` : '/api/teacher-session')
       const json = await res.json()
       if (res.ok && json.teacher?.id === teacherId) setSession(json)
     } catch {}
@@ -113,12 +116,12 @@ export function TeacherSelfProfile({ teacherId }: Props) {
 
   return (
     <div style={{
-      minHeight: '100dvh', height: '100dvh',
-      overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      minHeight: '100dvh', height: 'auto',
+      overflowY: 'visible', WebkitOverflowScrolling: 'auto',
       background: T.bg, maxWidth: 520, margin: '0 auto',
       fontFamily: 'Inter, -apple-system, sans-serif',
-      paddingTop: 'env(safe-area-inset-top, 0px)',
-      paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+      paddingTop: 0,
+      paddingBottom: 96,
     }}>
       {/* ─── Top bar — back, bell, sign out ─── */}
       <div style={{
