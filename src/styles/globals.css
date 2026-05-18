@@ -1129,3 +1129,118 @@ body {
     height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* ============================================================
+   School Connect - Lower Feed Content + Push Bottom Seam Down
+   Direction:
+   - Add breathing room at the top of the feed.
+   - Push the remaining iOS/PWA bottom seam lower/out of focus.
+   - Keep posts from looking cut.
+   - Keep categories scrolling naturally.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html,
+  body,
+  .app-root {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+  }
+
+  body {
+    position: fixed !important;
+    inset: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Move the app canvas slightly below the top edge and extend it slightly
+     beyond the bottom. This makes the feed feel less stuck to the top while
+     pushing the bottom seam lower on Safari/PWA. */
+  .app-root {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: -28px !important;
+    left: 0 !important;
+    height: auto !important;
+    min-height: calc(100dvh + 28px) !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--bg) !important;
+  }
+
+  .topbar {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    background: var(--bg) !important;
+  }
+
+  /* The feed starts lower now. The bottom still gets enough tail space so
+     the last post never sits directly on the system area. */
+  .feed-scroll,
+  [data-scroll-container] {
+    height: 100% !important;
+    min-height: 100% !important;
+    padding-top: 18px !important;
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    background: var(--bg) !important;
+    scroll-padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .feed-scroll::after,
+  [data-scroll-container]::after {
+    content: "" !important;
+    display: block !important;
+    height: calc(58px + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--bg) !important;
+    pointer-events: none !important;
+  }
+
+  .feed-filterbar {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+
+  /* Keep FAB away from the bottom and slightly lower than before so it feels
+     aligned with the lowered feed header. */
+  .fab {
+    position: fixed !important;
+    left: auto !important;
+    right: 14px !important;
+    top: 124px !important;
+    bottom: auto !important;
+    transform: none !important;
+    z-index: 90 !important;
+  }
+
+  .fab:active {
+    transform: scale(0.92) !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  .app-root {
+    bottom: -34px !important;
+    min-height: calc(100dvh + 34px) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-top: 20px !important;
+    padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+    scroll-padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .feed-scroll::after,
+  [data-scroll-container]::after {
+    height: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}

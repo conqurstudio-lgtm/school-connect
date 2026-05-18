@@ -93,7 +93,7 @@ export function FeedHeader({
       display: 'flex',
       alignItems: 'flex-start',
       justifyContent: 'space-between',
-      padding: '8px 24px 16px',
+      padding: '30px 20px 18px',
       background: '#FCFCFF',
     }}>
       <button
