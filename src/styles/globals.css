@@ -1,0 +1,429 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --bg:      #FCFCFF;
+  --surface: #FFFFFF;
+  --ink:     #1A1A1A;
+  --ink-2:   #4A4A4A;
+  --ink-3:   #555555;
+  --ink-4:   #B0B0B0;
+  --divider: rgba(0,0,0,0.07);
+  --red:     #E8281E;
+  --px:      16px;
+  --sat: env(safe-area-inset-top,    0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+  background: var(--bg);
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+input, textarea, select {
+  font-size: 16px !important;
+  font-family: inherit;
+  -webkit-appearance: none;
+}
+
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; }
+
+/* ── App shell ── */
+.app-root {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  overflow-x: clip; /* clip doesn't create a scroll container, allows children to overflow visually */
+  background: var(--bg);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Top bar ── */
+.topbar {
+  flex-shrink: 0;
+  padding-top: var(--sat);
+  background: var(--bg);
+  /* Header component handles all internal padding */
+}
+
+/* ── Feed scroll ── */
+/* Hint browser to skip rendering offscreen content */
+article {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+.feed-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: visible;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  background: var(--bg);
+  padding-bottom: calc(72px + var(--sab));
+  /* Allow children to visually overflow horizontally */
+  contain: none;
+}
+
+/* ── FAB — centered ── */
+/* FAB — gradient ring border directly on the button edge (no gap). */
+.fab {
+  position: fixed;
+  bottom: calc(20px + var(--sab));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background:
+    linear-gradient(var(--bg), var(--bg)) padding-box,
+    conic-gradient(
+      from var(--fab-angle, 0deg),
+      #EF4444 0%,
+      #F59E0B 25%,
+      #78A6FE 55%,
+      #22C55E 80%,
+      #EF4444 100%
+    ) border-box;
+  border: 2px solid transparent;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+  animation: fabRing 6s linear infinite;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+@property --fab-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes fabRing {
+  from { --fab-angle: 0deg;   }
+  to   { --fab-angle: 360deg; }
+}
+
+.fab:active {
+  transform: translateX(-50%) scale(0.92);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+
+/* ── Skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #fafafa 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* ── Fly reaction ── */
+@keyframes flyReaction {
+  0%   { opacity: 0;   transform: translate3d(0,0,0) scale(0.6); }
+  12%  { opacity: 1;   transform: translate3d(4px,-14px,0) scale(1.2); }
+  55%  { opacity: 1;   transform: translate3d(60px,-60px,0) scale(1); }
+  100% { opacity: 0;   transform: translate3d(110px,-36px,0) scale(0.75); }
+}
+
+.fly-reaction {
+  animation: flyReaction 750ms cubic-bezier(0.2,0.8,0.2,1) forwards;
+  pointer-events: none;
+  will-change: transform, opacity;
+  isolation: isolate;
+}
+
+/* ── Lightbox ── */
+@keyframes lightboxIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.lightbox-backdrop { animation: lightboxIn 180ms ease-out both; }
+
+/* ── Modal ── */
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Utilities ── */
+@layer utilities {
+  .h-dvh     { height: 100dvh; }
+  .min-h-dvh { min-height: 100dvh; }
+}
+
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* Inline keyframes consolidated from components */
+@keyframes spin { to { transform: rotate(360deg) } }
+@keyframes popUp {
+  from { opacity: 0; transform: scale(0.96) translateY(8px) }
+  to   { opacity: 1; transform: scale(1) translateY(0) }
+}
+@keyframes shimmer {
+  0%   { background-position: -200px 0 }
+  100% { background-position: 200px 0 }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+@keyframes slideUpPrompt {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px) }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) }
+}
+
+@keyframes expandIn {
+  from { opacity: 0; transform: translateY(-4px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+
+/* Page transitions — smooth slide + fade like native */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-in {
+  animation: pageIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Inner sections animate in slightly delayed */
+.section-in {
+  animation: pageIn 320ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+}
+
+/* Skeleton shimmer base */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.04) 0%,
+    rgba(0,0,0,0.07) 50%,
+    rgba(0,0,0,0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0 }
+  100% { background-position: -200% 0 }
+}
+
+/* Smooth slide for dropdowns */
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-in { animation: dropdownIn 200ms cubic-bezier(0.4,0,0.2,1) both; }
+
+/* Lift on touch for buttons */
+.smooth-press {
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+.smooth-press:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* No flash of unstyled content */
+html { background: var(--bg) }
+
+
+/* Slide in from RIGHT — like iOS push navigation when a child page opens */
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.slide-from-right {
+  animation: slideFromRight 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Swipe-peek hint — shown on first load of reports so users learn the gesture
+   Slides slightly LEFT, pauses, returns. Drawing attention to swipe direction. */
+@keyframes swipeHint {
+  0%   { transform: translateX(0); }
+  35%  { transform: translateX(-32px); }
+  70%  { transform: translateX(-32px); }
+  100% { transform: translateX(0); }
+}
+
+.swipe-hint {
+  animation: swipeHint 1400ms cubic-bezier(0.4, 0, 0.2, 1) 400ms both;
+}
+
+/* Preserve scroll position when content updates */
+.page-content { overflow-anchor: auto }
+
+
+/* Reports page floats OVER the feed — slides in from the left,
+   covers the viewport, but the feed stays mounted underneath. */
+@keyframes cardSlideFromLeft {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(0);     }
+}
+
+/* Slide back OUT to the left when user taps back */
+@keyframes cardSlideToLeft {
+  0%   { transform: translateX(0);     }
+  100% { transform: translateX(-100%); }
+}
+
+.slide-out-left {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 100;
+  animation: cardSlideToLeft 480ms cubic-bezier(0.5, 0, 0.75, 0) both;
+  box-shadow: -2px 0 24px rgba(0, 0, 0, 0.04);
+  will-change: transform;
+}
+
+.slide-from-left {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 100;
+  animation: cardSlideFromLeft 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Soft right-edge shadow so the layer above the feed feels like a real card */
+  box-shadow: -2px 0 24px rgba(0, 0, 0, 0.04);
+  will-change: transform;
+}
+
+
+/* Feed re-enter — slides in from the right when returning from a child page.
+   Quick, no shadow, just feels like the feed was waiting. */
+@keyframes feedReenter {
+  from { transform: translateX(40px); opacity: 0.4; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+.feed-reenter {
+  animation: feedReenter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+
+
+/* Teacher squircles share the same rotating gradient as the FAB */
+.teacher-ring {
+  animation: fabRing 6s linear infinite;
+  will-change: --fab-angle;
+}
+
+
+/* Smooth post entrance — posts fade in subtly on first paint */
+@keyframes postFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+article {
+  animation: postFadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger the first few posts so they cascade in */
+article:nth-child(1) { animation-delay: 0ms;   }
+article:nth-child(2) { animation-delay: 60ms;  }
+article:nth-child(3) { animation-delay: 120ms; }
+article:nth-child(4) { animation-delay: 180ms; }
+article:nth-child(5) { animation-delay: 240ms; }
+article:nth-child(n+6) { animation-delay: 300ms; }
+
+/* Smooth section transitions */
+.section-fade {
+  animation: postFadeIn 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Polish dropdown-in with origin */
+.dropdown-in {
+  transform-origin: top right;
+  animation: dropdownIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Subtle scale on interactive elements */
+button {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* Stop scale on textarea/input */
+textarea, input, select {
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+/* Smooth image carousel transitions */
+.carousel-image {
+  transition: opacity 0.4s ease-out;
+}
+
+/* Tab/filter buttons get a soft underline transition */
+.filter-tab {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* Smooth scrolling everywhere */
+html { scroll-behavior: smooth; }
+
+/* Read-more expand animation */
+@keyframes textExpand {
+  from { max-height: 60px; }
+  to   { max-height: 2000px; }
+}
+
+
+/* ── Teacher profile drill-in animations ── */
+@keyframes cardSlideFromRight {
+  from { transform: translateX(100%); opacity: 0.96; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes cardSlideToRight {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0.96; }
+}
+.card-from-right {
+  animation: cardSlideFromRight 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+.card-to-right {
+  animation: cardSlideToRight 280ms cubic-bezier(0.4, 0, 0.6, 1) both;
+  will-change: transform, opacity;
+}

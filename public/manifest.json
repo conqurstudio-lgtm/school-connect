@@ -1,0 +1,41 @@
+{
+  "name": "School Connect",
+  "short_name": "School Connect",
+  "description": "Your school's feed — moments, updates and events.",
+  "start_url": "/feed",
+  "display": "standalone",
+  "background_color": "#FCFCFF",
+  "theme_color": "#FCFCFF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-ZA",
+  "id": "/feed",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["education", "social"],
+  "prefer_related_applications": false
+}
