@@ -117,7 +117,8 @@ export function TeacherSelfProfile({ teacherId }: Props) {
       overflowY: 'auto', WebkitOverflowScrolling: 'touch',
       background: T.bg, maxWidth: 520, margin: '0 auto',
       fontFamily: 'Inter, -apple-system, sans-serif',
-      paddingBottom: 80,
+      paddingTop: 'env(safe-area-inset-top, 0px)',
+      paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
     }}>
       {/* ─── Top bar — back, bell, sign out ─── */}
       <div style={{

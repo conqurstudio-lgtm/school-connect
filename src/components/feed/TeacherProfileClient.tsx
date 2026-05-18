@@ -67,8 +67,9 @@ export function TeacherProfileClient({ teacherId }: Props) {
     minHeight: '100dvh', height: '100dvh',
     overflowY: 'auto', WebkitOverflowScrolling: 'touch',
     background: T.bg, maxWidth: 520, margin: '0 auto',
+    paddingTop: 'env(safe-area-inset-top, 0px)',
     fontFamily: 'Inter, -apple-system, sans-serif',
-    paddingBottom: 100, position: 'relative',
+    paddingBottom: 'calc(100px + env(safe-area-inset-bottom, 0px))', position: 'relative',
   }
 
   if (loading) {
