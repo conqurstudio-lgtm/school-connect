@@ -604,3 +604,91 @@ select:focus-visible {
     bottom: 0px !important;
   }
 }
+
+/* ============================================================
+   School Connect - Feed Under Home Indicator
+   Purpose:
+   - Remove the fake bottom menu/safe-area strip.
+   - Let actual feed content/background continue to the bottom edge.
+   - Keep the floating action button independent as an overlay.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  /* Do not create a reserved footer area. The feed owns the bottom edge. */
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
+    background: var(--bg) !important;
+  }
+
+  /* Stretch the fixed app shell slightly into the iOS home-indicator zone. */
+  .app-root {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
+    height: auto !important;
+    min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--bg) !important;
+  }
+
+  /* The feed scroll area fills the extended shell, not a shortened viewport. */
+  .feed-scroll {
+    height: 100% !important;
+    min-height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Any artificial bottom paint layer must not become a visible strip. */
+  body::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Floating button floats above content; it does not reserve layout space. */
+  .fab {
+    bottom: 14px !important;
+    z-index: 80 !important;
+  }
+
+  .fab:active {
+    transform: translateX(-50%) scale(0.92) !important;
+  }
+}
+
+/* Installed PWA: be even more aggressive because the iOS home indicator
+   area can otherwise look like a separate white footer. */
+@media (display-mode: standalone) and (max-width: 640px) {
+  html,
+  body {
+    background: var(--bg) !important;
+  }
+
+  .app-root {
+    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: 0px !important;
+    background: var(--bg) !important;
+  }
+
+  .fab {
+    bottom: 14px !important;
+  }
+}
+
+/* Where supported, prefer dynamic viewport and extend past the bottom inset. */
+@supports (height: 100dvh) {
+  @media (max-width: 640px) {
+    .app-root {
+      min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
+    }
+  }
+}
