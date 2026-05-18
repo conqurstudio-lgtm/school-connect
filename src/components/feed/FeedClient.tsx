@@ -173,23 +173,29 @@ export function FeedClient() {
           ) : posts.length === 0 ? (
             <EmptyState filter={filter} isSchool={isSchool} />
           ) : (
-            posts.map((post, i) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                index={i}
-                isSchool={isSchool}
-                userId={authUser.id}
-                schoolId={school.id}
-                schoolName={school.name}
-                schoolLogoUrl={school.logo_url ?? undefined}
-                isOptimistic={optimisticIds.includes(post.id)}
-                onReactionChange={(id, type, prevType) => updatePostReaction(id, type, prevType)}
-                onEditPost={(p) => { setEditPost(p); setShowComposer(true) }}
-                onPostDeleted={refetch}
-                onPinToggled={refetch}
-              />
-            ))
+            <div style={{
+              opacity: feedLoading && posts.length > 0 ? 0.55 : 1,
+              transition: 'opacity 0.22s ease',
+              pointerEvents: feedLoading ? 'none' : 'auto',
+            }}>
+              {posts.map((post, i) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  index={i}
+                  isSchool={isSchool}
+                  userId={authUser.id}
+                  schoolId={school.id}
+                  schoolName={school.name}
+                  schoolLogoUrl={school.logo_url ?? undefined}
+                  isOptimistic={optimisticIds.includes(post.id)}
+                  onReactionChange={(id, type, prevType) => updatePostReaction(id, type, prevType)}
+                  onEditPost={(p) => { setEditPost(p); setShowComposer(true) }}
+                  onPostDeleted={refetch}
+                  onPinToggled={refetch}
+                />
+              ))}
+            </div>
           )}
         </PullToRefresh>
 
