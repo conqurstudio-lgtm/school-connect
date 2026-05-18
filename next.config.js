@@ -4,7 +4,7 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
 
   // Local dev stays clean. Vercel production/preview builds get the PWA service worker.
-  disable: process.env.NODE_ENV === 'development',
+  disable: true, // PWA paused while we stabilise mobile browser scrolling // PWA paused while we stabilise mobile browser scrolling
 
   buildExcludes: [/middleware-manifest\.json$/],
   runtimeCaching: [

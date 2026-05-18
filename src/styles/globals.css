@@ -1256,3 +1256,108 @@ body {
     display: none !important;
   }
 }
+
+/* ============================================================
+   School Connect - Browser Scroll Mode / PWA Paused
+   Purpose:
+   - Let Safari/Chrome handle normal page scrolling again.
+   - Allow browser bottom bars to collapse while scrolling.
+   - Stop fixed inner-scroll behavior that can expose safe-area seams.
+   - Bypass app-level safe-area rules while we test the normal website mode.
+   ============================================================ */
+
+html {
+  height: auto !important;
+  min-height: 100% !important;
+  background: var(--bg) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: auto !important;
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+}
+
+body::before,
+body::after,
+html::before,
+html::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Feed app becomes a normal page, not a fixed app viewport. */
+.app-root {
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: var(--bg) !important;
+}
+
+/* The feed no longer owns a separate internal scroll. The document scrolls. */
+.feed-scroll,
+[data-scroll-container] {
+  height: auto !important;
+  min-height: 100dvh !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: auto !important;
+  overscroll-behavior-y: auto !important;
+  margin: 0 !important;
+  padding-top: 18px !important;
+  padding-bottom: 92px !important;
+  background: var(--bg) !important;
+  background-color: var(--bg) !important;
+  scroll-padding-bottom: 0 !important;
+}
+
+.feed-scroll::after,
+[data-scroll-container]::after {
+  content: "" !important;
+  display: block !important;
+  height: 48px !important;
+  background: var(--bg) !important;
+}
+
+/* Categories continue scrolling with the page. */
+.feed-filterbar {
+  position: relative !important;
+  top: auto !important;
+  z-index: auto !important;
+}
+
+/* The old floating feed FAB must stay gone. Header action is now used. */
+.fab {
+  display: none !important;
+}
+
+/* Desktop/tablet preview can still center later, but mobile gets true page width. */
+@media (min-width: 641px) {
+  .app-root {
+    max-width: 520px !important;
+    margin: 0 auto !important;
+  }
+}
