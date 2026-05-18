@@ -98,19 +98,17 @@ export async function POST(req: NextRequest) {
   }
 
   const sb = adminClient()
-  // Confirm ownership
-  const { data: post } = await sb.from('posts').select('teacher_id').eq('id', post_id).single()
+  // Confirm ownership and grab school_id in one query
+  const { data: post } = await sb.from('posts').select('teacher_id, school_id').eq('id', post_id).single()
   if (!post || post.teacher_id !== teacher.id) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
   // Insert as teacher comment (author_id null, teacher_id set)
-  // Need school_id since the comments table requires it
-  const { data: post } = await sb.from('posts').select('school_id').eq('id', post_id).single()
   const { data, error } = await sb.from('comments')
     .insert({
       post_id,
-      school_id:       post?.school_id,
+      school_id:       post.school_id,
       author_id:       null,
       teacher_id:      teacher.id,
       body:            body.trim(),
