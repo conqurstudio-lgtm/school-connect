@@ -69,7 +69,7 @@ export function FeedHeader({
   return (
     <div style={{
       display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-      padding: '14px 28px 24px',
+      padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 28px 20px',
     }}>
 
       {/* School logo — navigates to school profile */}
