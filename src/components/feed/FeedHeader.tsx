@@ -1,6 +1,6 @@
 'use client'
-import { useRouter } from 'next/navigation'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { LogOut, Settings, GraduationCap } from 'lucide-react'
 import type { Profile, School } from '@/lib/types'
@@ -39,67 +39,95 @@ function MoreDotsIcon() {
 }
 
 const circleBtn: React.CSSProperties = {
-  width: 36, height: 36, borderRadius: '50%',
+  width: 36,
+  height: 36,
+  borderRadius: '50%',
   border: '1px solid rgba(0,0,0,0.06)',
-  background: 'transparent',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  cursor: 'pointer', color: '#3D3D3D',
+  background: 'rgba(252,252,255,0.72)',
+  backdropFilter: 'blur(14px)',
+  WebkitBackdropFilter: 'blur(14px)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  color: '#3D3D3D',
 }
-
 
 function FadingImg({ src, alt }: { src: string; alt: string }) {
   const [loaded, setLoaded] = useState(false)
   return (
-    <img src={src} alt={alt}
+    <img
+      src={src}
+      alt={alt}
       onLoad={() => setLoaded(true)}
       style={{
-        width: '100%', height: '100%', objectFit: 'contain',
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
         opacity: loaded ? 1 : 0,
-        transition: 'opacity 0.4s ease-out',
-      }} />
+        transition: 'opacity 0.28s ease-out',
+      }}
+    />
   )
 }
 
 export function FeedHeader({
-  school, isSchool, unreadCount, onBellClick, onSignOut, onProfileOpen, onTeachersOpen, teachersPending = 0,
+  school,
+  isSchool,
+  unreadCount,
+  onBellClick,
+  onSignOut,
+  onTeachersOpen,
+  teachersPending = 0,
 }: FeedHeaderProps) {
   const router = useRouter()
   const [showMenu, setShowMenu] = useState(false)
 
+  const goSchoolProfile = () => {
+    try { sessionStorage.setItem('feed-left', '1') } catch {}
+    router.push('/school')
+  }
+
   return (
     <div style={{
-      display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
-      padding: 'calc(env(safe-area-inset-top, 0px) + 12px) 28px 20px',
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      padding: '8px 24px 16px',
+      background: '#FCFCFF',
     }}>
-
-      {/* School logo — navigates to school profile */}
-      <button onClick={() => {
-        try { sessionStorage.setItem('feed-left', '1') } catch {}
-        router.push('/school')
-      }}
-        onMouseDown ={e => e.currentTarget.style.transform = 'scale(0.95)'}
+      <button
+        onClick={goSchoolProfile}
+        onMouseDown ={e => e.currentTarget.style.transform = 'scale(0.96)'}
         onMouseUp   ={e => e.currentTarget.style.transform = 'scale(1)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         style={{
-          width: 72, height: 72, borderRadius: '50%',
-          overflow: 'hidden', flexShrink: 0,
+          width: 70,
+          height: 70,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          flexShrink: 0,
           background: '#F0F0F0',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           border: '1px solid rgba(0,0,0,0.07)',
-          cursor: 'pointer', padding: 0,
-          transition: 'transform 0.15s ease',
-        }}>
+          cursor: 'pointer',
+          padding: 0,
+          transition: 'transform 0.14s ease',
+          boxShadow: '0 1px 8px rgba(0,0,0,0.035)',
+        }}
+        aria-label="Open school profile"
+      >
         {school.logo_url
           ? <FadingImg key={school.logo_url} src={school.logo_url} alt={school.name} />
-          : <span style={{ fontSize: 26, fontWeight: 600, color: '#AAAAAA' }}>
+          : <span style={{ fontSize: 25, fontWeight: 600, color: '#AAAAAA' }}>
               {school.name.charAt(0)}
             </span>
         }
       </button>
 
-      {/* Right icons */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 18 }}>
-
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14 }}>
         {isSchool && (
           <div style={{ position: 'relative' }}>
             <button onClick={() => setShowMenu(v => !v)} aria-label="More" style={circleBtn}>
@@ -111,11 +139,16 @@ export function FeedHeader({
                 <div style={{ position: 'fixed', inset: 0, zIndex: 40 }}
                      onClick={() => setShowMenu(false)} />
                 <div className="dropdown-in" style={{
-                  position: 'absolute', right: 0, top: 44,
-                  width: 168, background: '#fff', borderRadius: 14,
+                  position: 'absolute',
+                  right: 0,
+                  top: 44,
+                  width: 174,
+                  background: '#fff',
+                  borderRadius: 14,
                   border: '1px solid rgba(0,0,0,0.07)',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                  zIndex: 50, padding: '5px 0',
+                  zIndex: 50,
+                  padding: '5px 0',
                   transformOrigin: 'top right',
                 }}>
                   <button onClick={() => { setShowMenu(false); onTeachersOpen() }} style={{
@@ -134,11 +167,7 @@ export function FeedHeader({
                       </span>
                     )}
                   </button>
-                  <button onClick={() => {
-                    setShowMenu(false)
-                    try { sessionStorage.setItem('feed-left', '1') } catch {}
-                    router.push('/school')
-                  }} style={{
+                  <button onClick={() => { setShowMenu(false); goSchoolProfile() }} style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: 9,
                     padding: '11px 16px', background: 'none', border: 'none',
                     cursor: 'pointer', fontSize: 14, color: '#1A1A1A',
@@ -163,7 +192,6 @@ export function FeedHeader({
           </div>
         )}
 
-        {/* Bell */}
         <button onClick={onBellClick} aria-label="Notifications"
                 style={{ ...circleBtn, position: 'relative' }}>
           <BellIcon />
