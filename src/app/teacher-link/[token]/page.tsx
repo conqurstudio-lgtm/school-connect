@@ -1,46 +1,65 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
+import { TeacherSelfProfile } from '@/components/teacher/TeacherSelfProfile'
 
 const T = {
   ink: '#1A1A1A',
   ink3: '#9A9A9A',
   bg: '#FCFCFF',
   border: 'rgba(0,0,0,0.07)',
+  white: '#FFFFFF',
 }
 
-function TeacherLinkBridgeInner() {
-  const router = useRouter()
-  const params = useSearchParams()
-  const token = params.get('token')
-  const [message, setMessage] = useState(
-    token ? 'Opening your class dashboard…' : 'Need your teacher link'
-  )
+export default function TeacherTokenEntryPage() {
+  const params = useParams<{ token: string }>()
+  const rawToken = params?.token
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
+
+  const [teacherId, setTeacherId] = useState<string | null>(null)
+  const [message, setMessage] = useState('Opening your class dashboard…')
+  const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    if (!token) return
+    if (!token) {
+      setFailed(true)
+      setMessage('Need your teacher link')
+      return
+    }
+
     let cancelled = false
 
-    fetch(`/api/teacher-session?token=${encodeURIComponent(token)}`)
+    fetch(`/api/teacher-session?token=${encodeURIComponent(token)}`, {
+      credentials: 'same-origin',
+      cache: 'no-store',
+    })
       .then(async res => {
         const json = await res.json().catch(() => ({}))
         if (cancelled) return
 
         if (!res.ok || !json.teacher?.id) {
+          setFailed(true)
           setMessage('This teacher link is invalid or has expired')
           return
         }
 
-        router.replace(`/teacher-link/${encodeURIComponent(token)}`)
+        setTeacherId(json.teacher.id)
       })
       .catch(() => {
-        if (!cancelled) setMessage('Could not open teacher link')
+        if (!cancelled) {
+          setFailed(true)
+          setMessage('Could not open teacher link')
+        }
       })
 
     return () => { cancelled = true }
-  }, [token, router])
+  }, [token])
+
+  if (teacherId) {
+    return <TeacherSelfProfile teacherId={teacherId} />
+  }
 
   return (
     <main style={{
@@ -56,7 +75,7 @@ function TeacherLinkBridgeInner() {
         width: '100%',
         maxWidth: 360,
         textAlign: 'center',
-        background: '#FFFFFF',
+        background: T.white,
         border: `1px solid ${T.border}`,
         borderRadius: 24,
         padding: '34px 24px',
@@ -93,19 +112,11 @@ function TeacherLinkBridgeInner() {
           color: T.ink3,
           margin: 0,
         }}>
-          {token
-            ? 'Please wait while we connect you to your class.'
-            : 'Open the private link your school admin shared with you to access your dashboard.'}
+          {failed
+            ? 'Ask the school admin to copy a fresh teacher link.'
+            : 'Please wait while we connect you to your class.'}
         </p>
       </section>
     </main>
-  )
-}
-
-export default function TeacherLinkBridgePage() {
-  return (
-    <Suspense fallback={null}>
-      <TeacherLinkBridgeInner />
-    </Suspense>
   )
 }

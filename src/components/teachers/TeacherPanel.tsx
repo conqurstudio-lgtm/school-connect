@@ -49,9 +49,9 @@ function token() {
 
 function inviteUrl(t: Teacher) {
   if (typeof window === 'undefined') return ''
-  const base = window.location.origin
-  const token = encodeURIComponent(t.access_token || '')
-  return `${base}/teachers/${t.id}?edit=1&token=${token}`
+  const origin = window.location.origin
+  const accessToken = encodeURIComponent(t.access_token || '')
+  return `${origin}/teacher-link/${accessToken}`
 }
 
 function initials(name: string) {
