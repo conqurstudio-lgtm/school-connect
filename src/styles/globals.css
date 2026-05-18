@@ -553,3 +553,54 @@ select:focus-visible {
   outline: none !important;
   box-shadow: none !important;
 }
+
+/* ============================================================
+   School Connect - Remove Bottom PWA Safe-Area Gap
+   Keeps the floating action button and feed shell flush with
+   the bottom edge in installed PWA / standalone mobile mode.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html,
+  body,
+  .app-root,
+  .feed-scroll {
+    background-color: var(--bg) !important;
+  }
+
+  /* Remove the extra visual gap below the floating action button. */
+  .fab {
+    bottom: 0px !important;
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  .fab:active {
+    transform: translateX(-50%) scale(0.92) !important;
+  }
+
+  /* Do not reserve a separate browser/PWA safe-area strip at the bottom. */
+  .feed-scroll {
+    padding-bottom: 58px !important;
+  }
+
+  body::after {
+    bottom: 0 !important;
+    height: 0 !important;
+    background: var(--bg) !important;
+  }
+}
+
+/* iOS installed PWA mode */
+@media (display-mode: standalone) and (max-width: 640px) {
+  .app-root {
+    bottom: 0 !important;
+  }
+
+  .feed-scroll {
+    padding-bottom: 58px !important;
+  }
+
+  .fab {
+    bottom: 0px !important;
+  }
+}
