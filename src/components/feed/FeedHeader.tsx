@@ -15,6 +15,8 @@ interface FeedHeaderProps {
   onProfileOpen:   () => void
   onTeachersOpen:  () => void
   teachersPending?: number
+  primaryActionType?: 'post' | 'reports' | null
+  onPrimaryAction?: () => void
 }
 
 function BellIcon() {
@@ -34,6 +36,26 @@ function MoreDotsIcon() {
       <circle cx="12" cy="5"  r="1.4" fill="currentColor" />
       <circle cx="12" cy="12" r="1.4" fill="currentColor" />
       <circle cx="12" cy="19" r="1.4" fill="currentColor" />
+    </svg>
+  )
+}
+
+
+function TopPlusIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  )
+}
+
+function ReportsIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+      <path d="M6 12v5c3 3 9 3 12 0v-5" />
     </svg>
   )
 }

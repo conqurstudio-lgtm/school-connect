@@ -1244,3 +1244,15 @@ body {
     height: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* ============================================================
+   School Connect - Feed Top Action
+   The main feed action now lives in the header next to the bell.
+   Hide the old floating feed FAB so the bottom edge stays clean.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .fab {
+    display: none !important;
+  }
+}

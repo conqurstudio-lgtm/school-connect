@@ -173,6 +173,16 @@ export function FeedClient() {
             onProfileOpen={() => setShowProfile(true)}
             onTeachersOpen={() => setShowTeachers(true)}
             teachersPending={teachersPending}
+            primaryActionType={isSchool ? 'post' : isTeacher ? null : 'reports'}
+            onPrimaryAction={() => {
+              if (isSchool) {
+                setEditPost(null)
+                setShowComposer(true)
+              } else {
+                try { sessionStorage.setItem('feed-left', '1') } catch {}
+                router.push('/reports')
+              }
+            }}
           />
         </div>
 
