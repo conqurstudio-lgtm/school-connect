@@ -17,10 +17,10 @@ export function FilterBar({ active, onChange, newPosts }: {
   newPosts?: Partial<Record<FeedFilter, boolean>>
 }) {
   return (
-    <div style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 5,
+    <div className="feed-filterbar" style={{
+      position: 'relative',
+      top: 'auto',
+      zIndex: 'auto',
       background: '#FCFCFF',
       borderBottom: '1px solid rgba(0,0,0,0.06)',
       marginTop:    16,

@@ -692,3 +692,133 @@ select:focus-visible {
     }
   }
 }
+
+/* ============================================================
+   School Connect - Fullscreen Feed, No Bottom Rules
+   This is the final mobile shell override for the feed:
+   - No sticky category bar.
+   - No fake bottom menu/safe-area reserve.
+   - Feed/background extends to all edges.
+   - Floating button moved away from bottom edge.
+   ============================================================ */
+
+html {
+  background: var(--bg) !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  height: -webkit-fill-available;
+}
+
+body {
+  background: var(--bg) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+  min-height: -webkit-fill-available;
+  overflow: hidden !important;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --sat: 0px !important;
+    --sab: 0px !important;
+  }
+
+  body {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-height: -webkit-fill-available;
+    background: var(--bg) !important;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .app-root {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-height: -webkit-fill-available;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--bg) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    background: var(--bg) !important;
+  }
+
+  /* Categories must move with the feed, not stick to the top. */
+  .feed-filterbar {
+    position: relative !important;
+    top: auto !important;
+    z-index: auto !important;
+  }
+
+  /* No bottom bar reservation. The button becomes an overlay near the side,
+     not a reason to create bottom whitespace. */
+  .fab {
+    position: fixed !important;
+    left: auto !important;
+    right: 14px !important;
+    bottom: auto !important;
+    top: 92px !important;
+    transform: none !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 16px !important;
+    z-index: 90 !important;
+  }
+
+  .fab:active {
+    transform: scale(0.92) !important;
+  }
+}
+
+/* Installed PWA mode: no separate bottom safe area/fake footer. */
+@media (display-mode: standalone) and (max-width: 640px) {
+  html,
+  body,
+  .app-root,
+  .feed-scroll,
+  [data-scroll-container] {
+    background: var(--bg) !important;
+  }
+
+  .app-root {
+    inset: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: 0 !important;
+  }
+
+  .fab {
+    top: 92px !important;
+    bottom: auto !important;
+  }
+}
