@@ -28,7 +28,6 @@ interface Props { teacherId: string }
 export function TeacherSelfProfile({ teacherId }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const searchParams = useSearchParams()
   const [session,  setSession]  = useState<any>(null)
   const [loading,  setLoading]  = useState(true)
   const [tab,      setTab]      = useState<Tab>('class')
