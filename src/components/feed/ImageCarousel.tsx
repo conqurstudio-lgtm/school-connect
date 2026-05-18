@@ -73,6 +73,8 @@ export function ImageCarousel({ images, onTap, flyEmoji, priority = false }: Ima
   const count = imgs.length
 
   const [ratio,   setRatio]   = useState<number | null>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [current, setCurrent] = useState(0)
 
 
   const firstImg = imgs[0]
@@ -81,6 +83,33 @@ export function ImageCarousel({ images, onTap, flyEmoji, priority = false }: Ima
     setRatio(null)
     measureRatio(firstImg).then(r => setRatio(clamp(r)))
   }, [firstImg])
+
+  // ── Multi-image horizontal scroll ───────────────────────────────
+  // Uses native browser scroll — same pattern as the teachers strip on the feed.
+  // Updates the counter based on which image is mostly visible.
+
+  useEffect(() => {
+    if (count <= 1) return
+    const el = scrollRef.current
+    if (!el) return
+
+    let raf: number | null = null
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = null
+        const left = el.scrollLeft
+        const itemWidth = el.scrollWidth / imgs.length
+        const idx = Math.round(left / itemWidth)
+        setCurrent(Math.max(0, Math.min(idx, imgs.length - 1)))
+      })
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [imgs.length])
 
   if (count === 0) return null
 
@@ -124,35 +153,6 @@ export function ImageCarousel({ images, onTap, flyEmoji, priority = false }: Ima
       </div>
     )
   }
-
-  // ── Multi-image horizontal scroll ───────────────────────────────
-  // Uses native browser scroll — same pattern as the teachers strip on the feed.
-  // Updates the counter based on which image is mostly visible.
-
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [current, setCurrent] = useState(0)
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-
-    let raf: number | null = null
-    const onScroll = () => {
-      if (raf) return
-      raf = requestAnimationFrame(() => {
-        raf = null
-        const left = el.scrollLeft
-        const itemWidth = el.scrollWidth / imgs.length
-        const idx = Math.round(left / itemWidth)
-        setCurrent(Math.max(0, Math.min(idx, imgs.length - 1)))
-      })
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      el.removeEventListener('scroll', onScroll)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [imgs.length])
 
   return (
     <div style={{ position: 'relative', marginBottom: 10 }}>

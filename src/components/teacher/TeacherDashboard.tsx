@@ -308,7 +308,7 @@ export function TeacherDashboard({ token }: Props) {
       )}
       {showRoster && (
         <RosterModal
-          children={children}
+          kids={children}
           onClose={() => setShowRoster(false)}
           onChanged={loadSession}
         />
@@ -549,7 +549,7 @@ function BasePostCard({ post, index, avatarUrl, avatarInitials, name, isSquare, 
 /* ──────────────────────────────────────────────────────────
    Full roster modal — opened when teacher taps "Add child" or "See all"
    ────────────────────────────────────────────────────────── */
-function RosterModal({ children, onClose, onChanged }: any) {
+function RosterModal({ kids, onClose, onChanged }: any) {
   const [showAdd,  setShowAdd]  = useState(false)
   const [editing,  setEditing]  = useState<any>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
@@ -618,7 +618,7 @@ function RosterModal({ children, onClose, onChanged }: any) {
             <h3 style={{ fontSize: 17, fontWeight: 700, color: T.ink,
                          letterSpacing: '-0.02em', margin: 0 }}>Your class</h3>
             <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-              {children.length} {children.length === 1 ? 'child' : 'children'}
+              {kids.length} {kids.length === 1 ? 'child' : 'children'}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -643,7 +643,7 @@ function RosterModal({ children, onClose, onChanged }: any) {
         </div>
 
         <div style={{ padding: 16, overflowY: 'auto', flex: 1 }}>
-          {children.length === 0 ? (
+          {kids.length === 0 ? (
             <div style={{
               padding: '40px 20px', textAlign: 'center',
               border: `1px dashed ${T.border}`, borderRadius: 14,
@@ -656,7 +656,7 @@ function RosterModal({ children, onClose, onChanged }: any) {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {children.map((c: any) => (
+              {kids.map((c: any) => (
                 <div key={c.id} style={{
                   padding: '12px 14px', borderRadius: 12,
                   background: T.white, border: `1px solid ${T.border}`,

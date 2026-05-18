@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
     .limit(30)
 
   // Fetch parent names
-  const parentIds = [...new Set((parentUpdates ?? []).map((u: any) => u.parent_id))]
+  const parentIds = Array.from(new Set((parentUpdates ?? []).map((u: any) => u.parent_id)))
   const { data: parentProfiles } = parentIds.length > 0
     ? await sb.from('profiles').select('id, full_name').in('id', parentIds)
     : { data: [] }
@@ -80,10 +80,10 @@ export async function GET(req: NextRequest) {
   }
 
   // Fetch reaction & comment author names
-  const reactorIds = [...new Set([
+  const reactorIds = Array.from(new Set([
     ...postReactions.map((r: any) => r.author_id).filter(Boolean),
     ...postReplies.map((c: any) => c.author_id).filter(Boolean),
-  ])]
+  ]))
   const { data: reactorProfiles } = reactorIds.length > 0
     ? await sb.from('profiles').select('id, full_name').in('id', reactorIds)
     : { data: [] }

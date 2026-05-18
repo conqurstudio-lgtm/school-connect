@@ -12,6 +12,7 @@ import type { Post, ReactionType } from '@/lib/types'
 import toast from 'react-hot-toast'
 
 interface PostCardProps {
+  index?:           number
   post:             Post
   isSchool:         boolean
   isOptimistic?:    boolean

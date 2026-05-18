@@ -212,7 +212,7 @@ export function TeacherSelfProfile({ teacherId }: Props) {
 
       {/* ─── Tab content ─── */}
       {tab === 'class' && (
-        <ClassRoster children={children} onChanged={load} />
+        <ClassRoster kids={children} onChanged={load} />
       )}
       {tab === 'updates' && <UpdatesInbox teacher={teacher} />}
       {tab === 'broadcast' && <BroadcastCompose teacher={teacher} />}
@@ -263,7 +263,7 @@ function TabPill({ active, onClick, label, icon }: any) {
 /* ────────────────────────────────────────
    CLASS TAB — roster
    ──────────────────────────────────────── */
-function ClassRoster({ children, onChanged }: any) {
+function ClassRoster({ kids, onChanged }: any) {
   const [showAdd,  setShowAdd]  = useState(false)
   const [editing,  setEditing]  = useState<any>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
@@ -314,9 +314,9 @@ function ClassRoster({ children, onChanged }: any) {
         marginBottom: 14,
       }}>
         <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
-          {children.length === 0
+          {kids.length === 0
             ? 'No children yet'
-            : `${children.length} ${children.length === 1 ? 'child' : 'children'} in your class`}
+            : `${kids.length} ${kids.length === 1 ? 'child' : 'children'} in your class`}
         </p>
         <button onClick={() => setShowAdd(true)} style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
@@ -329,7 +329,7 @@ function ClassRoster({ children, onChanged }: any) {
         </button>
       </div>
 
-      {children.length === 0 ? (
+      {kids.length === 0 ? (
         <div style={{
           padding: '32px 20px', textAlign: 'center',
           border: `1px dashed ${T.border}`, borderRadius: 14,
@@ -342,7 +342,7 @@ function ClassRoster({ children, onChanged }: any) {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {children.map((c: any) => (
+          {kids.map((c: any) => (
             <div key={c.id} style={{
               padding: '12px 14px', borderRadius: 12,
               background: T.white, border: `1px solid ${T.border}`,
