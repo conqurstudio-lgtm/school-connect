@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
-import { Eye, EyeOff, ArrowRight, School, Users, BookOpen } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, School, Users } from 'lucide-react'
 
-type AccountType = 'school' | 'parent' | 'teacher'
+type AccountType = 'school' | 'parent'
 
 const supabase = createClient()
 
@@ -76,7 +76,6 @@ function SignupForm() {
 
   const types: { type: AccountType; Icon: React.ElementType; label: string; desc: string }[] = [
     { type: 'school',  Icon: School,   label: 'School',  desc: 'I manage a school' },
-    { type: 'teacher', Icon: BookOpen, label: 'Teacher', desc: 'I teach at a school' },
     { type: 'parent',  Icon: Users,    label: 'Parent',  desc: 'My child attends a school' },
   ]
 
@@ -84,21 +83,33 @@ function SignupForm() {
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Account type */}
       {!fromInvite && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-          {types.map(({ type, Icon, label, desc }) => (
-            <button key={type} type="button" onClick={() => setAccountType(type)} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-              padding: '14px 8px', borderRadius: 14, cursor: 'pointer', fontFamily: 'inherit',
-              border: `1.5px solid ${accountType === type ? T.ink : T.border}`,
-              background: accountType === type ? T.ink : T.bg,
-            }}>
-              <Icon style={{ width: 20, height: 20, color: accountType === type ? '#fff' : T.ink3 }} strokeWidth={1.4} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: accountType === type ? '#fff' : T.ink }}>
-                {label}
-              </span>
-            </button>
-          ))}
-        </div>
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {types.map(({ type, Icon, label, desc }) => (
+              <button key={type} type="button" onClick={() => setAccountType(type)} style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                padding: '14px 8px', borderRadius: 14, cursor: 'pointer', fontFamily: 'inherit',
+                border: `1.5px solid ${accountType === type ? T.ink : T.border}`,
+                background: accountType === type ? T.ink : T.bg,
+              }}>
+                <Icon style={{ width: 20, height: 20, color: accountType === type ? '#fff' : T.ink3 }} strokeWidth={1.4} />
+                <span style={{ fontSize: 12, fontWeight: 600, color: accountType === type ? '#fff' : T.ink }}>
+                  {label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <p style={{
+            fontSize: 12,
+            lineHeight: 1.45,
+            color: T.ink3,
+            margin: '10px 2px 0',
+            textAlign: 'center',
+          }}>
+            Teachers do not create public accounts. The school admin shares a private teacher link.
+          </p>
+        </>
       )}
 
       <div>

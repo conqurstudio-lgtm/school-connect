@@ -1,5 +1,5 @@
 // /api/teachers
-// Admin endpoints for creating, listing, revoking, and rotating teacher tokens.
+// Admin endpoints for creating, listing, hiding/reactivating, and rotating teacher links.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
@@ -101,10 +101,18 @@ export async function PATCH(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
   let updates: any = {}
-  if (action === 'revoke')        updates.status       = 'revoked'
-  else if (action === 'reactivate') updates.status     = 'active'
-  else if (action === 'rotate')   updates.access_token = generateToken()
-  else                            updates              = { ...fields, updated_at: new Date().toISOString() }
+  if (action === 'revoke') {
+    updates.status = 'inactive'
+    updates.updated_at = new Date().toISOString()
+  } else if (action === 'reactivate') {
+    updates.status = 'active'
+    updates.updated_at = new Date().toISOString()
+  } else if (action === 'rotate') {
+    updates.access_token = generateToken()
+    updates.updated_at = new Date().toISOString()
+  } else {
+    updates = { ...fields, updated_at: new Date().toISOString() }
+  }
 
   const { data: teacher, error } = await supabase
     .from('teachers')
@@ -132,7 +140,8 @@ export async function DELETE(req: NextRequest) {
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
 
   const { error } = await supabase
-    .from('teachers').delete()
+    .from('teachers')
+    .update({ status: 'inactive', updated_at: new Date().toISOString() })
     .eq('id', id)
     .eq('school_id', school.id)
 
