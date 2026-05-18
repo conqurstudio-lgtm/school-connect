@@ -170,7 +170,6 @@ export default function SchoolSetupPage() {
           logo_url: logoUrl         || null,
           province: province        || null,
           phone:    phone.trim()    || null,
-          email:    email.trim()    || null,
           owner_id: userId,
         })
         .select()
