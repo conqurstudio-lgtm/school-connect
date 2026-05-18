@@ -822,3 +822,97 @@ body {
     bottom: auto !important;
   }
 }
+
+/* ============================================================
+   School Connect - Final Bottom Seam Fix
+   Purpose:
+   - Remove the white bottom seam/strip in Safari and installed PWA.
+   - Prevent feed content from looking cut off at the bottom.
+   - Keep the feed fullscreen and keep the floating button independent.
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html,
+  body {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+  }
+
+  /* Safari sometimes paints the home-indicator gutter from the root canvas.
+     This forces that canvas to match the app and removes the visible white line. */
+  html::before {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: calc(env(safe-area-inset-bottom, 0px) + 28px);
+    background: var(--bg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body,
+  .app-root {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+  }
+
+  /* Extend the app slightly beyond the viewport so Safari does not expose
+     a separate white browser/PWA gutter below the feed. */
+  .app-root {
+    inset: 0 0 -36px 0 !important;
+    height: auto !important;
+    min-height: calc(100dvh + 36px) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+    padding-bottom: 36px !important;
+    margin-bottom: -36px !important;
+    scroll-padding-bottom: 0 !important;
+  }
+
+  /* Remove any previous artificial bottom layers that may create a visible rule. */
+  body::after,
+  .app-root::after,
+  .feed-scroll::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Make the last feed item breathe so it does not look chopped by the
+     bottom edge/home indicator, without creating a visible bottom bar. */
+  .feed-scroll > *:last-child {
+    margin-bottom: 36px !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  html,
+  body,
+  .app-root,
+  .feed-scroll,
+  [data-scroll-container] {
+    background: var(--bg) !important;
+    background-color: var(--bg) !important;
+  }
+
+  .app-root {
+    inset: 0 0 -42px 0 !important;
+    min-height: calc(100dvh + 42px) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: 42px !important;
+    margin-bottom: -42px !important;
+  }
+
+  html::before {
+    height: calc(env(safe-area-inset-bottom, 0px) + 42px);
+    background: var(--bg) !important;
+  }
+}
