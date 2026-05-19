@@ -15,6 +15,12 @@ function adminClient() {
 async function getTeacher(req: NextRequest) {
   const token = req.cookies.get('teacher_token')?.value
   if (!token) return null
+  const detectedType =
+    document_url ? 'document'
+    : (event_date || event_time || event_location) ? 'event'
+    : Array.isArray(image_urls) && image_urls.length > 0 ? 'moment'
+    : 'update'
+
   const sb = adminClient()
   const { data } = await sb
     .from('teachers').select('*')
@@ -36,12 +42,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'empty post' }, { status: 400 })
   }
 
+  const detectedType =
+    document_url ? 'document'
+    : (event_date || event_time || event_location) ? 'event'
+    : Array.isArray(image_urls) && image_urls.length > 0 ? 'moment'
+    : 'update'
+
   const sb = adminClient()
   const { data: post, error } = await sb.from('posts')
     .insert({
       school_id:        teacher.school_id,
       author_id:        null,  // teacher posts have no auth user
-      type:             type || 'update',
+      type:             type || detectedType,
       status:           'published',
       body:             postBody?.trim() || null,
       image_urls:       Array.isArray(image_urls) ? image_urls : null,
@@ -66,6 +78,12 @@ export async function DELETE(req: NextRequest) {
 
   const id = req.nextUrl.searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 })
+
+  const detectedType =
+    document_url ? 'document'
+    : (event_date || event_time || event_location) ? 'event'
+    : Array.isArray(image_urls) && image_urls.length > 0 ? 'moment'
+    : 'update'
 
   const sb = adminClient()
   // Only allow if teacher owns the post
