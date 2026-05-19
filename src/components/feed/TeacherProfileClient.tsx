@@ -186,8 +186,9 @@ export function TeacherProfileClient({ teacherId }: Props) {
       <div style={{
         position: 'sticky',
         top: 0,
-        zIndex: 20,
-        background: 'rgba(252,252,255,0.94)',
+        zIndex: 40,
+        flexShrink: 0,
+        background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         padding: '14px 16px 12px',
@@ -477,8 +478,8 @@ function MessageRow({ update, teacher, onChanged }: any) {
       }}>
         <div style={{
           borderRadius: isTeacher ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
-          background: isTeacher ? T.white : T.ink,
-          color: isTeacher ? T.ink : T.white,
+          background: isTeacher ? T.white : '#F4F4F6',
+          color: T.ink,
           border: isTeacher ? `1px solid ${T.border}` : 'none',
           padding: '9px 12px',
         }}>
@@ -581,7 +582,7 @@ function ReportThreadCard({ report, teacher }: any) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
               fontSize: 13,
-              fontWeight: 800,
+              fontWeight: 650,
               color: T.ink,
               margin: 0,
               overflow: 'hidden',
@@ -620,9 +621,9 @@ function ReportThreadCard({ report, teacher }: any) {
             borderRadius: 999,
             background: T.ink,
             color: T.white,
-            padding: '10px 12px',
+            padding: '13px 12px',
             fontSize: 12,
-            fontWeight: 800,
+            fontWeight: 700,
             cursor: 'pointer',
             fontFamily: 'inherit',
           }}

@@ -192,8 +192,9 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         padding: '18px 18px 14px',
         position: 'sticky',
         top: 0,
-        zIndex: 20,
-        background: 'rgba(252,252,255,0.94)',
+        zIndex: 40,
+        flexShrink: 0,
+        background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         borderBottom: 'none',
@@ -270,7 +271,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}>
-            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}{children?.length ? ` · ${children.length} ${children.length === 1 ? 'child' : 'children'}` : ''}
           </p>
         </div>
 
@@ -292,7 +293,11 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             )}
           </button>
 
-          <button onClick={() => setShowClassComposer(true)} aria-label="Create" style={iconBtn}>
+          <button
+            onClick={() => setShowClassComposer(true)}
+            aria-label="Create"
+            style={{ ...iconBtn, background: T.ink, color: T.white, border: 'none' }}
+          >
             <Plus size={15} strokeWidth={2.1} />
           </button>
         </div>
@@ -1623,6 +1628,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
 }
 
 
+
 function ClassChildrenSummary({ kids, onReport }: any) {
   const list = Array.isArray(kids) ? kids : []
   const preview = list.slice(0, 10)
@@ -1630,6 +1636,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
 
   const openReport = (child: any) => {
     if (onReport) onReport(child)
+    else toast(`${child.name || 'Child'} report is next`)
   }
 
   return (
@@ -1646,54 +1653,36 @@ function ClassChildrenSummary({ kids, onReport }: any) {
         gap: 10,
         marginBottom: 10,
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 7,
-          minWidth: 0,
+        <p style={{
+          fontSize: 12,
+          fontWeight: 700,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.01em',
         }}>
-          <p style={{
-            fontSize: 12,
-            fontWeight: 800,
-            color: T.ink,
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
-            Children
-          </p>
-          <span style={{
-            minWidth: 22,
-            height: 22,
-            padding: '0 7px',
-            borderRadius: 999,
-            background: 'rgba(0,0,0,0.04)',
-            color: T.ink2,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 11,
-            fontWeight: 850,
-            lineHeight: 1,
-          }}>
-            {list.length}
-          </span>
-        </div>
+          Children
+        </p>
 
         <button
           onClick={() => setOpen(v => !v)}
+          aria-label={open ? 'Hide children' : 'View children'}
+          title={open ? 'Hide' : 'View all'}
           style={{
+            width: 38,
+            height: 38,
+            borderRadius: 14,
             border: 'none',
             background: 'rgba(0,0,0,0.04)',
             color: T.ink2,
-            borderRadius: 999,
-            padding: '7px 11px',
-            fontSize: 11,
-            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             cursor: 'pointer',
-            fontFamily: 'inherit',
+            transform: open ? 'scale(0.98)' : 'scale(1)',
+            transition: 'transform 0.16s ease, background 0.16s ease',
           }}
         >
-          {open ? 'Hide' : 'View'}
+          <Users size={16} strokeWidth={1.8} />
         </button>
       </div>
 
