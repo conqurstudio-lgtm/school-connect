@@ -31,6 +31,10 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const router = useRouter()
   const [teacher,   setTeacher]    = useState<any>(null)
   const [canMessage, setCanMessage] = useState(false)
+  const [joinStatus, setJoinStatus] = useState('none')
+  const [joinRequest, setJoinRequest] = useState<any>(null)
+  const [showJoin, setShowJoin] = useState(false)
+  const [classPosts, setClassPosts] = useState<any[]>([])
   const [updates,    setUpdates]   = useState<any[]>([])
   const [loading,    setLoading]   = useState(true)
   const [composing,  setComposing] = useState(false)
@@ -43,11 +47,14 @@ export function TeacherProfileClient({ teacherId }: Props) {
       const profRes = await fetch(`/api/teachers/${teacherId}/profile`)
       const profJson = await profRes.json()
       setTeacher(profJson.teacher)
+      setJoinStatus(profJson.join_status || (profJson.is_my_teacher ? 'approved' : 'none'))
+      setJoinRequest(profJson.join_request || null)
+      setClassPosts(profJson.posts ?? [])
 
       // Try fetching updates thread
       const updRes = await fetch(`/api/updates?teacher_id=${teacherId}`)
       const updJson = await updRes.json()
-      setCanMessage(!!updJson.can_message)
+      setCanMessage(!!updJson.can_message || !!profJson.is_my_teacher || profJson.join_status === 'approved')
       setUpdates(updJson.updates ?? [])
     } catch {}
     setLoading(false)
@@ -64,12 +71,12 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   const containerStyle: any = {
-    minHeight: '100dvh', height: '100dvh',
-    overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+    minHeight: '100dvh', height: 'auto',
+    overflowY: 'visible', WebkitOverflowScrolling: 'auto',
     background: T.bg, maxWidth: 520, margin: '0 auto',
-    paddingTop: 'env(safe-area-inset-top, 0px)',
+    paddingTop: 0,
     fontFamily: 'Inter, -apple-system, sans-serif',
-    paddingBottom: 'calc(100px + env(safe-area-inset-bottom, 0px))', position: 'relative',
+    paddingBottom: 96, position: 'relative',
   }
 
   if (loading) {
@@ -147,27 +154,65 @@ export function TeacherProfileClient({ teacherId }: Props) {
           {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} Teacher
         </p>
       </div>
-
-      {/* If NOT my child's teacher → soft notice, no input */}
+      {/* If NOT my child's teacher → request class access */}
       {!canMessage && (
         <div style={{ padding: '0 20px' }}>
           <div style={{
-            padding: '20px 16px', borderRadius: 16,
+            padding: '20px 16px',
+            borderRadius: 16,
             border: `1px dashed ${T.border}`,
-            display: 'flex', gap: 12, alignItems: 'flex-start',
+            display: 'flex',
+            gap: 12,
+            alignItems: 'flex-start',
+            background: T.white,
           }}>
             <Info size={18} color={T.ink3} strokeWidth={1.6}
               style={{ flexShrink: 0, marginTop: 2 }} />
-            <div>
-              <p style={{ fontSize: 14, color: T.ink, fontWeight: 600,
-                          letterSpacing: '-0.005em', margin: '0 0 4px' }}>
-                Not your child's teacher
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 4px' }}>
+                {joinStatus === 'pending'
+                  ? 'Request sent'
+                  : joinStatus === 'rejected'
+                    ? 'Request was not approved'
+                    : 'Join this class'}
               </p>
               <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
-                You can only send updates to teachers your child is in class with.
+                {joinStatus === 'pending'
+                  ? 'Your request is waiting for the teacher to approve that your child is in this class.'
+                  : joinStatus === 'rejected'
+                    ? 'You can ask the school or send a new request if this was a mistake.'
+                    : 'Send your child’s details to the teacher. Once approved, you can see class updates and message privately.'}
               </p>
+
+              {joinStatus !== 'pending' && (
+                <button onClick={() => setShowJoin(true)} style={{
+                  marginTop: 14,
+                  padding: '10px 14px',
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.ink,
+                  color: T.white,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}>
+                  {joinStatus === 'rejected' ? 'Send new request' : 'Join this class'}
+                </button>
+              )}
             </div>
           </div>
+
+          {showJoin && (
+            <JoinClassModal
+              teacher={teacher}
+              onClose={() => setShowJoin(false)}
+              onSubmitted={() => {
+                setShowJoin(false)
+                load()
+              }}
+            />
+          )}
         </div>
       )}
 
@@ -183,44 +228,338 @@ export function TeacherProfileClient({ teacherId }: Props) {
             <Info size={14} color={T.blue} strokeWidth={1.8}
               style={{ flexShrink: 0, marginTop: 2 }} />
             <p style={{ fontSize: 12, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
-              Quick updates, not chat. Teachers reply during school hours.
+              Class updates from your teacher. Parents can view what is happening in class, but only teachers can post here.
             </p>
           </div>
 
-          {/* Updates list */}
-          {updates.length === 0 ? (
+          {/* Read-only class posts */}
+          {classPosts.length === 0 ? (
             <EmptyState />
           ) : (
             <div>
-              {updates.map((u: any, i: number) => (
-                <UpdateRow
-                  key={u.id}
-                  update={u}
+              {classPosts.map((post: any, i: number) => (
+                <ClassPostRow
+                  key={post.id}
+                  post={post}
                   teacher={teacher}
-                  user={user}
-                  onChanged={load}
                   index={i}
                 />
               ))}
             </div>
           )}
-
-          {/* FAB compose */}
-          <button onClick={() => setComposing(true)} className="fab"
-            aria-label="Send an update">
-            <Plus size={22} strokeWidth={1.8} />
-          </button>
-
-          {composing && (
-            <ComposeUpdate
-              teacher={teacher}
-              onClose={() => setComposing(false)}
+          <div style={{ padding: '4px 20px 18px' }}>
+            <div style={{
+              padding: '12px 14px',
+              borderRadius: 14,
+              background: '#FAFAFC',
+              border: `1px solid ${T.border}`,
+              fontSize: 12,
+              color: T.ink3,
+              lineHeight: 1.5,
+            }}>
+              This class page is read-only for parents. Teacher updates, events, moments and reports will appear here.
+            </div>
+          </div>
               onSent={() => { setComposing(false); load() }}
             />
           )}
         </>
       )}
     </div>
+  )
+}
+
+
+function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [relationship, setRelationship] = useState('Parent/Guardian')
+  const [sending, setSending] = useState(false)
+
+  const submit = async () => {
+    const child_first_name = firstName.trim()
+    const child_last_name = lastName.trim()
+
+    if (!child_first_name || !child_last_name) {
+      toast.error('Enter child name and surname')
+      return
+    }
+
+    setSending(true)
+    try {
+      const res = await fetch('/api/class-join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacher_id: teacher.id,
+          child_first_name,
+          child_last_name,
+          relationship,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Could not send request')
+
+      if (json.already_joined) toast.success('You are already linked to this class')
+      else if (json.already_pending) toast.success('Your request is already waiting')
+      else toast.success('Request sent to teacher')
+
+      onSubmitted()
+    } catch (e: any) {
+      toast.error(e.message || 'Could not send request')
+    }
+    setSending(false)
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 220,
+      background: 'rgba(0,0,0,0.38)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        background: T.white,
+        borderRadius: '22px 22px 0 0',
+        padding: '20px',
+        animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: T.ink, letterSpacing: '-0.025em', margin: 0 }}>
+              Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+            </h3>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0' }}>
+              Teacher approval is required before access is granted.
+            </p>
+          </div>
+          <button onClick={onClose} style={{
+            width: 34,
+            height: 34,
+            borderRadius: 10,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink3,
+            cursor: 'pointer',
+          }}>
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <input autoFocus value={firstName} onChange={e => setFirstName(e.target.value)}
+            placeholder="Child first name" style={joinInputStyle} />
+          <input value={lastName} onChange={e => setLastName(e.target.value)}
+            placeholder="Child surname" style={joinInputStyle} />
+        </div>
+
+        <select value={relationship} onChange={e => setRelationship(e.target.value)}
+          style={{ ...joinInputStyle, marginTop: 10 }}>
+          <option>Parent/Guardian</option>
+          <option>Mother</option>
+          <option>Father</option>
+          <option>Guardian</option>
+          <option>Other</option>
+        </select>
+
+        <button onClick={submit} disabled={sending} style={{
+          width: '100%',
+          marginTop: 14,
+          padding: '14px',
+          borderRadius: 14,
+          border: 'none',
+          background: sending ? '#D4D4D8' : T.ink,
+          color: T.white,
+          fontSize: 15,
+          fontWeight: 800,
+          cursor: sending ? 'wait' : 'pointer',
+          fontFamily: 'inherit',
+        }}>
+          {sending ? 'Sending request…' : 'Send request'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const joinInputStyle: any = {
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '12px 13px',
+  borderRadius: 13,
+  border: `1px solid ${T.border}`,
+  background: '#FAFAFC',
+  color: T.ink,
+  fontSize: 15,
+  outline: 'none',
+  fontFamily: 'inherit',
+}
+
+
+function ClassPostRow({ post, teacher, index }: any) {
+  const images = Array.isArray(post.image_urls)
+    ? post.image_urls
+    : post.image_url
+      ? [post.image_url]
+      : []
+
+  const initials = teacher.name
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <article>
+      <div style={{ display: 'flex', gap: 12, padding: '14px 20px 8px', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+          <div style={{
+            width: 38,
+            height: 38,
+            borderRadius: 10,
+            flexShrink: 0,
+            overflow: 'hidden',
+            background: teacher.photo_url
+              ? `url(${teacher.photo_url}) center/cover`
+              : '#F0F0F4',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: `1px solid rgba(0,0,0,0.06)`,
+            fontSize: 13,
+            fontWeight: 600,
+            color: T.ink2,
+          }}>
+            {!teacher.photo_url && initials}
+          </div>
+          <div style={{
+            width: 1,
+            flex: 1,
+            minHeight: 24,
+            marginTop: 6,
+            background: 'rgba(0,0,0,0.07)',
+          }} />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0, paddingTop: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: T.ink, flex: 1 }}>
+              {teacher.name}
+              <span style={{
+                marginLeft: 6,
+                padding: '1px 6px',
+                background: '#F0F4FF',
+                color: T.blue,
+                borderRadius: 999,
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+              }}>
+                {typeLabel}
+              </span>
+            </span>
+            <span style={{ fontSize: 12, color: '#B0B0B0', flexShrink: 0 }}>
+              {relTime(post.created_at)}
+            </span>
+          </div>
+
+          {post.title && (
+            <p style={{
+              fontSize: 15,
+              lineHeight: 1.35,
+              color: T.ink,
+              fontWeight: 700,
+              margin: '6px 0 0',
+              letterSpacing: '-0.01em',
+            }}>
+              {post.title}
+            </p>
+          )}
+
+          {post.body && (
+            <p style={{
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: '#2A2A2A',
+              margin: '5px 0 0',
+              whiteSpace: 'pre-wrap',
+            }}>
+              {post.body}
+            </p>
+          )}
+
+          {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
+            <div style={{
+              marginTop: 8,
+              padding: '9px 10px',
+              borderRadius: 12,
+              background: '#F4F6FB',
+              color: T.ink2,
+              fontSize: 12,
+              lineHeight: 1.5,
+            }}>
+              {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
+              {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
+              {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
+            </div>
+          )}
+
+          {post.document_url && (
+            <a
+              href={post.document_url}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'inline-flex',
+                marginTop: 9,
+                padding: '8px 11px',
+                borderRadius: 999,
+                background: '#F4F4F6',
+                color: T.ink,
+                fontSize: 12,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              Open document
+            </a>
+          )}
+        </div>
+      </div>
+
+      {images.length > 0 && (
+        <div style={{ padding: '0 20px 8px 70px', display: 'grid', gap: 8 }}>
+          {images.slice(0, 4).map((url: string, idx: number) => (
+            <img
+              key={`${url}-${idx}`}
+              src={url}
+              alt=""
+              style={{
+                width: '100%',
+                borderRadius: 16,
+                display: 'block',
+                objectFit: 'cover',
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      <div style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }} />
+    </article>
   )
 }
 
@@ -237,7 +576,7 @@ function EmptyState() {
       <p style={{ fontSize: 14, color: T.ink, fontWeight: 600,
                   margin: '0 0 4px' }}>No updates yet</p>
       <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
-        Tap the + button to send the first one.
+        Your teacher’s class updates will appear here.
       </p>
     </div>
   )
