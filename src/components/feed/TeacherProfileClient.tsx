@@ -38,6 +38,15 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
+  const scrollThreadToBottom = (smooth = true) => {
+    window.setTimeout(() => {
+      bottomRef.current?.scrollIntoView({
+        behavior: smooth ? 'smooth' : 'auto',
+        block: 'end',
+      })
+    }, 80)
+  }
+
   const markThreadSeen = async (id = teacherId) => {
     try {
       await fetch('/api/thread-status', {
@@ -87,6 +96,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
       if (res.ok) {
         const list = json.updates ?? []
         setUpdates(list)
+        scrollThreadToBottom(false)
         setCanMessage(!!json.can_message)
 
         try { await markThreadSeen(id) } catch {}
@@ -108,7 +118,22 @@ export function TeacherProfileClient({ teacherId }: Props) {
     const text = message.trim()
     if (!text || sending || !teacher?.id) return
 
+    const tempId = `optimistic-parent-${Date.now()}`
+    const optimisticMessage = {
+      id: tempId,
+      teacher_id: teacher.id,
+      body: text,
+      image_url: null,
+      author_kind: 'parent',
+      created_at: new Date().toISOString(),
+      _optimistic: true,
+    }
+
+    setMessage('')
+    setUpdates(prev => [optimisticMessage, ...prev])
+    scrollThreadToBottom(true)
     setSending(true)
+
     try {
       const res = await fetch('/api/updates', {
         method: 'POST',
@@ -119,14 +144,24 @@ export function TeacherProfileClient({ teacherId }: Props) {
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not send message')
 
-      setMessage('')
-      await loadThread(teacher.id)
+      if (json.update?.id) {
+        setUpdates(prev => prev.map((item: any) =>
+          item.id === tempId ? json.update : item
+        ))
+      } else {
+        await loadThread(teacher.id)
+      }
+
+      scrollThreadToBottom(true)
     } catch (e: any) {
+      setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
+      setMessage(text)
       toast.error(e.message || 'Could not send message')
     } finally {
       setSending(false)
     }
   }
+
 
   if (loading) {
     return (

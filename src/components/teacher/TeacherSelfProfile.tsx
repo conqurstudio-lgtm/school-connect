@@ -2101,6 +2101,16 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [reply,   setReply]   = useState('')
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  const scrollThreadToBottom = (smooth = true) => {
+    window.setTimeout(() => {
+      bottomRef.current?.scrollIntoView({
+        behavior: smooth ? 'smooth' : 'auto',
+        block: 'end',
+      })
+    }, 80)
+  }
 
   const load = async () => {
     setLoading(true)
@@ -2108,6 +2118,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const res = await fetch(`/api/teacher/updates?parent_id=${parent.id}`)
       const json = await res.json()
       setUpdates(json.updates ?? [])
+      scrollThreadToBottom(false)
       try {
         await fetch('/api/teacher/thread-status', {
           method: 'POST',
@@ -2125,7 +2136,23 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     const clean = text.trim()
     if (!clean || sending) return
 
+    const tempId = `optimistic-teacher-${Date.now()}`
+    const optimisticMessage = {
+      id: tempId,
+      parent_id: parent.id,
+      teacher_id: teacher.id,
+      body: clean,
+      image_url: null,
+      author_kind: 'teacher',
+      created_at: new Date().toISOString(),
+      _optimistic: true,
+    }
+
+    setReply('')
+    setUpdates(prev => [optimisticMessage, ...prev])
+    scrollThreadToBottom(true)
     setSending(true)
+
     try {
       const res = await fetch('/api/teacher/updates', {
         method: 'POST',
@@ -2135,12 +2162,23 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not send')
 
-      setReply('')
-      await load()
+      if (Array.isArray(json.updates) && json.updates[0]?.id) {
+        const saved = json.updates[0]
+        setUpdates(prev => prev.map((item: any) =>
+          item.id === tempId ? saved : item
+        ))
+      } else {
+        await load()
+      }
+
+      scrollThreadToBottom(true)
     } catch (e: any) {
+      setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
+      setReply(clean)
       toast.error(e.message || 'Could not send')
+    } finally {
+      setSending(false)
     }
-    setSending(false)
   }
 
   const parentInitial = (parent.name || 'P').charAt(0).toUpperCase()
@@ -2352,6 +2390,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               )
             })
           )}
+          <div ref={bottomRef} />
         </div>
 
         <div style={{

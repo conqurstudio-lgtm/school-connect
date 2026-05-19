@@ -31,8 +31,13 @@ export function TeachersStrip() {
   const [unreadTeachers, setUnreadTeachers] = useState<Record<string, number>>({})
 
 
-  const checkTeacherMessages = async (teacherList: Teacher[], mineIds: string[]) => {
+  const checkTeacherMessages = async (teacherList: Teacher[], mineIds: string[] = []) => {
     try {
+      if (!Array.isArray(teacherList) || teacherList.length === 0) {
+        setUnreadTeachers({})
+        return
+      }
+
       const res = await fetch('/api/thread-status', { cache: 'no-store' })
       if (!res.ok) return
 
@@ -40,12 +45,14 @@ export function TeachersStrip() {
       const byTeacher = json.by_teacher || {}
       const next: Record<string, number> = {}
 
-      teacherList
-        .filter((teacher: any) => mineIds.includes(teacher.id))
-        .forEach((teacher: any) => {
-          const count = Number(byTeacher?.[teacher.id]?.unread_count || 0)
-          if (count > 0) next[teacher.id] = count
-        })
+      // Important: do not depend only on my_teacher_ids here.
+      // If the parent/child mapping has not filled my_teacher_ids yet,
+      // /api/thread-status is still the source of truth for approved
+      // teacher relationship unread messages.
+      teacherList.forEach((teacher: any) => {
+        const count = Number(byTeacher?.[teacher.id]?.unread_count || 0)
+        if (count > 0) next[teacher.id] = count
+      })
 
       setUnreadTeachers(next)
     } catch {}
@@ -106,6 +113,22 @@ export function TeachersStrip() {
     }
   }, [teachers, mine])
 
+
+  // teacher-dot-poll: keep teacher avatar dots fresh while parent is on the feed.
+  useEffect(() => {
+    const refreshTeacherDots = () => checkTeacherMessages(teachers, mine)
+
+    window.addEventListener('focus', refreshTeacherDots)
+    window.addEventListener('teacher-thread-seen', refreshTeacherDots as EventListener)
+
+    const interval = window.setInterval(refreshTeacherDots, 20_000)
+
+    return () => {
+      window.removeEventListener('focus', refreshTeacherDots)
+      window.removeEventListener('teacher-thread-seen', refreshTeacherDots as EventListener)
+      window.clearInterval(interval)
+    }
+  }, [teachers, mine])
 
   // Show ghost skeleton while waiting for first fetch and no cache
   if (!hydrated) return null  // brief; effect fires immediately
