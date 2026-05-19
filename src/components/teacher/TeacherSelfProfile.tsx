@@ -2973,8 +2973,8 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
             </div>
           ) : (
             <>
-              <MessageGroups title="New messages" messages={unreadMessages} onOpen={openMessageThread} unread />
-              <MessageGroups title="Read messages" messages={readMessages} onOpen={openMessageThread} />
+              <MessageGroups title="New messages" messages={unreadMessages} parents={parents} onOpen={openMessageThread} unread />
+              <MessageGroups title="Read messages" messages={readMessages} parents={parents} onOpen={openMessageThread} />
               <NotifSection title="Requests" items={requests} onOpen={() => toast('Class requests are shown on your teacher page')} />
               <NotifSection title="Replies" items={replies} onOpen={() => toast('Replies are linked to post activity')} />
               <NotifSection title="Reactions" items={reactions} onOpen={() => toast('Reaction received')} />
@@ -2987,18 +2987,57 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
   )
 }
 
-function groupMessagesByParent(messages: any[]) {
+
+function normalizeChildNames(value: any): string[] {
+  if (!value) return []
+  if (Array.isArray(value)) return value.filter(Boolean).map((v: any) => String(v))
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map(v => v.trim())
+      .filter(Boolean)
+  }
+  return []
+}
+
+function parentChildLabel(source: any): string {
+  const names = normalizeChildNames(
+    source?.child_names ||
+    source?.children ||
+    source?.child_name ||
+    source?.childName
+  )
+
+  if (names.length === 1) return `Parent of ${names[0]}`
+  if (names.length === 2) return `Parent of ${names[0]} and ${names[1]}`
+  if (names.length > 2) return `Parent of ${names[0]} +${names.length - 1}`
+
+  return source?.parent_name || source?.author_name || source?.name || 'Parent'
+}
+
+function groupMessagesByParent(messages: any[], parents: any[] = []) {
   const map = new Map<string, any>()
 
   for (const item of messages) {
     const key = item.parent_id || item.parentId || item.parent_name || item.author_name || 'unknown-parent'
-    const parentName = item.parent_name || item.author_name || 'Parent'
+
+    const matchedParent = parents.find((p: any) =>
+      (item.parent_id && p.id === item.parent_id) ||
+      (item.parentId && p.id === item.parentId) ||
+      (item.parent_name && p.name === item.parent_name) ||
+      (item.author_name && p.name === item.author_name)
+    )
+
+    const parentName = matchedParent?.name || item.parent_name || item.author_name || 'Parent'
+    const itemChildNames = normalizeChildNames(item.child_names || item.children || item.child_name)
+    const matchedChildNames = normalizeChildNames(matchedParent?.child_names || matchedParent?.children || matchedParent?.child_name)
+    const uniqueChildNames = Array.from(new Set([...itemChildNames, ...matchedChildNames].filter(Boolean)))
 
     if (!map.has(key)) {
       map.set(key, {
-        parent_id: item.parent_id || item.parentId || item.parent?.id,
+        parent_id: item.parent_id || item.parentId || item.parent?.id || matchedParent?.id,
         parent_name: parentName,
-        child_names: item.child_names || item.children || [],
+        child_names: uniqueChildNames,
         latest: item,
         items: [],
         unread: false,
@@ -3007,6 +3046,8 @@ function groupMessagesByParent(messages: any[]) {
 
     const group = map.get(key)
     group.items.push(item)
+    group.parent_name = group.parent_name || parentName
+    group.child_names = Array.from(new Set([...(group.child_names || []), ...uniqueChildNames]))
 
     if (item.unread) group.unread = true
 
@@ -3019,8 +3060,8 @@ function groupMessagesByParent(messages: any[]) {
     .sort((a, b) => new Date(b.latest?.created_at || 0).getTime() - new Date(a.latest?.created_at || 0).getTime())
 }
 
-function MessageGroups({ title, messages, onOpen, unread = false }: any) {
-  const groups = groupMessagesByParent(messages)
+function MessageGroups({ title, messages, parents = [], onOpen, unread = false }: any) {
+  const groups = groupMessagesByParent(messages, parents)
 
   if (groups.length === 0) return null
 
@@ -3054,9 +3095,10 @@ function MessageGroups({ title, messages, onOpen, unread = false }: any) {
 function MessageGroupRow({ group, unread, onOpen }: any) {
   const count = group.items.length
   const latest = group.latest || {}
+  const label = parentChildLabel(group)
   const title = count > 1
-    ? `${count} messages from ${group.parent_name || 'Parent'}`
-    : `${group.parent_name || 'Parent'} sent a message`
+    ? `${count} messages from ${label}`
+    : `${label} sent a message`
 
   const preview = latest.preview || latest.body || latest.post_preview || ''
 
