@@ -14,7 +14,6 @@ import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
 
-
 function sortMessagesOldestFirst(list: any[]) {
   return [...(list || [])].sort((a: any, b: any) =>
     new Date(a?.created_at || 0).getTime() - new Date(b?.created_at || 0).getTime()
@@ -157,6 +156,24 @@ function AttachmentCard({ attachment, compact = false, onRemove }: any) {
         </button>
       )}
     </a>
+  )
+}
+
+
+function AttachmentPreviewTray({ attachment, onRemove }: any) {
+  if (!attachment) return null
+
+  return (
+    <div style={{
+      padding: '0 2px 8px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      overflowX: 'auto',
+      scrollbarWidth: 'none',
+    }}>
+      <AttachmentCard attachment={attachment} compact onRemove={onRemove} />
+    </div>
   )
 }
 
@@ -2493,7 +2510,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           WebkitOverflowScrolling: 'touch',
           minHeight: 0,
           overscrollBehavior: 'contain',
-          padding: '10px 0 170px',
+          padding: '10px 0 190px',
         }}>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '50px 0' }}>
@@ -2595,6 +2612,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                           {u.body}
                         </p>
                       )}
+                      {attachment && <AttachmentCard attachment={attachment} />}
                     </div>
 
                     <p style={{ fontSize: 10, color: T.ink3, margin: '4px 4px 0' }}>

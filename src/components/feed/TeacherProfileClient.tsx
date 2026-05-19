@@ -24,6 +24,24 @@ const T = {
   red:    '#EF4444',
 }
 
+
+function AttachmentPreviewTray({ attachment, onRemove }: any) {
+  if (!attachment) return null
+
+  return (
+    <div style={{
+      padding: '0 2px 8px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      overflowX: 'auto',
+      scrollbarWidth: 'none',
+    }}>
+      <AttachmentCard attachment={attachment} compact onRemove={onRemove} />
+    </div>
+  )
+}
+
 interface Props {
   teacherId: string
 }
@@ -648,6 +666,11 @@ export function TeacherProfileClient({ teacherId }: Props) {
             WebkitBackdropFilter: 'blur(14px)',
             padding: '10px 12px 14px',
           }}>
+            <AttachmentPreviewTray
+              attachment={attachment}
+              onRemove={() => setAttachment(null)}
+            />
+
             <div style={{
               display: 'flex',
               alignItems: 'flex-end',
@@ -655,9 +678,43 @@ export function TeacherProfileClient({ teacherId }: Props) {
               background: T.white,
               border: `1px solid ${T.border}`,
               borderRadius: 22,
-              padding: '8px 8px 8px 14px',
+              padding: '8px 8px 8px 10px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
             }}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const f = e.target.files?.[0]
+                  if (f) handlePickAttachment(f)
+                  e.currentTarget.value = ''
+                }}
+              />
+
+              <button
+                type="button"
+                aria-label="Attach file"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingAttachment}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: attachment ? '#EAF1FF' : '#F4F4F6',
+                  color: attachment ? T.blue : T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: uploadingAttachment ? 'wait' : 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <Paperclip size={15} strokeWidth={2.1} />
+              </button>
+
               <textarea
                 value={message}
                 onChange={e => setMessage(e.target.value)}
@@ -780,6 +837,8 @@ function MessageRow({ update, teacher, onChanged }: any) {
             />
           )}
         </div>
+
+        {attachment && <AttachmentCard attachment={attachment} />}
 
         <p style={{
           fontSize: 10,
