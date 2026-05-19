@@ -24,6 +24,14 @@ interface PostCardProps {
   onEditPost:       (post: Post) => void
   onPostDeleted:    (postId: string) => void
   onPinToggled:     (postId: string, pinned: boolean) => void
+  canManagePost?:   boolean
+  authorOverride?:  {
+    id: string
+    name: string
+    photo_url: string | null
+    grade?: string | null
+    class_name?: string | null
+  }
 }
 
 /* ─── Icons ─────────────────────────────────────────── */
@@ -79,6 +87,7 @@ export function PostCard({
   post, isSchool, isOptimistic, userId, schoolId,
   schoolName, schoolLogoUrl,
   onReactionChange, onEditPost, onPostDeleted, onPinToggled,
+  canManagePost = true, authorOverride,
 }: PostCardProps) {
   const router = useRouter()
 
@@ -87,9 +96,25 @@ export function PostCard({
   const [teacherInfo, setTeacherInfo] = useState<{
     id: string; name: string; photo_url: string | null;
     grade: string; class_name: string | null
-  } | null>(null)
+  } | null>(authorOverride ? {
+    id: authorOverride.id,
+    name: authorOverride.name,
+    photo_url: authorOverride.photo_url,
+    grade: authorOverride.grade || '',
+    class_name: authorOverride.class_name || null,
+  } : null)
 
   useEffect(() => {
+    if (authorOverride) {
+      setTeacherInfo({
+        id: authorOverride.id,
+        name: authorOverride.name,
+        photo_url: authorOverride.photo_url,
+        grade: authorOverride.grade || '',
+        class_name: authorOverride.class_name || null,
+      })
+      return
+    }
     if (!isTeacherPost) return
     try {
       const cached = sessionStorage.getItem('teachers-cache')
@@ -99,7 +124,7 @@ export function PostCard({
         if (t) setTeacherInfo(t)
       }
     } catch {}
-  }, [isTeacherPost, post.teacher_id])
+  }, [isTeacherPost, post.teacher_id, authorOverride?.id])
 
   // Tap handler — saves feed scroll position and navigates to teacher profile
   const handleTeacherTap = () => {
@@ -287,7 +312,7 @@ export function PostCard({
               <span style={{ fontSize: 12, color: '#B0B0B0', flexShrink: 0, whiteSpace: 'nowrap' }}>
                 {formatFeedDate(post.created_at)}
               </span>
-              {isSchool && (
+              {isSchool && canManagePost !== false && (
                 <div style={{ position: 'relative', flexShrink: 0 }}>
                   <button onClick={() => setShowMenu(v => !v)} style={{
                     width: 24, height: 24, display: 'flex', alignItems: 'center',

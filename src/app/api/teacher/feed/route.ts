@@ -68,9 +68,11 @@ export async function GET(req: NextRequest) {
   // Aggregate reaction + comment counts; compute "new since last seen"
   const enriched = (posts ?? []).map((p: any) => {
     const counts: Record<string, number> = {}
+    let mine: string | null = null
     let newReactions = 0
     for (const r of (p.reactions ?? [])) {
       counts[r.type] = (counts[r.type] || 0) + 1
+      if (r.user_id === teacher.id) mine = r.type
       if (r.created_at > lastSeen) newReactions++
     }
     const total = Object.values(counts).reduce((a, b) => a + b, 0)
@@ -83,7 +85,7 @@ export async function GET(req: NextRequest) {
       ...p,
       reaction_count:  total,
       reaction_counts: counts,
-      my_reaction:     null,
+      my_reaction:     mine,
       comment_count:   commentCount,
       new_reactions:   newReactions,
       new_comments:    newComments,

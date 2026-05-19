@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
+import { PostCard } from '@/components/feed/PostCard'
 
 const T = {
   ink:    '#1A1A1A',
@@ -192,7 +193,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         background: 'rgba(252,252,255,0.94)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        borderBottom: `1px solid ${T.border}`,
+        borderBottom: 'none',
       }}>
         <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
           position: 'relative',
@@ -288,10 +289,6 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           <button onClick={() => setShowClassComposer(true)} aria-label="Create" style={iconBtn}>
             <Plus size={15} strokeWidth={2.1} />
           </button>
-
-          <button onClick={signOut} aria-label="Sign out" style={iconBtn}>
-            <LogOut size={14} strokeWidth={1.7} />
-          </button>
         </div>
       </div>
 
@@ -300,7 +297,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <ClassChildrenSummary kids={children} />
       </div>
 
-      <TeacherOwnClassFeed refreshKey={postRefreshKey} />
+      <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
 
       {showNotifs && (
         <NotificationsSheet
@@ -902,7 +899,8 @@ const classPostInputStyle: any = {
 /* ────────────────────────────────────────
    SIMPLE TEACHER SPACE — class feed + one composer
    ──────────────────────────────────────── */
-function TeacherOwnClassFeed({ refreshKey }: any) {
+
+function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   const [posts, setPosts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -918,178 +916,75 @@ function TeacherOwnClassFeed({ refreshKey }: any) {
 
   useEffect(() => { load() }, [refreshKey])
 
-  return (
-    <section style={{ padding: '0 0 18px' }}>
+  const updatePostReaction = (postId: string, type: any, prevType: any) => {
+    setPosts(prev => prev.map((post: any) => {
+      if (post.id !== postId) return post
+      const counts = { ...(post.reaction_counts || {}) }
+      if (prevType && counts[prevType] > 0) counts[prevType] -= 1
+      if (prevType && counts[prevType] === 0) delete counts[prevType]
+      if (type) counts[type] = (counts[type] || 0) + 1
+      const total = Object.values(counts).reduce((a: number, b: any) => a + b, 0)
+      return { ...post, my_reaction: type, reaction_counts: counts, reaction_count: total }
+    }))
+  }
 
-      {loading ? (
+  const deleteLocal = (postId: string) => {
+    setPosts(prev => prev.filter((post: any) => post.id !== postId))
+  }
+
+  const pinLocal = (postId: string, pinned: boolean) => {
+    setPosts(prev => prev.map((post: any) => post.id === postId ? { ...post, is_pinned: pinned } : post))
+  }
+
+  if (loading) {
+    return (
+      <section style={{ padding: '18px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-          <div style={{
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
-            border: `2px solid ${T.border}`,
-            borderTopColor: T.ink,
-            animation: 'spin 0.7s linear infinite',
-          }} />
+          <div style={{ width: 16, height: 16, borderRadius: '50%', border: `2px solid ${T.border}`, borderTopColor: T.ink, animation: 'spin 0.7s linear infinite' }} />
         </div>
-      ) : posts.length === 0 ? (
-        <div style={{
-          margin: '0 20px',
-          padding: '26px 18px',
-          borderRadius: 18,
-          border: `1px dashed ${T.border}`,
-          background: T.white,
-          textAlign: 'center',
-        }}>
-          <Megaphone size={18} color={T.ink3} strokeWidth={1.5}
-            style={{ margin: '0 auto 8px' }} />
-          <p style={{ fontSize: 14, fontWeight: 700, color: T.ink, margin: '0 0 4px' }}>
-            Your class feed is empty
-          </p>
-          <p style={{ fontSize: 12, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
-            Tap + to share an update, photo moment or event with parents.
-          </p>
-        </div>
-      ) : (
-        <div>
-          {posts.map((post: any, index: number) => (
-            <TeacherSpacePostCard key={post.id} post={post} index={index} onDeleted={load} />
-          ))}
-        </div>
-      )}
-    </section>
-  )
-}
+      </section>
+    )
+  }
 
-function TeacherSpacePostCard({ post, index, onDeleted }: any) {
-  const images = Array.isArray(post.image_urls) ? post.image_urls : []
-  const typeLabel =
-    post.type === 'event' ? 'Event' :
-    post.type === 'moment' ? 'Moment' :
-    post.type === 'document' ? 'Document' :
-    'Update'
-
-  const deletePost = async () => {
-    if (!confirm('Delete this post?')) return
-    const tid = toast.loading('Deleting…')
-    try {
-      const res = await fetch(`/api/teacher/post?id=${encodeURIComponent(post.id)}`, { method: 'DELETE' })
-      const json = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(json.error || 'Could not delete')
-      toast.success('Deleted', { id: tid })
-      onDeleted()
-    } catch (e: any) {
-      toast.error(e.message || 'Could not delete', { id: tid })
-    }
+  if (posts.length === 0) {
+    return (
+      <section style={{ padding: '8px 20px 24px' }}>
+        <div style={{ padding: '28px 0', textAlign: 'center' }}>
+          <Megaphone size={18} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 8px' }} />
+          <p style={{ fontSize: 14, fontWeight: 700, color: T.ink, margin: '0 0 4px' }}>Nothing shared yet</p>
+          <p style={{ fontSize: 12, color: T.ink3, margin: 0, lineHeight: 1.5 }}>Tap + to share with parents.</p>
+        </div>
+      </section>
+    )
   }
 
   return (
-    <article style={{
-      background: T.white,
-      borderTop: index === 0 ? `1px solid ${T.border}` : 'none',
-      borderBottom: `1px solid ${T.border}`,
-      padding: '14px 20px',
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: post.body || images.length || post.event_date ? 7 : 0,
-      }}>
-        <span style={{
-          padding: '2px 7px',
-          borderRadius: 999,
-          background: '#F0F4FF',
-          color: T.blue,
-          fontSize: 10,
-          fontWeight: 800,
-          letterSpacing: '0.02em',
-        }}>
-          {typeLabel}
-        </span>
-        <span style={{ fontSize: 11, color: T.ink3, flex: 1 }}>
-          {relTime(post.created_at)}
-        </span>
-        <button onClick={deletePost} aria-label="Delete post" style={{
-          width: 28,
-          height: 28,
-          borderRadius: 8,
-          border: `1px solid ${T.border}`,
-          background: '#FAFAFC',
-          color: T.red,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-        }}>
-          <Trash2 size={12} strokeWidth={1.9} />
-        </button>
-      </div>
-
-      {post.body && (
-        <p style={{
-          fontSize: 14,
-          lineHeight: 1.55,
-          color: T.ink,
-          margin: 0,
-          whiteSpace: 'pre-wrap',
-        }}>
-          {post.body}
-        </p>
-      )}
-
-      {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
-        <div style={{
-          marginTop: 9,
-          padding: '9px 10px',
-          borderRadius: 12,
-          background: '#F4F6FB',
-          color: T.ink2,
-          fontSize: 12,
-          lineHeight: 1.5,
-        }}>
-          {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
-          {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
-          {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
-        </div>
-      )}
-
-      {images.length > 0 && (
-        <div style={{
-          display: 'grid',
-          gap: 7,
-          marginTop: 10,
-        }}>
-          {images.slice(0, 4).map((url: string, i: number) => (
-            <img
-              key={`${url}-${i}`}
-              src={url}
-              alt=""
-              style={{
-                width: '100%',
-                maxHeight: 320,
-                objectFit: 'cover',
-                borderRadius: 16,
-                display: 'block',
-              }}
-            />
-          ))}
-        </div>
-      )}
-
-      <div style={{
-        display: 'flex',
-        gap: 10,
-        alignItems: 'center',
-        marginTop: 10,
-        color: T.ink3,
-        fontSize: 12,
-      }}>
-        <span>{post.reaction_count || 0} reactions</span>
-        <span>·</span>
-        <span>{post.comment_count || 0} replies</span>
-      </div>
-    </article>
+    <section style={{ padding: '0 0 24px' }}>
+      {posts.map((post: any, index: number) => (
+        <PostCard
+          key={post.id}
+          index={index}
+          post={post}
+          isSchool={true}
+          canManagePost={false}
+          userId={teacher.id}
+          schoolId={teacher.school_id}
+          schoolName={teacher.name}
+          schoolLogoUrl={teacher.photo_url || undefined}
+          authorOverride={{
+            id: teacher.id,
+            name: teacher.name,
+            photo_url: teacher.photo_url,
+            grade: teacher.grade,
+            class_name: teacher.class_name,
+          }}
+          onReactionChange={updatePostReaction}
+          onEditPost={() => {}}
+          onPostDeleted={deleteLocal}
+          onPinToggled={pinLocal}
+        />
+      ))}
+    </section>
   )
 }
 
@@ -1394,11 +1289,11 @@ function ClassChildrenSummary({ kids }: any) {
 
   return (
     <div style={{
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      borderRadius: 18,
-      padding: 13,
-      marginBottom: 12,
+      background: 'transparent',
+      border: 'none',
+      borderRadius: 0,
+      padding: '2px 0 10px',
+      marginBottom: 8,
     }}>
       <div style={{
         display: 'flex',
