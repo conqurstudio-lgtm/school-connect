@@ -2102,6 +2102,7 @@ function UpdatesInbox({ teacher }: any) {
 function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [updates, setUpdates] = useState<any[]>([])
   const [reply,   setReply]   = useState('')
+  const [showQuickReplies, setShowQuickReplies] = useState(false)
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -2125,14 +2126,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         block: 'end',
         inline: 'nearest',
       })
-
-      // Fallback for screens where the page itself is the scroll container.
-      try {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight + document.body.scrollHeight,
-          behavior: smooth ? 'smooth' : 'auto',
-        })
-      } catch {}
     }
 
     run()
@@ -2194,6 +2187,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     }
 
     setReply('')
+    setShowQuickReplies(false)
     setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
     setSending(true)
@@ -2327,7 +2321,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           WebkitOverflowScrolling: 'touch',
           minHeight: 0,
           overscrollBehavior: 'contain',
-          padding: '10px 0 142px',
+          padding: '10px 0 170px',
         }}>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '50px 0' }}>
@@ -2454,8 +2448,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             position: 'absolute',
             left: 12,
             right: 12,
-            top: -38,
-            display: 'flex',
+            top: -44,
+            display: showQuickReplies ? 'flex' : 'none',
             gap: 8,
             marginBottom: 0,
             overflowX: 'auto',
@@ -2491,9 +2485,31 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             padding: '8px 8px 8px 14px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
           }}>
-            <textarea
+                        <button
+              type="button"
+              aria-label="Toggle quick replies"
+              onClick={() => setShowQuickReplies((v: boolean) => !v)}
+              style={{
+                height: 34,
+                padding: '0 11px',
+                borderRadius: 999,
+                border: 'none',
+                background: showQuickReplies ? T.ink : '#F4F4F6',
+                color: showQuickReplies ? T.white : T.ink2,
+                fontSize: 12,
+                fontWeight: 800,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              Quick
+            </button>
+
+<textarea
               value={reply}
               onChange={e => setReply(e.target.value)}
+              onFocus={() => setShowQuickReplies(true)}
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
