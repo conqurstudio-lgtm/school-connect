@@ -179,67 +179,60 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       paddingTop: 0,
       paddingBottom: 96,
     }}>
-      {/* ─── Top bar — back, bell, sign out ─── */}
+
+      {/* Compact teacher header */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '20px 20px 12px',
-        position: 'sticky', top: 0, zIndex: 10,
-        background: T.bg,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: '18px 18px 14px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 20,
+        background: 'rgba(252,252,255,0.94)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        borderBottom: `1px solid ${T.border}`,
       }}>
-        <button onClick={goToFeed} aria-label="Back to feed" style={iconBtn}>
-          <ArrowLeft size={16} strokeWidth={1.8} />
+        <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
+          position: 'relative',
+          width: 52,
+          height: 52,
+          borderRadius: 16,
+          border: 'none',
+          padding: 0,
+          overflow: 'hidden',
+          background: teacher.photo_url
+            ? `url(${teacher.photo_url}) center/cover`
+            : '#F0F0F4',
+          color: T.ink2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 16,
+          fontWeight: 800,
+          cursor: 'pointer',
+          flexShrink: 0,
+        }}>
+          {!teacher.photo_url && initials}
+          <span style={{
+            position: 'absolute',
+            right: -1,
+            bottom: -1,
+            width: 19,
+            height: 19,
+            borderRadius: '50%',
+            background: T.ink,
+            color: T.white,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: `2px solid ${T.bg}`,
+          }}>
+            <Camera size={10} strokeWidth={2.2} />
+          </span>
         </button>
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={() => setShowNotifs(true)} aria-label="Notifications"
-            style={{ ...iconBtn, position: 'relative' }}>
-            <Bell size={15} strokeWidth={1.7} />
-            {unread > 0 && (
-              <span style={{
-                position: 'absolute', top: 6, right: 6,
-                width: 8, height: 8, borderRadius: '50%',
-                background: T.red, border: `2px solid ${T.bg}`,
-              }} />
-            )}
-          </button>
-          <button onClick={signOut} aria-label="Sign out" style={iconBtn}>
-            <LogOut size={14} strokeWidth={1.7} />
-          </button>
-        </div>
-      </div>
-
-      {/* ─── Hero ─── */}
-      <div style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        padding: '8px 20px 24px', textAlign: 'center',
-      }}>
-        <button onClick={() => fileRef.current?.click()}
-          style={{
-            position: 'relative', padding: 0, border: 'none',
-            background: 'transparent', cursor: 'pointer',
-            marginBottom: 14,
-          }}>
-          <div style={{
-            width: 124, height: 124, borderRadius: 36,
-            overflow: 'hidden',
-            background: teacher.photo_url
-              ? `url(${teacher.photo_url}) center/cover`
-              : '#F0F0F4',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 38, fontWeight: 600, color: T.ink2,
-          }}>
-            {!teacher.photo_url && initials}
-          </div>
-          <div style={{
-            position: 'absolute', bottom: 0, right: -4,
-            width: 32, height: 32, borderRadius: '50%',
-            background: T.ink, color: T.white,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `3px solid ${T.bg}`,
-          }}>
-            <Camera size={14} strokeWidth={2} />
-          </div>
-        </button>
         <input ref={fileRef} type="file" accept="image/*"
           style={{ display: 'none' }}
           onChange={e => {
@@ -248,36 +241,66 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             e.target.value = ''
           }} />
 
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: T.ink,
-                     letterSpacing: '-0.025em', margin: 0 }}>
-          {teacher.name}
-        </h1>
-        <p style={{ fontSize: 13, color: T.ink3, margin: '4px 0 0' }}>
-          {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} · {school.name}
-        </p>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h1 style={{
+            fontSize: 16,
+            lineHeight: 1.1,
+            fontWeight: 850,
+            color: T.ink,
+            letterSpacing: '-0.035em',
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teacher.name}
+          </h1>
+          <p style={{
+            fontSize: 12,
+            color: T.ink3,
+            margin: '4px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} · {school.name}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+          <button onClick={() => setShowNotifs(true)} aria-label="Activity"
+            style={{ ...iconBtn, position: 'relative' }}>
+            <Bell size={15} strokeWidth={1.7} />
+            {unread > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: 6,
+                right: 6,
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: T.red,
+                border: `2px solid ${T.bg}`,
+              }} />
+            )}
+          </button>
+
+          <button onClick={() => setShowClassComposer(true)} aria-label="Create" style={iconBtn}>
+            <Plus size={15} strokeWidth={2.1} />
+          </button>
+
+          <button onClick={signOut} aria-label="Sign out" style={iconBtn}>
+            <LogOut size={14} strokeWidth={1.7} />
+          </button>
+        </div>
+      </div>
+
+      <div style={{ padding: '14px 20px 8px' }}>
+        <PendingClassRequests onChanged={load} />
+        <ClassChildrenSummary kids={children} />
       </div>
 
       <TeacherOwnClassFeed refreshKey={postRefreshKey} />
-
-      {/* ─── Teacher tools ─── */}
-      <div style={{
-        display: 'flex', justifyContent: 'center', gap: 8,
-        padding: '0 20px 20px',
-      }}>
-        <TabPill active={tab === 'class'} onClick={() => setTab('class')}
-          icon={<Users size={13} strokeWidth={1.8} />} label="Class" />
-        <TabPill active={tab === 'updates'} onClick={() => setTab('updates')}
-          icon={<MessageCircle size={13} strokeWidth={1.8} />} label="Inbox" />
-        <TabPill active={tab === 'broadcast'} onClick={() => setTab('broadcast')}
-          icon={<Megaphone size={13} strokeWidth={1.8} />} label="Broadcast" />
-      </div>
-
-      {/* ─── Tab content ─── */}
-      {tab === 'class' && (
-        <ClassRoster kids={children} onChanged={load} />
-      )}
-      {tab === 'updates' && <UpdatesInbox teacher={teacher} />}
-      {tab === 'broadcast' && <BroadcastCompose teacher={teacher} />}
 
       {showNotifs && (
         <NotificationsSheet
@@ -897,26 +920,6 @@ function TeacherOwnClassFeed({ refreshKey }: any) {
 
   return (
     <section style={{ padding: '0 0 18px' }}>
-      <div style={{
-        padding: '0 20px 10px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}>
-        <p style={{
-          fontSize: 12,
-          color: T.ink3,
-          fontWeight: 800,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          margin: 0,
-        }}>
-          Class Feed
-        </p>
-        <span style={{ fontSize: 11, color: T.ink3 }}>
-          {posts.length} {posts.length === 1 ? 'post' : 'posts'}
-        </span>
-      </div>
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
@@ -1384,6 +1387,95 @@ const simpleInputStyle: any = {
 /* ────────────────────────────────────────
    CLASS TAB — roster
    ──────────────────────────────────────── */
+
+function ClassChildrenSummary({ kids }: any) {
+  const list = Array.isArray(kids) ? kids : []
+  const preview = list.slice(0, 8)
+
+  return (
+    <div style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+      padding: 13,
+      marginBottom: 12,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 10,
+        marginBottom: preview.length ? 10 : 0,
+      }}>
+        <div>
+          <p style={{
+            fontSize: 12,
+            fontWeight: 850,
+            color: T.ink,
+            letterSpacing: '-0.01em',
+            margin: 0,
+          }}>
+            Children
+          </p>
+          <p style={{
+            fontSize: 11,
+            color: T.ink3,
+            margin: '2px 0 0',
+          }}>
+            {list.length} {list.length === 1 ? 'child' : 'children'} in this class
+          </p>
+        </div>
+      </div>
+
+      {preview.length > 0 && (
+        <div style={{
+          display: 'flex',
+          gap: 7,
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}>
+          {preview.map((child: any) => (
+            <div key={child.id} title={child.name} style={{
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: '#F0F0F4',
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 11,
+              fontWeight: 850,
+              flexShrink: 0,
+            }}>
+              {String(child.name || '?').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+            </div>
+          ))}
+          {list.length > preview.length && (
+            <div style={{
+              minWidth: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: '#FAFAFC',
+              border: `1px solid ${T.border}`,
+              color: T.ink3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 11,
+              fontWeight: 850,
+              flexShrink: 0,
+            }}>
+              +{list.length - preview.length}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ClassRoster({ kids, onChanged }: any) {
   const [showAdd,  setShowAdd]  = useState(false)
   const [editing,  setEditing]  = useState<any>(null)
