@@ -3,7 +3,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, FileText, Info, Send, X } from 'lucide-react'
+import { ArrowLeft, FileText, Info, Send, X, Paperclip } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 
@@ -28,6 +28,134 @@ interface Props {
   teacherId: string
 }
 
+
+type AttachmentDraft = {
+  url: string
+  name: string
+  type: string
+  is_image?: boolean
+}
+
+function updateAttachment(update: any): AttachmentDraft | null {
+  if (update?.attachment_url) {
+    return {
+      url: update.attachment_url,
+      name: update.attachment_name || 'Attachment',
+      type: update.attachment_type || '',
+      is_image: update.attachment_type?.startsWith?.('image/') || false,
+    }
+  }
+
+  if (update?.image_url) {
+    return {
+      url: update.image_url,
+      name: 'Image',
+      type: 'image',
+      is_image: true,
+    }
+  }
+
+  return null
+}
+
+function AttachmentCard({ attachment, compact = false, onRemove }: any) {
+  if (!attachment) return null
+
+  const isImage = attachment.is_image || attachment.type?.startsWith?.('image/')
+
+  if (isImage) {
+    return (
+      <div style={{ marginTop: 8, position: 'relative', maxWidth: compact ? 130 : '100%' }}>
+        <img
+          src={attachment.url}
+          alt={attachment.name || 'Attachment'}
+          style={{
+            width: compact ? 96 : '100%',
+            maxHeight: compact ? 96 : 280,
+            objectFit: 'cover',
+            borderRadius: 14,
+            display: 'block',
+            border: `1px solid ${T.border}`,
+          }}
+        />
+        {onRemove && (
+          <button onClick={onRemove} style={{
+            position: 'absolute',
+            top: -7,
+            right: -7,
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            border: `1px solid ${T.border}`,
+            background: T.white,
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}>
+            <X size={13} strokeWidth={2.1} />
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <a
+      href={attachment.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        marginTop: 8,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: compact ? '8px 9px' : '10px 12px',
+        borderRadius: 14,
+        background: '#F4F4F6',
+        border: `1px solid ${T.border}`,
+        color: T.ink,
+        textDecoration: 'none',
+        maxWidth: compact ? 220 : '100%',
+      }}
+    >
+      <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
+      <span style={{
+        fontSize: compact ? 12 : 13,
+        fontWeight: 700,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        flex: 1,
+      }}>
+        {attachment.name || 'Document'}
+      </span>
+      {onRemove && (
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); onRemove() }}
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            border: 'none',
+            background: 'rgba(0,0,0,0.05)',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          <X size={12} strokeWidth={2.2} />
+        </button>
+      )}
+    </a>
+  )
+}
+
 type ThreadItem =
   | { kind: 'message'; created_at: string; data: any }
   | { kind: 'report'; created_at: string; data: any }
@@ -43,6 +171,9 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [showJoin, setShowJoin] = useState(false)
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
+  const [attachment, setAttachment] = useState<AttachmentDraft | null>(null)
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const threadScrollRef = useRef<HTMLDivElement>(null)
 
@@ -163,22 +294,54 @@ export function TeacherProfileClient({ teacherId }: Props) {
     return () => window.clearTimeout(id)
   }, [loading, canMessage, updates.length, reports.length])
 
+  const handlePickAttachment = async (file?: File | null) => {
+    if (!file) return
+
+    setUploadingAttachment(true)
+    const tid = toast.loading('Attaching…')
+
+    try {
+      const form = new FormData()
+      form.append('file', file)
+
+      const res = await fetch('/api/updates/attachment', {
+        method: 'POST',
+        body: form,
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not attach file')
+
+      setAttachment(json.attachment)
+      toast.success('Attachment ready', { id: tid })
+    } catch (e: any) {
+      toast.error(e.message || 'Could not attach file', { id: tid })
+    } finally {
+      setUploadingAttachment(false)
+    }
+  }
+
   const sendMessage = async () => {
     const text = message.trim()
-    if (!text || sending || !teacher?.id) return
+    const currentAttachment = attachment
+    if ((!text && !currentAttachment) || sending || !teacher?.id) return
 
     const tempId = `optimistic-parent-${Date.now()}`
     const optimisticMessage = {
       id: tempId,
       teacher_id: teacher.id,
       body: text,
-      image_url: null,
+      image_url: currentAttachment?.is_image ? currentAttachment.url : null,
+      attachment_url: !currentAttachment?.is_image ? currentAttachment?.url : null,
+      attachment_name: currentAttachment?.name || null,
+      attachment_type: currentAttachment?.type || null,
       author_kind: 'parent',
       created_at: new Date().toISOString(),
       _optimistic: true,
     }
 
     setMessage('')
+    setAttachment(null)
     setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
     setSending(true)
@@ -187,7 +350,14 @@ export function TeacherProfileClient({ teacherId }: Props) {
       const res = await fetch('/api/updates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teacher_id: teacher.id, body: text }),
+        body: JSON.stringify({
+          teacher_id: teacher.id,
+          body: text,
+          image_url: currentAttachment?.is_image ? currentAttachment.url : null,
+          attachment_url: !currentAttachment?.is_image ? currentAttachment?.url : null,
+          attachment_name: currentAttachment?.name || null,
+          attachment_type: currentAttachment?.type || null,
+        }),
       })
 
       const json = await res.json().catch(() => ({}))
@@ -205,6 +375,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
     } catch (e: any) {
       setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
       setMessage(text)
+      setAttachment(currentAttachment)
       toast.error(e.message || 'Could not send message')
     } finally {
       setSending(false)
@@ -515,19 +686,19 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
               <button
                 onClick={sendMessage}
-                disabled={!message.trim() || sending}
+                disabled={(!message.trim() && !attachment) || sending}
                 aria-label="Send"
                 style={{
                   width: 36,
                   height: 36,
                   borderRadius: '50%',
                   border: 'none',
-                  background: message.trim() && !sending ? T.ink : '#D4D4D8',
+                  background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
                   color: T.white,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  cursor: message.trim() && !sending ? 'pointer' : 'not-allowed',
+                  cursor: (message.trim() || attachment) && !sending ? 'pointer' : 'not-allowed',
                   flexShrink: 0,
                 }}
               >
@@ -543,6 +714,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
 function MessageRow({ update, teacher, onChanged }: any) {
   const isTeacher = update.author_kind === 'teacher'
+  const attachment = updateAttachment(update)
   const initials = isTeacher
     ? teacher.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : 'You'.slice(0, 1)

@@ -65,11 +65,11 @@ export async function POST(req: NextRequest) {
   const teacher = await getTeacher(req)
   if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const { parent_ids, body, image_url } = await req.json()
+  const { parent_ids, body, image_url, attachment_url, attachment_name, attachment_type } = await req.json()
   if (!Array.isArray(parent_ids) || parent_ids.length === 0) {
     return NextResponse.json({ error: 'parent_ids required' }, { status: 400 })
   }
-  if (!body?.trim() && !image_url) {
+  if (!body?.trim() && !image_url && !attachment_url) {
     return NextResponse.json({ error: 'empty update' }, { status: 400 })
   }
 
@@ -86,6 +86,9 @@ export async function POST(req: NextRequest) {
     author_kind:  'teacher',
     body:         body?.trim() || null,
     image_url:    image_url || null,
+    attachment_url: attachment_url || null,
+    attachment_name: attachment_name || null,
+    attachment_type: attachment_type || null,
     broadcast_id,
   }))
 

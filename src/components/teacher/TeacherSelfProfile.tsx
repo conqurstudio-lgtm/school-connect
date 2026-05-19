@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
-  Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone
+  Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone, Paperclip, FileText
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
@@ -29,6 +29,134 @@ const T = {
   white:  '#FFFFFF',
   red:    '#EF4444',
   blue:   '#78A6FE',
+}
+
+
+type AttachmentDraft = {
+  url: string
+  name: string
+  type: string
+  is_image?: boolean
+}
+
+function updateAttachment(update: any): AttachmentDraft | null {
+  if (update?.attachment_url) {
+    return {
+      url: update.attachment_url,
+      name: update.attachment_name || 'Attachment',
+      type: update.attachment_type || '',
+      is_image: update.attachment_type?.startsWith?.('image/') || false,
+    }
+  }
+
+  if (update?.image_url) {
+    return {
+      url: update.image_url,
+      name: 'Image',
+      type: 'image',
+      is_image: true,
+    }
+  }
+
+  return null
+}
+
+function AttachmentCard({ attachment, compact = false, onRemove }: any) {
+  if (!attachment) return null
+
+  const isImage = attachment.is_image || attachment.type?.startsWith?.('image/')
+
+  if (isImage) {
+    return (
+      <div style={{ marginTop: 8, position: 'relative', maxWidth: compact ? 130 : '100%' }}>
+        <img
+          src={attachment.url}
+          alt={attachment.name || 'Attachment'}
+          style={{
+            width: compact ? 96 : '100%',
+            maxHeight: compact ? 96 : 280,
+            objectFit: 'cover',
+            borderRadius: 14,
+            display: 'block',
+            border: `1px solid ${T.border}`,
+          }}
+        />
+        {onRemove && (
+          <button onClick={onRemove} style={{
+            position: 'absolute',
+            top: -7,
+            right: -7,
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            border: `1px solid ${T.border}`,
+            background: T.white,
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}>
+            <X size={13} strokeWidth={2.1} />
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <a
+      href={attachment.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        marginTop: 8,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: compact ? '8px 9px' : '10px 12px',
+        borderRadius: 14,
+        background: '#F4F4F6',
+        border: `1px solid ${T.border}`,
+        color: T.ink,
+        textDecoration: 'none',
+        maxWidth: compact ? 220 : '100%',
+      }}
+    >
+      <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
+      <span style={{
+        fontSize: compact ? 12 : 13,
+        fontWeight: 700,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        flex: 1,
+      }}>
+        {attachment.name || 'Document'}
+      </span>
+      {onRemove && (
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); onRemove() }}
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            border: 'none',
+            background: 'rgba(0,0,0,0.05)',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}
+        >
+          <X size={12} strokeWidth={2.2} />
+        </button>
+      )}
+    </a>
+  )
 }
 
 type Tab = 'class' | 'updates' | 'broadcast'
@@ -2102,6 +2230,9 @@ function UpdatesInbox({ teacher }: any) {
 function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [updates, setUpdates] = useState<any[]>([])
   const [reply,   setReply]   = useState('')
+  const [attachment, setAttachment] = useState<AttachmentDraft | null>(null)
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [showQuickReplies, setShowQuickReplies] = useState(false)
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -2170,9 +2301,37 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
 
 
+  const handlePickAttachment = async (file?: File | null) => {
+    if (!file) return
+
+    setUploadingAttachment(true)
+    const tid = toast.loading('Attaching…')
+
+    try {
+      const form = new FormData()
+      form.append('file', file)
+
+      const res = await fetch('/api/updates/attachment', {
+        method: 'POST',
+        body: form,
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not attach file')
+
+      setAttachment(json.attachment)
+      toast.success('Attachment ready', { id: tid })
+    } catch (e: any) {
+      toast.error(e.message || 'Could not attach file', { id: tid })
+    } finally {
+      setUploadingAttachment(false)
+    }
+  }
+
   const sendText = async (text: string) => {
     const clean = text.trim()
-    if (!clean || sending) return
+    const currentAttachment = attachment
+    if ((!clean && !currentAttachment) || sending) return
 
     const tempId = `optimistic-teacher-${Date.now()}`
     const optimisticMessage = {
@@ -2180,13 +2339,17 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       parent_id: parent.id,
       teacher_id: teacher.id,
       body: clean,
-      image_url: null,
+      image_url: currentAttachment?.is_image ? currentAttachment.url : null,
+      attachment_url: !currentAttachment?.is_image ? currentAttachment?.url : null,
+      attachment_name: currentAttachment?.name || null,
+      attachment_type: currentAttachment?.type || null,
       author_kind: 'teacher',
       created_at: new Date().toISOString(),
       _optimistic: true,
     }
 
     setReply('')
+    setAttachment(null)
     setShowQuickReplies(false)
     setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
@@ -2196,7 +2359,14 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const res = await fetch('/api/teacher/updates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ parent_ids: [parent.id], body: clean }),
+        body: JSON.stringify({
+          parent_ids: [parent.id],
+          body: clean,
+          image_url: currentAttachment?.is_image ? currentAttachment.url : null,
+          attachment_url: !currentAttachment?.is_image ? currentAttachment?.url : null,
+          attachment_name: currentAttachment?.name || null,
+          attachment_type: currentAttachment?.type || null,
+        }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not send')
@@ -2214,6 +2384,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     } catch (e: any) {
       setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
       setReply(clean)
+      setAttachment(currentAttachment)
       toast.error(e.message || 'Could not send')
     } finally {
       setSending(false)
@@ -2370,6 +2541,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           ) : (
             sortMessagesOldestFirst(updates).map((u: any) => {
               const isTeacher = u.author_kind === 'teacher'
+                const attachment = updateAttachment(u)
               return (
                 <div key={u.id} style={{
                   display: 'flex',
@@ -2485,7 +2657,49 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             padding: '8px 8px 8px 14px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
           }}>
-                        <button
+                        <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+              style={{ display: 'none' }}
+              onChange={e => {
+                const f = e.target.files?.[0]
+                if (f) handlePickAttachment(f)
+                e.currentTarget.value = ''
+              }}
+            />
+
+            <button
+              type="button"
+              aria-label="Attach file"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingAttachment}
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: '50%',
+                border: 'none',
+                background: attachment ? '#EAF1FF' : '#F4F4F6',
+                color: attachment ? T.blue : T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: uploadingAttachment ? 'wait' : 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <Paperclip size={15} strokeWidth={2.1} />
+            </button>
+
+            {attachment && (
+              <AttachmentCard
+                attachment={attachment}
+                compact
+                onRemove={() => setAttachment(null)}
+              />
+            )}
+
+            <button
               type="button"
               aria-label="Toggle quick replies"
               onClick={() => setShowQuickReplies((v: boolean) => !v)}
@@ -2533,14 +2747,14 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               }}
             />
 
-            <button onClick={() => sendText(reply)} disabled={!reply.trim() || sending} style={{
+            <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
               width: 36,
               height: 36,
               borderRadius: '50%',
-              background: reply.trim() && !sending ? T.ink : '#D4D4D8',
+              background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
               color: T.white,
               border: 'none',
-              cursor: reply.trim() && !sending ? 'pointer' : 'not-allowed',
+              cursor: (reply.trim() || attachment) && !sending ? 'pointer' : 'not-allowed',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

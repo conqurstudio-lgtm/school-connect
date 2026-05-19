@@ -166,11 +166,11 @@ export async function POST(req: NextRequest) {
   if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const body = await req.json().catch(() => ({}))
-  const { teacher_id, image_url, child_id } = body
+  const { teacher_id, image_url, child_id, attachment_url, attachment_name, attachment_type } = body
   const text = typeof body.body === 'string' ? body.body.trim() : ''
 
   if (!teacher_id) return NextResponse.json({ error: 'teacher_id required' }, { status: 400 })
-  if (!text && !image_url) return NextResponse.json({ error: 'empty update' }, { status: 400 })
+  if (!text && !image_url && !attachment_url) return NextResponse.json({ error: 'empty update' }, { status: 400 })
 
   const sb = adminClient()
 
@@ -194,6 +194,9 @@ export async function POST(req: NextRequest) {
       author_kind: 'parent',
       body: text || null,
       image_url: image_url || null,
+      attachment_url: attachment_url || null,
+      attachment_name: attachment_name || null,
+      attachment_type: attachment_type || null,
     })
     .select()
     .single()
