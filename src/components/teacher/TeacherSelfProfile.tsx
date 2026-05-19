@@ -967,6 +967,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
           post={post}
           isSchool={true}
           canManagePost={false}
+          reactionEndpoint="/api/teacher/post-reaction"
           userId={teacher.id}
           schoolId={teacher.school_id}
           schoolName={teacher.name}

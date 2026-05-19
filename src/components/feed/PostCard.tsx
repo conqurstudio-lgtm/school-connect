@@ -32,6 +32,7 @@ interface PostCardProps {
     grade?: string | null
     class_name?: string | null
   }
+  reactionEndpoint?: string
 }
 
 /* ─── Icons ─────────────────────────────────────────── */
@@ -87,7 +88,7 @@ export function PostCard({
   post, isSchool, isOptimistic, userId, schoolId,
   schoolName, schoolLogoUrl,
   onReactionChange, onEditPost, onPostDeleted, onPinToggled,
-  canManagePost = true, authorOverride,
+  canManagePost = true, authorOverride, reactionEndpoint,
 }: PostCardProps) {
   const router = useRouter()
 
@@ -181,7 +182,16 @@ export function PostCard({
     }
 
     try {
-      if (isSame) {
+      if (reactionEndpoint) {
+        const res = await fetch(reactionEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_id: post.id, type: next }),
+        })
+
+        const json = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error(json.error || 'Could not save reaction.')
+      } else if (isSame) {
         await supabase.from('reactions').delete().eq('post_id', post.id).eq('user_id', userId)
       } else if (prev !== null) {
         await supabase.from('reactions').update({ type }).eq('post_id', post.id).eq('user_id', userId)
