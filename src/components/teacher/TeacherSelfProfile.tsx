@@ -2108,6 +2108,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const res = await fetch(`/api/teacher/updates?parent_id=${parent.id}`)
       const json = await res.json()
       setUpdates(json.updates ?? [])
+      try {
+        await fetch('/api/teacher/thread-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ parent_id: parent.id }),
+        })
+      } catch {}
     } catch {}
     setLoading(false)
   }

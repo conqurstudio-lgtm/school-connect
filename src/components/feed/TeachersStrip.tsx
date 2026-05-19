@@ -33,40 +33,23 @@ export function TeachersStrip() {
 
   const checkTeacherMessages = async (teacherList: Teacher[], mineIds: string[]) => {
     try {
+      const res = await fetch('/api/thread-status', { cache: 'no-store' })
+      if (!res.ok) return
+
+      const json = await res.json()
+      const byTeacher = json.by_teacher || {}
       const next: Record<string, number> = {}
 
-      await Promise.all(
-        teacherList
-          .filter((teacher: any) => mineIds.includes(teacher.id))
-          .map(async (teacher: any) => {
-            try {
-              const res = await fetch(`/api/updates?teacher_id=${encodeURIComponent(teacher.id)}`, { cache: 'no-store' })
-              if (!res.ok) return
-
-              const json = await res.json()
-              const list = Array.isArray(json.updates) ? json.updates : []
-
-              let lastSeen = 0
-              try {
-                const saved = localStorage.getItem(`teacher-thread-seen-${teacher.id}`)
-                if (saved) lastSeen = new Date(saved).getTime()
-              } catch {}
-
-              const unreadCount = list.filter((item: any) => {
-                if (item.author_kind !== 'teacher') return false
-                const created = new Date(item.created_at || 0).getTime()
-                return created > lastSeen
-              }).length
-
-              if (unreadCount > 0) next[teacher.id] = unreadCount
-            } catch {}
-          })
-      )
+      teacherList
+        .filter((teacher: any) => mineIds.includes(teacher.id))
+        .forEach((teacher: any) => {
+          const count = Number(byTeacher?.[teacher.id]?.unread_count || 0)
+          if (count > 0) next[teacher.id] = count
+        })
 
       setUnreadTeachers(next)
     } catch {}
   }
-
 
   // Hydrate from sessionStorage immediately on mount (no network)
   useEffect(() => {
@@ -77,6 +60,7 @@ export function TeachersStrip() {
         if (Array.isArray(t)) {
           setTeachers(t)
           setMine(m ?? [])
+          checkTeacherMessages(t, m ?? [])
           checkTeacherMessages(t, m ?? [])
         }
       }
@@ -94,6 +78,7 @@ export function TeachersStrip() {
         const newMine     = j.my_teacher_ids ?? []
         setTeachers(newTeachers)
         setMine(newMine)
+        checkTeacherMessages(newTeachers, newMine)
         checkTeacherMessages(newTeachers, newMine)
         try {
           sessionStorage.setItem('teachers-cache', JSON.stringify({

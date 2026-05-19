@@ -38,6 +38,17 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
+  const markThreadSeen = async (id = teacherId) => {
+    try {
+      await fetch('/api/thread-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teacher_id: id }),
+      })
+      window.dispatchEvent(new CustomEvent('teacher-thread-seen', { detail: { teacherId: id } }))
+    } catch {}
+  }
+
   const load = async () => {
     setLoading(true)
     try {
@@ -78,16 +89,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
         setUpdates(list)
         setCanMessage(!!json.can_message)
 
-        try {
-          const latestTeacherMessage = [...list]
-            .filter((item: any) => item.author_kind === 'teacher')
-            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
-
-          if (latestTeacherMessage?.created_at) {
-            localStorage.setItem(`teacher-thread-seen-${id}`, latestTeacherMessage.created_at)
-            window.dispatchEvent(new CustomEvent('teacher-thread-seen', { detail: { teacherId: id } }))
-          }
-        } catch {}
+        try { await markThreadSeen(id) } catch {}
       }
     } catch {}
   }

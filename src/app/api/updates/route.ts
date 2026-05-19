@@ -65,6 +65,31 @@ async function getCaller(req: NextRequest) {
   return null
 }
 
+
+async function touchParentTeacherThread(sb: any, payload: {
+  school_id: string
+  teacher_id: string
+  parent_id: string
+  child_id?: string | null
+  from: 'parent' | 'teacher'
+}) {
+  const now = new Date().toISOString()
+
+  await sb
+    .from('teacher_parent_threads')
+    .upsert({
+      school_id: payload.school_id,
+      teacher_id: payload.teacher_id,
+      parent_id: payload.parent_id,
+      child_id: payload.child_id || null,
+      last_message_at: now,
+      last_message_from: payload.from,
+      unread_for_teacher: payload.from === 'parent' ? 1 : 0,
+      unread_for_parent: payload.from === 'teacher' ? 1 : 0,
+      updated_at: now,
+    }, { onConflict: 'teacher_id,parent_id' })
+}
+
 async function isMyTeacher(sb: any, parentId: string, teacherId: string): Promise<boolean> {
   const { data: teacher } = await sb.from('teachers')
     .select('school_id, grade, class_name, status')
@@ -174,6 +199,16 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  try {
+    await touchParentTeacherThread(sb, {
+      school_id: teacher.school_id,
+      teacher_id,
+      parent_id: typeof caller !== 'undefined' ? caller.profile.id : user.id,
+      child_id: child_id || null,
+      from: 'parent',
+    })
+  } catch {}
+
   return NextResponse.json({ update: data })
 }
 

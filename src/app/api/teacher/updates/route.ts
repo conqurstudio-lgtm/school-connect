@@ -20,6 +20,29 @@ async function getTeacher(req: NextRequest) {
   return data
 }
 
+
+async function touchParentTeacherThread(sb: any, payload: {
+  school_id: string
+  teacher_id: string
+  parent_id: string
+  from: 'parent' | 'teacher'
+}) {
+  const now = new Date().toISOString()
+
+  await sb
+    .from('teacher_parent_threads')
+    .upsert({
+      school_id: payload.school_id,
+      teacher_id: payload.teacher_id,
+      parent_id: payload.parent_id,
+      last_message_at: now,
+      last_message_from: payload.from,
+      unread_for_parent: payload.from === 'teacher' ? 1 : 0,
+      unread_for_teacher: payload.from === 'parent' ? 1 : 0,
+      updated_at: now,
+    }, { onConflict: 'teacher_id,parent_id' })
+}
+
 export async function GET(req: NextRequest) {
   const teacher = await getTeacher(req)
   if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
@@ -68,6 +91,17 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await sb.from('updates').insert(rows).select()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  try {
+    await Promise.all(
+      parent_ids.map((pid: string) => touchParentTeacherThread(sb, {
+        school_id: teacher.school_id,
+        teacher_id: teacher.id,
+        parent_id: pid,
+        from: 'teacher',
+      }))
+    )
+  } catch {}
+
   return NextResponse.json({ updates: data, count: data?.length || 0 })
 }
 
