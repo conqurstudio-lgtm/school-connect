@@ -2234,7 +2234,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '10px 0 100px',
+          padding: '10px 0 142px',
         }}>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '50px 0' }}>
@@ -2351,17 +2351,23 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           position: 'sticky',
           bottom: 0,
           zIndex: 30,
-          background: 'rgba(252,252,255,0.96)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
+          background: 'transparent',
+          backdropFilter: 'none',
+          WebkitBackdropFilter: 'none',
           padding: '8px 12px 14px',
         }}>
           <div style={{
+            position: 'absolute',
+            left: 12,
+            right: 12,
+            top: -38,
             display: 'flex',
             gap: 8,
-            marginBottom: 8,
+            marginBottom: 0,
             overflowX: 'auto',
             scrollbarWidth: 'none',
+            zIndex: 2,
+            pointerEvents: 'auto',
           }}>
             {['Sure', 'OK', '❤️', 'Thank you'].map(text => (
               <button key={text} onClick={() => sendText(text)} disabled={sending} style={{

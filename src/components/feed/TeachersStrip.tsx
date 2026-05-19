@@ -28,6 +28,45 @@ export function TeachersStrip() {
   const [mine,     setMine]     = useState<string[]>([])
   const [hydrated, setHydrated] = useState(false)   // hydrated from cache?
   const [active,   setActive]   = useState<Teacher | null>(null)
+  const [unreadTeachers, setUnreadTeachers] = useState<Record<string, number>>({})
+
+
+  const checkTeacherMessages = async (teacherList: Teacher[], mineIds: string[]) => {
+    try {
+      const next: Record<string, number> = {}
+
+      await Promise.all(
+        teacherList
+          .filter((teacher: any) => mineIds.includes(teacher.id))
+          .map(async (teacher: any) => {
+            try {
+              const res = await fetch(`/api/updates?teacher_id=${encodeURIComponent(teacher.id)}`, { cache: 'no-store' })
+              if (!res.ok) return
+
+              const json = await res.json()
+              const list = Array.isArray(json.updates) ? json.updates : []
+
+              let lastSeen = 0
+              try {
+                const saved = localStorage.getItem(`teacher-thread-seen-${teacher.id}`)
+                if (saved) lastSeen = new Date(saved).getTime()
+              } catch {}
+
+              const unreadCount = list.filter((item: any) => {
+                if (item.author_kind !== 'teacher') return false
+                const created = new Date(item.created_at || 0).getTime()
+                return created > lastSeen
+              }).length
+
+              if (unreadCount > 0) next[teacher.id] = unreadCount
+            } catch {}
+          })
+      )
+
+      setUnreadTeachers(next)
+    } catch {}
+  }
+
 
   // Hydrate from sessionStorage immediately on mount (no network)
   useEffect(() => {
@@ -38,6 +77,7 @@ export function TeachersStrip() {
         if (Array.isArray(t)) {
           setTeachers(t)
           setMine(m ?? [])
+          checkTeacherMessages(t, m ?? [])
         }
       }
     } catch {}
@@ -54,6 +94,7 @@ export function TeachersStrip() {
         const newMine     = j.my_teacher_ids ?? []
         setTeachers(newTeachers)
         setMine(newMine)
+        checkTeacherMessages(newTeachers, newMine)
         try {
           sessionStorage.setItem('teachers-cache', JSON.stringify({
             teachers: newTeachers, mine: newMine,
@@ -62,6 +103,24 @@ export function TeachersStrip() {
       })
       .catch(() => {})
   }, [hydrated])
+
+
+  // Refresh teacher-message dots when the parent returns to the feed
+  // or when a teacher thread marks itself as seen.
+  useEffect(() => {
+    const refreshTeacherDots = () => {
+      checkTeacherMessages(teachers, mine)
+    }
+
+    window.addEventListener('focus', refreshTeacherDots)
+    window.addEventListener('teacher-thread-seen', refreshTeacherDots as EventListener)
+
+    return () => {
+      window.removeEventListener('focus', refreshTeacherDots)
+      window.removeEventListener('teacher-thread-seen', refreshTeacherDots as EventListener)
+    }
+  }, [teachers, mine])
+
 
   // Show ghost skeleton while waiting for first fetch and no cache
   if (!hydrated) return null  // brief; effect fires immediately
@@ -110,6 +169,30 @@ export function TeachersStrip() {
               }}>
                 {!t.photo_url && initials}
               </div>
+
+              {/* Teacher-message notification dot: teacher-specific messages live on the avatar. */}
+              {unreadTeachers[t.id] > 0 && (
+                <div style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  minWidth: unreadTeachers[t.id] > 1 ? 19 : 10,
+                  height: unreadTeachers[t.id] > 1 ? 19 : 10,
+                  padding: unreadTeachers[t.id] > 1 ? '0 5px' : 0,
+                  borderRadius: 999,
+                  background: '#EF4444',
+                  color: '#FFFFFF',
+                  border: `2px solid ${T.bg}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 10,
+                  fontWeight: 850,
+                  lineHeight: 1,
+                }}>
+                  {unreadTeachers[t.id] > 1 ? unreadTeachers[t.id] : ''}
+                </div>
+              )}
 
               {/* Highlight dot — small filled circle below the photo for "my child's teacher" */}
               {isMine && (
