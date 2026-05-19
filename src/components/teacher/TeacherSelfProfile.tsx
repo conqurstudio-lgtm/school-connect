@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
+import { PullToRefresh } from '@/components/feed/PullToRefresh'
 
 const T = {
   ink:    '#1A1A1A',
@@ -298,6 +299,25 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <ClassChildrenSummary kids={children} />
       </div>
 
+      <div style={{ padding: '0 20px 8px', display: 'flex', justifyContent: 'flex-end' }}>
+        <button
+          onClick={() => setPostRefreshKey((v: number) => v + 1)}
+          aria-label="Refresh posts"
+          style={{
+            border: 'none',
+            background: 'rgba(0,0,0,0.04)',
+            color: T.ink2,
+            borderRadius: 999,
+            padding: '7px 11px',
+            fontSize: 11,
+            fontWeight: 800,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Refresh
+        </button>
+      </div>
       <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
 
       {showNotifs && (
@@ -1009,9 +1029,10 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   }
 
   return (
-    <section style={{ padding: '0 0 24px' }}>
-      {posts.map((post: any, index: number) => (
-        <PostCard
+    <PullToRefresh onRefresh={load}>
+      <section style={{ padding: '0 0 24px' }}>
+        {posts.map((post: any, index: number) => (
+          <PostCard
           key={post.id}
           index={index}
           post={post}
@@ -1033,9 +1054,10 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
           onEditPost={() => {}}
           onPostDeleted={deleteLocal}
           onPinToggled={pinLocal}
-        />
-      ))}
-    </section>
+          />
+        ))}
+      </section>
+    </PullToRefresh>
   )
 }
 
@@ -1334,25 +1356,35 @@ const simpleInputStyle: any = {
    CLASS TAB — roster
    ──────────────────────────────────────── */
 
+
 function ClassChildrenSummary({ kids }: any) {
   const list = Array.isArray(kids) ? kids : []
   const preview = list.slice(0, 8)
+  const [open, setOpen] = useState(false)
 
   return (
     <div style={{
       background: 'transparent',
       border: 'none',
-      borderRadius: 0,
-      padding: '2px 0 10px',
+      padding: '0 0 10px',
       marginBottom: 8,
     }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-        marginBottom: preview.length ? 10 : 0,
-      }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        style={{
+          width: '100%',
+          background: 'transparent',
+          border: 'none',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          textAlign: 'left',
+        }}
+      >
         <div>
           <p style={{
             fontSize: 12,
@@ -1371,15 +1403,33 @@ function ClassChildrenSummary({ kids }: any) {
             {list.length} {list.length === 1 ? 'child' : 'children'} in this class
           </p>
         </div>
-      </div>
 
-      {preview.length > 0 && (
+        <span style={{
+          width: 28,
+          height: 28,
+          borderRadius: 999,
+          background: 'rgba(0,0,0,0.04)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: T.ink3,
+          fontSize: 15,
+          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform 0.18s ease',
+          flexShrink: 0,
+        }}>
+          v
+        </span>
+      </button>
+
+      {!open && preview.length > 0 && (
         <div style={{
           display: 'flex',
           gap: 7,
           overflowX: 'auto',
           scrollbarWidth: 'none',
           WebkitOverflowScrolling: 'touch',
+          marginTop: 10,
         }}>
           {preview.map((child: any) => (
             <div key={child.id} title={child.name} style={{
@@ -1415,6 +1465,82 @@ function ClassChildrenSummary({ kids }: any) {
             }}>
               +{list.length - preview.length}
             </div>
+          )}
+        </div>
+      )}
+
+      {open && (
+        <div style={{
+          marginTop: 10,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+        }}>
+          {list.length === 0 ? (
+            <p style={{ fontSize: 12, color: T.ink3, margin: 0 }}>
+              No children have been added yet.
+            </p>
+          ) : (
+            list.map((child: any) => (
+              <div key={child.id} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '9px 0',
+              }}>
+                <div style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  background: '#F0F0F4',
+                  color: T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 11,
+                  fontWeight: 850,
+                  flexShrink: 0,
+                }}>
+                  {String(child.name || '?').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{
+                    fontSize: 13,
+                    fontWeight: 650,
+                    color: T.ink,
+                    margin: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {child.name}
+                  </p>
+                  <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+                    {child.guardian_count === 0 ? 'No parents linked'
+                    : child.guardian_count === 1 ? '1 parent linked'
+                    : `${child.guardian_count} parents linked`}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => toast('Reports are next for this child')}
+                  style={{
+                    border: 'none',
+                    background: 'rgba(0,0,0,0.04)',
+                    color: T.ink2,
+                    borderRadius: 999,
+                    padding: '7px 11px',
+                    fontSize: 11,
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  Report
+                </button>
+              </div>
+            ))
           )}
         </div>
       )}
