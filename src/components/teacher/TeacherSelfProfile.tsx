@@ -5,20 +5,14 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
-  Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone, Paperclip, FileText
+  Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone,
+  Paperclip, FileText
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
-
-
-function sortMessagesOldestFirst(list: any[]) {
-  return [...(list || [])].sort((a: any, b: any) =>
-    new Date(a?.created_at || 0).getTime() - new Date(b?.created_at || 0).getTime()
-  )
-}
 
 const T = {
   ink:    '#1A1A1A',
