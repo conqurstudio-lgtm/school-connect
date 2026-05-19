@@ -83,10 +83,10 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         if (!res.ok) return
         const j = await res.json()
         const fallbackCount = Array.isArray(j.items)
-          ? j.items.filter((item: any) => item.unread || item.kind === 'message').length
+          ? j.items.filter((item: any) => item.unread).length
           : 0
-        const apiCount = Number(j.unread_count || 0)
-        if (alive) setUnread(Math.max(apiCount, fallbackCount))
+        const apiCount = typeof j.unread_count === 'number' ? j.unread_count : fallbackCount
+        if (alive) setUnread(apiCount)
       } catch {}
     }
     fetchCount()
@@ -317,6 +317,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <NotificationsSheet
           teacher={teacher}
           onClose={() => { setShowNotifs(false); setUnread(0) }}
+          onRead={() => setUnread(0)}
         />
       )}
 
@@ -2777,8 +2778,9 @@ function AddChildOverlay({ onAdd, onClose }: any) {
    NOTIFICATIONS SHEET — bell content
    ──────────────────────────────────────── */
 
-/* FULLSCREEN TEACHER NOTIFICATIONS */
-function NotificationsSheet({ teacher, onClose }: any) {
+
+/* GROUPED TEACHER NOTIFICATIONS */
+function NotificationsSheet({ teacher, onClose, onRead }: any) {
   const [items, setItems] = useState<any[]>([])
   const [parents, setParents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -2797,17 +2799,37 @@ function NotificationsSheet({ teacher, onClose }: any) {
 
       setItems(notifJson.items ?? [])
       setParents(parentsJson.parents ?? [])
-
-      await fetch('/api/teacher/notifications', { method: 'POST' })
     } catch {}
     setLoading(false)
   }
 
   useEffect(() => { load() }, [])
 
-  const openMessageThread = (item: any) => {
-    const parentId = item.parent_id || item.parentId || item.parent?.id
-    const parentName = item.parent_name || item.author_name || item.name
+  const markOpenedMessagesRead = async (group: any) => {
+    const groupItems = Array.isArray(group.items) ? group.items : [group]
+    const ids = groupItems.map((item: any) => item.id).filter(Boolean)
+
+    // Move this conversation from New to Read instantly in the UI.
+    setItems(prev => prev.map((item: any) => {
+      if (ids.includes(item.id)) return { ...item, unread: false }
+      return item
+    }))
+
+    // Current backend marks teacher notifications as read through this endpoint.
+    // This clears the bell dot while we keep the UI grouped locally.
+    try {
+      await fetch('/api/teacher/notifications', { method: 'POST' })
+    } catch {}
+
+    if (onRead) onRead()
+  }
+
+  const openMessageThread = async (group: any) => {
+    const source = Array.isArray(group.items) ? group.latest : group
+    await markOpenedMessagesRead(group)
+
+    const parentId = source?.parent_id || source?.parentId || source?.parent?.id || group.parent_id
+    const parentName = source?.parent_name || source?.author_name || source?.name || group.parent_name
 
     const found = parents.find((p: any) =>
       (parentId && p.id === parentId) ||
@@ -2823,7 +2845,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
       setOpenThread({
         id: parentId,
         name: parentName || 'Parent',
-        child_names: item.child_names || item.children || [],
+        child_names: source?.child_names || source?.children || group.child_names || [],
       })
       return
     }
@@ -2832,6 +2854,9 @@ function NotificationsSheet({ teacher, onClose }: any) {
   }
 
   const messages = items.filter((item: any) => item.kind === 'message')
+  const unreadMessages = messages.filter((item: any) => item.unread)
+  const readMessages = messages.filter((item: any) => !item.unread)
+
   const requests = items.filter((item: any) => item.kind === 'request' || item.kind === 'class_request')
   const replies = items.filter((item: any) => item.kind === 'reply')
   const reactions = items.filter((item: any) => item.kind === 'reaction')
@@ -2899,7 +2924,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
               color: T.ink3,
               margin: '3px 0 0',
             }}>
-              Messages, requests and activity
+              Messages move to Read after you open them
             </p>
           </div>
 
@@ -2948,7 +2973,8 @@ function NotificationsSheet({ teacher, onClose }: any) {
             </div>
           ) : (
             <>
-              <NotifSection title="Messages" items={messages} onOpen={openMessageThread} />
+              <MessageGroups title="New messages" messages={unreadMessages} onOpen={openMessageThread} unread />
+              <MessageGroups title="Read messages" messages={readMessages} onOpen={openMessageThread} />
               <NotifSection title="Requests" items={requests} onOpen={() => toast('Class requests are shown on your teacher page')} />
               <NotifSection title="Replies" items={replies} onOpen={() => toast('Replies are linked to post activity')} />
               <NotifSection title="Reactions" items={reactions} onOpen={() => toast('Reaction received')} />
@@ -2958,6 +2984,154 @@ function NotificationsSheet({ teacher, onClose }: any) {
         </div>
       </div>
     </div>
+  )
+}
+
+function groupMessagesByParent(messages: any[]) {
+  const map = new Map<string, any>()
+
+  for (const item of messages) {
+    const key = item.parent_id || item.parentId || item.parent_name || item.author_name || 'unknown-parent'
+    const parentName = item.parent_name || item.author_name || 'Parent'
+
+    if (!map.has(key)) {
+      map.set(key, {
+        parent_id: item.parent_id || item.parentId || item.parent?.id,
+        parent_name: parentName,
+        child_names: item.child_names || item.children || [],
+        latest: item,
+        items: [],
+        unread: false,
+      })
+    }
+
+    const group = map.get(key)
+    group.items.push(item)
+
+    if (item.unread) group.unread = true
+
+    const currentTime = new Date(group.latest?.created_at || 0).getTime()
+    const itemTime = new Date(item.created_at || 0).getTime()
+    if (itemTime >= currentTime) group.latest = item
+  }
+
+  return Array.from(map.values())
+    .sort((a, b) => new Date(b.latest?.created_at || 0).getTime() - new Date(a.latest?.created_at || 0).getTime())
+}
+
+function MessageGroups({ title, messages, onOpen, unread = false }: any) {
+  const groups = groupMessagesByParent(messages)
+
+  if (groups.length === 0) return null
+
+  return (
+    <section style={{ marginBottom: 18 }}>
+      <p style={{
+        fontSize: 11,
+        fontWeight: 800,
+        color: T.ink3,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        margin: '10px 2px 8px',
+      }}>
+        {title} · {groups.length}
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {groups.map((group: any) => (
+          <MessageGroupRow
+            key={group.parent_id || group.parent_name}
+            group={group}
+            unread={unread || group.unread}
+            onOpen={() => onOpen(group)}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function MessageGroupRow({ group, unread, onOpen }: any) {
+  const count = group.items.length
+  const latest = group.latest || {}
+  const title = count > 1
+    ? `${count} messages from ${group.parent_name || 'Parent'}`
+    : `${group.parent_name || 'Parent'} sent a message`
+
+  const preview = latest.preview || latest.body || latest.post_preview || ''
+
+  return (
+    <button onClick={onOpen} style={{
+      width: '100%',
+      padding: '12px 12px',
+      display: 'flex',
+      gap: 12,
+      alignItems: 'flex-start',
+      background: unread ? '#F4F6FB' : T.white,
+      border: `1px solid ${unread ? 'rgba(120,166,254,0.28)' : T.border}`,
+      borderRadius: 16,
+      cursor: 'pointer',
+      fontFamily: 'inherit',
+      textAlign: 'left',
+    }}>
+      <div style={{
+        width: 38,
+        height: 38,
+        borderRadius: 12,
+        background: '#F0F0F4',
+        color: T.ink2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        fontSize: 13,
+        fontWeight: 800,
+      }}>
+        {(group.parent_name || 'P').charAt(0).toUpperCase()}
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.005em',
+        }}>
+          {title}
+        </p>
+
+        {preview && (
+          <p style={{
+            fontSize: 12,
+            color: T.ink3,
+            margin: '4px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: 320,
+            lineHeight: 1.4,
+          }}>
+            {preview}
+          </p>
+        )}
+
+        <p style={{ fontSize: 11, color: T.ink3, margin: '5px 0 0' }}>
+          {relTime(latest.created_at)}
+        </p>
+      </div>
+
+      {unread && (
+        <span style={{
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          background: T.red,
+          marginTop: 4,
+          flexShrink: 0,
+        }} />
+      )}
+    </button>
   )
 }
 
@@ -2991,17 +3165,15 @@ function NotifSection({ title, items, onOpen }: any) {
 }
 
 function NotifRow({ item, onOpen }: any) {
-  const isClickable = item.kind === 'message' || item.kind === 'request' || item.kind === 'class_request'
+  const isClickable = item.kind === 'request' || item.kind === 'class_request'
 
   const title =
-    item.kind === 'message'  ? `${item.parent_name || item.author_name || 'Parent'} sent a message` :
     item.kind === 'reaction' ? `${item.author_name || 'Someone'} reacted to your post` :
     item.kind === 'reply'    ? `${item.author_name || 'Someone'} replied to your post` :
     item.kind === 'request' || item.kind === 'class_request' ? 'Class request' :
     'Notification'
 
   const icon =
-    item.kind === 'message' ? '💬' :
     item.kind === 'reaction'
       ? (item.type === 'love' ? '❤️' : item.type === 'like' ? '👍' : item.type === 'celebrate' ? '🎉' : '👏') :
     item.kind === 'reply' ? '💭' :
@@ -3009,7 +3181,7 @@ function NotifRow({ item, onOpen }: any) {
     '🔔'
 
   return (
-    <button onClick={onOpen} disabled={!isClickable && item.kind !== 'message'} style={{
+    <button onClick={onOpen} disabled={!isClickable} style={{
       width: '100%',
       padding: '12px 12px',
       display: 'flex',
