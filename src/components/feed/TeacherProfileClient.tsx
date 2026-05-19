@@ -37,15 +37,27 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const threadScrollRef = useRef<HTMLDivElement>(null)
 
-  const scrollThreadToBottom = (smooth = true) => {
-    window.setTimeout(() => {
+  const forceScrollToBottom = (smooth = true) => {
+    const run = () => {
+      const el = threadScrollRef.current
+      if (el) {
+        el.scrollTop = el.scrollHeight
+      }
+
       bottomRef.current?.scrollIntoView({
         behavior: smooth ? 'smooth' : 'auto',
         block: 'end',
       })
-    }, 80)
+    }
+
+    run()
+    window.requestAnimationFrame(run)
+    window.setTimeout(run, 80)
+    window.setTimeout(run, 240)
   }
+
 
   const markThreadSeen = async (id = teacherId) => {
     try {
@@ -96,7 +108,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
       if (res.ok) {
         const list = json.updates ?? []
         setUpdates(list)
-        scrollThreadToBottom(false)
+        forceScrollToBottom(false)
         setCanMessage(!!json.can_message)
 
         try { await markThreadSeen(id) } catch {}
@@ -105,6 +117,14 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   useEffect(() => { load() }, [teacherId])
+
+  // parent-thread-autoscroll: when the thread opens or receives a new message,
+  // always land on the latest item at the bottom.
+  useEffect(() => {
+    if (!canMessage) return
+    forceScrollToBottom(false)
+  }, [canMessage, updates.length, reports.length])
+
 
   useEffect(() => {
     if (!canMessage) return
@@ -131,7 +151,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
     setMessage('')
     setUpdates(prev => [optimisticMessage, ...prev])
-    scrollThreadToBottom(true)
+    forceScrollToBottom(true)
     setSending(true)
 
     try {
@@ -152,7 +172,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
         await loadThread(teacher.id)
       }
 
-      scrollThreadToBottom(true)
+      forceScrollToBottom(true)
     } catch (e: any) {
       setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
       setMessage(text)
@@ -384,7 +404,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
         </div>
       ) : (
         <>
-          <div style={{
+          <div ref={threadScrollRef} style={{
             flex: 1,
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',

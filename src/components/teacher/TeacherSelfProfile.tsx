@@ -1359,9 +1359,6 @@ const simpleInputStyle: any = {
    ──────────────────────────────────────── */
 
 
-
-
-
 function weekStartToday() {
   const d = new Date()
   const day = d.getDay()
@@ -1631,7 +1628,6 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
     </div>
   )
 }
-
 
 
 function ClassChildrenSummary({ kids, onReport }: any) {
@@ -2102,15 +2098,27 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const threadScrollRef = useRef<HTMLDivElement>(null)
 
-  const scrollThreadToBottom = (smooth = true) => {
-    window.setTimeout(() => {
+  const forceScrollToBottom = (smooth = true) => {
+    const run = () => {
+      const el = threadScrollRef.current
+      if (el) {
+        el.scrollTop = el.scrollHeight
+      }
+
       bottomRef.current?.scrollIntoView({
         behavior: smooth ? 'smooth' : 'auto',
         block: 'end',
       })
-    }, 80)
+    }
+
+    run()
+    window.requestAnimationFrame(run)
+    window.setTimeout(run, 80)
+    window.setTimeout(run, 240)
   }
+
 
   const load = async () => {
     setLoading(true)
@@ -2118,7 +2126,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const res = await fetch(`/api/teacher/updates?parent_id=${parent.id}`)
       const json = await res.json()
       setUpdates(json.updates ?? [])
-      scrollThreadToBottom(false)
+      forceScrollToBottom(false)
       try {
         await fetch('/api/teacher/thread-status', {
           method: 'POST',
@@ -2131,6 +2139,12 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   }
 
   useEffect(() => { load() }, [parent.id])
+
+  // teacher-thread-autoscroll: always land on the newest message.
+  useEffect(() => {
+    forceScrollToBottom(false)
+  }, [updates.length, parent.id])
+
 
   const sendText = async (text: string) => {
     const clean = text.trim()
@@ -2150,7 +2164,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
     setReply('')
     setUpdates(prev => [optimisticMessage, ...prev])
-    scrollThreadToBottom(true)
+    forceScrollToBottom(true)
     setSending(true)
 
     try {
@@ -2171,7 +2185,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         await load()
       }
 
-      scrollThreadToBottom(true)
+      forceScrollToBottom(true)
     } catch (e: any) {
       setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
       setReply(clean)
@@ -2275,7 +2289,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           </div>
         </div>
 
-        <div style={{
+        <div ref={threadScrollRef} style={{
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
