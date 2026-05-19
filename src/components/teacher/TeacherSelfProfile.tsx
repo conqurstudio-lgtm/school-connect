@@ -3092,15 +3092,13 @@ function MessageGroups({ title, messages, parents = [], onOpen, unread = false }
   )
 }
 
+
 function MessageGroupRow({ group, unread, onOpen }: any) {
-  const count = group.items.length
+  const count = group.items?.length || 0
   const latest = group.latest || {}
   const label = parentChildLabel(group)
-  const title = count > 1
-    ? `${count} messages from ${label}`
-    : `${label} sent a message`
-
   const preview = latest.preview || latest.body || latest.post_preview || ''
+  const showCountBadge = unread && count > 1
 
   return (
     <button onClick={onOpen} style={{
@@ -3115,7 +3113,34 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
       cursor: 'pointer',
       fontFamily: 'inherit',
       textAlign: 'left',
+      position: 'relative', // count badge anchor
     }}>
+      {showCountBadge && (
+        <span
+          aria-label={`${count} unread messages`}
+          style={{
+            position: 'absolute',
+            top: 9,
+            right: 9,
+            minWidth: 20,
+            height: 20,
+            padding: '0 6px',
+            borderRadius: 999,
+            background: T.red,
+            color: T.white,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 10,
+            fontWeight: 850,
+            lineHeight: 1,
+            border: `2px solid ${unread ? '#F4F6FB' : T.white}`,
+          }}
+        >
+          {count}
+        </span>
+      )}
+
       <div style={{
         width: 38,
         height: 38,
@@ -3129,18 +3154,25 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
         fontSize: 13,
         fontWeight: 800,
       }}>
-        {(group.parent_name || 'P').charAt(0).toUpperCase()}
+        {(label || 'P').replace('Parent of ', '').charAt(0).toUpperCase()}
       </div>
 
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{
+        flex: 1,
+        minWidth: 0,
+        paddingRight: showCountBadge ? 28 : 0,
+      }}>
         <p style={{
           fontSize: 13,
           fontWeight: 700,
           color: T.ink,
           margin: 0,
           letterSpacing: '-0.005em',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         }}>
-          {title}
+          {label}
         </p>
 
         {preview && (
@@ -3163,7 +3195,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
         </p>
       </div>
 
-      {unread && (
+      {unread && !showCountBadge && (
         <span style={{
           width: 8,
           height: 8,
@@ -3176,6 +3208,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
     </button>
   )
 }
+
 
 function NotifSection({ title, items, onOpen }: any) {
   if (!items || items.length === 0) return null
