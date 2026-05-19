@@ -82,11 +82,15 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         const res = await fetch('/api/teacher/notifications')
         if (!res.ok) return
         const j = await res.json()
-        if (alive) setUnread(j.unread_count ?? 0)
+        const fallbackCount = Array.isArray(j.items)
+          ? j.items.filter((item: any) => item.unread || item.kind === 'message').length
+          : 0
+        const apiCount = Number(j.unread_count || 0)
+        if (alive) setUnread(Math.max(apiCount, fallbackCount))
       } catch {}
     }
     fetchCount()
-    const id = setInterval(fetchCount, 30_000)
+    const id = setInterval(fetchCount, 15_000)
     const onFocus = () => fetchCount()
     window.addEventListener('focus', onFocus)
     return () => { alive = false; clearInterval(id); window.removeEventListener('focus', onFocus) }
@@ -2090,6 +2094,7 @@ function UpdatesInbox({ teacher }: any) {
 }
 
 /* Parent thread bottom sheet */
+
 function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [updates, setUpdates] = useState<any[]>([])
   const [reply,   setReply]   = useState('')
@@ -2105,136 +2110,334 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     } catch {}
     setLoading(false)
   }
+
   useEffect(() => { load() }, [parent.id])
 
-  const send = async () => {
-    const text = reply.trim()
-    if (!text) return
+  const sendText = async (text: string) => {
+    const clean = text.trim()
+    if (!clean || sending) return
+
     setSending(true)
     try {
       const res = await fetch('/api/teacher/updates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ parent_ids: [parent.id], body: text }),
+        body: JSON.stringify({ parent_ids: [parent.id], body: clean }),
       })
-      if (!res.ok) throw new Error()
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not send')
+
       setReply('')
-      load()
-    } catch { toast.error('Could not send') }
+      await load()
+    } catch (e: any) {
+      toast.error(e.message || 'Could not send')
+    }
     setSending(false)
   }
 
+  const parentInitial = (parent.name || 'P').charAt(0).toUpperCase()
+  const childLine = Array.isArray(parent.child_names)
+    ? parent.child_names.join(', ')
+    : parent.child_name || ''
+
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 200,
-      background: 'rgba(0,0,0,0.4)',
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-      animation: 'fadeIn 0.2s ease',
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 270,
+      background: T.bg,
+      display: 'flex',
+      justifyContent: 'center',
+      animation: 'fadeIn 0.16s ease',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%', maxWidth: 520, background: T.white,
-        borderRadius: '20px 20px 0 0',
-        animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
-        maxHeight: '88dvh', display: 'flex', flexDirection: 'column',
+      <div style={{
+        width: '100%',
+        maxWidth: 520,
+        height: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.bg,
+        fontFamily: 'Inter, -apple-system, sans-serif',
       }}>
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 20px', borderBottom: `1px solid ${T.border}`,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 11,
+          padding: '14px 16px 12px',
+          background: 'rgba(252,252,255,0.98)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
         }}>
-          <div>
-            <h3 style={{ fontSize: 17, fontWeight: 700, color: T.ink,
-                         letterSpacing: '-0.02em', margin: 0 }}>
-              {parent.name}
+          <button onClick={onClose} aria-label="Back" style={{
+            width: 34,
+            height: 34,
+            borderRadius: 999,
+            border: `1px solid ${T.border}`,
+            background: 'transparent',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}>
+            <X size={16} strokeWidth={1.8} />
+          </button>
+
+          <div style={{
+            width: 38,
+            height: 38,
+            borderRadius: 10,
+            background: '#F0F0F4',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 13,
+            fontWeight: 800,
+            flexShrink: 0,
+          }}>
+            {parentInitial}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{
+              fontSize: 14,
+              color: T.ink,
+              fontWeight: 650,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {parent.name || 'Parent'}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-              {parent.child_names.join(', ')}
+            <p style={{
+              fontSize: 11,
+              color: T.ink3,
+              margin: '2px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {childLine || 'Parent message'}
             </p>
           </div>
-          <button onClick={onClose} aria-label="Close" style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'none', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: T.ink3,
-          }}><X size={18} strokeWidth={1.8} /></button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '10px 0 100px',
+        }}>
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '30px 0' }}>
-              <div style={{ width: 16, height: 16, borderRadius: '50%',
-                            border: `2px solid ${T.border}`, borderTopColor: T.ink,
-                            animation: 'spin 0.7s linear infinite' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '50px 0' }}>
+              <div style={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                border: `2px solid ${T.border}`,
+                borderTopColor: T.ink,
+                animation: 'spin 0.7s linear infinite',
+              }} />
             </div>
           ) : updates.length === 0 ? (
-            <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
-                No messages yet.
+            <div style={{ padding: '70px 28px', textAlign: 'center' }}>
+              <div style={{
+                width: 54,
+                height: 54,
+                borderRadius: 16,
+                background: '#F0F0F4',
+                color: T.ink2,
+                margin: '0 auto 14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+              }}>
+                {parentInitial}
+              </div>
+              <p style={{
+                fontSize: 15,
+                color: T.ink,
+                fontWeight: 700,
+                margin: '0 0 5px',
+              }}>
+                No messages yet
+              </p>
+              <p style={{
+                fontSize: 13,
+                color: T.ink3,
+                margin: 0,
+                lineHeight: 1.5,
+              }}>
+                Send a quick reply or use one of the shortcuts below.
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {[...updates].reverse().map((u: any) => {
-                const isTeacher = u.author_kind === 'teacher'
-                return (
-                  <div key={u.id} style={{
-                    display: 'flex', gap: 8,
-                    flexDirection: isTeacher ? 'row-reverse' : 'row',
+            [...updates].reverse().map((u: any) => {
+              const isTeacher = u.author_kind === 'teacher'
+              return (
+                <div key={u.id} style={{
+                  display: 'flex',
+                  gap: 10,
+                  padding: '8px 16px',
+                  flexDirection: isTeacher ? 'row-reverse' : 'row',
+                }}>
+                  <div style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 9,
+                    overflow: 'hidden',
+                    background: isTeacher && teacher.photo_url
+                      ? `url(${teacher.photo_url}) center/cover`
+                      : '#F0F0F4',
+                    color: T.ink2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 10,
+                    fontWeight: 800,
+                    flexShrink: 0,
+                    marginTop: 2,
+                  }}>
+                    {isTeacher
+                      ? (!teacher.photo_url && teacher.name?.charAt(0))
+                      : parentInitial}
+                  </div>
+
+                  <div style={{
+                    maxWidth: '74%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: isTeacher ? 'flex-end' : 'flex-start',
                   }}>
                     <div style={{
-                      maxWidth: '75%', padding: '8px 12px',
-                      borderRadius: 14,
-                      background: isTeacher ? T.ink : '#F0F0F4',
+                      borderRadius: isTeacher ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                      background: isTeacher ? T.ink : T.white,
                       color: isTeacher ? T.white : T.ink,
+                      border: isTeacher ? 'none' : `1px solid ${T.border}`,
+                      padding: '9px 12px',
                     }}>
                       {u.body && (
-                        <p style={{ fontSize: 13.5, margin: 0, lineHeight: 1.45,
-                                    whiteSpace: 'pre-wrap' }}>{u.body}</p>
+                        <p style={{
+                          fontSize: 13.5,
+                          lineHeight: 1.45,
+                          margin: 0,
+                          whiteSpace: 'pre-wrap',
+                        }}>
+                          {u.body}
+                        </p>
                       )}
-                      {u.image_url && (
-                        <img src={u.image_url} alt="" style={{
-                          marginTop: u.body ? 6 : 0, width: '100%',
-                          borderRadius: 8, display: 'block',
-                        }} />
-                      )}
-                      <p style={{ fontSize: 10, margin: '4px 0 0',
-                                  opacity: 0.6, textAlign: isTeacher ? 'right' : 'left' }}>
-                        {relTime(u.created_at)}
-                      </p>
                     </div>
+
+                    <p style={{ fontSize: 10, color: T.ink3, margin: '4px 4px 0' }}>
+                      {relTime(u.created_at)}
+                    </p>
                   </div>
-                )
-              })}
-            </div>
+                </div>
+              )
+            })
           )}
         </div>
 
         <div style={{
-          display: 'flex', gap: 8, alignItems: 'center',
-          padding: '10px 12px', borderTop: `1px solid ${T.border}`,
+          position: 'sticky',
+          bottom: 0,
+          zIndex: 30,
+          background: 'rgba(252,252,255,0.96)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          padding: '8px 12px 14px',
         }}>
-          <input value={reply}
-            onChange={e => setReply(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter' && !sending) send() }}
-            placeholder="Message…"
-            style={{
-              flex: 1, padding: '9px 14px', fontSize: 13,
-              border: `1px solid ${T.border}`, borderRadius: 999,
-              background: '#FAFAFC', outline: 'none', fontFamily: 'inherit',
-            }} />
-          <button onClick={send} disabled={!reply.trim() || sending} style={{
-            width: 36, height: 36, borderRadius: '50%',
-            background: reply.trim() ? T.ink : '#E0E0E4',
-            color: T.white, border: 'none',
-            cursor: reply.trim() ? 'pointer' : 'not-allowed',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          <div style={{
+            display: 'flex',
+            gap: 8,
+            marginBottom: 8,
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
           }}>
-            <Send size={14} strokeWidth={2} />
-          </button>
+            {['Sure', 'OK', '❤️', 'Thank you'].map(text => (
+              <button key={text} onClick={() => sendText(text)} disabled={sending} style={{
+                border: 'none',
+                borderRadius: 999,
+                background: '#F4F4F6',
+                color: T.ink2,
+                padding: '7px 11px',
+                fontSize: 12,
+                fontWeight: 750,
+                cursor: sending ? 'wait' : 'pointer',
+                fontFamily: 'inherit',
+                flexShrink: 0,
+              }}>
+                {text}
+              </button>
+            ))}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: 8,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            borderRadius: 22,
+            padding: '8px 8px 8px 14px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+          }}>
+            <textarea
+              value={reply}
+              onChange={e => setReply(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  sendText(reply)
+                }
+              }}
+              rows={1}
+              placeholder="Message..."
+              style={{
+                flex: 1,
+                border: 'none',
+                outline: 'none',
+                resize: 'none',
+                background: 'transparent',
+                color: T.ink,
+                fontSize: 16,
+                lineHeight: 1.35,
+                maxHeight: 90,
+                fontFamily: 'inherit',
+                padding: '8px 0',
+              }}
+            />
+
+            <button onClick={() => sendText(reply)} disabled={!reply.trim() || sending} style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: reply.trim() && !sending ? T.ink : '#D4D4D8',
+              color: T.white,
+              border: 'none',
+              cursor: reply.trim() && !sending ? 'pointer' : 'not-allowed',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <Send size={15} strokeWidth={2.2} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
   )
 }
+
 
 /* ────────────────────────────────────────
    BROADCAST TAB — compose to many parents
@@ -2573,71 +2776,184 @@ function AddChildOverlay({ onAdd, onClose }: any) {
 /* ────────────────────────────────────────
    NOTIFICATIONS SHEET — bell content
    ──────────────────────────────────────── */
+
+/* FULLSCREEN TEACHER NOTIFICATIONS */
 function NotificationsSheet({ teacher, onClose }: any) {
-  const [items,   setItems]   = useState<any[]>([])
+  const [items, setItems] = useState<any[]>([])
+  const [parents, setParents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [openThread, setOpenThread] = useState<any>(null)
 
   const load = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/teacher/notifications')
-      const json = await res.json()
-      setItems(json.items ?? [])
-      // Mark all read on open
+      const [notifRes, parentsRes] = await Promise.all([
+        fetch('/api/teacher/notifications'),
+        fetch('/api/teacher/parents'),
+      ])
+
+      const notifJson = await notifRes.json()
+      const parentsJson = await parentsRes.json().catch(() => ({ parents: [] }))
+
+      setItems(notifJson.items ?? [])
+      setParents(parentsJson.parents ?? [])
+
       await fetch('/api/teacher/notifications', { method: 'POST' })
     } catch {}
     setLoading(false)
   }
+
   useEffect(() => { load() }, [])
 
+  const openMessageThread = (item: any) => {
+    const parentId = item.parent_id || item.parentId || item.parent?.id
+    const parentName = item.parent_name || item.author_name || item.name
+
+    const found = parents.find((p: any) =>
+      (parentId && p.id === parentId) ||
+      (parentName && p.name === parentName)
+    )
+
+    if (found) {
+      setOpenThread(found)
+      return
+    }
+
+    if (parentId || parentName) {
+      setOpenThread({
+        id: parentId,
+        name: parentName || 'Parent',
+        child_names: item.child_names || item.children || [],
+      })
+      return
+    }
+
+    toast('Open Messages to reply')
+  }
+
+  const messages = items.filter((item: any) => item.kind === 'message')
+  const requests = items.filter((item: any) => item.kind === 'request' || item.kind === 'class_request')
+  const replies = items.filter((item: any) => item.kind === 'reply')
+  const reactions = items.filter((item: any) => item.kind === 'reaction')
+  const other = items.filter((item: any) =>
+    !['message', 'request', 'class_request', 'reply', 'reaction'].includes(item.kind)
+  )
+
+  if (openThread) {
+    return (
+      <ParentThreadSheet
+        parent={openThread}
+        teacher={teacher}
+        onClose={() => {
+          setOpenThread(null)
+          load()
+        }}
+      />
+    )
+  }
+
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 200,
-      background: 'rgba(0,0,0,0.4)',
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-      animation: 'fadeIn 0.2s ease',
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 250,
+      background: T.bg,
+      display: 'flex',
+      justifyContent: 'center',
+      animation: 'fadeIn 0.16s ease',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%', maxWidth: 520, background: T.white,
-        borderRadius: '20px 20px 0 0',
-        animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
-        maxHeight: '85dvh', display: 'flex', flexDirection: 'column',
+      <div style={{
+        width: '100%',
+        maxWidth: 520,
+        height: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.bg,
       }}>
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 20px', borderBottom: `1px solid ${T.border}`,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '16px 18px 12px',
+          background: 'rgba(252,252,255,0.98)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
         }}>
-          <h3 style={{ fontSize: 17, fontWeight: 700, color: T.ink,
-                       letterSpacing: '-0.02em', margin: 0 }}>
-            Notifications
-          </h3>
+          <div>
+            <h3 style={{
+              fontSize: 18,
+              fontWeight: 750,
+              color: T.ink,
+              letterSpacing: '-0.025em',
+              margin: 0,
+            }}>
+              Notifications
+            </h3>
+            <p style={{
+              fontSize: 12,
+              color: T.ink3,
+              margin: '3px 0 0',
+            }}>
+              Messages, requests and activity
+            </p>
+          </div>
+
           <button onClick={onClose} aria-label="Close" style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'none', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: 34,
+            height: 34,
+            borderRadius: 999,
+            background: 'rgba(0,0,0,0.04)',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             color: T.ink3,
-          }}><X size={18} strokeWidth={1.8} /></button>
+          }}>
+            <X size={17} strokeWidth={1.8} />
+          </button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px 28px',
+        }}>
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '30px 0' }}>
-              <div style={{ width: 16, height: 16, borderRadius: '50%',
-                            border: `2px solid ${T.border}`, borderTopColor: T.ink,
-                            animation: 'spin 0.7s linear infinite' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+              <div style={{
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                border: `2px solid ${T.border}`,
+                borderTopColor: T.ink,
+                animation: 'spin 0.7s linear infinite',
+              }} />
             </div>
           ) : items.length === 0 ? (
-            <div style={{ padding: '40px 24px', textAlign: 'center' }}>
-              <Bell size={20} color={T.ink3} strokeWidth={1.5}
-                style={{ margin: '0 auto 8px' }} />
+            <div style={{ padding: '70px 24px', textAlign: 'center' }}>
+              <Bell size={22} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 10px' }} />
+              <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 5px' }}>
+                You're all caught up
+              </p>
               <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
-                You're all caught up.
+                New parent messages, requests and reactions will appear here.
               </p>
             </div>
           ) : (
-            items.map(item => (
-              <NotifRow key={item.id} item={item} onClose={onClose} />
-            ))
+            <>
+              <NotifSection title="Messages" items={messages} onOpen={openMessageThread} />
+              <NotifSection title="Requests" items={requests} onOpen={() => toast('Class requests are shown on your teacher page')} />
+              <NotifSection title="Replies" items={replies} onOpen={() => toast('Replies are linked to post activity')} />
+              <NotifSection title="Reactions" items={reactions} onOpen={() => toast('Reaction received')} />
+              <NotifSection title="Other" items={other} onOpen={() => {}} />
+            </>
           )}
         </div>
       </div>
@@ -2645,49 +2961,127 @@ function NotificationsSheet({ teacher, onClose }: any) {
   )
 }
 
-function NotifRow({ item, onClose }: any) {
+function NotifSection({ title, items, onOpen }: any) {
+  if (!items || items.length === 0) return null
+
   return (
-    <div style={{
-      padding: '12px 20px', display: 'flex', gap: 12,
+    <section style={{ marginBottom: 18 }}>
+      <p style={{
+        fontSize: 11,
+        fontWeight: 800,
+        color: T.ink3,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        margin: '10px 2px 8px',
+      }}>
+        {title} · {items.length}
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {items.map((item: any) => (
+          <NotifRow
+            key={item.id || `${item.kind}-${item.created_at}`}
+            item={item}
+            onOpen={() => onOpen(item)}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function NotifRow({ item, onOpen }: any) {
+  const isClickable = item.kind === 'message' || item.kind === 'request' || item.kind === 'class_request'
+
+  const title =
+    item.kind === 'message'  ? `${item.parent_name || item.author_name || 'Parent'} sent a message` :
+    item.kind === 'reaction' ? `${item.author_name || 'Someone'} reacted to your post` :
+    item.kind === 'reply'    ? `${item.author_name || 'Someone'} replied to your post` :
+    item.kind === 'request' || item.kind === 'class_request' ? 'Class request' :
+    'Notification'
+
+  const icon =
+    item.kind === 'message' ? '💬' :
+    item.kind === 'reaction'
+      ? (item.type === 'love' ? '❤️' : item.type === 'like' ? '👍' : item.type === 'celebrate' ? '🎉' : '👏') :
+    item.kind === 'reply' ? '💭' :
+    item.kind === 'request' || item.kind === 'class_request' ? '👤' :
+    '🔔'
+
+  return (
+    <button onClick={onOpen} disabled={!isClickable && item.kind !== 'message'} style={{
+      width: '100%',
+      padding: '12px 12px',
+      display: 'flex',
+      gap: 12,
       alignItems: 'flex-start',
-      background: item.unread ? '#F4F6FB' : 'transparent',
-      borderBottom: '1px solid rgba(0,0,0,0.04)',
+      background: item.unread ? '#F4F6FB' : T.white,
+      border: `1px solid ${item.unread ? 'rgba(120,166,254,0.28)' : T.border}`,
+      borderRadius: 16,
+      cursor: isClickable ? 'pointer' : 'default',
+      fontFamily: 'inherit',
+      textAlign: 'left',
+      opacity: isClickable ? 1 : 0.95,
     }}>
       <div style={{
-        width: 36, height: 36, borderRadius: 10,
+        width: 38,
+        height: 38,
+        borderRadius: 12,
         background: '#F0F0F4',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0, fontSize: 16,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        fontSize: 16,
       }}>
-        {item.kind === 'message' ? '💬'
-        : item.kind === 'reaction'
-          ? (item.type === 'love' ? '❤️' : item.type === 'like' ? '👍'
-            : item.type === 'celebrate' ? '🎉' : '👏')
-        : '💭'}
+        {icon}
       </div>
+
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 13, fontWeight: 600, color: T.ink, margin: 0,
-                    letterSpacing: '-0.005em' }}>
-          {item.kind === 'message'  && `${item.parent_name} sent you an update`}
-          {item.kind === 'reaction' && `${item.author_name} reacted to your post`}
-          {item.kind === 'reply'    && `${item.author_name} replied to your post`}
+        <p style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.005em',
+        }}>
+          {title}
         </p>
+
         {(item.preview || item.post_preview) && (
-          <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0',
-                      overflow: 'hidden', textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap', maxWidth: 280, lineHeight: 1.4 }}>
-            {item.kind === 'message' && item.preview}
-            {item.kind === 'reply'   && item.preview}
-            {item.kind === 'reaction' && `"${item.post_preview}…"`}
+          <p style={{
+            fontSize: 12,
+            color: T.ink3,
+            margin: '4px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: 320,
+            lineHeight: 1.4,
+          }}>
+            {item.kind === 'reaction' ? `"${item.post_preview}..."` : (item.preview || item.post_preview)}
           </p>
         )}
-        <p style={{ fontSize: 11, color: T.ink3, margin: '4px 0 0' }}>
+
+        <p style={{ fontSize: 11, color: T.ink3, margin: '5px 0 0' }}>
           {relTime(item.created_at)}
         </p>
       </div>
-    </div>
+
+      {item.unread && (
+        <span style={{
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          background: T.red,
+          marginTop: 4,
+          flexShrink: 0,
+        }} />
+      )}
+    </button>
   )
 }
+
 
 function relTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
