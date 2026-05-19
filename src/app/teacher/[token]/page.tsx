@@ -1,5 +1,9 @@
-import { TeacherTokenLanding } from '@/components/teacher/TeacherTokenLanding'
+import { redirect } from 'next/navigation'
 
-export default function TeacherPage({ params }: { params: { token: string } }) {
-  return <TeacherTokenLanding token={params.token} />
+export default function OldTeacherTokenRedirectPage({
+  params,
+}: {
+  params: { token: string }
+}) {
+  redirect(`/teacher-link/${encodeURIComponent(params.token)}`)
 }

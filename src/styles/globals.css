@@ -1361,3 +1361,60 @@ html::after {
     margin: 0 auto !important;
   }
 }
+
+/* ============================================================
+   School Connect - Teacher/Class Stabilisation
+   - Teacher dashboard action no longer uses the hidden bottom .fab.
+   - Teacher pages follow normal browser page scrolling.
+   ============================================================ */
+
+.teacher-feed-top-link {
+  position: fixed;
+  right: 14px;
+  top: 96px;
+  z-index: 75;
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #1A1A1A;
+  color: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: inherit;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.teacher-feed-top-link:active {
+  transform: scale(0.96);
+}
+
+@media (min-width: 641px) {
+  .teacher-feed-top-link {
+    right: calc(50% - 246px);
+  }
+}
+
+.card-from-right,
+.card-to-right,
+.slide-from-left {
+  min-height: 100dvh;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 640px) {
+  .card-from-right,
+  .card-to-right,
+  .slide-from-left {
+    max-width: none !important;
+    margin: 0 !important;
+    background: var(--bg) !important;
+  }
+}

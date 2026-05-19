@@ -1,7 +1,5 @@
 // /api/teachers/[id]/profile
-// Returns a teacher's public profile + their class posts.
-// If the caller is a parent with a child in this teacher's class,
-// also returns the child's reports written by this teacher.
+// Supports normal Supabase parents and lightweight parent_token sessions.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -21,59 +19,124 @@ function userClient() {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: {
-      get(name: string) { return store.get(name)?.value },
-      set() {}, remove() {},
-    }}
+    {
+      cookies: {
+        get(name: string) { return store.get(name)?.value },
+        set() {},
+        remove() {},
+      },
+    }
   )
 }
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+async function getCaller(req: NextRequest) {
+  const sb = adminClient()
   const supabase = userClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  if (user?.id) {
+    const { data: profile } = await sb.from('profiles')
+      .select('id, school_id, role, child_name')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.school_id) return { profile }
+  }
+
+  const parentToken = req.cookies.get('parent_token')?.value
+
+  if (parentToken) {
+    const { data: session } = await sb.from('parent_sessions')
+      .select('*')
+      .eq('access_token', parentToken)
+      .maybeSingle()
+
+    if (session && (!session.expires_at || new Date(session.expires_at).getTime() > Date.now())) {
+      const { data: profile } = await sb.from('profiles')
+        .select('id, school_id, role, child_name')
+        .eq('id', session.parent_id)
+        .single()
+
+      if (profile?.school_id) return { profile }
+    }
+  }
+
+  return null
+}
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const caller = await getCaller(req)
+  if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const sb = adminClient()
+  const profile = caller.profile
 
-  // Get the teacher
   const { data: teacher } = await sb.from('teachers')
     .select('id, name, photo_url, grade, class_name, school_id, status')
     .eq('id', params.id)
     .eq('status', 'active')
     .single()
+
   if (!teacher) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
-  // Verify the caller is in the same school
-  const { data: profile } = await supabase.from('profiles')
-    .select('id, school_id, role, child_name').eq('id', user.id).single()
-  if (!profile || profile.school_id !== teacher.school_id) {
+  if (profile.school_id !== teacher.school_id) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  // Is the parent linked to a child in this teacher's class?
-  // Best-effort matching using legacy child_name
   let myChildIds: string[] = []
   let isMyTeacher = false
-  if (profile.child_name) {
+
+  const { data: links } = await sb.from('child_guardians')
+    .select('child_id')
+    .eq('guardian_id', profile.id)
+
+  const linkedChildIds = (links ?? []).map((l: any) => l.child_id)
+
+  if (linkedChildIds.length > 0) {
     const { data: kids } = await sb.from('children')
-      .select('id, grade, class_name')
-      .eq('school_id', teacher.school_id)
-      .ilike('name', profile.child_name)
-    if (kids) {
-      for (const k of kids) {
-        if (k.grade === teacher.grade &&
-            (k.class_name || null) === (teacher.class_name || null)) {
-          myChildIds.push(k.id)
-          isMyTeacher = true
-        }
+      .select('id, school_id, grade, class_name, status')
+      .in('id', linkedChildIds)
+
+    for (const kid of (kids ?? [])) {
+      if (
+        kid.school_id === teacher.school_id &&
+        kid.status === 'active' &&
+        kid.grade === teacher.grade &&
+        (kid.class_name || null) === (teacher.class_name || null)
+      ) {
+        myChildIds.push(kid.id)
+        isMyTeacher = true
       }
     }
   }
 
-  // Posts by this teacher
+  if (!isMyTeacher && profile.child_name) {
+    const { data: kids } = await sb.from('children')
+      .select('id, grade, class_name')
+      .eq('school_id', teacher.school_id)
+      .ilike('name', profile.child_name)
+
+    for (const kid of (kids ?? [])) {
+      if (
+        kid.grade === teacher.grade &&
+        (kid.class_name || null) === (teacher.class_name || null)
+      ) {
+        myChildIds.push(kid.id)
+        isMyTeacher = true
+      }
+    }
+  }
+
+  const { data: latestRequest } = await sb.from('class_join_requests')
+    .select('*')
+    .eq('teacher_id', teacher.id)
+    .eq('parent_id', profile.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const joinStatus = isMyTeacher ? 'approved' : (latestRequest?.status || 'none')
+
   const { data: posts } = await sb.from('posts')
     .select('*, reactions(post_id, type, user_id)')
     .eq('teacher_id', teacher.id)
@@ -81,44 +144,49 @@ export async function GET(
     .order('created_at', { ascending: false })
     .limit(50)
 
-  const enrichedPosts = (posts ?? []).map((p: any) => {
+  const enrichedPosts = (posts ?? []).map((post: any) => {
     const counts: Record<string, number> = {}
     let mine: string | null = null
-    for (const r of (p.reactions ?? [])) {
-      counts[r.type] = (counts[r.type] || 0) + 1
-      if (r.user_id === user.id) mine = r.type
+
+    for (const reaction of (post.reactions ?? [])) {
+      counts[reaction.type] = (counts[reaction.type] || 0) + 1
+      if (reaction.user_id === profile.id) mine = reaction.type
     }
+
     return {
-      ...p,
-      reaction_count:  Object.values(counts).reduce((a, b) => a + b, 0),
+      ...post,
+      reaction_count: Object.values(counts).reduce((a, b) => a + b, 0),
       reaction_counts: counts,
-      my_reaction:     mine,
-      reactions:       undefined,
+      my_reaction: mine,
+      reactions: undefined,
     }
   })
 
-  // Reports for this parent's child(ren) authored by this teacher
   let reports: any[] = []
   if (myChildIds.length > 0) {
     const { data } = await sb.from('child_reports')
       .select('*')
       .in('child_id', myChildIds)
       .eq('teacher_id', teacher.id)
-      .order('week_start', { ascending: false })
+      .eq('status', 'published')
+      .order('week_starting', { ascending: false })
       .limit(20)
+
     reports = data ?? []
   }
 
   return NextResponse.json({
     teacher: {
-      id:         teacher.id,
-      name:       teacher.name,
-      photo_url:  teacher.photo_url,
-      grade:      teacher.grade,
+      id: teacher.id,
+      name: teacher.name,
+      photo_url: teacher.photo_url,
+      grade: teacher.grade,
       class_name: teacher.class_name,
     },
     is_my_teacher: isMyTeacher,
-    posts:         enrichedPosts,
+    join_status: joinStatus,
+    join_request: latestRequest ?? null,
+    posts: enrichedPosts,
     reports,
   })
 }

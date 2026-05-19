@@ -5,21 +5,22 @@ import { useRouter } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 
 /**
- * Visible on /feed only when there's a valid teacher cookie.
- * Same .fab class as the parent's reports FAB so it sits in the same place
- * with the same animated ring. Replaces the parent FAB (which is hidden for teachers).
+ * Teacher dashboard entry on the feed.
+ * We no longer use the shared `.fab` class because the bottom floating button
+ * was intentionally removed from the feed.
  */
 export function TeacherFeedFab() {
   const router = useRouter()
   const [teacherId, setTeacherId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/teacher-session').then(async r => {
-      if (r.ok) {
+    fetch('/api/teacher-session')
+      .then(async r => {
+        if (!r.ok) return
         const json = await r.json()
         if (json.teacher?.id) setTeacherId(json.teacher.id)
-      }
-    }).catch(() => {})
+      })
+      .catch(() => {})
   }, [])
 
   if (!teacherId) return null
@@ -27,10 +28,11 @@ export function TeacherFeedFab() {
   return (
     <button
       onClick={() => router.push(`/teachers/${teacherId}?edit=1`)}
-      aria-label="Go to my dashboard"
-      className="fab"
+      aria-label="Go to my class dashboard"
+      className="teacher-feed-top-link"
     >
-      <GraduationCap size={22} strokeWidth={1.8} />
+      <GraduationCap size={15} strokeWidth={1.9} />
+      <span>Class</span>
     </button>
   )
 }

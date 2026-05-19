@@ -3,42 +3,45 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-/**
- * Token landing page — validates the cookie + token, then redirects
- * to the teacher's profile dashboard at /teachers/{id}?edit=1.
- * The token is only consumed for the cookie set-up; subsequent visits
- * to /teachers/{id}?edit=1 use the cookie.
- */
 export function TeacherTokenLanding({ token }: { token: string }) {
   const router = useRouter()
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`/api/teacher-session?token=${encodeURIComponent(token)}`)
-        const json = await res.json()
-        if (res.ok && json.teacher?.id) {
-          router.replace(`/teachers/${json.teacher.id}?edit=1`)
-        } else {
-          router.replace('/teacher')
-        }
-      } catch {
-        router.replace('/teacher')
-      }
-    })()
+    if (token) {
+      router.replace(`/teacher-link/${encodeURIComponent(token)}`)
+    }
   }, [token, router])
 
   return (
-    <div style={{
-      minHeight: '100dvh', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      fontFamily: 'Inter, sans-serif',
+    <main style={{
+      minHeight: '100dvh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      background: '#FCFCFF',
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      textAlign: 'center',
     }}>
-      <div style={{
-        width: 22, height: 22, borderRadius: '50%',
-        border: '2px solid rgba(0,0,0,0.07)', borderTopColor: '#1A1A1A',
-        animation: 'spin 0.7s linear infinite',
-      }} />
-    </div>
+      <div>
+        <h1 style={{
+          fontSize: 20,
+          fontWeight: 800,
+          color: '#1A1A1A',
+          margin: '0 0 8px',
+          letterSpacing: '-0.03em',
+        }}>
+          Opening teacher dashboard…
+        </h1>
+        <p style={{
+          fontSize: 14,
+          color: '#9A9A9A',
+          margin: 0,
+          lineHeight: 1.5,
+        }}>
+          Please wait while we open the correct teacher link.
+        </p>
+      </div>
+    </main>
   )
 }

@@ -45,7 +45,7 @@ function formatRelative(iso: string | null): string {
 
 function teacherLink(token: string): string {
   if (typeof window === 'undefined') return ''
-  return `${window.location.origin}/teacher/${token}`
+  return `${window.location.origin}/teacher-link/${token}`
 }
 
 export function TeachersTab() {
@@ -296,7 +296,7 @@ function TeacherRow({ teacher, copiedId, openMenu, setOpenMenu,
             fontFamily: 'ui-monospace, SF Mono, Menlo, monospace',
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
-            /teacher/{t.access_token.slice(0, 8)}…{t.access_token.slice(-4)}
+            /teacher-link/{t.access_token.slice(0, 8)}…{t.access_token.slice(-4)}
           </code>
           <button onClick={() => onCopy(t)} style={{
             display: 'inline-flex', alignItems: 'center', gap: 4,

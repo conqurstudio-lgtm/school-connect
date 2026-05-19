@@ -18,7 +18,7 @@ export default function TeacherTokenEntryPage() {
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
 
-  const [teacherId, setTeacherId] = useState<string | null>(null)
+  const [session, setSession] = useState<any>(null)
   const [message, setMessage] = useState('Opening your class dashboard…')
   const [failed, setFailed] = useState(false)
 
@@ -45,7 +45,7 @@ export default function TeacherTokenEntryPage() {
           return
         }
 
-        setTeacherId(json.teacher.id)
+        setSession(json)
       })
       .catch(() => {
         if (!cancelled) {
@@ -57,8 +57,14 @@ export default function TeacherTokenEntryPage() {
     return () => { cancelled = true }
   }, [token])
 
-  if (teacherId) {
-    return <TeacherSelfProfile teacherId={teacherId} />
+  if (session?.teacher?.id) {
+    return (
+      <TeacherSelfProfile
+        teacherId={session.teacher.id}
+        initialSession={session}
+        initialToken={token}
+      />
+    )
   }
 
   return (

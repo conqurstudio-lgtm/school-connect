@@ -50,8 +50,8 @@ function token() {
 function inviteUrl(t: Teacher) {
   if (typeof window === 'undefined') return ''
   const origin = window.location.origin
-  const accessToken = encodeURIComponent(t.access_token || '')
-  return `${origin}/teacher-link/${accessToken}`
+  const token = encodeURIComponent(t.access_token || '')
+  return `${origin}/teacher-link/${token}`
 }
 
 function initials(name: string) {

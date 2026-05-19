@@ -1,24 +1,27 @@
-'use client'
-
-import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { TeacherProfileClient } from '@/components/feed/TeacherProfileClient'
 import { TeacherSelfProfile } from '@/components/teacher/TeacherSelfProfile'
 
-function Inner({ teacherId }: { teacherId: string }) {
-  const params = useSearchParams()
-  const isSelfEdit = params.get('edit') === '1'
+type SearchParams = Record<string, string | string[] | undefined>
 
-  if (isSelfEdit) {
-    return <TeacherSelfProfile teacherId={teacherId} />
-  }
-  return <TeacherProfileClient teacherId={teacherId} />
+function hasValue(value: string | string[] | undefined, expected?: string) {
+  if (Array.isArray(value)) return expected ? value.includes(expected) : value.length > 0
+  return expected ? value === expected : !!value
 }
 
-export default function TeacherProfilePage({ params }: { params: { id: string } }) {
-  return (
-    <Suspense fallback={null}>
-      <Inner teacherId={params.id} />
-    </Suspense>
-  )
+export default function TeacherProfilePage({
+  params,
+  searchParams,
+}: {
+  params: { id: string }
+  searchParams?: SearchParams
+}) {
+  const isTeacherDashboard =
+    hasValue(searchParams?.edit, '1') ||
+    hasValue(searchParams?.token)
+
+  if (isTeacherDashboard) {
+    return <TeacherSelfProfile teacherId={params.id} />
+  }
+
+  return <TeacherProfileClient teacherId={params.id} />
 }

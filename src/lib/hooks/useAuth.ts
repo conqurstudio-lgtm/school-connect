@@ -16,22 +16,38 @@ export function useAuth() {
   async function load(userId: string, email?: string) {
     userIdRef.current = userId
     emailRef.current  = email
+
     try {
       const { data: profile } = await supabase
-        .from('profiles').select('*').eq('id', userId).single()
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
 
-      if (!profile) { setAuthUser(null); setLoading(false); return }
+      if (!profile) {
+        setAuthUser(null)
+        setLoading(false)
+        return
+      }
 
-      let school      = undefined
+      let school = undefined
       let parentSchool = undefined
 
       if (profile.role === 'school') {
         const { data: s } = await supabase
-          .from('schools').select('*').eq('owner_id', userId).single()
+          .from('schools')
+          .select('*')
+          .eq('owner_id', userId)
+          .single()
+
         school = s ?? undefined
       } else if (profile.school_id) {
         const { data: s } = await supabase
-          .from('schools').select('*').eq('id', profile.school_id).single()
+          .from('schools')
+          .select('*')
+          .eq('id', profile.school_id)
+          .single()
+
         parentSchool = s ?? undefined
       }
 
@@ -43,31 +59,68 @@ export function useAuth() {
     }
   }
 
+  async function loadParentSession() {
+    try {
+      const res = await fetch('/api/parent-session', {
+        cache: 'no-store',
+        credentials: 'same-origin',
+      })
+
+      if (!res.ok) {
+        setAuthUser(null)
+        setLoading(false)
+        return
+      }
+
+      const json = await res.json()
+
+      if (!json?.profile?.id || !json?.school?.id) {
+        setAuthUser(null)
+        setLoading(false)
+        return
+      }
+
+      const profile = {
+        ...json.profile,
+        role: 'parent',
+        onboarding_done: true,
+      }
+
+      setAuthUser({
+        id: json.profile.id,
+        email: undefined,
+        profile,
+        school: undefined,
+        parentSchool: json.school,
+      })
+    } catch {
+      setAuthUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    // Get session instantly from local storage
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         load(session.user.id, session.user.email)
       } else {
-        setLoading(false)
+        loadParentSession()
       }
     })
 
-    // Auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         load(session.user.id, session.user.email)
       } else {
-        setAuthUser(null)
-        setLoading(false)
+        loadParentSession()
       }
     })
 
-    // Update school data from event detail immediately (no re-fetch needed)
     const onSchoolUpdated = (e: Event) => {
       const detail = (e as CustomEvent).detail
+
       if (detail && Object.keys(detail).length > 0) {
-        // Patch the school in memory instantly
         setAuthUser(prev => {
           if (!prev) return prev
           const updatedSchool = prev.school ? { ...prev.school, ...detail } : prev.school
@@ -75,10 +128,10 @@ export function useAuth() {
           return { ...prev, school: updatedSchool, parentSchool: updatedParentSchool }
         })
       } else if (userIdRef.current) {
-        // No detail — full re-fetch
         load(userIdRef.current, emailRef.current)
       }
     }
+
     window.addEventListener('school-updated', onSchoolUpdated as EventListener)
 
     return () => {
@@ -88,6 +141,7 @@ export function useAuth() {
   }, [])
 
   const signOut = async () => {
+    await fetch('/api/parent-session', { method: 'DELETE' }).catch(() => {})
     await supabase.auth.signOut()
     setAuthUser(null)
     window.location.href = '/auth/login'

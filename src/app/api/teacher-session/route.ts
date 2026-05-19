@@ -16,9 +16,9 @@ function adminClient() {
 // GET /api/teacher-session?token=...  → validate and return teacher
 // GET /api/teacher-session            → use cookie
 export async function GET(req: NextRequest) {
-  const url   = new URL(req.url)
-  const token = url.searchParams.get('token')
-                ?? req.cookies.get('teacher_token')?.value
+  const url = new URL(req.url)
+  const tokenFromUrl = url.searchParams.get('token')
+  const token = tokenFromUrl ?? req.cookies.get('teacher_token')?.value
 
   if (!token) {
     return NextResponse.json({ error: 'no token' }, { status: 401 })
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
   })
 
   // Set cookie if it wasn't already set (i.e. first visit via URL token)
-  if (!req.cookies.get('teacher_token')) {
+  if (tokenFromUrl || !req.cookies.get('teacher_token')) {
     res.cookies.set('teacher_token', token, {
       httpOnly: true,
       sameSite: 'lax',

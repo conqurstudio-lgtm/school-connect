@@ -23,13 +23,17 @@ const T = {
 
 type Tab = 'class' | 'updates' | 'broadcast'
 
-interface Props { teacherId: string }
+interface Props {
+  teacherId: string
+  initialSession?: any
+  initialToken?: string
+}
 
-export function TeacherSelfProfile({ teacherId }: Props) {
+export function TeacherSelfProfile({ teacherId, initialSession = null, initialToken }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [session,  setSession]  = useState<any>(null)
-  const [loading,  setLoading]  = useState(true)
+  const [session,  setSession]  = useState<any>(initialSession)
+  const [loading,  setLoading]  = useState(!initialSession)
   const [tab,      setTab]      = useState<Tab>('class')
   const [cropFile, setCropFile] = useState<File | null>(null)
   const [showNotifs, setShowNotifs] = useState(false)
@@ -38,14 +42,31 @@ export function TeacherSelfProfile({ teacherId }: Props) {
 
   const load = async () => {
     try {
-      const token = searchParams.get('token')
+      const token = initialToken || searchParams.get('token')
       const res = await fetch(token ? `/api/teacher-session?token=${encodeURIComponent(token)}` : '/api/teacher-session')
       const json = await res.json()
-      if (res.ok && json.teacher?.id === teacherId) setSession(json)
+      if (res.ok && json.teacher?.id) {
+        if (json.teacher.id !== teacherId) {
+          const suffix = token ? `?edit=1&token=${encodeURIComponent(token)}` : '?edit=1'
+          router.replace(`/teachers/${json.teacher.id}${suffix}`)
+          return
+        }
+        setSession(json)
+        return
+      }
     } catch {}
     setLoading(false)
   }
-  useEffect(() => { load() }, [teacherId])
+  useEffect(() => {
+    if (initialSession?.teacher?.id) {
+      setSession(initialSession)
+      setLoading(false)
+    }
+  }, [initialSession])
+
+  useEffect(() => {
+    load()
+  }, [teacherId])
 
   // Unread bell count — refreshed on tab focus & every 30s
   useEffect(() => {
@@ -81,10 +102,44 @@ export function TeacherSelfProfile({ teacherId }: Props) {
     )
   }
   if (!session) {
-    if (typeof window !== 'undefined') {
-      router.replace(`/teachers/${teacherId}`)
-    }
-    return null
+    return (
+      <div style={{
+        minHeight: '100dvh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+        background: T.bg,
+        fontFamily: 'Inter, sans-serif',
+      }}>
+        <div style={{
+          maxWidth: 360,
+          textAlign: 'center',
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 22,
+          padding: 28,
+        }}>
+          <h1 style={{
+            fontSize: 20,
+            fontWeight: 800,
+            color: T.ink,
+            margin: '0 0 8px',
+            letterSpacing: '-0.03em',
+          }}>
+            Need your teacher link
+          </h1>
+          <p style={{
+            fontSize: 14,
+            color: T.ink3,
+            lineHeight: 1.5,
+            margin: 0,
+          }}>
+            Open the private teacher link shared by your school admin. If the link was reset, ask the school to copy a new one.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   const { teacher, school, children } = session
@@ -312,6 +367,7 @@ function ClassRoster({ kids, onChanged }: any) {
 
   return (
     <div style={{ padding: '0 20px 24px' }}>
+      <PendingClassRequests onChanged={onChanged} />
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         marginBottom: 14,
@@ -855,6 +911,103 @@ function InlineRename({ value, onCancel, onSave }: any) {
         color: T.ink3, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
       }}><X size={12} strokeWidth={1.8} /></button>
+    </div>
+  )
+}
+
+
+function PendingClassRequests({ onChanged }: any) {
+  const [requests, setRequests] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  const load = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/teacher/class-requests?status=pending')
+      const json = await res.json()
+      setRequests(json.requests ?? [])
+    } catch {}
+    setLoading(false)
+  }
+
+  useEffect(() => { load() }, [])
+
+  const review = async (requestId: string, action: 'approve' | 'reject') => {
+    setBusyId(requestId)
+    const tid = toast.loading(action === 'approve' ? 'Approving…' : 'Rejecting…')
+    try {
+      const res = await fetch('/api/teacher/class-requests', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ request_id: requestId, action }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Could not review request')
+
+      toast.success(action === 'approve' ? 'Request approved' : 'Request rejected', { id: tid })
+      await load()
+      onChanged()
+    } catch (e: any) {
+      toast.error(e.message || 'Failed', { id: tid })
+    }
+    setBusyId(null)
+  }
+
+  if (loading || requests.length === 0) return null
+
+  return (
+    <div style={{ marginBottom: 16, padding: 14, borderRadius: 16, background: '#F4F6FB', border: `1px solid ${T.border}` }}>
+      <p style={{ fontSize: 12, fontWeight: 800, color: T.ink3, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 10px' }}>
+        Pending class requests · {requests.length}
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {requests.map((request: any) => {
+          const childName = request.child_full_name || `${request.child_first_name || ''} ${request.child_last_name || ''}`.trim()
+          return (
+            <div key={request.id} style={{ padding: 12, borderRadius: 14, background: T.white, border: `1px solid ${T.border}` }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  background: '#F0F0F4',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: T.ink2, fontSize: 13, fontWeight: 800, flexShrink: 0,
+                }}>
+                  {childName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {childName}
+                  </p>
+                  <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+                    {request.parent?.full_name || 'Parent'} · {request.relationship || 'Parent/Guardian'}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 11 }}>
+                <button disabled={busyId === request.id} onClick={() => review(request.id, 'reject')} style={{
+                  height: 34, borderRadius: 10, border: `1px solid ${T.border}`, background: T.white, color: T.red,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  fontSize: 12, fontWeight: 800, cursor: busyId === request.id ? 'wait' : 'pointer', fontFamily: 'inherit',
+                }}>
+                  <X size={13} strokeWidth={2.2} /> Reject
+                </button>
+
+                <button disabled={busyId === request.id} onClick={() => review(request.id, 'approve')} style={{
+                  height: 34, borderRadius: 10, border: 'none', background: T.ink, color: T.white,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  fontSize: 12, fontWeight: 800, cursor: busyId === request.id ? 'wait' : 'pointer', fontFamily: 'inherit',
+                }}>
+                  <Check size={13} strokeWidth={2.4} /> Approve
+                </button>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
