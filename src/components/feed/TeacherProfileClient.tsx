@@ -383,7 +383,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
       if (json.update?.id) {
         setUpdates(prev => prev.map((item: any) =>
-          item.id === tempId ? json.update : item
+          item.id === tempId ? { ...json.update, image_url: json.update?.attachment_url ? null : json.update?.image_url } : item
         ))
       } else {
         await loadThread(teacher.id)
@@ -824,7 +824,7 @@ function MessageRow({ update, teacher, onChanged }: any) {
               {update.body}
             </p>
           )}
-          {update.image_url && (
+          {update.image_url && !update.attachment_url && (
             <img
               src={update.image_url}
               alt=""

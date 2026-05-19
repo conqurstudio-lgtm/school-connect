@@ -2392,7 +2392,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       if (Array.isArray(json.updates) && json.updates[0]?.id) {
         const saved = json.updates[0]
         setUpdates(prev => prev.map((item: any) =>
-          item.id === tempId ? saved : item
+          item.id === tempId ? { ...saved, image_url: saved?.attachment_url ? null : saved?.image_url } : item
         ))
       } else {
         await load()
@@ -2709,15 +2709,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             >
               <Paperclip size={15} strokeWidth={2.1} />
             </button>
-
-            {attachment && (
-              <AttachmentCard
-                attachment={attachment}
-                compact
-                onRemove={() => setAttachment(null)}
-              />
-            )}
-
             <button
               type="button"
               aria-label="Toggle quick replies"

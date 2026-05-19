@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       child_id: child_id || null,
       author_kind: 'parent',
       body: text || null,
-      image_url: image_url || null,
+      image_url: attachment_url ? null : (image_url || null),
       attachment_url: attachment_url || null,
       attachment_name: attachment_name || null,
       attachment_type: attachment_type || null,

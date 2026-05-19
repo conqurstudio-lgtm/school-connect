@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     parent_id:    pid,
     author_kind:  'teacher',
     body:         body?.trim() || null,
-    image_url:    image_url || null,
+    image_url:    attachment_url ? null : (image_url || null),
     attachment_url: attachment_url || null,
     attachment_name: attachment_name || null,
     attachment_type: attachment_type || null,
