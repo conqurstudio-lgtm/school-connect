@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
+import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 
 const T = {
@@ -915,6 +916,55 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   }
 
   useEffect(() => { load() }, [refreshKey])
+
+  // Keep mirrored teacher posts in sync with the main feed.
+  // Parent reactions/comments happen on the parent feed, so the teacher page
+  // must listen for engagement changes and reload the affected class posts.
+  useEffect(() => {
+    if (!teacher?.id || !teacher?.school_id) return
+
+    const sb = createClient()
+
+    const refreshIfOwnPost = (payload: any) => {
+      const row = payload?.new || payload?.old || {}
+      const postId = row.post_id
+
+      if (!postId) {
+        load()
+        return
+      }
+
+      setPosts(prev => {
+        const exists = prev.some((post: any) => post.id === postId)
+        if (exists) window.setTimeout(() => load(), 0)
+        return prev
+      })
+    }
+
+    const ch = sb
+      .channel(`teacher-mirrored-engagement:${teacher.id}:${teacher.school_id}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'reactions',
+        filter: `school_id=eq.${teacher.school_id}`,
+      }, refreshIfOwnPost)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'comments',
+        filter: `school_id=eq.${teacher.school_id}`,
+      }, refreshIfOwnPost)
+      .subscribe()
+
+    const onFocus = () => load()
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      window.removeEventListener('focus', onFocus)
+      sb.removeChannel(ch)
+    }
+  }, [teacher?.id, teacher?.school_id])
 
   const updatePostReaction = (postId: string, type: any, prevType: any) => {
     setPosts(prev => prev.map((post: any) => {
