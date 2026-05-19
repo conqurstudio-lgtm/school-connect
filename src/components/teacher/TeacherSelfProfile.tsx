@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
@@ -12,6 +12,13 @@ import { PhotoCropper } from './PhotoCropper'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
+
+
+function sortMessagesOldestFirst(list: any[]) {
+  return [...(list || [])].sort((a: any, b: any) =>
+    new Date(a?.created_at || 0).getTime() - new Date(b?.created_at || 0).getTime()
+  )
+}
 
 const T = {
   ink:    '#1A1A1A',
@@ -2103,20 +2110,32 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const forceScrollToBottom = (smooth = true) => {
     const run = () => {
       const el = threadScrollRef.current
+
       if (el) {
-        el.scrollTop = el.scrollHeight
+        const top = el.scrollHeight + 9999
+
+        if (typeof el.scrollTo === 'function') {
+          el.scrollTo({
+            top,
+            behavior: smooth ? 'smooth' : 'auto',
+          })
+        } else {
+          el.scrollTop = top
+        }
       }
 
       bottomRef.current?.scrollIntoView({
         behavior: smooth ? 'smooth' : 'auto',
         block: 'end',
+        inline: 'nearest',
       })
     }
 
     run()
     window.requestAnimationFrame(run)
-    window.setTimeout(run, 80)
-    window.setTimeout(run, 240)
+    window.setTimeout(run, 60)
+    window.setTimeout(run, 180)
+    window.setTimeout(run, 420)
   }
 
 
@@ -2139,6 +2158,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   }
 
   useEffect(() => { load() }, [parent.id])
+
+  // teacher-thread-layout-autoscroll: newest message should be visible immediately.
+  useLayoutEffect(() => {
+    forceScrollToBottom(false)
+  }, [updates.length, parent.id])
+
+
 
   // teacher-thread-autoscroll: always land on the newest message.
   useEffect(() => {
@@ -2163,7 +2189,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     }
 
     setReply('')
-    setUpdates(prev => [optimisticMessage, ...prev])
+    setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
     setSending(true)
 
@@ -2216,6 +2242,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
         background: T.bg,
         fontFamily: 'Inter, -apple-system, sans-serif',
       }}>
@@ -2293,6 +2320,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
+          minHeight: 0,
+          overscrollBehavior: 'contain',
           padding: '10px 0 142px',
         }}>
           {loading ? (
@@ -2340,7 +2369,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               </p>
             </div>
           ) : (
-            [...updates].reverse().map((u: any) => {
+            sortMessagesOldestFirst(updates).map((u: any) => {
               const isTeacher = u.author_kind === 'teacher'
               return (
                 <div key={u.id} style={{
@@ -2959,6 +2988,7 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
         height: '100dvh',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
         background: T.bg,
       }}>
         <div style={{
@@ -3014,6 +3044,8 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
+          minHeight: 0,
+          overscrollBehavior: 'contain',
           padding: '8px 16px 28px',
         }}>
           {loading ? (

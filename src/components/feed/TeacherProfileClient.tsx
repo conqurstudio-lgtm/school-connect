@@ -1,10 +1,17 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, FileText, Info, Send, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+
+function sortMessagesOldestFirst(list: any[]) {
+  return [...(list || [])].sort((a: any, b: any) =>
+    new Date(a?.created_at || 0).getTime() - new Date(b?.created_at || 0).getTime()
+  )
+}
 
 const T = {
   ink:    '#1A1A1A',
@@ -42,20 +49,32 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const forceScrollToBottom = (smooth = true) => {
     const run = () => {
       const el = threadScrollRef.current
+
       if (el) {
-        el.scrollTop = el.scrollHeight
+        const top = el.scrollHeight + 9999
+
+        if (typeof el.scrollTo === 'function') {
+          el.scrollTo({
+            top,
+            behavior: smooth ? 'smooth' : 'auto',
+          })
+        } else {
+          el.scrollTop = top
+        }
       }
 
       bottomRef.current?.scrollIntoView({
         behavior: smooth ? 'smooth' : 'auto',
         block: 'end',
+        inline: 'nearest',
       })
     }
 
     run()
     window.requestAnimationFrame(run)
-    window.setTimeout(run, 80)
-    window.setTimeout(run, 240)
+    window.setTimeout(run, 60)
+    window.setTimeout(run, 180)
+    window.setTimeout(run, 420)
   }
 
 
@@ -118,6 +137,14 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
   useEffect(() => { load() }, [teacherId])
 
+  // parent-thread-layout-autoscroll: newest message should be visible immediately.
+  useLayoutEffect(() => {
+    if (!canMessage) return
+    forceScrollToBottom(false)
+  }, [canMessage, updates.length, reports.length, teacherId])
+
+
+
   // parent-thread-autoscroll: when the thread opens or receives a new message,
   // always land on the latest item at the bottom.
   useEffect(() => {
@@ -150,7 +177,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
     }
 
     setMessage('')
-    setUpdates(prev => [optimisticMessage, ...prev])
+    setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
     setSending(true)
 
@@ -229,12 +256,12 @@ export function TeacherProfileClient({ teacherId }: Props) {
     .toUpperCase()
 
   const threadItems: ThreadItem[] = [
-    ...[...updates].reverse().map((u: any) => ({
+    ...sortMessagesOldestFirst(updates).map((u: any) => ({
       kind: 'message' as const,
       created_at: u.created_at,
       data: u,
     })),
-    ...[...reports].reverse().map((r: any) => ({
+    ...[...(reports || [])].sort((a: any, b: any) => new Date(a?.published_at || a?.created_at || a?.week_starting || 0).getTime() - new Date(b?.published_at || b?.created_at || b?.week_starting || 0).getTime()).map((r: any) => ({
       kind: 'report' as const,
       created_at: r.published_at || r.created_at || r.week_starting,
       data: r,
@@ -408,6 +435,8 @@ export function TeacherProfileClient({ teacherId }: Props) {
             flex: 1,
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
+            minHeight: 0,
+            overscrollBehavior: 'contain',
             padding: '10px 0 90px',
           }}>
             {threadItems.length === 0 ? (
