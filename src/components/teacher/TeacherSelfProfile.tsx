@@ -2666,6 +2666,11 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             ))}
           </div>
 
+          <AttachmentPreviewTray
+            attachment={attachment}
+            onRemove={() => setAttachment(null)}
+          />
+
           <div style={{
             display: 'flex',
             alignItems: 'flex-end',

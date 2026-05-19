@@ -824,7 +824,7 @@ function MessageRow({ update, teacher, onChanged }: any) {
               {update.body}
             </p>
           )}
-          {update.image_url && !update.attachment_url && (
+          {update.image_url && !attachment && (
             <img
               src={update.image_url}
               alt=""
