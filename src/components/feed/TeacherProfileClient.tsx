@@ -769,12 +769,15 @@ export function TeacherProfileClient({ teacherId }: Props) {
   )
 }
 
-function MessageRow({ update, teacher, onChanged }: any) {
+function MessageRow({ update, teacher }: any) {
+  // parent-message-bubble-v2
+  // This mirrors the teacher thread layout so images/documents sit INSIDE the chat bubble.
   const isTeacher = update.author_kind === 'teacher'
   const attachment = updateAttachment(update)
+
   const initials = isTeacher
     ? teacher.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'You'.slice(0, 1)
+    : 'Y'
 
   return (
     <article style={{
@@ -788,7 +791,9 @@ function MessageRow({ update, teacher, onChanged }: any) {
         height: 30,
         borderRadius: 9,
         overflow: 'hidden',
-        background: isTeacher && teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+        background: isTeacher && teacher.photo_url
+          ? `url(${teacher.photo_url}) center/cover`
+          : '#F0F0F4',
         color: T.ink2,
         display: 'flex',
         alignItems: 'center',
@@ -813,6 +818,7 @@ function MessageRow({ update, teacher, onChanged }: any) {
           color: T.ink,
           border: isTeacher ? `1px solid ${T.border}` : 'none',
           padding: '9px 12px',
+          overflow: 'hidden',
         }}>
           {update.body && (
             <p style={{
@@ -824,40 +830,21 @@ function MessageRow({ update, teacher, onChanged }: any) {
               {update.body}
             </p>
           )}
-          {update.image_url && !attachment && (
-            <img
-              src={update.image_url}
-              alt=""
-              style={{
-                width: '100%',
-                borderRadius: 10,
-                marginTop: update.body ? 8 : 0,
-                display: 'block',
-              }}
-            />
-          )}
-        {/* parent-image-inside-bubble */}
-        {attachment && <AttachmentCard attachment={attachment} />}
         </div>
+
         <p style={{
           fontSize: 10,
           color: T.ink3,
           margin: '4px 4px 0',
+          textAlign: isTeacher ? 'left' : 'right',
         }}>
           {relTime(update.created_at)}
         </p>
-
-        {update.update_replies?.length > 0 && (
-          <div style={{ marginTop: 6, width: '100%' }}>
-            {update.update_replies.map((reply: any) => (
-              <ReplyBubble key={reply.id} reply={reply} teacher={teacher} />
-            ))}
-          </div>
-        )}
       </div>
     </article>
   )
 }
+
 
 function ReplyBubble({ reply, teacher }: any) {
   const isTeacher = !!reply.teacher_id
