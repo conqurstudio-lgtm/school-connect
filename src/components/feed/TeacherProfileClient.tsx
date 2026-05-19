@@ -52,12 +52,8 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
       if (el) {
         const top = el.scrollHeight + 9999
-
         if (typeof el.scrollTo === 'function') {
-          el.scrollTo({
-            top,
-            behavior: smooth ? 'smooth' : 'auto',
-          })
+          el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
         } else {
           el.scrollTop = top
         }
@@ -68,13 +64,21 @@ export function TeacherProfileClient({ teacherId }: Props) {
         block: 'end',
         inline: 'nearest',
       })
+
+      // Fallback for screens where the page itself is the scroll container.
+      try {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight + document.body.scrollHeight,
+          behavior: smooth ? 'smooth' : 'auto',
+        })
+      } catch {}
     }
 
     run()
     window.requestAnimationFrame(run)
-    window.setTimeout(run, 60)
-    window.setTimeout(run, 180)
-    window.setTimeout(run, 420)
+    window.setTimeout(run, 80)
+    window.setTimeout(run, 240)
+    window.setTimeout(run, 600)
   }
 
 
@@ -137,20 +141,18 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
   useEffect(() => { load() }, [teacherId])
 
-  // parent-thread-layout-autoscroll: newest message should be visible immediately.
+  // scroll-after-loading: the thread is not mounted while the loading screen is showing.
+  // So we scroll only after loading becomes false and the real message container exists.
   useLayoutEffect(() => {
-    if (!canMessage) return
+    if (loading || !canMessage) return
     forceScrollToBottom(false)
-  }, [canMessage, updates.length, reports.length, teacherId])
+  }, [loading, canMessage, updates.length, reports.length, teacherId])
 
 
 
-  // parent-thread-autoscroll: when the thread opens or receives a new message,
-  // always land on the latest item at the bottom.
-  useEffect(() => {
-    if (!canMessage) return
-    forceScrollToBottom(false)
-  }, [canMessage, updates.length, reports.length])
+
+
+
 
 
   useEffect(() => {
@@ -159,7 +161,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
     }, 120)
     return () => window.clearTimeout(id)
-  }, [canMessage, updates.length, reports.length])
+  }, [loading, canMessage, updates.length, reports.length])
 
   const sendMessage = async () => {
     const text = message.trim()

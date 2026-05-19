@@ -2113,12 +2113,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
       if (el) {
         const top = el.scrollHeight + 9999
-
         if (typeof el.scrollTo === 'function') {
-          el.scrollTo({
-            top,
-            behavior: smooth ? 'smooth' : 'auto',
-          })
+          el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
         } else {
           el.scrollTop = top
         }
@@ -2129,13 +2125,21 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         block: 'end',
         inline: 'nearest',
       })
+
+      // Fallback for screens where the page itself is the scroll container.
+      try {
+        window.scrollTo({
+          top: document.documentElement.scrollHeight + document.body.scrollHeight,
+          behavior: smooth ? 'smooth' : 'auto',
+        })
+      } catch {}
     }
 
     run()
     window.requestAnimationFrame(run)
-    window.setTimeout(run, 60)
-    window.setTimeout(run, 180)
-    window.setTimeout(run, 420)
+    window.setTimeout(run, 80)
+    window.setTimeout(run, 240)
+    window.setTimeout(run, 600)
   }
 
 
@@ -2159,17 +2163,18 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
   useEffect(() => { load() }, [parent.id])
 
-  // teacher-thread-layout-autoscroll: newest message should be visible immediately.
+  // scroll-after-loading: the message list renders after loading becomes false.
+  // This makes the thread open directly at the latest message.
   useLayoutEffect(() => {
+    if (loading) return
     forceScrollToBottom(false)
-  }, [updates.length, parent.id])
+  }, [loading, updates.length, parent.id])
 
 
 
-  // teacher-thread-autoscroll: always land on the newest message.
-  useEffect(() => {
-    forceScrollToBottom(false)
-  }, [updates.length, parent.id])
+
+
+
 
 
   const sendText = async (text: string) => {
