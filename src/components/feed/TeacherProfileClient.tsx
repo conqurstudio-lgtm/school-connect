@@ -836,10 +836,9 @@ function MessageRow({ update, teacher, onChanged }: any) {
               }}
             />
           )}
-        </div>
-
+        {/* parent-image-inside-bubble */}
         {attachment && <AttachmentCard attachment={attachment} />}
-
+        </div>
         <p style={{
           fontSize: 10,
           color: T.ink3,
