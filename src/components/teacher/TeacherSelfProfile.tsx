@@ -39,6 +39,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
   const [loading,  setLoading]  = useState(!initialSession)
   const [tab,      setTab]      = useState<Tab>('class')
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [reportChild, setReportChild] = useState<any>(null)
   const [showNotifs, setShowNotifs] = useState(false)
   const [showClassComposer, setShowClassComposer] = useState(false)
   const [postRefreshKey, setPostRefreshKey] = useState(0)
@@ -299,7 +300,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
       <div style={{ padding: '14px 20px 8px' }}>
         <PendingClassRequests onChanged={load} />
-        <ClassChildrenSummary kids={children} />
+        <ClassChildrenSummary kids={children} onReport={setReportChild} />
       </div>
       <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
 
@@ -307,6 +308,14 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <NotificationsSheet
           teacher={teacher}
           onClose={() => { setShowNotifs(false); setUnread(0) }}
+        />
+      )}
+
+      {reportChild && (
+        <QuickReportSheet
+          child={reportChild}
+          onClose={() => setReportChild(null)}
+          onSaved={() => setReportChild(null)}
         />
       )}
 
@@ -1342,13 +1351,285 @@ const simpleInputStyle: any = {
 
 
 
-function ClassChildrenSummary({ kids }: any) {
+
+function weekStartToday() {
+  const d = new Date()
+  const day = d.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + diff)
+  d.setHours(0, 0, 0, 0)
+  return d.toISOString().slice(0, 10)
+}
+
+function QuickReportSheet({ child, onClose, onSaved }: any) {
+  const defaultSubjects = ['Mathematics', 'English Home Language', 'Life Skills', 'Behaviour']
+  const [week, setWeek] = useState(weekStartToday())
+  const [scores, setScores] = useState<Record<string, number>>({
+    Mathematics: 3,
+    'English Home Language': 3,
+    'Life Skills': 3,
+    Behaviour: 3,
+  })
+  const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const setScore = (subject: string, score: number) => {
+    setScores(prev => ({ ...prev, [subject]: score }))
+  }
+
+  const save = async () => {
+    if (saving) return
+
+    setSaving(true)
+    const tid = toast.loading('Publishing report...')
+
+    try {
+      const res = await fetch('/api/teacher/child-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          child_id: child.id,
+          week_starting: week,
+          scores,
+          comment: note.trim(),
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not publish report')
+
+      toast.success('Report published', { id: tid })
+      onSaved()
+    } catch (e: any) {
+      toast.error(e.message || 'Could not publish report', { id: tid })
+    }
+
+    setSaving(false)
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 260,
+      background: 'rgba(0,0,0,0.38)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        background: T.white,
+        borderRadius: '22px 22px 0 0',
+        padding: 20,
+        maxHeight: '90dvh',
+        overflowY: 'auto',
+        animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          marginBottom: 16,
+        }}>
+          <div style={{
+            width: 42,
+            height: 42,
+            borderRadius: 14,
+            background: child.photo_url ? `url(${child.photo_url}) center/cover` : '#F0F0F4',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: T.ink2,
+            fontSize: 13,
+            fontWeight: 800,
+            flexShrink: 0,
+          }}>
+            {!child.photo_url && String(child.name || '?').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{
+              fontSize: 17,
+              color: T.ink,
+              fontWeight: 850,
+              margin: 0,
+              letterSpacing: '-0.03em',
+            }}>
+              Report
+            </h3>
+            <p style={{
+              fontSize: 12,
+              color: T.ink3,
+              margin: '3px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {child.name}
+            </p>
+          </div>
+
+          <button onClick={onClose} style={{
+            width: 34,
+            height: 34,
+            borderRadius: 10,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink3,
+            cursor: 'pointer',
+            fontSize: 18,
+            lineHeight: 1,
+          }}>
+            ×
+          </button>
+        </div>
+
+        <label style={{
+          display: 'block',
+          fontSize: 11,
+          fontWeight: 800,
+          color: T.ink3,
+          marginBottom: 6,
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+        }}>
+          Week
+        </label>
+        <input
+          type="date"
+          value={week}
+          onChange={e => setWeek(e.target.value)}
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '11px 12px',
+            borderRadius: 13,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink,
+            fontSize: 16,
+            outline: 'none',
+            fontFamily: 'inherit',
+            marginBottom: 16,
+          }}
+        />
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {defaultSubjects.map(subject => (
+            <div key={subject}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 8,
+                marginBottom: 8,
+              }}>
+                <p style={{
+                  fontSize: 13,
+                  color: T.ink,
+                  fontWeight: 650,
+                  margin: 0,
+                }}>
+                  {subject}
+                </p>
+                <span style={{
+                  fontSize: 12,
+                  color: T.ink3,
+                  fontWeight: 800,
+                }}>
+                  {scores[subject].toFixed(1)}
+                </span>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: 6,
+              }}>
+                {[1, 2, 3, 4, 5].map(score => {
+                  const active = scores[subject] === score
+                  return (
+                    <button
+                      key={score}
+                      onClick={() => setScore(subject, score)}
+                      style={{
+                        height: 34,
+                        borderRadius: 999,
+                        border: active ? 'none' : `1px solid ${T.border}`,
+                        background: active ? T.ink : '#FAFAFC',
+                        color: active ? T.white : T.ink2,
+                        fontSize: 12,
+                        fontWeight: 850,
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {score}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <textarea
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          rows={4}
+          placeholder="Optional note. Leave empty to auto-generate a comment."
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            marginTop: 16,
+            padding: '12px 13px',
+            borderRadius: 14,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink,
+            fontSize: 16,
+            outline: 'none',
+            resize: 'none',
+            fontFamily: 'inherit',
+            lineHeight: 1.5,
+          }}
+        />
+
+        <button
+          onClick={save}
+          disabled={saving}
+          style={{
+            width: '100%',
+            marginTop: 14,
+            padding: '14px',
+            borderRadius: 14,
+            border: 'none',
+            background: saving ? '#D4D4D8' : T.ink,
+            color: T.white,
+            fontSize: 15,
+            fontWeight: 850,
+            cursor: saving ? 'not-allowed' : 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          {saving ? 'Publishing...' : 'Publish'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+
+function ClassChildrenSummary({ kids, onReport }: any) {
   const list = Array.isArray(kids) ? kids : []
   const preview = list.slice(0, 10)
   const [open, setOpen] = useState(false)
 
   const openReport = (child: any) => {
-    toast(`${child.name || 'Child'} report is next`)
+    if (onReport) onReport(child)
   }
 
   return (
