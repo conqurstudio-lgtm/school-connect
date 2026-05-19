@@ -14,6 +14,13 @@ import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
 
+
+function sortMessagesOldestFirst(list: any[]) {
+  return [...(list || [])].sort((a: any, b: any) =>
+    new Date(a?.created_at || 0).getTime() - new Date(b?.created_at || 0).getTime()
+  )
+}
+
 const T = {
   ink:    '#1A1A1A',
   ink2:   '#4A4A4A',
