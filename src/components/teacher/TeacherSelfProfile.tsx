@@ -199,12 +199,12 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       }}>
         <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
           position: 'relative',
-          width: 52,
-          height: 52,
-          borderRadius: 16,
+          width: 38,
+          height: 38,
+          borderRadius: 10,
           border: 'none',
           padding: 0,
-          overflow: 'hidden',
+          overflow: 'visible',
           background: teacher.photo_url
             ? `url(${teacher.photo_url}) center/cover`
             : '#F0F0F4',
@@ -212,16 +212,16 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 16,
-          fontWeight: 800,
+          fontSize: 15,
+          fontWeight: 700,
           cursor: 'pointer',
           flexShrink: 0,
         }}>
           {!teacher.photo_url && initials}
           <span style={{
             position: 'absolute',
-            right: -1,
-            bottom: -1,
+            right: -7,
+            bottom: -7,
             width: 19,
             height: 19,
             borderRadius: '50%',
@@ -231,6 +231,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             alignItems: 'center',
             justifyContent: 'center',
             border: `2px solid ${T.bg}`,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
           }}>
             <Camera size={10} strokeWidth={2.2} />
           </span>
@@ -1340,6 +1341,7 @@ const simpleInputStyle: any = {
 
 
 
+
 function ClassChildrenSummary({ kids }: any) {
   const list = Array.isArray(kids) ? kids : []
   const preview = list.slice(0, 10)
@@ -1363,7 +1365,12 @@ function ClassChildrenSummary({ kids }: any) {
         gap: 10,
         marginBottom: 10,
       }}>
-        <div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 7,
+          minWidth: 0,
+        }}>
           <p style={{
             fontSize: 12,
             fontWeight: 800,
@@ -1373,13 +1380,22 @@ function ClassChildrenSummary({ kids }: any) {
           }}>
             Children
           </p>
-          <p style={{
+          <span style={{
+            minWidth: 22,
+            height: 22,
+            padding: '0 7px',
+            borderRadius: 999,
+            background: 'rgba(0,0,0,0.04)',
+            color: T.ink2,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             fontSize: 11,
-            color: T.ink3,
-            margin: '2px 0 0',
+            fontWeight: 850,
+            lineHeight: 1,
           }}>
-            {list.length} {list.length === 1 ? 'child' : 'children'}
-          </p>
+            {list.length}
+          </span>
         </div>
 
         <button
