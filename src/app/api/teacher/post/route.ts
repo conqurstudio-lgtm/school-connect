@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
   if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { body: postBody, type, image_urls } = body
+  const { body: postBody, type, image_urls, event_date, event_time, event_location } = body
 
-  // Need at least body OR images
-  if (!postBody && (!image_urls || image_urls.length === 0)) {
+  // Need at least body OR images OR event details
+  if (!postBody && (!image_urls || image_urls.length === 0) && !event_date && !event_time && !event_location) {
     return NextResponse.json({ error: 'empty post' }, { status: 400 })
   }
 
@@ -45,6 +45,9 @@ export async function POST(req: NextRequest) {
       status:           'published',
       body:             postBody?.trim() || null,
       image_urls:       Array.isArray(image_urls) ? image_urls : null,
+      event_date:       event_date || null,
+      event_time:       event_time || null,
+      event_location:   event_location || null,
       posted_by_kind:   'teacher',
       teacher_id:       teacher.id,
       audience_grade:   teacher.grade,

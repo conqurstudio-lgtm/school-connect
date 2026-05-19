@@ -21,7 +21,7 @@ const T = {
   blue:   '#78A6FE',
 }
 
-type Tab = 'class' | 'updates' | 'broadcast'
+type Tab = 'class' | 'posts' | 'updates' | 'broadcast'
 
 interface Props {
   teacherId: string
@@ -262,8 +262,10 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       }}>
         <TabPill active={tab === 'class'} onClick={() => setTab('class')}
           icon={<Users size={13} strokeWidth={1.8} />} label="Class" />
+        <TabPill active={tab === 'posts'} onClick={() => setTab('posts')}
+          icon={<Plus size={13} strokeWidth={1.8} />} label="Posts" />
         <TabPill active={tab === 'updates'} onClick={() => setTab('updates')}
-          icon={<MessageCircle size={13} strokeWidth={1.8} />} label="Updates" />
+          icon={<MessageCircle size={13} strokeWidth={1.8} />} label="Inbox" />
         <TabPill active={tab === 'broadcast'} onClick={() => setTab('broadcast')}
           icon={<Megaphone size={13} strokeWidth={1.8} />} label="Broadcast" />
       </div>
@@ -272,6 +274,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       {tab === 'class' && (
         <ClassRoster kids={children} onChanged={load} />
       )}
+      {tab === 'posts' && <ClassPosts teacher={teacher} />}
       {tab === 'updates' && <UpdatesInbox teacher={teacher} />}
       {tab === 'broadcast' && <BroadcastCompose teacher={teacher} />}
 
@@ -316,6 +319,548 @@ function TabPill({ active, onClick, label, icon }: any) {
       {icon} {label}
     </button>
   )
+}
+
+
+/* ────────────────────────────────────────
+   POSTS TAB — official class posts
+   ──────────────────────────────────────── */
+function ClassPosts({ teacher }: any) {
+  const [posts, setPosts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+
+  const load = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/teacher/feed?scope=class&filter=all', { cache: 'no-store' })
+      const json = await res.json()
+      setPosts(json.posts ?? [])
+    } catch {
+      toast.error('Could not load class posts')
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => { load() }, [])
+
+  const removePost = async (postId: string) => {
+    if (!confirm('Delete this class post?')) return
+    const tid = toast.loading('Deleting…')
+    try {
+      const res = await fetch(`/api/teacher/post?id=${encodeURIComponent(postId)}`, {
+        method: 'DELETE',
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not delete post')
+      toast.success('Post deleted', { id: tid })
+      load()
+    } catch (e: any) {
+      toast.error(e.message || 'Could not delete post', { id: tid })
+    }
+  }
+
+  return (
+    <div style={{ padding: '0 20px 24px' }}>
+      <div style={{
+        padding: '12px 14px',
+        borderRadius: 14,
+        background: '#F4F6FB',
+        display: 'flex',
+        gap: 10,
+        alignItems: 'flex-start',
+        marginBottom: 14,
+      }}>
+        <Megaphone size={14} color={T.blue} strokeWidth={1.8}
+          style={{ flexShrink: 0, marginTop: 2 }} />
+        <p style={{ fontSize: 12, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
+          These are official class updates. Approved parents can view them, but only you can post here.
+        </p>
+      </div>
+
+      <button onClick={() => setShowCreate(true)} style={{
+        width: '100%',
+        padding: '13px 14px',
+        borderRadius: 14,
+        border: 'none',
+        background: T.ink,
+        color: T.white,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        fontSize: 14,
+        fontWeight: 800,
+        marginBottom: 14,
+      }}>
+        <Plus size={14} strokeWidth={2.4} />
+        Create class post
+      </button>
+
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '30px 0' }}>
+          <div style={{
+            width: 16, height: 16, borderRadius: '50%',
+            border: `2px solid ${T.border}`,
+            borderTopColor: T.ink,
+            animation: 'spin 0.7s linear infinite',
+          }} />
+        </div>
+      ) : posts.length === 0 ? (
+        <div style={{
+          padding: '32px 20px',
+          textAlign: 'center',
+          border: `1px dashed ${T.border}`,
+          borderRadius: 14,
+        }}>
+          <Megaphone size={20} color={T.ink3} strokeWidth={1.5}
+            style={{ margin: '0 auto 8px' }} />
+          <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 4px' }}>
+            No class posts yet
+          </p>
+          <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+            Post class updates, moments or events for approved parents to see.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {posts.map((post: any) => (
+            <TeacherClassPostCard
+              key={post.id}
+              post={post}
+              onDelete={() => removePost(post.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {showCreate && (
+        <ClassPostComposer
+          teacher={teacher}
+          onClose={() => setShowCreate(false)}
+          onCreated={() => {
+            setShowCreate(false)
+            load()
+          }}
+        />
+      )}
+    </div>
+  )
+}
+
+function TeacherClassPostCard({ post, onDelete }: any) {
+  const images = Array.isArray(post.image_urls) ? post.image_urls : []
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <article style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 16,
+      overflow: 'hidden',
+    }}>
+      <div style={{ padding: 14 }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+          marginBottom: post.body || post.event_date || images.length ? 8 : 0,
+        }}>
+          <div>
+            <span style={{
+              display: 'inline-flex',
+              padding: '3px 8px',
+              borderRadius: 999,
+              background: '#F0F4FF',
+              color: T.blue,
+              fontSize: 11,
+              fontWeight: 800,
+            }}>
+              {typeLabel}
+            </span>
+            <span style={{ marginLeft: 8, fontSize: 11, color: T.ink3 }}>
+              {relTime(post.created_at)}
+            </span>
+          </div>
+
+          <button onClick={onDelete} style={{
+            width: 30,
+            height: 30,
+            borderRadius: 9,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.red,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <Trash2 size={13} strokeWidth={1.9} />
+          </button>
+        </div>
+
+        {post.body && (
+          <p style={{
+            fontSize: 14,
+            lineHeight: 1.55,
+            color: T.ink,
+            margin: 0,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {post.body}
+          </p>
+        )}
+
+        {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
+          <div style={{
+            marginTop: 9,
+            padding: '9px 10px',
+            borderRadius: 12,
+            background: '#F4F6FB',
+            fontSize: 12,
+            color: T.ink2,
+            lineHeight: 1.5,
+          }}>
+            {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
+            {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
+            {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
+          </div>
+        )}
+      </div>
+
+      {images.length > 0 && (
+        <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
+          {images.slice(0, 4).map((url: string, i: number) => (
+            <img
+              key={`${url}-${i}`}
+              src={url}
+              alt=""
+              style={{
+                width: '100%',
+                maxHeight: 260,
+                objectFit: 'cover',
+                display: 'block',
+                borderRadius: 13,
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </article>
+  )
+}
+
+function ClassPostComposer({ teacher, onClose, onCreated }: any) {
+  const [type, setType] = useState<'update' | 'moment' | 'event'>('update')
+  const [body, setBody] = useState('')
+  const [eventDate, setEventDate] = useState('')
+  const [eventTime, setEventTime] = useState('')
+  const [eventLocation, setEventLocation] = useState('')
+  const [files, setFiles] = useState<File[]>([])
+  const [saving, setSaving] = useState(false)
+
+  const canSubmit =
+    body.trim() ||
+    files.length > 0 ||
+    (type === 'event' && (eventDate || eventTime || eventLocation))
+
+  const uploadImages = async () => {
+    const urls: string[] = []
+
+    for (const file of files) {
+      const form = new FormData()
+      form.append('file', file)
+
+      const res = await fetch('/api/teacher/post-image', {
+        method: 'POST',
+        body: form,
+      })
+
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Could not upload image')
+      urls.push(json.url)
+    }
+
+    return urls
+  }
+
+  const submit = async () => {
+    if (!canSubmit || saving) return
+    setSaving(true)
+    const tid = toast.loading('Publishing…')
+
+    try {
+      const image_urls = files.length > 0 ? await uploadImages() : []
+
+      const res = await fetch('/api/teacher/post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          body: body.trim(),
+          image_urls,
+          event_date: type === 'event' ? eventDate : null,
+          event_time: type === 'event' ? eventTime : null,
+          event_location: type === 'event' ? eventLocation.trim() : null,
+        }),
+      })
+
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Could not publish post')
+
+      toast.success('Class post published', { id: tid })
+      onCreated()
+    } catch (e: any) {
+      toast.error(e.message || 'Could not publish post', { id: tid })
+    }
+
+    setSaving(false)
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 240,
+      background: 'rgba(0,0,0,0.38)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      animation: 'fadeIn 0.2s ease',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        background: T.white,
+        borderRadius: '22px 22px 0 0',
+        padding: 20,
+        animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+        maxHeight: '88dvh',
+        overflowY: 'auto',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 14,
+        }}>
+          <div>
+            <h3 style={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: T.ink,
+              letterSpacing: '-0.025em',
+              margin: 0,
+            }}>
+              Create class post
+            </h3>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0' }}>
+              {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+            </p>
+          </div>
+
+          <button onClick={onClose} style={{
+            width: 34,
+            height: 34,
+            borderRadius: 10,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink3,
+            cursor: 'pointer',
+          }}>
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 8,
+          marginBottom: 12,
+        }}>
+          {[
+            ['update', 'Update'],
+            ['moment', 'Moment'],
+            ['event', 'Event'],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setType(value as any)}
+              style={{
+                padding: '9px 8px',
+                borderRadius: 999,
+                border: type === value ? 'none' : `1px solid ${T.border}`,
+                background: type === value ? T.ink : '#FAFAFC',
+                color: type === value ? T.white : T.ink3,
+                fontSize: 13,
+                fontWeight: 800,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <textarea
+          value={body}
+          onChange={e => setBody(e.target.value)}
+          rows={5}
+          placeholder={
+            type === 'event'
+              ? 'What should parents know about this event?'
+              : type === 'moment'
+                ? 'Share what happened in class...'
+                : 'Write a class update...'
+          }
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '12px 13px',
+            borderRadius: 14,
+            border: `1px solid ${T.border}`,
+            background: '#FAFAFC',
+            color: T.ink,
+            fontSize: 16,
+            outline: 'none',
+            resize: 'none',
+            fontFamily: 'inherit',
+            lineHeight: 1.5,
+          }}
+        />
+
+        {type === 'event' && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 8,
+            marginTop: 10,
+          }}>
+            <input
+              value={eventDate}
+              onChange={e => setEventDate(e.target.value)}
+              placeholder="Event date"
+              type="date"
+              style={classPostInputStyle}
+            />
+            <input
+              value={eventTime}
+              onChange={e => setEventTime(e.target.value)}
+              placeholder="Event time"
+              type="time"
+              style={classPostInputStyle}
+            />
+            <input
+              value={eventLocation}
+              onChange={e => setEventLocation(e.target.value)}
+              placeholder="Location"
+              style={{ ...classPostInputStyle, gridColumn: '1 / -1' }}
+            />
+          </div>
+        )}
+
+        <label style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          marginTop: 10,
+          padding: '11px 13px',
+          borderRadius: 14,
+          border: `1px dashed ${T.border}`,
+          background: '#FAFAFC',
+          color: T.ink2,
+          cursor: 'pointer',
+          fontSize: 13,
+          fontWeight: 800,
+        }}>
+          <Camera size={14} strokeWidth={1.9} />
+          Add photos
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={e => {
+              const picked = Array.from(e.target.files || [])
+              setFiles(picked.slice(0, 4))
+              e.target.value = ''
+            }}
+          />
+        </label>
+
+        {files.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 6,
+            marginTop: 10,
+          }}>
+            {files.map((file, i) => (
+              <div key={`${file.name}-${i}`} style={{
+                borderRadius: 10,
+                overflow: 'hidden',
+                height: 58,
+                background: '#F0F0F4',
+              }}>
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        <button
+          onClick={submit}
+          disabled={!canSubmit || saving}
+          style={{
+            width: '100%',
+            marginTop: 14,
+            padding: '14px',
+            borderRadius: 14,
+            border: 'none',
+            background: !canSubmit || saving ? '#D4D4D8' : T.ink,
+            color: T.white,
+            fontSize: 15,
+            fontWeight: 800,
+            cursor: !canSubmit || saving ? 'not-allowed' : 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          {saving ? 'Publishing…' : 'Publish class post'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const classPostInputStyle: any = {
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '11px 12px',
+  borderRadius: 13,
+  border: `1px solid ${T.border}`,
+  background: '#FAFAFC',
+  color: T.ink,
+  fontSize: 16,
+  outline: 'none',
+  fontFamily: 'inherit',
 }
 
 /* ────────────────────────────────────────
