@@ -310,6 +310,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       </div>
 
       <div style={{ padding: '14px 20px 8px' }}>
+        <ClassInviteCard teacher={teacher} school={school} kids={children} />
         <PendingClassRequests onChanged={load} />
         <ClassChildrenSummary kids={children} onReport={setReportChild} />
       </div>
@@ -1630,6 +1631,184 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
   )
 }
 
+
+function ClassInviteCard({ teacher, school, kids }: any) {
+  const list = Array.isArray(kids) ? kids : []
+  const [origin, setOrigin] = useState('')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin)
+    }
+  }, [])
+
+  const classLabel = `${teacher.grade}${teacher.class_name ? ` · ${teacher.class_name}` : ''}`
+  const classLink = origin ? `${origin}/teachers/${teacher.id}` : `/teachers/${teacher.id}`
+  const totalChildren = list.length
+  const claimedChildren = list.filter((child: any) => Number(child.guardian_count || 0) > 0).length
+  const unclaimedChildren = Math.max(totalChildren - claimedChildren, 0)
+  const allClaimed = totalChildren > 0 && unclaimedChildren === 0
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(classLink)
+      toast.success('Class link copied')
+    } catch {
+      toast.error('Could not copy link')
+    }
+  }
+
+  return (
+    <section style={{
+      marginBottom: 12,
+      padding: 13,
+      borderRadius: 20,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      boxShadow: '0 8px 24px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 12,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Class invite link
+          </p>
+
+          <p style={{
+            fontSize: 11.5,
+            color: T.ink3,
+            margin: '2px 0 0',
+            lineHeight: 1.45,
+          }}>
+            Share this with {classLabel} parents. They request access, then you approve them here.
+          </p>
+        </div>
+
+        <span style={{
+          flexShrink: 0,
+          padding: '6px 9px',
+          borderRadius: 999,
+          background: allClaimed ? '#F0FDF4' : '#F4F6FB',
+          color: allClaimed ? '#15803D' : T.ink2,
+          fontSize: 10.5,
+          fontWeight: 850,
+          whiteSpace: 'nowrap',
+        }}>
+          {allClaimed ? 'All claimed' : `${unclaimedChildren} unclaimed`}
+        </span>
+      </div>
+
+      <div style={{
+        marginTop: 12,
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        gap: 8,
+        alignItems: 'center',
+      }}>
+        <div style={{
+          minWidth: 0,
+          height: 34,
+          borderRadius: 999,
+          background: '#FAFAFC',
+          border: `1px solid ${T.border}`,
+          color: T.ink3,
+          fontSize: 11,
+          display: 'flex',
+          alignItems: 'center',
+          padding: '0 11px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {classLink}
+        </div>
+
+        <button
+          type="button"
+          onClick={copyLink}
+          style={{
+            height: 34,
+            borderRadius: 999,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
+            padding: '0 13px',
+            fontSize: 11.5,
+            fontWeight: 850,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Copy
+        </button>
+      </div>
+
+      <div style={{
+        marginTop: 11,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: 7,
+      }}>
+        <ClassInviteStat label="Children" value={totalChildren} />
+        <ClassInviteStat label="Claimed" value={claimedChildren} />
+        <ClassInviteStat label="Pending" value="Review" />
+      </div>
+
+      {allClaimed && (
+        <p style={{
+          fontSize: 11,
+          color: T.ink3,
+          margin: '10px 0 0',
+          lineHeight: 1.4,
+        }}>
+          Every child has at least one linked parent. Keep the link available for extra guardians or new children.
+        </p>
+      )}
+    </section>
+  )
+}
+
+function ClassInviteStat({ label, value }: any) {
+  return (
+    <div style={{
+      padding: '8px 9px',
+      borderRadius: 14,
+      background: '#F8F8FB',
+      border: `1px solid ${T.border}`,
+      minWidth: 0,
+    }}>
+      <p style={{
+        fontSize: 14,
+        fontWeight: 900,
+        color: T.ink,
+        margin: 0,
+        lineHeight: 1,
+      }}>
+        {value}
+      </p>
+      <p style={{
+        fontSize: 10.2,
+        color: T.ink3,
+        margin: '3px 0 0',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}>
+        {label}
+      </p>
+    </div>
+  )
+}
 
 function ClassChildrenSummary({ kids, onReport }: any) {
   const list = Array.isArray(kids) ? kids : []
