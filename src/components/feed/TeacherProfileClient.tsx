@@ -60,6 +60,7 @@ const [showJoin, setShowJoin] = useState(false)
   const composerDockRef = useRef<HTMLDivElement | null>(null)
   const scrollRafRef = useRef<number | null>(null)
   const previousThreadCountRef = useRef(0)
+  const messageLandingRef = useRef(false)
   const messageScrollReadyRef = useRef(false)
 
   const isMessageListNearBottom = () => {
@@ -179,20 +180,51 @@ const [showJoin, setShowJoin] = useState(false)
   const threadScrollRef = useRef<HTMLDivElement>(null)
 
   const forceScrollToBottom = (smooth = false) => {
-    const run = () => {
-      const el = threadScrollRef.current
-      if (!el) return
+  const run = () => {
+    const el = threadScrollRef.current
+    if (!el) return
 
-      const top = Math.max(0, el.scrollHeight - el.clientHeight)
-      if (typeof el.scrollTo === 'function') {
-        el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
-      } else {
-        el.scrollTop = top
-      }
+    const top = Math.max(0, el.scrollHeight - el.clientHeight)
+    if (typeof el.scrollTo === 'function') {
+      el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
+    } else {
+      el.scrollTop = top
     }
-
-    requestAnimationFrame(run)
   }
+
+  requestAnimationFrame(run)
+}
+
+  // message-landing-slide-v1
+  useEffect(() => {
+    if (!canMessage || classSpaceTab !== 'messages') return
+
+    messageLandingRef.current = true
+
+    const startTimer = window.setTimeout(() => {
+      forceScrollToBottom(false)
+    }, 80)
+
+    const releaseTimer = window.setTimeout(() => {
+      messageLandingRef.current = false
+    }, 520)
+
+    return () => {
+      window.clearTimeout(startTimer)
+      window.clearTimeout(releaseTimer)
+      messageLandingRef.current = false
+    }
+  }, [classSpaceTab, canMessage, teacherId])
+
+  // parent-composer-auto-expand-v1
+  useEffect(() => {
+    const el = messageTextareaRef.current
+    if (!el) return
+
+    el.style.height = 'auto'
+    const nextHeight = Math.min(el.scrollHeight, 92)
+    el.style.height = `${Math.max(nextHeight, 22)}px`
+  }, [message, classSpaceTab])
 
 
   const loadClassLife = async (id = teacherId) => {
@@ -291,8 +323,10 @@ try {
   // positions the internal message container before the browser paints.
   useLayoutEffect(() => {
     if (loading || threadLoading || !canMessage || classSpaceTab !== 'messages') return
+    if (messageLandingRef.current) return
+
     forceScrollToBottom(false)
-  }, [loading, threadLoading, canMessage, classSpaceTab, updates.length, reports.length, teacherId])
+  }, [loading, threadLoading, canMessage, classSpaceTab, teacherId])
 
   // parent-composer-auto-expand-v1
   useEffect(() => {
