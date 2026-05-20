@@ -657,6 +657,10 @@ const handlePickAttachment = async (file?: File | null) => {
 }
 
 function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReports }: any) {
+  const { hidden, dismiss } = useDismissibleClassGuide(`sc-messages-guide:${teacher?.id || 'unknown'}`)
+
+  if (hidden) return null
+
   return (
     <section style={{
       margin: '8px 14px 8px',
@@ -668,7 +672,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
     }}>
       <div style={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 9,
       }}>
         <div style={{
@@ -683,6 +687,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
           fontSize: 9.5,
           fontWeight: 850,
           flexShrink: 0,
+          marginTop: 1,
         }}>
           {!teacher.photo_url && teacher.name?.charAt(0)}
         </div>
@@ -710,6 +715,8 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
             {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} stays connected to class life.
           </p>
         </div>
+
+        <GuideDismissButton onClick={dismiss} />
       </div>
 
       <div style={{
@@ -742,6 +749,52 @@ const messageMiniActionBtn: any = {
   fontWeight: 850,
   cursor: 'pointer',
   fontFamily: 'inherit',
+}
+
+
+function useDismissibleClassGuide(key: string) {
+  const [hidden, setHidden] = useState(false)
+
+  useEffect(() => {
+    try {
+      setHidden(localStorage.getItem(key) === '1')
+    } catch {}
+  }, [key])
+
+  const dismiss = () => {
+    setHidden(true)
+    try { localStorage.setItem(key, '1') } catch {}
+  }
+
+  return { hidden, dismiss }
+}
+
+function GuideDismissButton({ onClick }: any) {
+  return (
+    <button
+      type="button"
+      aria-label="Hide guide"
+      onClick={onClick}
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: '50%',
+        border: `1px solid ${T.border}`,
+        background: '#F8F8FB',
+        color: T.ink3,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        flexShrink: 0,
+        fontFamily: 'inherit',
+        fontSize: 14,
+        lineHeight: 1,
+      }}
+    >
+      ×
+    </button>
+  )
 }
 
 
@@ -830,6 +883,10 @@ function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOp
 }
 
 function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: any) {
+  const { hidden, dismiss } = useDismissibleClassGuide(`sc-class-life-guide:${teacher?.id || 'unknown'}`)
+
+  if (hidden) return null
+
   return (
     <section style={{
       padding: 12,
@@ -839,24 +896,35 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
       marginBottom: 10,
       boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
     }}>
-      <p style={{
-        fontSize: 11.5,
-        fontWeight: 850,
-        color: T.ink,
-        margin: 0,
-        letterSpacing: '-0.01em',
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 10,
       }}>
-        Today in {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
-      </p>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 11.5,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Today in {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+          </p>
 
-      <p style={{
-        fontSize: 10.5,
-        color: T.ink3,
-        margin: '2px 0 10px',
-        lineHeight: 1.35,
-      }}>
-        Class memories, teacher updates, reports and communication stay together here.
-      </p>
+          <p style={{
+            fontSize: 10.5,
+            color: T.ink3,
+            margin: '2px 0 10px',
+            lineHeight: 1.35,
+          }}>
+            Class memories, teacher updates, reports and communication stay together here.
+          </p>
+        </div>
+
+        <GuideDismissButton onClick={dismiss} />
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
         <button type="button" onClick={onOpenMessages} style={classSpaceActionBtn}>
@@ -977,6 +1045,7 @@ function ClassLifePostCard({ post, teacher }: any) {
 
 function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
   const latest = reports?.length ? reports[reports.length - 1] : null
+  const { hidden: reportsGuideHidden, dismiss: dismissReportsGuide } = useDismissibleClassGuide(`sc-reports-guide:${teacher?.id || 'unknown'}`)
 
   return (
     <div style={{
@@ -986,6 +1055,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
       WebkitOverflowScrolling: 'touch',
       padding: '10px 14px calc(var(--sc-bottom-extra, 18px) + env(safe-area-inset-bottom))',
     }}>
+      {!reportsGuideHidden && (
       <section style={{
         padding: 12,
         borderRadius: 18,
@@ -1032,6 +1102,8 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} · child progress record
             </p>
           </div>
+
+          <GuideDismissButton onClick={dismissReportsGuide} />
         </div>
 
         {latest && (
@@ -1060,6 +1132,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
           </div>
         )}
       </section>
+      )}
 
       {reports.length === 0 ? (
         <section style={{
