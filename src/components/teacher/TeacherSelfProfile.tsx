@@ -585,7 +585,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       {showNotifs && (
         <NotificationsSheet
           teacher={teacher}
-          onClose={() => { setShowNotifs(false); setUnread(0) }}
+          onClose={() => setShowNotifs(false)}
           onRead={() => setUnread(0)}
         />
       )}
@@ -2361,6 +2361,7 @@ function UpdatesInbox({ teacher }: any) {
 
 /* Parent thread bottom sheet */
 
+/* teacher-message-ux-polish: applied */
 function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [updates, setUpdates] = useState<any[]>([])
   const [reply,   setReply]   = useState('')
@@ -2716,8 +2717,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                   }}>
                     <div style={{
                       borderRadius: isTeacher ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      background: isTeacher ? T.ink : T.white,
-                      color: isTeacher ? T.white : T.ink,
+                      background: isTeacher ? '#F4F4F6' : T.white,
+                      color: T.ink,
                       border: imageOnly ? 'none' : (isTeacher ? 'none' : `1px solid ${T.border}`),
                       padding: imageOnly ? 0 : '9px 12px',
                       overflow: 'hidden',
@@ -2760,7 +2761,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             left: 12,
             right: 12,
             top: -44,
-            display: showQuickReplies ? 'flex' : 'none',
+            display: showQuickReplies && !reply.trim() ? 'flex' : 'none',
             gap: 8,
             marginBottom: 0,
             overflowX: 'auto',
@@ -2839,6 +2840,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               aria-label="Toggle quick replies"
               onClick={() => setShowQuickReplies((v: boolean) => !v)}
               style={{
+                // teacher-message-ux-polish
+                display: reply.trim() ? 'none' : 'inline-flex',
                 height: 34,
                 padding: '0 11px',
                 borderRadius: 999,
@@ -2857,7 +2860,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
 <textarea
               value={reply}
-              onChange={e => setReply(e.target.value)}
+              onChange={e => { setReply(e.target.value); if (e.target.value.trim()) setShowQuickReplies(false) }}
               onFocus={() => setShowQuickReplies(true)}
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -3283,8 +3286,7 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
     // Current backend marks teacher notifications as read through this endpoint.
     // This clears the bell dot while we keep the UI grouped locally.
     try {
-      await fetch('/api/teacher/notifications', { method: 'POST' })
-    } catch {}
+} catch {}
 
     if (onRead) onRead()
   }
