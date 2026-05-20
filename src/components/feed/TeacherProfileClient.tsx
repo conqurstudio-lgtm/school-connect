@@ -549,7 +549,7 @@ const handlePickAttachment = async (file?: File | null) => {
             borderTop: `1px solid ${T.border}`,
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '6px 12px calc(8px + env(safe-area-inset-bottom))',
+            padding: '6px 12px calc(var(--sc-compose-bottom, 8px) + env(safe-area-inset-bottom))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -803,7 +803,7 @@ function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOp
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(18px + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 18px) + env(safe-area-inset-bottom))',
     }}>
       <ClassSpaceWelcome
         teacher={teacher}
@@ -976,14 +976,91 @@ function ClassLifePostCard({ post, teacher }: any) {
 }
 
 function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
+  const latest = reports?.length ? reports[reports.length - 1] : null
+
   return (
     <div style={{
       flex: 1,
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(18px + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 18px) + env(safe-area-inset-bottom))',
     }}>
+      <section style={{
+        padding: 12,
+        borderRadius: 18,
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        marginBottom: 10,
+        boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 30,
+            height: 30,
+            borderRadius: '50%',
+            background: '#F0F4FF',
+            color: T.blue,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <FileText size={15} strokeWidth={1.8} />
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 11.5,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              Reports and progress
+            </p>
+            <p style={{
+              fontSize: 9.8,
+              color: T.ink3,
+              margin: '-2px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} · child progress record
+            </p>
+          </div>
+        </div>
+
+        {latest && (
+          <div style={{
+            marginTop: 10,
+            padding: '9px 10px',
+            borderRadius: 14,
+            background: '#F8F8FB',
+            border: `1px solid ${T.border}`,
+          }}>
+            <p style={{
+              fontSize: 10.5,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+            }}>
+              Latest report ready
+            </p>
+            <p style={{
+              fontSize: 9.5,
+              color: T.ink3,
+              margin: '-1px 0 0',
+            }}>
+              {formatWeek(latest.week_starting || latest.created_at || latest.published_at)}
+            </p>
+          </div>
+        )}
+      </section>
+
       {reports.length === 0 ? (
         <section style={{
           padding: '46px 24px',
@@ -991,10 +1068,11 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
           background: T.white,
           border: `1px solid ${T.border}`,
           borderRadius: 18,
+          boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
         }}>
           <FileText size={22} color={T.ink3} strokeWidth={1.6} />
           <p style={{
-            fontSize: 13,
+            fontSize: 12.5,
             color: T.ink,
             fontWeight: 850,
             margin: '10px 0 4px',
@@ -1002,7 +1080,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
             No reports yet
           </p>
           <p style={{
-            fontSize: 11.5,
+            fontSize: 11,
             color: T.ink3,
             lineHeight: 1.45,
             margin: 0,
@@ -1018,19 +1096,148 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
           </button>
         </section>
       ) : (
-        reports.map((report: any, index: number) => (
-          <ReportThreadCard
-            key={`report-tab-${report.id || index}`}
-            report={report}
-            teacher={teacher}
-          />
-        ))
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[...reports].reverse().map((report: any, index: number) => (
+            <ClassSpaceReportCard
+              key={`report-card-${report.id || index}`}
+              report={report}
+              teacher={teacher}
+            />
+          ))}
+        </div>
       )}
 
       <PoweredByBar />
     </div>
   )
 }
+
+function ClassSpaceReportCard({ report, teacher }: any) {
+  const scoreValues = Object.values(report.scores || {})
+  const avg = scoreValues.length
+    ? scoreValues.reduce((a: number, b: any) => a + Number(b || 0), 0) / scoreValues.length
+    : 0
+
+  const scoreLabel =
+    avg >= 4 ? 'Strong progress' :
+    avg >= 3 ? 'On track' :
+    avg > 0 ? 'Needs support' :
+    'Progress update'
+
+  return (
+    <article style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+      padding: 12,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+      }}>
+        <div style={{
+          width: 36,
+          height: 36,
+          borderRadius: '50%',
+          background: '#F0F4FF',
+          color: T.blue,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <FileText size={16} strokeWidth={1.8} />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 12.2,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            Weekly Report
+          </p>
+          <p style={{
+            fontSize: 9.8,
+            color: T.ink3,
+            margin: '-2px 0 0',
+          }}>
+            {formatWeek(report.week_starting || report.created_at || report.published_at)}
+          </p>
+        </div>
+
+        <div style={{
+          minWidth: 44,
+          height: 34,
+          padding: '0 9px',
+          borderRadius: 999,
+          background: '#F8F8FB',
+          border: `1px solid ${T.border}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: T.ink,
+          fontSize: 11,
+          fontWeight: 900,
+          flexShrink: 0,
+        }}>
+          {avg ? avg.toFixed(1) : '—'}
+        </div>
+      </div>
+
+      <div style={{
+        display: 'inline-flex',
+        marginTop: 10,
+        padding: '5px 9px',
+        borderRadius: 999,
+        background: '#F4F6FB',
+        color: T.ink2,
+        fontSize: 9.8,
+        fontWeight: 850,
+      }}>
+        {scoreLabel}
+      </div>
+
+      {report.comment && (
+        <p style={{
+          fontSize: 11.5,
+          color: T.ink2,
+          lineHeight: 1.4,
+          margin: '9px 0 0',
+        }}>
+          {report.comment}
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={() => { window.location.href = '/reports' }}
+        style={{
+          width: '100%',
+          height: 36,
+          marginTop: 11,
+          border: 'none',
+          borderRadius: 999,
+          background: T.ink,
+          color: T.white,
+          fontSize: 10.8,
+          fontWeight: 850,
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        View full report
+      </button>
+    </article>
+  )
+}
+
 
 function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
   return (
@@ -1110,7 +1317,7 @@ function PoweredByBar() {
       color: T.ink3,
       textAlign: 'center',
       margin: '14px 0 0',
-      paddingBottom: 'max(2px, env(safe-area-inset-bottom))',
+      paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
       opacity: 0.7,
     }}>
       Powered by School Connect

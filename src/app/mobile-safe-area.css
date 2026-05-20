@@ -5,6 +5,9 @@
   --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
   --sc-safe-left: env(safe-area-inset-left, 0px);
   --sc-mobile-bg: #FCFCFF;
+
+  --sc-bottom-extra: 18px;
+  --sc-compose-bottom: 8px;
 }
 
 html {
@@ -17,6 +20,13 @@ body {
   margin: 0;
   background: var(--sc-mobile-bg);
   overscroll-behavior-y: none;
+  min-height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  body {
+    min-height: 100dvh;
+  }
 }
 
 input,
@@ -40,6 +50,11 @@ input {
 }
 
 @media (display-mode: standalone) {
+  :root {
+    --sc-bottom-extra: 28px;
+    --sc-compose-bottom: 16px;
+  }
+
   html,
   body {
     background: var(--sc-mobile-bg);
