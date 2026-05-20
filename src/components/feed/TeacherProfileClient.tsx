@@ -44,6 +44,9 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [canMessage, setCanMessage] = useState(false)
   const [reports, setReports] = useState<any[]>([])
   const [updates, setUpdates] = useState<any[]>([])
+  const [classSpaceTab, setClassSpaceTab] = useState<'life' | 'messages' | 'reports'>('life')
+  const [classLifePosts, setClassLifePosts] = useState<any[]>([])
+  const [classLifeLoading, setClassLifeLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [threadLoading, setThreadLoading] = useState(false)
 const [showJoin, setShowJoin] = useState(false)
@@ -71,6 +74,28 @@ const [showJoin, setShowJoin] = useState(false)
     run()
     window.requestAnimationFrame(run)
     window.setTimeout(run, 80)
+  }
+
+
+  const loadClassLife = async (id = teacherId) => {
+    setClassLifeLoading(true)
+
+    try {
+      const res = await fetch(`/api/parent/class-life?teacher_id=${encodeURIComponent(id)}`, {
+        cache: 'no-store',
+      })
+      const json = await res.json().catch(() => ({ posts: [] }))
+
+      if (res.ok) {
+        setClassLifePosts(json.posts ?? [])
+      } else {
+        setClassLifePosts([])
+      }
+    } catch {
+      setClassLifePosts([])
+    }
+
+    setClassLifeLoading(false)
   }
 
   const markThreadSeen = async (id = teacherId) => {
@@ -445,6 +470,33 @@ const handlePickAttachment = async (file?: File | null) => {
         </div>
       ) : (
         <>
+          <ClassSpaceTabs
+            active={classSpaceTab}
+            onChange={setClassSpaceTab}
+            reportsCount={reports.length}
+          />
+
+          {classSpaceTab === 'life' && (
+            <ClassLifePanel
+              teacher={teacher}
+              posts={classLifePosts}
+              loading={classLifeLoading}
+              reports={reports}
+              onOpenMessages={() => setClassSpaceTab('messages')}
+              onOpenReports={() => setClassSpaceTab('reports')}
+            />
+          )}
+
+          {classSpaceTab === 'reports' && (
+            <ReportsPanel
+              teacher={teacher}
+              reports={reports}
+              onOpenMessages={() => setClassSpaceTab('messages')}
+            />
+          )}
+
+          {classSpaceTab === 'messages' && (
+            <>
           <div ref={threadScrollRef} style={{
             flex: 1,
             overflowY: 'auto',
@@ -588,11 +640,399 @@ const handlePickAttachment = async (file?: File | null) => {
               </button>
             </div>
           </div>
+            </>
+          )}
         </>
       )}
     </div>
   )
 }
+
+function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
+  const tabs = [
+    { key: 'life', label: 'Class Life' },
+    { key: 'messages', label: 'Messages' },
+    { key: 'reports', label: reportsCount > 0 ? `Reports ${reportsCount}` : 'Reports' },
+  ]
+
+  return (
+    <div style={{
+      flexShrink: 0,
+      padding: '6px 14px 7px',
+      background: 'rgba(252,252,255,0.98)',
+      borderBottom: `1px solid ${T.border}`,
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 6,
+        padding: 3,
+        borderRadius: 999,
+        background: '#F4F4F6',
+      }}>
+        {tabs.map((tab: any) => {
+          const selected = active === tab.key
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onChange(tab.key)}
+              style={{
+                height: 30,
+                borderRadius: 999,
+                border: 'none',
+                background: selected ? T.white : 'transparent',
+                color: selected ? T.ink : T.ink3,
+                fontSize: 10.5,
+                fontWeight: selected ? 850 : 750,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                boxShadow: selected ? '0 5px 14px rgba(0,0,0,0.06)' : 'none',
+              }}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOpenReports }: any) {
+  return (
+    <div style={{
+      flex: 1,
+      minHeight: 0,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      padding: '10px 14px calc(18px + env(safe-area-inset-bottom))',
+    }}>
+      <ClassSpaceWelcome
+        teacher={teacher}
+        reports={reports}
+        onOpenMessages={onOpenMessages}
+        onOpenReports={onOpenReports}
+      />
+
+      {loading ? (
+        <ClassLifeSkeleton />
+      ) : posts.length === 0 ? (
+        <ClassLifeEmpty teacher={teacher} onOpenMessages={onOpenMessages} />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {posts.map((post: any) => (
+            <ClassLifePostCard key={post.id} post={post} teacher={teacher} />
+          ))}
+        </div>
+      )}
+
+      <PoweredByBar />
+    </div>
+  )
+}
+
+function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: any) {
+  return (
+    <section style={{
+      padding: 12,
+      borderRadius: 18,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      marginBottom: 10,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <p style={{
+        fontSize: 11.5,
+        fontWeight: 850,
+        color: T.ink,
+        margin: 0,
+        letterSpacing: '-0.01em',
+      }}>
+        Today in {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+      </p>
+
+      <p style={{
+        fontSize: 10.5,
+        color: T.ink3,
+        margin: '2px 0 10px',
+        lineHeight: 1.35,
+      }}>
+        Class memories, teacher updates, reports and communication stay together here.
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
+        <button type="button" onClick={onOpenMessages} style={classSpaceActionBtn}>
+          Message teacher
+        </button>
+        <button type="button" onClick={onOpenReports} style={classSpaceActionBtn}>
+          Reports {reports?.length ? `(${reports.length})` : ''}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+function ClassLifePostCard({ post, teacher }: any) {
+  const images = Array.isArray(post.image_urls)
+    ? post.image_urls
+    : post.image_url
+      ? [post.image_url]
+      : []
+
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <article style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+      overflow: 'hidden',
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{ padding: 12 }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 9,
+          marginBottom: post.body ? 8 : 0,
+        }}>
+          <div style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 10,
+            fontWeight: 850,
+            flexShrink: 0,
+          }}>
+            {!teacher.photo_url && teacher.name?.charAt(0)}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 11.2,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.name}
+            </p>
+            <p style={{
+              fontSize: 9.5,
+              color: T.ink3,
+              margin: '-2px 0 0',
+            }}>
+              {typeLabel} · {relTime(post.created_at || post.published_at)}
+            </p>
+          </div>
+        </div>
+
+        {post.body && (
+          <p style={{
+            fontSize: 12.2,
+            lineHeight: 1.38,
+            color: T.ink2,
+            margin: 0,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {post.body}
+          </p>
+        )}
+      </div>
+
+      {images.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gap: 1,
+          gridTemplateColumns: images.length > 1 ? '1fr 1fr' : '1fr',
+        }}>
+          {images.slice(0, 4).map((url: string, index: number) => (
+            <img
+              key={`${url}-${index}`}
+              src={url}
+              alt=""
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: images.length > 1 ? 150 : 220,
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </article>
+  )
+}
+
+function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
+  return (
+    <div style={{
+      flex: 1,
+      minHeight: 0,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      padding: '10px 14px calc(18px + env(safe-area-inset-bottom))',
+    }}>
+      {reports.length === 0 ? (
+        <section style={{
+          padding: '46px 24px',
+          textAlign: 'center',
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 18,
+        }}>
+          <FileText size={22} color={T.ink3} strokeWidth={1.6} />
+          <p style={{
+            fontSize: 13,
+            color: T.ink,
+            fontWeight: 850,
+            margin: '10px 0 4px',
+          }}>
+            No reports yet
+          </p>
+          <p style={{
+            fontSize: 11.5,
+            color: T.ink3,
+            lineHeight: 1.45,
+            margin: 0,
+          }}>
+            Reports from {teacher.name} will appear here when they are published.
+          </p>
+          <button type="button" onClick={onOpenMessages} style={{
+            ...classSpaceActionBtn,
+            width: '100%',
+            marginTop: 14,
+          }}>
+            Message teacher
+          </button>
+        </section>
+      ) : (
+        reports.map((report: any, index: number) => (
+          <ReportThreadCard
+            key={`report-tab-${report.id || index}`}
+            report={report}
+            teacher={teacher}
+          />
+        ))
+      )}
+
+      <PoweredByBar />
+    </div>
+  )
+}
+
+function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
+  return (
+    <section style={{
+      padding: '46px 24px',
+      textAlign: 'center',
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+    }}>
+      <div style={{
+        width: 46,
+        height: 46,
+        borderRadius: '50%',
+        background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+        margin: '0 auto 12px',
+      }} />
+      <p style={{
+        fontSize: 13,
+        color: T.ink,
+        fontWeight: 850,
+        margin: '0 0 4px',
+      }}>
+        Class Life will appear here
+      </p>
+      <p style={{
+        fontSize: 11.5,
+        color: T.ink3,
+        lineHeight: 1.45,
+        margin: 0,
+      }}>
+        Updates, memories and documents from {teacher.name} will live here.
+      </p>
+      <button type="button" onClick={onOpenMessages} style={{
+        ...classSpaceActionBtn,
+        width: '100%',
+        marginTop: 14,
+      }}>
+        Message teacher
+      </button>
+    </section>
+  )
+}
+
+function ClassLifeSkeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {[0, 1, 2].map((i) => (
+        <div key={i} style={{
+          padding: 12,
+          borderRadius: 18,
+          background: T.white,
+          border: `1px solid ${T.border}`,
+        }}>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
+            <SkeletonBlock style={{ width: 28, height: 28, borderRadius: '50%' }} />
+            <div style={{ flex: 1 }}>
+              <SkeletonBlock style={{ width: '42%', height: 10, borderRadius: 999, marginBottom: 7 }} />
+              <SkeletonBlock style={{ width: '28%', height: 8, borderRadius: 999 }} />
+            </div>
+          </div>
+          <SkeletonBlock style={{ width: '92%', height: 10, borderRadius: 999, marginTop: 14 }} />
+          <SkeletonBlock style={{ width: '68%', height: 10, borderRadius: 999, marginTop: 7 }} />
+          {i === 1 && (
+            <SkeletonBlock style={{ width: '100%', height: 150, borderRadius: 14, marginTop: 12 }} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PoweredByBar() {
+  return (
+    <p style={{
+      fontSize: 9.5,
+      color: T.ink3,
+      textAlign: 'center',
+      margin: '14px 0 0',
+      paddingBottom: 'max(2px, env(safe-area-inset-bottom))',
+      opacity: 0.7,
+    }}>
+      Powered by School Connect
+    </p>
+  )
+}
+
+const classSpaceActionBtn: any = {
+  height: 34,
+  borderRadius: 999,
+  border: `1px solid ${T.border}`,
+  background: '#F8F8FB',
+  color: T.ink2,
+  fontSize: 10.8,
+  fontWeight: 850,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
 
 function MessageRow({ update, teacher }: any) {
   const teacherInitials = teacher.name

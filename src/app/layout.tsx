@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import { PwaPauseCleanup } from '@/components/pwa/PwaPauseCleanup'
 import '@/styles/globals.css'
+import './mobile-safe-area.css'
 
 // Self-hosted via next/font — zero network request, no FOUT, subset to latin only
 const inter = Inter({

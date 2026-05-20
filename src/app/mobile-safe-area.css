@@ -1,0 +1,47 @@
+/* School Connect mobile app foundation */
+:root {
+  --sc-safe-top: env(safe-area-inset-top, 0px);
+  --sc-safe-right: env(safe-area-inset-right, 0px);
+  --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --sc-safe-left: env(safe-area-inset-left, 0px);
+  --sc-mobile-bg: #FCFCFF;
+}
+
+html {
+  background: var(--sc-mobile-bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--sc-mobile-bg);
+  overscroll-behavior-y: none;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+button,
+input,
+textarea,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+textarea,
+input {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@media (display-mode: standalone) {
+  html,
+  body {
+    background: var(--sc-mobile-bg);
+  }
+}
