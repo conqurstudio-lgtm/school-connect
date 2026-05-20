@@ -303,6 +303,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [updates, setUpdates] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [threadLoading, setThreadLoading] = useState(false)
+  const [threadSettled, setThreadSettled] = useState(false)
   const [showJoin, setShowJoin] = useState(false)
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
@@ -352,6 +353,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
     // Messages load as an inline thread state instead of blocking the whole screen.
     setLoading(true)
     setThreadLoading(false)
+    setThreadSettled(false)
 
     try {
       const res = await fetch(`/api/teachers/${teacherId}/profile`, { cache: 'no-store' })
@@ -376,6 +378,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
         loadThread(json.teacher.id)
       } else {
         setUpdates([])
+        setThreadSettled(true)
       }
     } catch (e: any) {
       setLoading(false)
@@ -384,7 +387,12 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   const loadThread = async (id = teacherId) => {
+    // parent-thread-open-no-jump-v1:
+    // Keep the thread covered by the inline loader until we have positioned the
+    // internal scroll container at the latest message. This prevents the user
+    // seeing old messages first and then watching the page jump to the bottom.
     setThreadLoading(true)
+    setThreadSettled(false)
 
     try {
       const res = await fetch(`/api/updates?teacher_id=${encodeURIComponent(id)}`, { cache: 'no-store' })
@@ -397,22 +405,29 @@ export function TeacherProfileClient({ teacherId }: Props) {
 
         try { await markThreadSeen(id) } catch {}
 
-        window.requestAnimationFrame(() => forceScrollToBottom(false))
+        window.requestAnimationFrame(() => {
+          forceScrollToBottom(false)
+          window.requestAnimationFrame(() => {
+            forceScrollToBottom(false)
+            setThreadSettled(true)
+            setThreadLoading(false)
+          })
+        })
+        return
       }
-    } catch {
-    } finally {
-      setThreadLoading(false)
-    }
-  }
+    } catch {}
 
+    setThreadSettled(true)
+    setThreadLoading(false)
+  }
   useEffect(() => { load() }, [teacherId])
   // parent-thread-scroll-v1:
   // One reliable scroll trigger after the visible thread data is ready.
   // Avoid duplicate delayed scroll effects that can create jumpiness.
   useLayoutEffect(() => {
-    if (loading || threadLoading || !canMessage) return
+    if (loading || threadLoading || !threadSettled || !canMessage) return
     forceScrollToBottom(false)
-  }, [loading, threadLoading, canMessage, updates.length, reports.length, teacherId])
+  }, [loading, threadLoading, threadSettled, canMessage, updates.length, reports.length, teacherId])
 
 const handlePickAttachment = async (file?: File | null) => {
     if (!file) return
@@ -714,7 +729,7 @@ const handlePickAttachment = async (file?: File | null) => {
             overscrollBehavior: 'contain',
             padding: '10px 0 90px',
           }}>
-            {threadLoading && threadItems.length === 0 ? (
+            {(!threadSettled || threadLoading) ? (
               <ConversationLoading />
             ) : threadItems.length === 0 ? (
               <EmptyConversation teacher={teacher} />
