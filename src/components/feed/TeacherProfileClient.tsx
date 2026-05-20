@@ -77,97 +77,131 @@ function updateAttachment(update: any): AttachmentDraft | null {
 }
 
 function AttachmentCard({ attachment, compact = false, onRemove, flush = false }: any) {
+  // message-image-viewer-v1
   if (!attachment) return null
 
+  const [viewerOpen, setViewerOpen] = useState(false)
   const isImage = attachment.is_image || attachment.type?.startsWith?.('image/')
-  const fileName = attachment.name || (isImage ? 'image' : 'document')
+  const fileName = attachment.name || (isImage ? 'Image' : 'Document')
 
   if (isImage) {
     return (
-      <div style={{
-        marginTop: flush ? 0 : 8,
-        position: 'relative',
-        maxWidth: compact ? 132 : '100%',
-        width: flush ? '100%' : undefined,
-      }}>
-        <a
-          href={attachment.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Open image"
-          style={{
-            display: 'block',
-            lineHeight: 0,
-            borderRadius: flush ? 0 : 14,
-            overflow: 'hidden',
-          }}
-        >
-          <img
-            src={attachment.url}
-            alt={fileName}
+      <>
+        <div style={{
+          marginTop: flush ? 0 : 8,
+          position: 'relative',
+          maxWidth: compact ? 132 : '100%',
+          width: flush ? '100%' : undefined,
+        }}>
+          <button
+            type="button"
+            onClick={() => setViewerOpen(true)}
+            title="Open image"
             style={{
-              width: compact ? 104 : '100%',
-              maxHeight: compact ? 104 : 320,
-              objectFit: 'cover',
-              borderRadius: flush ? 0 : 14,
               display: 'block',
-              border: flush ? 'none' : `1px solid ${T.border}`,
+              width: compact ? 104 : '100%',
+              padding: 0,
+              margin: 0,
+              border: 'none',
+              background: 'transparent',
+              lineHeight: 0,
+              borderRadius: flush ? 0 : 14,
+              overflow: 'hidden',
               cursor: 'zoom-in',
             }}
-          />
-        </a>
+          >
+            <img
+              src={attachment.url}
+              alt={fileName}
+              style={{
+                width: '100%',
+                maxHeight: compact ? 104 : 320,
+                objectFit: 'cover',
+                borderRadius: flush ? 0 : 14,
+                display: 'block',
+                border: flush ? 'none' : `1px solid ${T.border}`,
+              }}
+            />
+          </button>
 
-        {!compact && (
-          <a
-            href={attachment.url}
-            download={fileName}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              position: flush ? 'absolute' : 'static',
-              right: flush ? 8 : undefined,
-              bottom: flush ? 8 : undefined,
-              display: 'inline-flex',
+          {onRemove && (
+            <button onClick={onRemove} style={{
+              position: 'absolute',
+              top: -7,
+              right: -7,
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: flush ? 0 : 7,
-              height: 28,
-              padding: '0 10px',
-              borderRadius: 999,
-              background: flush ? 'rgba(255,255,255,0.88)' : '#F4F4F6',
-              backdropFilter: flush ? 'blur(10px)' : undefined,
-              WebkitBackdropFilter: flush ? 'blur(10px)' : undefined,
-              color: T.ink2,
-              border: `1px solid ${T.border}`,
-              fontSize: 11,
-              fontWeight: 750,
-              textDecoration: 'none',
+              cursor: 'pointer',
+            }}>
+              <X size={13} strokeWidth={2.1} />
+            </button>
+          )}
+        </div>
+
+        {viewerOpen && (
+          <div
+            onClick={() => setViewerOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              background: 'rgba(0,0,0,0.82)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 18,
             }}
           >
-            Download
-          </a>
-        )}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setViewerOpen(false)
+              }}
+              aria-label="Close image"
+              style={{
+                position: 'fixed',
+                top: 18,
+                right: 18,
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                border: '1px solid rgba(255,255,255,0.22)',
+                background: 'rgba(255,255,255,0.12)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }}
+            >
+              <X size={20} strokeWidth={2.1} />
+            </button>
 
-        {onRemove && (
-          <button onClick={onRemove} style={{
-            position: 'absolute',
-            top: -7,
-            right: -7,
-            width: 24,
-            height: 24,
-            borderRadius: '50%',
-            border: `1px solid ${T.border}`,
-            background: T.white,
-            color: T.ink2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}>
-            <X size={13} strokeWidth={2.1} />
-          </button>
+            <img
+              src={attachment.url}
+              alt={fileName}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '86dvh',
+                objectFit: 'contain',
+                borderRadius: 18,
+                boxShadow: '0 20px 80px rgba(0,0,0,0.35)',
+              }}
+            />
+          </div>
         )}
-      </div>
+      </>
     )
   }
 
@@ -179,7 +213,6 @@ function AttachmentCard({ attachment, compact = false, onRemove, flush = false }
     }}>
       <a
         href={attachment.url}
-        download={fileName}
         target="_blank"
         rel="noopener noreferrer"
         style={{
@@ -842,8 +875,6 @@ export function TeacherProfileClient({ teacherId }: Props) {
 }
 
 function MessageRow({ update, teacher }: any) {
-  // parent-image-bubble-frame-v2
-  // Parent relationship thread now uses the same image-inside-bubble treatment as the teacher thread.
   const isTeacher = update.author_kind === 'teacher'
   const attachment = updateAttachment(update)
   const imageOnly = !!attachment
@@ -891,7 +922,7 @@ function MessageRow({ update, teacher }: any) {
           borderRadius: isTeacher ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
           background: isTeacher ? T.white : '#F4F4F6',
           color: T.ink,
-          border: isTeacher ? `1px solid ${T.border}` : 'none',
+          border: imageOnly ? 'none' : (isTeacher ? `1px solid ${T.border}` : 'none'),
           padding: imageOnly ? 0 : '9px 12px',
           overflow: 'hidden',
         }}>
@@ -921,6 +952,7 @@ function MessageRow({ update, teacher }: any) {
     </article>
   )
 }
+
 
 function ReplyBubble({ reply, teacher }: any) {
   const isTeacher = !!reply.teacher_id

@@ -61,28 +61,185 @@ function updateAttachment(update: any): AttachmentDraft | null {
   return null
 }
 
-function AttachmentCard({ attachment, compact = false, onRemove }: any) {
+function AttachmentCard({ attachment, compact = false, onRemove, flush = false }: any) {
+  // message-image-viewer-v1
   if (!attachment) return null
 
+  const [viewerOpen, setViewerOpen] = useState(false)
   const isImage = attachment.is_image || attachment.type?.startsWith?.('image/')
+  const fileName = attachment.name || (isImage ? 'Image' : 'Document')
 
   if (isImage) {
     return (
-      <div style={{ marginTop: 8, position: 'relative', maxWidth: compact ? 130 : '100%' }}>
-        <img
-          src={attachment.url}
-          alt={attachment.name || 'Attachment'}
+      <>
+        <div style={{
+          marginTop: flush ? 0 : 8,
+          position: 'relative',
+          maxWidth: compact ? 132 : '100%',
+          width: flush ? '100%' : undefined,
+        }}>
+          <button
+            type="button"
+            onClick={() => setViewerOpen(true)}
+            title="Open image"
+            style={{
+              display: 'block',
+              width: compact ? 104 : '100%',
+              padding: 0,
+              margin: 0,
+              border: 'none',
+              background: 'transparent',
+              lineHeight: 0,
+              borderRadius: flush ? 0 : 14,
+              overflow: 'hidden',
+              cursor: 'zoom-in',
+            }}
+          >
+            <img
+              src={attachment.url}
+              alt={fileName}
+              style={{
+                width: '100%',
+                maxHeight: compact ? 104 : 320,
+                objectFit: 'cover',
+                borderRadius: flush ? 0 : 14,
+                display: 'block',
+                border: flush ? 'none' : `1px solid ${T.border}`,
+              }}
+            />
+          </button>
+
+          {onRemove && (
+            <button onClick={onRemove} style={{
+              position: 'absolute',
+              top: -7,
+              right: -7,
+              width: 24,
+              height: 24,
+              borderRadius: '50%',
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}>
+              <X size={13} strokeWidth={2.1} />
+            </button>
+          )}
+        </div>
+
+        {viewerOpen && (
+          <div
+            onClick={() => setViewerOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              background: 'rgba(0,0,0,0.82)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 18,
+            }}
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setViewerOpen(false)
+              }}
+              aria-label="Close image"
+              style={{
+                position: 'fixed',
+                top: 18,
+                right: 18,
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                border: '1px solid rgba(255,255,255,0.22)',
+                background: 'rgba(255,255,255,0.12)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }}
+            >
+              <X size={20} strokeWidth={2.1} />
+            </button>
+
+            <img
+              src={attachment.url}
+              alt={fileName}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '86dvh',
+                objectFit: 'contain',
+                borderRadius: 18,
+                boxShadow: '0 20px 80px rgba(0,0,0,0.35)',
+              }}
+            />
+          </div>
+        )}
+      </>
+    )
+  }
+
+  return (
+    <div style={{
+      marginTop: 8,
+      position: 'relative',
+      maxWidth: compact ? 230 : '100%',
+    }}>
+      <a
+        href={attachment.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: compact ? '8px 9px' : '10px 12px',
+          borderRadius: 14,
+          background: '#F4F4F6',
+          border: `1px solid ${T.border}`,
+          color: T.ink,
+          textDecoration: 'none',
+        }}
+      >
+        <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
+        <span style={{
+          fontSize: compact ? 12 : 13,
+          fontWeight: 700,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          flex: 1,
+        }}>
+          {fileName}
+        </span>
+        {!compact && (
+          <span style={{
+            fontSize: 11,
+            color: T.ink3,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}>
+            Open
+          </span>
+        )}
+      </a>
+
+      {onRemove && (
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); onRemove() }}
           style={{
-            width: compact ? 96 : '100%',
-            maxHeight: compact ? 96 : 280,
-            objectFit: 'cover',
-            borderRadius: 14,
-            display: 'block',
-            border: `1px solid ${T.border}`,
-          }}
-        />
-        {onRemove && (
-          <button onClick={onRemove} style={{
             position: 'absolute',
             top: -7,
             right: -7,
@@ -96,68 +253,15 @@ function AttachmentCard({ attachment, compact = false, onRemove }: any) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-          }}>
-            <X size={13} strokeWidth={2.1} />
-          </button>
-        )}
-      </div>
-    )
-  }
-
-  return (
-    <a
-      href={attachment.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        marginTop: 8,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: compact ? '8px 9px' : '10px 12px',
-        borderRadius: 14,
-        background: '#F4F4F6',
-        border: `1px solid ${T.border}`,
-        color: T.ink,
-        textDecoration: 'none',
-        maxWidth: compact ? 220 : '100%',
-      }}
-    >
-      <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
-      <span style={{
-        fontSize: compact ? 12 : 13,
-        fontWeight: 700,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        flex: 1,
-      }}>
-        {attachment.name || 'Document'}
-      </span>
-      {onRemove && (
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); onRemove() }}
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: '50%',
-            border: 'none',
-            background: 'rgba(0,0,0,0.05)',
-            color: T.ink2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            flexShrink: 0,
           }}
         >
           <X size={12} strokeWidth={2.2} />
         </button>
       )}
-    </a>
+    </div>
   )
 }
+
 
 
 function AttachmentPreviewTray({ attachment, onRemove }: any) {
@@ -2560,6 +2664,9 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             sortMessagesOldestFirst(updates).map((u: any) => {
               const isTeacher = u.author_kind === 'teacher'
                 const attachment = updateAttachment(u)
+                const imageOnly = !!attachment
+                  && (attachment.is_image || attachment.type?.startsWith?.('image/'))
+                  && !String(u.body || '').trim()
               return (
                 <div key={u.id} style={{
                   display: 'flex',
@@ -2599,8 +2706,9 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                       borderRadius: isTeacher ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                       background: isTeacher ? T.ink : T.white,
                       color: isTeacher ? T.white : T.ink,
-                      border: isTeacher ? 'none' : `1px solid ${T.border}`,
-                      padding: '9px 12px',
+                      border: imageOnly ? 'none' : (isTeacher ? 'none' : `1px solid ${T.border}`),
+                      padding: imageOnly ? 0 : '9px 12px',
+                      overflow: 'hidden',
                     }}>
                       {u.body && (
                         <p style={{
@@ -2612,7 +2720,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                           {u.body}
                         </p>
                       )}
-                      {attachment && <AttachmentCard attachment={attachment} />}
+                      {attachment && <AttachmentCard attachment={attachment} flush={imageOnly} />}
                     </div>
 
                     <p style={{ fontSize: 10, color: T.ink3, margin: '4px 4px 0' }}>
