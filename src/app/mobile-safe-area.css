@@ -7,13 +7,12 @@
   --sc-mobile-bg: #FCFCFF;
 
   /*
-    Class Space bottom behavior:
-    - Panels need a little extra bottom breathing.
-    - Message composer should sit lower and use the safe area instead of floating too high.
+    Message composer should use the iPhone safe-area instead of floating far above it.
+    The thread reserve only needs to protect the compact composer height.
   */
-  --sc-bottom-extra: 14px;
-  --sc-compose-bottom: 2px;
-  --sc-thread-bottom: 58px;
+  --sc-bottom-extra: 12px;
+  --sc-compose-bottom: 0px;
+  --sc-thread-bottom: 42px;
 }
 
 html {
@@ -55,12 +54,11 @@ input {
   appearance: none;
 }
 
-/* When saved to iPhone home screen, keep it app-like without lifting the composer too high. */
 @media (display-mode: standalone) {
   :root {
-    --sc-bottom-extra: 18px;
-    --sc-compose-bottom: 1px;
-    --sc-thread-bottom: 54px;
+    --sc-bottom-extra: 14px;
+    --sc-compose-bottom: 0px;
+    --sc-thread-bottom: 40px;
   }
 
   html,

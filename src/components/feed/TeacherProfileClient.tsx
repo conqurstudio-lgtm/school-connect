@@ -510,7 +510,7 @@ const handlePickAttachment = async (file?: File | null) => {
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '4px 0 calc(var(--sc-thread-bottom, 58px) + env(safe-area-inset-bottom))',
+            padding: '4px 0 calc(var(--sc-thread-bottom, 42px) + env(safe-area-inset-bottom))',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -545,11 +545,11 @@ const handlePickAttachment = async (file?: File | null) => {
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.97)',
-            borderTop: `1px solid ${T.border}`,
-            backdropFilter: 'blur(12px)',
+            background: 'rgba(252,252,255,0.92)',
+            borderTop: 'none',
+            backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '5px 10px calc(var(--sc-compose-bottom, 2px) + env(safe-area-inset-bottom))',
+            padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -559,12 +559,12 @@ const handlePickAttachment = async (file?: File | null) => {
             <div style={{
               display: 'flex',
               alignItems: 'flex-end',
-              gap: 6,
+              gap: 5,
               background: T.white,
               border: `1px solid ${T.border}`,
-              borderRadius: 18,
-              padding: '5px 6px 5px 9px',
-              boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
+              borderRadius: 16,
+              padding: '3px 5px 3px 8px',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
             }}>
               <input
                 ref={fileInputRef}
@@ -584,8 +584,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingAttachment}
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 27,
+                  height: 27,
                   borderRadius: '50%',
                   border: 'none',
                   background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -597,7 +597,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   flexShrink: 0,
                 }}
               >
-                <Paperclip size={15} strokeWidth={2.1} />
+                <Paperclip size={13} strokeWidth={2.1} />
               </button>
 
               <textarea
@@ -619,10 +619,13 @@ const handlePickAttachment = async (file?: File | null) => {
                   background: 'transparent',
                   color: T.ink,
                   fontSize: 16,
-                  lineHeight: 1.35,
-                  maxHeight: 74,
+                  lineHeight: 1.25,
+                  transform: 'scale(0.74)',
+                  transformOrigin: 'left center',
+                  width: '135%',
+                  maxHeight: 58,
                   fontFamily: 'inherit',
-                  padding: '5px 0',
+                  padding: '3px 0',
                 }}
               />
 
@@ -631,8 +634,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 disabled={(!message.trim() && !attachment) || sending}
                 aria-label="Send"
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 27,
+                  height: 27,
                   borderRadius: '50%',
                   border: 'none',
                   background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
@@ -644,7 +647,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   flexShrink: 0,
                 }}
               >
-                <Send size={15} strokeWidth={2.2} />
+                <Send size={13} strokeWidth={2.2} />
               </button>
             </div>
           </div>
@@ -856,7 +859,7 @@ function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOp
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(var(--sc-bottom-extra, 14px) + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
     }}>
       <ClassSpaceWelcome
         teacher={teacher}
@@ -1053,7 +1056,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(var(--sc-bottom-extra, 14px) + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
     }}>
       {!reportsGuideHidden && (
       <section style={{
@@ -1390,7 +1393,7 @@ function PoweredByBar() {
       color: T.ink3,
       textAlign: 'center',
       margin: '14px 0 0',
-      paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+      paddingBottom: 0,
       opacity: 0.7,
     }}>
       Powered by School Connect
@@ -1467,7 +1470,7 @@ function ReportThreadCard({ report, teacher }: any) {
         border: `1px solid ${T.border}`,
         borderRadius: 18,
         padding: 14,
-        boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
+        boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -1655,7 +1658,7 @@ function ParentTeacherPageSkeleton() {
 
       <div style={{
         flexShrink: 0,
-        padding: '5px 10px calc(var(--sc-compose-bottom, 2px) + env(safe-area-inset-bottom))',
+        padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
         background: 'rgba(252,252,255,0.96)',
       }}>
         <div style={{
@@ -1666,7 +1669,7 @@ function ParentTeacherPageSkeleton() {
           border: `1px solid ${T.border}`,
           borderRadius: 18,
           padding: '5px 6px 5px 9px',
-          boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
         }}>
           <SkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
           <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
