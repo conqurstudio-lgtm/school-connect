@@ -65,11 +65,8 @@ async function getCaller(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const caller = await getCaller(req)
-  if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
   const sb = adminClient()
-  const profile = caller.profile
+  const publicMode = req.nextUrl.searchParams.get('public') === '1'
 
   const { data: teacher } = await sb.from('teachers')
     .select('id, name, photo_url, grade, class_name, school_id, status')
@@ -78,6 +75,29 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     .single()
 
   if (!teacher) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  if (publicMode) {
+    return NextResponse.json({
+      teacher: {
+        id: teacher.id,
+        name: teacher.name,
+        photo_url: teacher.photo_url,
+        grade: teacher.grade,
+        class_name: teacher.class_name,
+      },
+      is_my_teacher: false,
+      join_status: 'none',
+      join_request: null,
+      posts: [],
+      reports: [],
+      public_mode: true,
+    })
+  }
+
+  const caller = await getCaller(req)
+  if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const profile = caller.profile
 
   if (profile.school_id !== teacher.school_id) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })

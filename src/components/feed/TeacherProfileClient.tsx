@@ -30,6 +30,7 @@ const T = {
 
 interface Props {
   teacherId: string
+  publicMode?: boolean
 }
 
 
@@ -37,7 +38,7 @@ type ThreadItem =
   | { kind: 'message'; created_at: string; data: any }
   | { kind: 'report'; created_at: string; data: any }
 
-export function TeacherProfileClient({ teacherId }: Props) {
+export function TeacherProfileClient({ teacherId, publicMode = false }: Props) {
   const router = useRouter()
   const [hydrated, setHydrated] = useState(false)
   const [teacher, setTeacher] = useState<any>(null)
@@ -233,10 +234,16 @@ const [showJoin, setShowJoin] = useState(false)
     setLoading(true)
     setThreadLoading(false)
 try {
-      const res = await fetch(`/api/teachers/${teacherId}/profile`, { cache: 'no-store' })
+      const res = await fetch(`/api/teachers/${teacherId}/profile${publicMode ? '?public=1' : ''}`, { cache: 'no-store' })
       const json = await res.json()
 
       if (res.status === 401) {
+        if (publicMode) {
+          setCanMessage(false)
+          setJoinStatus('none')
+          throw new Error('Could not load public class invite')
+        }
+
         window.location.href = '/auth/login'
         return
       }
@@ -284,7 +291,7 @@ try {
       setThreadLoading(false)
     }
   }
-  useEffect(() => { load() }, [teacherId])
+  useEffect(() => { load() }, [teacherId, publicMode])
   // parent-thread-fast-open-v2:
   // Keep the thread feeling instant. When messages arrive, useLayoutEffect
   // positions the internal message container before the browser paints.
