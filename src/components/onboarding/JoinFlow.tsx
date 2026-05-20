@@ -338,6 +338,8 @@ function AuthStep({ schoolId, schoolName, onSignedIn }: any) {
 function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
   const [children, setChildren] = useState<any[]>([])
   const [myChildIds, setMyChildIds] = useState<string[]>([])
+  const [myChildren, setMyChildren] = useState<any[]>([])
+  const [mineLoading, setMineLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [grade, setGrade] = useState('')
   const [loading, setLoading] = useState(false)
@@ -345,6 +347,29 @@ function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
 
   const pickedIds = alreadyPicked.map((c: any) => c.id)
   const normalizedSearch = search.trim()
+
+  useEffect(() => {
+    let alive = true
+    setMineLoading(true)
+
+    fetch(`/api/onboarding/children?school_id=${school.id}&mine=1`)
+      .then(r => r.json())
+      .then(j => {
+        if (!alive) return
+        setMyChildIds(j.my_child_ids ?? [])
+        setMyChildren(j.my_children ?? [])
+      })
+      .catch(() => {
+        if (!alive) return
+        setMyChildren([])
+      })
+      .finally(() => {
+        if (!alive) return
+        setMineLoading(false)
+      })
+
+    return () => { alive = false }
+  }, [school.id])
 
   useEffect(() => {
     let alive = true
@@ -370,6 +395,7 @@ function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
           if (!alive) return
           setChildren(j.children ?? [])
           setMyChildIds(j.my_child_ids ?? [])
+          setMyChildren(j.my_children ?? [])
         })
         .catch(() => {
           if (!alive) return
@@ -391,6 +417,20 @@ function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
     const skip = new Set([...pickedIds, ...myChildIds])
     return children.filter((child: any) => !skip.has(child.id))
   }, [children, pickedIds.join(','), myChildIds.join(',')])
+
+  const connectedChildren = useMemo(() => {
+    const map = new Map<string, any>()
+
+    for (const child of myChildren) {
+      if (child?.id) map.set(child.id, child)
+    }
+
+    for (const child of alreadyPicked) {
+      if (child?.id) map.set(child.id, child)
+    }
+
+    return Array.from(map.values())
+  }, [myChildren, alreadyPicked])
 
   const groups: Record<string, any[]> = {}
   for (const c of visibleChildren) {
@@ -447,6 +487,10 @@ function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
           Search by name, then tap “This is my child”. This keeps the school list private.
         </p>
       </div>
+
+      {mineLoading ? null : connectedChildren.length > 0 && (
+        <ConnectedChildrenCard children={connectedChildren} />
+      )}
 
       <div style={{ padding: '0 24px 14px' }}>
         <div style={{
@@ -669,6 +713,141 @@ function ChildrenStep({ school, alreadyPicked, onPicked, onCantFind }: any) {
     </div>
   )
 }
+
+function ConnectedChildrenCard({ children }: any) {
+  return (
+    <div style={{ padding: '0 24px 16px' }}>
+      <div style={{
+        padding: 14,
+        borderRadius: 16,
+        background: '#F4F6FB',
+        border: `1px solid ${T.border}`,
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 12,
+          marginBottom: 10,
+        }}>
+          <div>
+            <p style={{
+              fontSize: 13,
+              fontWeight: 800,
+              color: T.ink,
+              margin: '0 0 3px',
+            }}>
+              Connected children
+            </p>
+            <p style={{
+              fontSize: 12,
+              color: T.ink3,
+              margin: 0,
+              lineHeight: 1.45,
+            }}>
+              These children are already linked to your parent profile.
+            </p>
+          </div>
+
+          <span style={{
+            height: 24,
+            minWidth: 24,
+            padding: '0 8px',
+            borderRadius: 999,
+            background: T.ink,
+            color: T.white,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 11,
+            fontWeight: 850,
+            flexShrink: 0,
+          }}>
+            {children.length}
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {children.map((child: any) => (
+            <div key={child.id} style={{
+              padding: '9px 10px',
+              borderRadius: 13,
+              background: T.white,
+              border: `1px solid ${T.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}>
+              <div style={{
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                background: '#F0F0F4',
+                color: T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 850,
+                flexShrink: 0,
+              }}>
+                {String(child.name || 'C').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+              </div>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{
+                  fontSize: 13.5,
+                  fontWeight: 750,
+                  color: T.ink,
+                  margin: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {child.name}
+                </p>
+                <p style={{
+                  fontSize: 11,
+                  color: T.ink3,
+                  margin: '1px 0 0',
+                }}>
+                  {child.grade}{child.class_name ? ` · ${child.class_name}` : ''}
+                </p>
+              </div>
+
+              <Check size={15} color={T.blue} strokeWidth={2.2} />
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => { window.location.href = '/feed' }}
+          style={{
+            width: '100%',
+            height: 38,
+            borderRadius: 12,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
+            fontSize: 12.5,
+            fontWeight: 800,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            marginTop: 11,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 7,
+          }}
+        >
+          Open parent feed <ArrowRight size={13} strokeWidth={2.3} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 
 function SiblingStep({ picked, onAddMore, onDone }: any) {
   const latest = picked[picked.length - 1]
@@ -906,7 +1085,7 @@ function DoneStep() {
         marginLeft: 'auto',
         marginRight: 'auto',
       }}>
-        If your child was linked, your feed is ready. If you requested help, the school will review it.
+        If your child is linked, your feed is ready. If you requested help, the school will review it and your child will appear once approved.
       </p>
 
       <button

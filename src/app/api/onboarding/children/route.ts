@@ -1,6 +1,6 @@
-// /api/onboarding/children?school_id=...&q=...&grade=...
+// /api/onboarding/children?school_id=...&q=...&grade=...&mine=1
 // Returns matching children for the parent join flow.
-// Privacy note: the endpoint no longer returns the full school roster by default.
+// Privacy note: the endpoint does not return the full school roster by default.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -28,25 +28,55 @@ function clean(value: string | null) {
   return String(value || '').trim().replace(/\s+/g, ' ')
 }
 
+async function getMyChildren(sb: any, userId: string | null, schoolId: string) {
+  if (!userId) return { myChildIds: [] as string[], myChildren: [] as any[] }
+
+  const { data: links } = await sb.from('child_guardians')
+    .select('child_id')
+    .eq('guardian_id', userId)
+
+  const myChildIds = (links ?? []).map((link: any) => link.child_id).filter(Boolean)
+
+  if (myChildIds.length === 0) {
+    return { myChildIds, myChildren: [] as any[] }
+  }
+
+  const { data: mine } = await sb.from('children')
+    .select('id, name, grade, class_name')
+    .in('id', myChildIds)
+    .eq('school_id', schoolId)
+    .eq('status', 'active')
+    .order('grade')
+    .order('class_name')
+    .order('name')
+
+  return {
+    myChildIds,
+    myChildren: mine ?? [],
+  }
+}
+
 export async function GET(req: NextRequest) {
   const schoolId = req.nextUrl.searchParams.get('school_id')
   if (!schoolId) return NextResponse.json({ error: 'school_id required' }, { status: 400 })
 
   const q = clean(req.nextUrl.searchParams.get('q'))
   const grade = clean(req.nextUrl.searchParams.get('grade'))
+  const mineOnly = req.nextUrl.searchParams.get('mine') === '1'
 
   const sb = adminClient()
   const supa = userClient()
   const { data: { user } } = await supa.auth.getUser()
 
-  let myChildIds: string[] = []
+  const { myChildIds, myChildren } = await getMyChildren(sb, user?.id || null, schoolId)
 
-  if (user) {
-    const { data: links } = await sb.from('child_guardians')
-      .select('child_id')
-      .eq('guardian_id', user.id)
-
-    myChildIds = (links ?? []).map((link: any) => link.child_id)
+  if (mineOnly) {
+    return NextResponse.json({
+      children: [],
+      my_child_ids: myChildIds,
+      my_children: myChildren,
+      needs_search: true,
+    })
   }
 
   // Do not expose the whole school roster on a public/shared invite link.
@@ -55,6 +85,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       children: [],
       my_child_ids: myChildIds,
+      my_children: myChildren,
       needs_search: true,
     })
   }
@@ -83,6 +114,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     children: kids ?? [],
     my_child_ids: myChildIds,
+    my_children: myChildren,
     needs_search: false,
   })
 }
