@@ -310,18 +310,19 @@ const handlePickAttachment = async (file?: File | null) => {
             }}
             aria-label="Back"
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: 'transparent',
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
+                width: 'auto',
+                height: 'auto',
+                borderRadius: 0,
+                border: 'none',
+                background: 'transparent',
+                color: T.ink2,
+                padding: '5px 4px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
           >
             <ArrowLeft size={15} strokeWidth={1.8} />
           </button>
@@ -329,7 +330,7 @@ const handlePickAttachment = async (file?: File | null) => {
           <div style={{
             width: 38,
             height: 38,
-            borderRadius: 10,
+            borderRadius: '50%',
             overflow: 'hidden',
             background: teacher.photo_url
               ? `url(${teacher.photo_url}) center/cover`
@@ -360,7 +361,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '0px 0 0',
+              margin: '-1px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -499,7 +500,7 @@ const handlePickAttachment = async (file?: File | null) => {
               gap: 8,
               background: T.white,
               border: `1px solid ${T.border}`,
-              borderRadius: 22,
+              borderRadius: 20,
               padding: '7px 7px 7px 10px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
             }}>
@@ -618,7 +619,7 @@ function ReplyBubble({ reply, teacher }: any) {
     <div style={{
       marginTop: 6,
       padding: '7px 9px',
-      borderRadius: 12,
+      borderRadius: '50%',
       background: isTeacher ? '#F0F4FF' : '#F4F4F6',
       color: T.ink2,
     }}>
@@ -653,7 +654,7 @@ function ReportThreadCard({ report, teacher }: any) {
           <div style={{
             width: 38,
             height: 38,
-            borderRadius: 12,
+            borderRadius: '50%',
             background: '#F0F4FF',
             color: T.blue,
             display: 'flex',
@@ -679,7 +680,7 @@ function ReportThreadCard({ report, teacher }: any) {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '0px 0 0',
+              margin: '-1px 0 0',
             }}>
               {formatWeek(report.week_starting)} · {avg.toFixed(1)}/5
             </p>
@@ -748,7 +749,7 @@ function MessageGhostRows() {
             style={{
               display: 'flex',
               flexDirection: mine ? 'row-reverse' : 'row',
-              gap: 10,
+              gap: 8,
               marginBottom: 14,
             }}
           >
@@ -805,7 +806,7 @@ function ParentTeacherPageSkeleton() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
-          <SkeletonBlock style={{ width: 38, height: 38, borderRadius: 10 }} />
+          <SkeletonBlock style={{ width: 32, height: 32, borderRadius: 10 }} />
           <div style={{ flex: 1 }}>
             <SkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
             <SkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
@@ -819,7 +820,7 @@ function ParentTeacherPageSkeleton() {
             <div key={i} style={{
               display: 'flex',
               flexDirection: i % 2 === 1 ? 'row-reverse' : 'row',
-              gap: 10,
+              gap: 8,
               marginBottom: 14,
             }}>
               <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0 }} />
@@ -844,13 +845,13 @@ function ParentTeacherPageSkeleton() {
           gap: 8,
           background: T.white,
           border: `1px solid ${T.border}`,
-          borderRadius: 22,
+          borderRadius: 20,
           padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
-          <SkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <SkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
           <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
-          <SkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <SkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
         </div>
       </div>
 
@@ -895,7 +896,7 @@ function EmptyConversation({ teacher }: any) {
         {!teacher.photo_url && teacher.name?.charAt(0)}
       </div>
       <p style={{
-        fontSize: 15,
+        fontSize: 16,
         color: T.ink,
         fontWeight: 750,
         margin: '0 0 5px',
@@ -992,7 +993,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             }}>
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '-1px 0 0' }}>
               Teacher approval is required before access is granted.
             </p>
           </div>
@@ -1000,7 +1001,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           <button onClick={onClose} style={{
             width: 34,
             height: 34,
-            borderRadius: 10,
+            borderRadius: '50%',
             border: `1px solid ${T.border}`,
             background: '#FAFAFC',
             color: T.ink3,

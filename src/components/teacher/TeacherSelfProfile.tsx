@@ -128,7 +128,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           textAlign: 'center',
           background: T.white,
           border: `1px solid ${T.border}`,
-          borderRadius: 22,
+          borderRadius: 20,
           padding: 28,
         }}>
           <h1 style={{
@@ -206,9 +206,9 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       }}>
         <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
           position: 'relative',
-          width: 38,
-          height: 38,
-          borderRadius: 10,
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
           border: 'none',
           padding: 0,
           overflow: 'visible',
@@ -271,7 +271,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             fontWeight: 500,
             color: T.ink3,
             letterSpacing: '0.02em',
-            margin: '0px 0 0',
+            margin: '-1px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -353,7 +353,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 }
 
 const iconBtn: any = {
-  width: 36, height: 36, borderRadius: 999,
+  width: 31, height: 31, borderRadius: 999,
   background: 'none', border: `1px solid ${T.border}`,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   cursor: 'pointer', color: T.ink2,
@@ -422,7 +422,7 @@ function ClassPosts({ teacher }: any) {
         borderRadius: 14,
         background: '#F4F6FB',
         display: 'flex',
-        gap: 10,
+        gap: 8,
         alignItems: 'flex-start',
         marginBottom: 14,
       }}>
@@ -525,7 +525,7 @@ function TeacherClassPostCard({ post, onDelete }: any) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: 10,
+          gap: 8,
           marginBottom: post.body || post.event_date || images.length ? 8 : 0,
         }}>
           <div>
@@ -577,7 +577,7 @@ function TeacherClassPostCard({ post, onDelete }: any) {
           <div style={{
             marginTop: 9,
             padding: '9px 10px',
-            borderRadius: 12,
+            borderRadius: '50%',
             background: '#F4F6FB',
             fontSize: 12,
             color: T.ink2,
@@ -716,7 +716,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create class post
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '-1px 0 0' }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -724,7 +724,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           <button onClick={onClose} style={{
             width: 34,
             height: 34,
-            borderRadius: 10,
+            borderRadius: '50%',
             border: `1px solid ${T.border}`,
             background: '#FAFAFC',
             color: T.ink3,
@@ -834,8 +834,8 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           background: '#FAFAFC',
           color: T.ink2,
           cursor: 'pointer',
-          fontSize: 13,
-          fontWeight: 800,
+          fontSize: 12,
+          fontWeight: 780,
         }}>
           <Camera size={14} strokeWidth={1.9} />
           Add photos
@@ -861,7 +861,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           }}>
             {files.map((file, i) => (
               <div key={`${file.name}-${i}`} style={{
-                borderRadius: 10,
+                borderRadius: '50%',
                 overflow: 'hidden',
                 height: 58,
                 background: '#F0F0F4',
@@ -1170,7 +1170,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '-1px 0 0' }}>
               {inferred} · {teacher.grade}{teacher.class_name ? ` ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -1178,7 +1178,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           <button onClick={onClose} aria-label="Close" style={{
             width: 34,
             height: 34,
-            borderRadius: 10,
+            borderRadius: '50%',
             border: `1px solid ${T.border}`,
             background: '#FAFAFC',
             color: T.ink3,
@@ -1252,7 +1252,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           }}>
             {files.map((file, i) => (
               <div key={`${file.name}-${i}`} style={{
-                borderRadius: 10,
+                borderRadius: '50%',
                 overflow: 'hidden',
                 height: 58,
                 background: '#F0F0F4',
@@ -1349,7 +1349,7 @@ const simpleInputStyle: any = {
   border: `1px solid ${T.border}`,
   background: '#FAFAFC',
   color: T.ink,
-  fontSize: 15,
+  fontSize: 16,
   outline: 'none',
   fontFamily: 'inherit',
 }
@@ -1470,7 +1470,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             <p style={{
               fontSize: 12,
               color: T.ink3,
-              margin: '1px 0 0',
+              margin: '-1px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -1482,7 +1482,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
           <button onClick={onClose} style={{
             width: 34,
             height: 34,
-            borderRadius: 10,
+            borderRadius: '50%',
             border: `1px solid ${T.border}`,
             background: '#FAFAFC',
             color: T.ink3,
@@ -1651,7 +1651,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 10,
+        gap: 8,
         marginBottom: 10,
       }}>
         <p style={{
@@ -1690,7 +1690,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
       {preview.length > 0 && (
         <div style={{
           display: 'flex',
-          gap: 10,
+          gap: 8,
           overflowX: 'auto',
           overflowY: 'visible',
           scrollbarWidth: 'none',
@@ -1774,7 +1774,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     padding: '4px 0',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 10,
+                    gap: 8,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     textAlign: 'left',
@@ -1811,7 +1811,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     }}>
                       {child.name}
                     </p>
-                    <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+                    <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
                       {child.guardian_count === 0 ? 'No parents linked'
                       : child.guardian_count === 1 ? '1 parent linked'
                       : `${child.guardian_count} parents linked`}
@@ -1922,7 +1922,7 @@ function ClassRoster({ kids, onChanged }: any) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {kids.map((c: any) => (
             <div key={c.id} style={{
-              padding: '12px 14px', borderRadius: 12,
+              padding: '12px 14px', borderRadius: '50%',
               background: T.white, border: `1px solid ${T.border}`,
               display: 'flex', alignItems: 'center', gap: 12,
               position: 'relative',
@@ -1946,7 +1946,7 @@ function ClassRoster({ kids, onChanged }: any) {
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+                  <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
                     {c.guardian_count === 0 ? 'No parents yet'
                     : c.guardian_count === 1 ? '1 parent linked'
                     : `${c.guardian_count} parents linked`}
@@ -1967,7 +1967,7 @@ function ClassRoster({ kids, onChanged }: any) {
               {openMenu === c.id && (
                 <div className="dropdown-in" style={{
                   position: 'absolute', right: 10, top: 46, zIndex: 10,
-                  background: T.white, borderRadius: 12,
+                  background: T.white, borderRadius: '50%',
                   border: `1px solid ${T.border}`,
                   boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                   padding: '4px 0', minWidth: 150,
@@ -2037,13 +2037,13 @@ function UpdatesInbox({ teacher }: any) {
           {parents.map((p: any) => (
             <button key={p.id} onClick={() => setOpenThread(p)}
               style={{
-                padding: '12px 14px', borderRadius: 12,
+                padding: '12px 14px', borderRadius: '50%',
                 background: T.white, border: `1px solid ${T.border}`,
                 display: 'flex', alignItems: 'center', gap: 12,
                 cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
               }}>
               <div style={{
-                width: 36, height: 36, borderRadius: '50%',
+                width: 31, height: 31, borderRadius: '50%',
                 background: '#F0F0F4',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, fontSize: 13, color: T.ink2, fontWeight: 600,
@@ -2057,11 +2057,11 @@ function UpdatesInbox({ teacher }: any) {
                             whiteSpace: 'nowrap' }}>
                   {p.name}
                 </p>
-                <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+                <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
                   {p.child_names.join(', ')}
                 </p>
                 {p.latest_update && (
-                  <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0',
+                  <p style={{ fontSize: 12, color: T.ink3, margin: '-1px 0 0',
                               overflow: 'hidden', textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap', maxWidth: 240 }}>
                     {p.latest_update.author_kind === 'teacher' ? 'You: ' : ''}
@@ -2278,7 +2278,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 8,
           padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
@@ -2306,7 +2306,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           <div style={{
             width: 38,
             height: 38,
-            borderRadius: 10,
+            borderRadius: '50%',
             background: '#F0F0F4',
             color: T.ink2,
             display: 'flex',
@@ -2334,7 +2334,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '0px 0 0',
+              margin: '-1px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -2371,7 +2371,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 {parentInitial}
               </div>
               <p style={{
-                fontSize: 15,
+                fontSize: 16,
                 color: T.ink,
                 fontWeight: 700,
                 margin: '0 0 5px',
@@ -2423,8 +2423,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             gap: 7,
             background: T.white,
             border: `1px solid ${T.border}`,
-            borderRadius: 22,
-            padding: '7px 7px 7px 12px',
+            borderRadius: 20,
+            padding: '6px 7px 6px 11px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
           }}>
                         <input
@@ -2445,8 +2445,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAttachment}
               style={{
-                width: 32,
-                height: 32,
+                width: 30,
+                height: 30,
                 borderRadius: '50%',
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -2490,8 +2490,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             />
 
             <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
-              width: 34,
-              height: 34,
+              width: 30,
+              height: 30,
               borderRadius: '50%',
               background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
               color: T.white,
@@ -2622,10 +2622,10 @@ function BroadcastCompose({ teacher }: any) {
             return (
               <button key={p.id} onClick={() => togglePick(p.id)}
                 style={{
-                  padding: '10px 12px', borderRadius: 10,
+                  padding: '10px 12px', borderRadius: '50%',
                   background: isPicked ? '#F0F4FF' : T.white,
                   border: isPicked ? `1px solid ${T.blue}` : `1px solid ${T.border}`,
-                  display: 'flex', alignItems: 'center', gap: 10,
+                  display: 'flex', alignItems: 'center', gap: 8,
                   cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
                   transition: 'all 0.15s ease',
                 }}>
@@ -2644,7 +2644,7 @@ function BroadcastCompose({ teacher }: any) {
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {p.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+                  <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
                     {p.child_names.join(', ')}
                   </p>
                 </div>
@@ -2658,7 +2658,7 @@ function BroadcastCompose({ teacher }: any) {
         style={{
           width: '100%', padding: '14px', marginTop: 16,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          borderRadius: 12,
+          borderRadius: '50%',
           background: !body.trim() || picked.size === 0 ? '#E0E0E4' : T.ink,
           color: T.white, border: 'none',
           fontSize: 14, fontWeight: 600,
@@ -2737,7 +2737,7 @@ function TeacherMessageGhostRows() {
             style={{
               display: 'flex',
               flexDirection: mine ? 'row-reverse' : 'row',
-              gap: 10,
+              gap: 8,
               marginBottom: 14,
             }}
           >
@@ -2798,20 +2798,20 @@ function TeacherPageSkeleton() {
           justifyContent: 'space-between',
           gap: 12,
         }}>
-          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
+          <TeacherSkeletonBlock style={{ width: 31, height: 31, borderRadius: 999 }} />
           <div style={{ display: 'flex', gap: 8 }}>
-            <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
-            <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
+            <TeacherSkeletonBlock style={{ width: 31, height: 31, borderRadius: 999 }} />
+            <TeacherSkeletonBlock style={{ width: 31, height: 31, borderRadius: 999 }} />
           </div>
         </div>
 
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 8,
           marginTop: 18,
         }}>
-          <TeacherSkeletonBlock style={{ width: 42, height: 42, borderRadius: 12, flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <TeacherSkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
             <TeacherSkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
@@ -2844,13 +2844,13 @@ function TeacherPageSkeleton() {
           gap: 8,
           background: T.white,
           border: `1px solid ${T.border}`,
-          borderRadius: 22,
+          borderRadius: 20,
           padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
-          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
           <TeacherSkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
-          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
         </div>
       </div>
 
@@ -3060,7 +3060,7 @@ function PendingClassRequests({ onChanged }: any) {
                   <p style={{
                     fontSize: 12,
                     color: T.ink2,
-                    margin: '1px 0 0',
+                    margin: '-1px 0 0',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -3100,7 +3100,7 @@ function PendingClassRequests({ onChanged }: any) {
                   onClick={() => review(request.id, 'reject')}
                   style={{
                     height: 40,
-                    borderRadius: 12,
+                    borderRadius: '50%',
                     border: `1px solid ${T.border}`,
                     background: T.white,
                     color: T.red,
@@ -3123,7 +3123,7 @@ function PendingClassRequests({ onChanged }: any) {
                   onClick={() => review(request.id, 'approve')}
                   style={{
                     height: 40,
-                    borderRadius: 12,
+                    borderRadius: '50%',
                     border: 'none',
                     background: T.ink,
                     color: T.white,
@@ -3187,13 +3187,13 @@ function AddChildOverlay({ onAdd, onClose }: any) {
           placeholder="Emma Johnson"
           style={{
             width: '100%', padding: '12px 14px', fontSize: 16,
-            border: `1px solid ${T.border}`, borderRadius: 12,
+            border: `1px solid ${T.border}`, borderRadius: '50%',
             background: T.white, color: T.ink, outline: 'none',
             fontFamily: 'inherit', boxSizing: 'border-box',
           }} />
         <button onClick={submit} style={{
           width: '100%', marginTop: 12, padding: '14px',
-          borderRadius: 12, background: T.ink, color: T.white, border: 'none',
+          borderRadius: '50%', background: T.ink, color: T.white, border: 'none',
           fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
         }}>Add child</button>
       </div>
@@ -3225,7 +3225,7 @@ function NotificationGhostRows() {
           <TeacherSkeletonBlock style={{
             width: 38,
             height: 38,
-            borderRadius: 12,
+            borderRadius: '50%',
             flexShrink: 0,
           }} />
 
@@ -3533,7 +3533,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
             <p style={{
               fontSize: 12,
               color: T.ink3,
-              margin: '1px 0 0',
+              margin: '-1px 0 0',
             }}>
               Messages move to Read after you open them
             </p>
@@ -3748,7 +3748,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
       <div style={{
         width: 38,
         height: 38,
-        borderRadius: 12,
+        borderRadius: '50%',
         background: '#F0F0F4',
         color: T.ink2,
         display: 'flex',
@@ -3783,7 +3783,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '0px 0 0',
+            margin: '-1px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3794,7 +3794,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
           {relTime(latest.created_at)}
         </p>
       </div>
@@ -3877,7 +3877,7 @@ function NotifRow({ item, onOpen }: any) {
       <div style={{
         width: 38,
         height: 38,
-        borderRadius: 12,
+        borderRadius: '50%',
         background: '#F0F0F4',
         display: 'flex',
         alignItems: 'center',
@@ -3903,7 +3903,7 @@ function NotifRow({ item, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '0px 0 0',
+            margin: '-1px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3914,7 +3914,7 @@ function NotifRow({ item, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '-1px 0 0' }}>
           {relTime(item.created_at)}
         </p>
       </div>
