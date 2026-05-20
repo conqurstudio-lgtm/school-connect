@@ -2611,7 +2611,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           padding: '10px 0 190px',
         }}>
           {loading ? (
-            <TeacherThreadSkeleton />
+            <SoftConversationLoader />
           ) : updates.length === 0 ? (
             <div style={{ padding: '70px 28px', textAlign: 'center' }}>
               <div style={{
@@ -3381,6 +3381,121 @@ function NotificationGhostRows() {
   )
 }
 
+
+function SoftLoaderDots() {
+  return (
+    <span style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 4,
+      marginLeft: 6,
+    }}>
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          style={{
+            width: 5,
+            height: 5,
+            borderRadius: '50%',
+            background: T.ink3,
+            opacity: 0.45,
+            animation: `softDot 1.05s ease-in-out ${i * 0.14}s infinite`,
+          }}
+        />
+      ))}
+    </span>
+  )
+}
+
+function SoftNotificationLoader() {
+  return (
+    <div style={{
+      padding: '42px 18px 30px',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: 42,
+        height: 42,
+        borderRadius: 14,
+        background: '#F4F6FB',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 12px',
+      }}>
+        <Bell size={18} color={T.ink3} strokeWidth={1.7} />
+      </div>
+
+      <p style={{
+        fontSize: 13,
+        fontWeight: 750,
+        color: T.ink,
+        margin: 0,
+      }}>
+        Checking notifications
+        <SoftLoaderDots />
+      </p>
+
+      <p style={{
+        fontSize: 12,
+        color: T.ink3,
+        margin: '6px 0 0',
+        lineHeight: 1.45,
+      }}>
+        We’re bringing the latest parent messages forward.
+      </p>
+
+      <style jsx global>{`
+        @keyframes softDot {
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+          40% { transform: translateY(-4px); opacity: 0.9; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+function SoftConversationLoader() {
+  return (
+    <div style={{
+      padding: '58px 24px 34px',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: 44,
+        height: 44,
+        borderRadius: 16,
+        background: '#F4F4F6',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 12px',
+      }}>
+        <MessageCircle size={19} color={T.ink3} strokeWidth={1.7} />
+      </div>
+
+      <p style={{
+        fontSize: 13,
+        fontWeight: 750,
+        color: T.ink,
+        margin: 0,
+      }}>
+        Opening conversation
+        <SoftLoaderDots />
+      </p>
+
+      <p style={{
+        fontSize: 12,
+        color: T.ink3,
+        margin: '6px 0 0',
+        lineHeight: 1.45,
+      }}>
+        Messages will appear here in a moment.
+      </p>
+    </div>
+  )
+}
+
 function NotificationsSheet({ teacher, onClose }: any) {
   const [items, setItems] = useState<any[]>([])
   const [parents, setParents] = useState<any[]>([])
@@ -3555,7 +3670,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
           padding: '8px 16px 28px',
         }}>
           {loading ? (
-            <NotificationGhostRows />
+            <SoftNotificationLoader />
           ) : items.length === 0 ? (
             <div style={{ padding: '70px 24px', textAlign: 'center' }}>
               <Bell size={22} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 10px' }} />
