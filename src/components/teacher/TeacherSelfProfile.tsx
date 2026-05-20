@@ -2739,6 +2739,32 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                     <p style={{ fontSize: 10, color: T.ink3, margin: '4px 4px 0' }}>
                       {relTime(u.created_at)}
                     </p>
+
+                    {!isTeacher && (
+                      <button
+                        type="button"
+                        className="quick-reply-under-message"
+                        onClick={() => {
+                          setReply('')
+                          setShowQuickReplies(true)
+                          window.setTimeout(() => forceScrollToBottom(true), 40)
+                        }}
+                        style={{
+                          margin: '5px 4px 0',
+                          padding: 0,
+                          border: 'none',
+                          background: 'transparent',
+                          color: T.blue,
+                          fontSize: 11,
+                          fontWeight: 800,
+                          fontFamily: 'inherit',
+                          cursor: 'pointer',
+                          alignSelf: 'flex-start',
+                        }}
+                      >
+                        Quick reply
+                      </button>
+                    )}
                   </div>
                 </div>
               )
@@ -2835,28 +2861,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             >
               <Paperclip size={15} strokeWidth={2.1} />
             </button>
-            <button
-              type="button"
-              aria-label="Toggle quick replies"
-              onClick={() => setShowQuickReplies((v: boolean) => !v)}
-              style={{
-                // teacher-message-ux-polish
-                display: reply.trim() ? 'none' : 'inline-flex',
-                height: 34,
-                padding: '0 11px',
-                borderRadius: 999,
-                border: 'none',
-                background: showQuickReplies ? T.ink : '#F4F4F6',
-                color: showQuickReplies ? T.white : T.ink2,
-                fontSize: 12,
-                fontWeight: 800,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              Quick
-            </button>
+            
+
 
 <textarea
               value={reply}
