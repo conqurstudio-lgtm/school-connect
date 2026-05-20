@@ -3511,7 +3511,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
   const latest = group.latest || {}
   const label = parentChildLabel(group)
   const preview = latest.preview || latest.body || latest.post_preview || ''
-  const showCountBadge = unread && count > 1
+  const showCountBadge = false // teacher-notification-count-badge-removed
 
   return (
     <button onClick={onOpen} style={{
