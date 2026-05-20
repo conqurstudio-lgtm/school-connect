@@ -107,6 +107,8 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
     return () => { alive = false; clearInterval(id); window.removeEventListener('focus', onFocus) }
   }, [])
 
+  const [teacherClassSpaceTab, setTeacherClassSpaceTab] = useState<'life' | 'messages' | 'children'>('life')
+
   const goToFeed = () => router.push('/feed')
 
   if (loading) {
@@ -309,12 +311,28 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         </div>
       </div>
 
-      <div style={{ padding: '14px 20px 8px' }}>
-        <ClassInviteCard teacher={teacher} school={school} kids={children} />
-        <PendingClassRequests onChanged={load} />
-        <ClassChildrenSummary kids={children} onReport={setReportChild} />
-      </div>
-      <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
+      <TeacherClassSpaceTabs
+        active={teacherClassSpaceTab}
+        onChange={setTeacherClassSpaceTab}
+        childrenCount={children?.length || 0}
+      />
+
+      {teacherClassSpaceTab === 'life' && (
+        <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
+      )}
+
+      {teacherClassSpaceTab === 'messages' && (
+        <UpdatesInbox teacher={teacher} />
+      )}
+
+      {teacherClassSpaceTab === 'children' && (
+        <>
+          <div style={{ padding: '14px 20px 0' }}>
+            <ClassInviteCard teacher={teacher} school={school} kids={children} />
+          </div>
+          <ClassRoster kids={children} onChanged={load} />
+        </>
+      )}
 
       {showNotifs && (
         <NotificationsSheet
@@ -350,6 +368,65 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           onSave={uploadPhoto}
         />
       )}
+    </div>
+  )
+}
+
+
+function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0 }: any) {
+  const tabs = [
+    { key: 'life', label: 'Class Life' },
+    { key: 'messages', label: 'Messages' },
+    { key: 'children', label: childrenCount ? `Children ${childrenCount}` : 'Children' },
+  ]
+
+  return (
+    <div style={{
+      position: 'sticky',
+      top: 57,
+      zIndex: 35,
+      padding: '6px 18px 8px',
+      background: 'rgba(252,252,255,0.96)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 6,
+        padding: 3,
+        borderRadius: 999,
+        background: '#F4F4F6',
+        border: `1px solid ${T.border}`,
+      }}>
+        {tabs.map((tab: any) => {
+          const selected = active === tab.key
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onChange(tab.key)}
+              style={{
+                height: 31,
+                borderRadius: 999,
+                border: 'none',
+                background: selected ? T.white : 'transparent',
+                color: selected ? T.ink : T.ink3,
+                fontSize: 12,
+                fontWeight: selected ? 850 : 720,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                boxShadow: selected ? '0 5px 14px rgba(0,0,0,0.06)' : 'none',
+                transition: 'background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -2102,7 +2179,7 @@ function ClassRoster({ kids, onChanged }: any) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {kids.map((c: any) => (
             <div key={c.id} style={{
-              padding: '12px 14px', borderRadius: '50%',
+              padding: '12px 14px', borderRadius: 16,
               background: T.white, border: `1px solid ${T.border}`,
               display: 'flex', alignItems: 'center', gap: 12,
               position: 'relative',
@@ -2147,7 +2224,7 @@ function ClassRoster({ kids, onChanged }: any) {
               {openMenu === c.id && (
                 <div className="dropdown-in" style={{
                   position: 'absolute', right: 10, top: 46, zIndex: 10,
-                  background: T.white, borderRadius: '50%',
+                  background: T.white, borderRadius: 14,
                   border: `1px solid ${T.border}`,
                   boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                   padding: '4px 0', minWidth: 150,
