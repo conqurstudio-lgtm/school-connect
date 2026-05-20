@@ -55,6 +55,7 @@ const [showJoin, setShowJoin] = useState(false)
   const [attachment, setAttachment] = useState<AttachmentDraft | null>(null)
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const composerDockRef = useRef<HTMLDivElement | null>(null)
   const scrollRafRef = useRef<number | null>(null)
@@ -173,14 +174,16 @@ const [showJoin, setShowJoin] = useState(false)
   }, [classSpaceTab])
 
 
+  // parent-composer-smooth-v1: using the simpler teacher-style scroll behaviour.
+
   const threadScrollRef = useRef<HTMLDivElement>(null)
 
-  const forceScrollToBottom = (smooth = true) => {
+  const forceScrollToBottom = (smooth = false) => {
     const run = () => {
       const el = threadScrollRef.current
       if (!el) return
 
-      const top = el.scrollHeight + 9999
+      const top = Math.max(0, el.scrollHeight - el.clientHeight)
       if (typeof el.scrollTo === 'function') {
         el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
       } else {
@@ -188,9 +191,7 @@ const [showJoin, setShowJoin] = useState(false)
       }
     }
 
-    run()
-    window.requestAnimationFrame(run)
-    window.setTimeout(run, 80)
+    requestAnimationFrame(run)
   }
 
 
@@ -289,9 +290,20 @@ try {
   // Keep the thread feeling instant. When messages arrive, useLayoutEffect
   // positions the internal message container before the browser paints.
   useLayoutEffect(() => {
-    if (loading || threadLoading || !canMessage) return
+    if (loading || threadLoading || !canMessage || classSpaceTab !== 'messages') return
     forceScrollToBottom(false)
-  }, [loading, threadLoading, canMessage, updates.length, reports.length, teacherId])
+  }, [loading, threadLoading, canMessage, classSpaceTab, updates.length, reports.length, teacherId])
+
+  // parent-composer-auto-expand-v1
+  useEffect(() => {
+    const el = messageTextareaRef.current
+    if (!el) return
+
+    el.style.height = 'auto'
+    const nextHeight = Math.min(el.scrollHeight, 92)
+    el.style.height = `${Math.max(nextHeight, 22)}px`
+  }, [message, classSpaceTab])
+
 
 const handlePickAttachment = async (file?: File | null) => {
     if (!file) return
@@ -342,7 +354,7 @@ const handlePickAttachment = async (file?: File | null) => {
     setMessage('')
     setAttachment(null)
     setUpdates(prev => [...prev, optimisticMessage])
-    forceScrollToBottom(true)
+    forceScrollToBottom(false)
     setSending(true)
 
     try {
@@ -370,7 +382,7 @@ const handlePickAttachment = async (file?: File | null) => {
         await loadThread(teacher.id)
       }
 
-      forceScrollToBottom(true)
+      forceScrollToBottom(false)
     } catch (e: any) {
       setUpdates(prev => prev.filter((item: any) => item.id !== tempId))
       setMessage(text)
@@ -718,6 +730,7 @@ const handlePickAttachment = async (file?: File | null) => {
               </button>
 
               <textarea
+                ref={messageTextareaRef}
                 value={message}
                 onChange={e => setMessage(e.target.value)}
                 onKeyDown={e => {
@@ -736,13 +749,12 @@ const handlePickAttachment = async (file?: File | null) => {
                   background: 'transparent',
                   color: T.ink,
                   fontSize: 16,
-                  lineHeight: 1.25,
-                  transform: 'scale(0.74)',
-                  transformOrigin: 'left center',
-                  width: '135%',
-                  maxHeight: 58,
+                  lineHeight: 1.35,
+                  minHeight: 22,
+                  maxHeight: 92,
+                  overflowY: 'auto',
                   fontFamily: 'inherit',
-                  padding: '3px 0',
+                  padding: '5px 0',
                 }}
               />
 
