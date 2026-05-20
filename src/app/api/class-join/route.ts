@@ -36,6 +36,10 @@ function clean(value: unknown) {
   return String(value || '').trim().replace(/\s+/g, ' ')
 }
 
+function makeToken() {
+  return randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '')
+}
+
 async function getCaller(req: NextRequest) {
   const sb = adminClient()
   const supabase = userClient()
@@ -78,24 +82,83 @@ async function createPublicParentSession(
   childLastName: string,
   relationship: string,
 ) {
-  const parentId = randomUUID()
-  const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '')
   const childName = `${childFirstName} ${childLastName}`.trim()
   const fullName = `${relationship || 'Parent/Guardian'} of ${childName}`.trim()
+  const token = makeToken()
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString()
 
-  const { data: profile, error: profileError } = await sb.from('profiles')
-    .insert({
-      id: parentId,
-      school_id: teacher.school_id,
-      role: 'parent',
-      full_name: fullName,
-      child_name: childName,
-    })
-    .select('id, school_id, role')
-    .single()
+  // profiles.id has a foreign key to auth.users.id, so we must first create
+  // a lightweight auth user for public invite parents.
+  const authEmail = `parent-${randomUUID().replace(/-/g, '')}@schoolconnect.local`
+  const authPassword = makeToken()
 
-  if (profileError) throw new Error(profileError.message)
+  const { data: authData, error: authError } = await sb.auth.admin.createUser({
+    email: authEmail,
+    password: authPassword,
+    email_confirm: true,
+    user_metadata: {
+      source: 'public_class_invite',
+      school_id: teacher.school_id,
+      child_name: childName,
+      relationship,
+    },
+  })
+
+  if (authError || !authData.user?.id) {
+    throw new Error(authError?.message || 'Could not create parent auth user')
+  }
+
+  const parentId = authData.user.id
+
+  // public-class-join-profile-upsert-v3
+  // Some projects have a database trigger that creates profiles automatically
+  // when an auth user is created. If that happened, insert would violate
+  // profiles_pkey. So we first update the existing profile, then insert only
+  // when no profile row exists yet.
+  let profile: any = null
+
+  const { data: existingProfile } = await sb.from('profiles')
+    .select('id, school_id, role')
+    .eq('id', parentId)
+    .maybeSingle()
+
+  if (existingProfile?.id) {
+    const { data: updatedProfile, error: updateProfileError } = await sb.from('profiles')
+      .update({
+        school_id: teacher.school_id,
+        role: 'parent',
+        full_name: fullName,
+        child_name: childName,
+      })
+      .eq('id', parentId)
+      .select('id, school_id, role')
+      .single()
+
+    if (updateProfileError) {
+      try { await sb.auth.admin.deleteUser(parentId) } catch {}
+      throw new Error(updateProfileError.message)
+    }
+
+    profile = updatedProfile
+  } else {
+    const { data: insertedProfile, error: insertProfileError } = await sb.from('profiles')
+      .insert({
+        id: parentId,
+        school_id: teacher.school_id,
+        role: 'parent',
+        full_name: fullName,
+        child_name: childName,
+      })
+      .select('id, school_id, role')
+      .single()
+
+    if (insertProfileError) {
+      try { await sb.auth.admin.deleteUser(parentId) } catch {}
+      throw new Error(insertProfileError.message)
+    }
+
+    profile = insertedProfile
+  }
 
   const { error: sessionError } = await sb.from('parent_sessions')
     .insert({
@@ -104,7 +167,10 @@ async function createPublicParentSession(
       expires_at: expiresAt,
     })
 
-  if (sessionError) throw new Error(sessionError.message)
+  if (sessionError) {
+    try { await sb.auth.admin.deleteUser(parentId) } catch {}
+    throw new Error(sessionError.message)
+  }
 
   return { profile, createdToken: token }
 }
@@ -150,9 +216,9 @@ export async function POST(req: NextRequest) {
 
   let caller = await getCaller(req)
 
-  // public-class-join-request-v1
-  // A first-time parent opening /class/{teacherId} has no Supabase auth session yet.
-  // Create a lightweight parent profile/session so the teacher can approve the request.
+  // public-class-join-auth-user-fix-v2
+  // First-time parents opening /class/{teacherId} have no Supabase auth session.
+  // Create a lightweight auth user + profile + parent_token session for them.
   if (!caller?.profile) {
     try {
       caller = await createPublicParentSession(
