@@ -834,7 +834,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           background: '#FAFAFC',
           color: T.ink2,
           cursor: 'pointer',
-          fontSize: 13,
+          fontSize: 13.5,
           fontWeight: 800,
         }}>
           <Camera size={14} strokeWidth={1.9} />
@@ -2279,7 +2279,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           display: 'flex',
           alignItems: 'center',
           gap: 11,
-          padding: '14px 16px 12px',
+          padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -2790,7 +2790,7 @@ function TeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: '20px 20px 12px',
+        padding: 'calc(18px + env(safe-area-inset-top)) 20px 12px',
       }}>
         <div style={{
           display: 'flex',

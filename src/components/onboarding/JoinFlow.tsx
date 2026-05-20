@@ -138,7 +138,7 @@ function JoinHeader({ school }: any) {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: '38px 24px 24px',
+      padding: 'calc(38px + env(safe-area-inset-top)) 24px 24px',
       borderBottom: `1px solid ${T.border}`,
     }}>
       <div style={{

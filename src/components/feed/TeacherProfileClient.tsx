@@ -300,7 +300,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: '14px 16px 12px',
+        padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -801,7 +801,7 @@ function ParentTeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: '14px 16px 12px',
+        padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
