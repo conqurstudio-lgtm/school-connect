@@ -716,7 +716,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create class post
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -1170,7 +1170,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
               {inferred} · {teacher.grade}{teacher.class_name ? ` ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -1470,7 +1470,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             <p style={{
               fontSize: 12,
               color: T.ink3,
-              margin: '3px 0 0',
+              margin: '1px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -2061,7 +2061,7 @@ function UpdatesInbox({ teacher }: any) {
                   {p.child_names.join(', ')}
                 </p>
                 {p.latest_update && (
-                  <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0',
+                  <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0',
                               overflow: 'hidden', textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap', maxWidth: 240 }}>
                     {p.latest_update.author_kind === 'teacher' ? 'You: ' : ''}
@@ -2278,8 +2278,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
-          gap: 11,
-          padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
+          gap: 10,
+          padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -2790,7 +2790,7 @@ function TeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: 'calc(18px + env(safe-area-inset-top)) 20px 12px',
+        padding: 'calc(11px + env(safe-area-inset-top)) 20px 10px',
       }}>
         <div style={{
           display: 'flex',
@@ -2808,7 +2808,7 @@ function TeacherPageSkeleton() {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 11,
+          gap: 10,
           marginTop: 18,
         }}>
           <TeacherSkeletonBlock style={{ width: 42, height: 42, borderRadius: 12, flexShrink: 0 }} />
@@ -3060,7 +3060,7 @@ function PendingClassRequests({ onChanged }: any) {
                   <p style={{
                     fontSize: 12,
                     color: T.ink2,
-                    margin: '3px 0 0',
+                    margin: '1px 0 0',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
@@ -3533,7 +3533,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
             <p style={{
               fontSize: 12,
               color: T.ink3,
-              margin: '3px 0 0',
+              margin: '1px 0 0',
             }}>
               Messages move to Read after you open them
             </p>
@@ -3783,7 +3783,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '4px 0 0',
+            margin: '2px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3794,7 +3794,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '5px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
           {relTime(latest.created_at)}
         </p>
       </div>
@@ -3903,7 +3903,7 @@ function NotifRow({ item, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '4px 0 0',
+            margin: '2px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3914,7 +3914,7 @@ function NotifRow({ item, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '5px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
           {relTime(item.created_at)}
         </p>
       </div>

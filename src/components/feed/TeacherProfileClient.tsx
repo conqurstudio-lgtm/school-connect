@@ -300,7 +300,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
+        padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -801,7 +801,7 @@ function ParentTeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: 'calc(18px + env(safe-area-inset-top)) 16px 12px',
+        padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
@@ -992,7 +992,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             }}>
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '4px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
               Teacher approval is required before access is granted.
             </p>
           </div>

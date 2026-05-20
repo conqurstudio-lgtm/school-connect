@@ -46,7 +46,7 @@ export function MessageBubble({
     <article style={{
       display: 'flex',
       gap: 10,
-      padding: '8px 16px',
+      padding: '7px 17px',
       flexDirection: isMine ? 'row-reverse' : 'row',
     }}>
       <div style={{
@@ -70,7 +70,7 @@ export function MessageBubble({
       </div>
 
       <div style={{
-        maxWidth: '74%',
+        maxWidth: '72%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: isMine ? 'flex-end' : 'flex-start',
@@ -80,13 +80,13 @@ export function MessageBubble({
           background: isMine ? '#F4F4F6' : T.white,
           color: T.ink,
           border: imageOnly ? 'none' : (isMine ? 'none' : `1px solid ${T.border}`),
-          padding: imageOnly ? 0 : '9px 12px',
+          padding: imageOnly ? 0 : '8px 11px',
           overflow: 'hidden',
         }}>
           {update?.body && (
             <p style={{
-              fontSize: 13.5,
-              lineHeight: 1.45,
+              fontSize: 13,
+              lineHeight: 1.42,
               margin: 0,
               whiteSpace: 'pre-wrap',
             }}>
@@ -100,7 +100,7 @@ export function MessageBubble({
         <p style={{
           fontSize: 10,
           color: T.ink3,
-          margin: '4px 4px 0',
+          margin: '3px 4px 0',
           textAlign: isMine ? 'right' : 'left',
         }}>
           {relTime(update?.created_at)}
