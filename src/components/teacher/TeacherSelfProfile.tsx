@@ -3,6 +3,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { createPortal } from 'react-dom'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
   Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone,
@@ -62,7 +63,7 @@ function updateAttachment(update: any): AttachmentDraft | null {
 }
 
 function AttachmentCard({ attachment, compact = false, onRemove, flush = false }: any) {
-  // message-image-viewer-v1
+  // message-fullscreen-image-viewer-v2
   if (!attachment) return null
 
   const [viewerOpen, setViewerOpen] = useState(false)
@@ -70,6 +71,70 @@ function AttachmentCard({ attachment, compact = false, onRemove, flush = false }
   const fileName = attachment.name || (isImage ? 'Image' : 'Document')
 
   if (isImage) {
+    const viewer = (
+      <div
+        onClick={() => setViewerOpen(false)}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          width: '100vw',
+          height: '100dvh',
+          zIndex: 2147483647,
+          background: 'rgba(0,0,0,0.9)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setViewerOpen(false)
+          }}
+          aria-label="Close image"
+          style={{
+            position: 'fixed',
+            top: 16,
+            right: 16,
+            width: 42,
+            height: 42,
+            borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.22)',
+            background: 'rgba(255,255,255,0.12)',
+            color: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            zIndex: 2147483647,
+          }}
+        >
+          <X size={22} strokeWidth={2.1} />
+        </button>
+
+        <img
+          src={attachment.url}
+          alt={fileName}
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            maxWidth: '96vw',
+            maxHeight: '88dvh',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'contain',
+            borderRadius: 18,
+            boxShadow: '0 24px 90px rgba(0,0,0,0.45)',
+            userSelect: 'none',
+          }}
+        />
+      </div>
+    )
+
     return (
       <>
         <div style={{
@@ -130,62 +195,9 @@ function AttachmentCard({ attachment, compact = false, onRemove, flush = false }
           )}
         </div>
 
-        {viewerOpen && (
-          <div
-            onClick={() => setViewerOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9999,
-              background: 'rgba(0,0,0,0.82)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 18,
-            }}
-          >
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setViewerOpen(false)
-              }}
-              aria-label="Close image"
-              style={{
-                position: 'fixed',
-                top: 18,
-                right: 18,
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                border: '1px solid rgba(255,255,255,0.22)',
-                background: 'rgba(255,255,255,0.12)',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-              }}
-            >
-              <X size={20} strokeWidth={2.1} />
-            </button>
-
-            <img
-              src={attachment.url}
-              alt={fileName}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                maxWidth: '100%',
-                maxHeight: '86dvh',
-                objectFit: 'contain',
-                borderRadius: 18,
-                boxShadow: '0 20px 80px rgba(0,0,0,0.35)',
-              }}
-            />
-          </div>
-        )}
+        {viewerOpen && typeof document !== 'undefined'
+          ? createPortal(viewer, document.body)
+          : null}
       </>
     )
   }
