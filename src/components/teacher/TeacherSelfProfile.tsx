@@ -585,7 +585,6 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <NotificationsSheet
           teacher={teacher}
           onClose={() => setShowNotifs(false)}
-          onRead={() => {}}
         />
       )}
 
@@ -3191,7 +3190,7 @@ function AddChildOverlay({ onAdd, onClose }: any) {
 
 
 /* GROUPED TEACHER NOTIFICATIONS */
-function NotificationsSheet({ teacher, onClose, onRead }: any) {
+function NotificationsSheet({ teacher, onClose }: any) {
   const [items, setItems] = useState<any[]>([])
   const [parents, setParents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -3228,11 +3227,7 @@ function NotificationsSheet({ teacher, onClose, onRead }: any) {
 
     // Current backend marks teacher notifications as read through this endpoint.
     // This clears the bell dot while we keep the UI grouped locally.
-    try {
-} catch {}
-
-    if (onRead) onRead()
-  }
+}
 
   const openMessageThread = async (group: any) => {
     const source = Array.isArray(group.items) ? group.latest : group
