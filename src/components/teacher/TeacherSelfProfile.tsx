@@ -2891,82 +2891,276 @@ function PendingClassRequests({ onChanged }: any) {
 
   const review = async (requestId: string, action: 'approve' | 'reject') => {
     setBusyId(requestId)
-    const tid = toast.loading(action === 'approve' ? 'Approving…' : 'Rejecting…')
+    const tid = toast.loading(action === 'approve' ? 'Approving request…' : 'Rejecting request…')
+
     try {
       const res = await fetch('/api/teacher/class-requests', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ request_id: requestId, action }),
       })
+
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Could not review request')
 
-      toast.success(action === 'approve' ? 'Request approved' : 'Request rejected', { id: tid })
+      toast.success(action === 'approve'
+        ? 'Parent approved and child linked'
+        : 'Request rejected',
+        { id: tid }
+      )
+
       await load()
-      onChanged()
+      onChanged?.()
     } catch (e: any) {
       toast.error(e.message || 'Failed', { id: tid })
     }
+
     setBusyId(null)
   }
 
   if (loading || requests.length === 0) return null
 
   return (
-    <div style={{ marginBottom: 16, padding: 14, borderRadius: 16, background: '#F4F6FB', border: `1px solid ${T.border}` }}>
-      <p style={{ fontSize: 12, fontWeight: 800, color: T.ink3, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 10px' }}>
-        Pending class requests · {requests.length}
-      </p>
+    <section style={{
+      marginBottom: 16,
+      padding: 14,
+      borderRadius: 18,
+      background: '#F4F6FB',
+      border: `1px solid ${T.border}`,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginBottom: 12,
+      }}>
+        <div>
+          <p style={{
+            fontSize: 12,
+            fontWeight: 850,
+            color: T.ink,
+            letterSpacing: '-0.01em',
+            margin: '0 0 3px',
+          }}>
+            Parent join requests
+          </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <p style={{
+            fontSize: 11.5,
+            color: T.ink3,
+            margin: 0,
+            lineHeight: 1.45,
+          }}>
+            Review parents who asked to link a child to your class.
+          </p>
+        </div>
+
+        <span style={{
+          minWidth: 26,
+          height: 24,
+          padding: '0 8px',
+          borderRadius: 999,
+          background: T.ink,
+          color: T.white,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 11,
+          fontWeight: 850,
+          flexShrink: 0,
+        }}>
+          {requests.length}
+        </span>
+      </div>
+
+      <div style={{
+        padding: '10px 11px',
+        borderRadius: 14,
+        background: 'rgba(255,255,255,0.72)',
+        border: `1px solid ${T.border}`,
+        display: 'flex',
+        gap: 9,
+        alignItems: 'flex-start',
+        marginBottom: 10,
+      }}>
+        <AlertCircle size={15} color={T.blue} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
+        <p style={{
+          fontSize: 11.5,
+          color: T.ink2,
+          lineHeight: 1.45,
+          margin: 0,
+        }}>
+          Approving creates or links the child to your class and allows this parent to see class updates and teacher communication.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         {requests.map((request: any) => {
-          const childName = request.child_full_name || `${request.child_first_name || ''} ${request.child_last_name || ''}`.trim()
+          const childName = String(
+            request.child_full_name ||
+            `${request.child_first_name || ''} ${request.child_last_name || ''}`
+          ).trim().replace(/\s+/g, ' ') || 'Child'
+
+          const parentName = request.parent?.full_name || 'Parent'
+          const parentPhone = request.parent?.phone || ''
+          const relationship = request.relationship || 'Parent/Guardian'
+          const submittedAt = request.created_at
+            ? new Date(request.created_at).toLocaleDateString('en-ZA', { month: 'short', day: 'numeric' })
+            : ''
+
+          const initials = childName
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase()
+
+          const busy = busyId === request.id
+
           return (
-            <div key={request.id} style={{ padding: 12, borderRadius: 14, background: T.white, border: `1px solid ${T.border}` }}>
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <article key={request.id} style={{
+              padding: 13,
+              borderRadius: 16,
+              background: T.white,
+              border: `1px solid ${T.border}`,
+              boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+            }}>
+              <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
                 <div style={{
-                  width: 36, height: 36, borderRadius: '50%',
+                  width: 40,
+                  height: 40,
+                  borderRadius: 13,
                   background: '#F0F0F4',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: T.ink2, fontSize: 13, fontWeight: 800, flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: T.ink2,
+                  fontSize: 13,
+                  fontWeight: 850,
+                  flexShrink: 0,
                 }}>
-                  {childName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                  {initials}
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{
+                    fontSize: 14.5,
+                    color: T.ink,
+                    fontWeight: 800,
+                    margin: 0,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '-0.01em',
+                  }}>
                     {childName}
                   </p>
-                  <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-                    {request.parent?.full_name || 'Parent'} · {request.relationship || 'Parent/Guardian'}
+
+                  <p style={{
+                    fontSize: 12,
+                    color: T.ink2,
+                    margin: '3px 0 0',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {parentName}
+                    {parentPhone ? ` · ${parentPhone}` : ''}
                   </p>
+
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    flexWrap: 'wrap',
+                    marginTop: 8,
+                  }}>
+                    <span style={requestChipStyle}>
+                      {relationship}
+                    </span>
+
+                    {submittedAt && (
+                      <span style={requestChipStyle}>
+                        Requested {submittedAt}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 11 }}>
-                <button disabled={busyId === request.id} onClick={() => review(request.id, 'reject')} style={{
-                  height: 34, borderRadius: 10, border: `1px solid ${T.border}`, background: T.white, color: T.red,
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 12, fontWeight: 800, cursor: busyId === request.id ? 'wait' : 'pointer', fontFamily: 'inherit',
-                }}>
-                  <X size={13} strokeWidth={2.2} /> Reject
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
+                marginTop: 12,
+              }}>
+                <button
+                  disabled={busy}
+                  onClick={() => review(request.id, 'reject')}
+                  style={{
+                    height: 40,
+                    borderRadius: 12,
+                    border: `1px solid ${T.border}`,
+                    background: T.white,
+                    color: T.red,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    fontSize: 12.5,
+                    fontWeight: 850,
+                    cursor: busy ? 'wait' : 'pointer',
+                    fontFamily: 'inherit',
+                    opacity: busy ? 0.6 : 1,
+                  }}
+                >
+                  <X size={14} strokeWidth={2.2} /> Reject
                 </button>
 
-                <button disabled={busyId === request.id} onClick={() => review(request.id, 'approve')} style={{
-                  height: 34, borderRadius: 10, border: 'none', background: T.ink, color: T.white,
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  fontSize: 12, fontWeight: 800, cursor: busyId === request.id ? 'wait' : 'pointer', fontFamily: 'inherit',
-                }}>
-                  <Check size={13} strokeWidth={2.4} /> Approve
+                <button
+                  disabled={busy}
+                  onClick={() => review(request.id, 'approve')}
+                  style={{
+                    height: 40,
+                    borderRadius: 12,
+                    border: 'none',
+                    background: T.ink,
+                    color: T.white,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    fontSize: 12.5,
+                    fontWeight: 850,
+                    cursor: busy ? 'wait' : 'pointer',
+                    fontFamily: 'inherit',
+                    opacity: busy ? 0.72 : 1,
+                  }}
+                >
+                  <Check size={14} strokeWidth={2.4} /> Approve
                 </button>
               </div>
-            </div>
+            </article>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }
+
+const requestChipStyle: any = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  height: 23,
+  padding: '0 8px',
+  borderRadius: 999,
+  background: '#F4F4F6',
+  color: T.ink3,
+  fontSize: 10.5,
+  fontWeight: 750,
+}
+
 
 function AddChildOverlay({ onAdd, onClose }: any) {
   const [name, setName] = useState('')
