@@ -510,7 +510,7 @@ const handlePickAttachment = async (file?: File | null) => {
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '4px 0 calc(78px + env(safe-area-inset-bottom))',
+            padding: '4px 0 calc(var(--sc-thread-bottom, 58px) + env(safe-area-inset-bottom))',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -545,11 +545,11 @@ const handlePickAttachment = async (file?: File | null) => {
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.98)',
+            background: 'rgba(252,252,255,0.97)',
             borderTop: `1px solid ${T.border}`,
-            backdropFilter: 'blur(14px)',
+            backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '6px 12px calc(var(--sc-compose-bottom, 8px) + env(safe-area-inset-bottom))',
+            padding: '5px 10px calc(var(--sc-compose-bottom, 2px) + env(safe-area-inset-bottom))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -559,12 +559,12 @@ const handlePickAttachment = async (file?: File | null) => {
             <div style={{
               display: 'flex',
               alignItems: 'flex-end',
-              gap: 8,
+              gap: 6,
               background: T.white,
               border: `1px solid ${T.border}`,
               borderRadius: 18,
-              padding: '6px 6px 6px 10px',
-              boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
+              padding: '5px 6px 5px 9px',
+              boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
             }}>
               <input
                 ref={fileInputRef}
@@ -584,8 +584,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingAttachment}
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: 30,
+                  height: 30,
                   borderRadius: '50%',
                   border: 'none',
                   background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -620,9 +620,9 @@ const handlePickAttachment = async (file?: File | null) => {
                   color: T.ink,
                   fontSize: 16,
                   lineHeight: 1.35,
-                  maxHeight: 82,
+                  maxHeight: 74,
                   fontFamily: 'inherit',
-                  padding: '7px 0',
+                  padding: '5px 0',
                 }}
               />
 
@@ -631,8 +631,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 disabled={(!message.trim() && !attachment) || sending}
                 aria-label="Send"
                 style={{
-                  width: 32,
-                  height: 32,
+                  width: 30,
+                  height: 30,
                   borderRadius: '50%',
                   border: 'none',
                   background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
@@ -856,7 +856,7 @@ function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOp
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(var(--sc-bottom-extra, 18px) + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 14px) + env(safe-area-inset-bottom))',
     }}>
       <ClassSpaceWelcome
         teacher={teacher}
@@ -1053,7 +1053,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(var(--sc-bottom-extra, 18px) + env(safe-area-inset-bottom))',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 14px) + env(safe-area-inset-bottom))',
     }}>
       {!reportsGuideHidden && (
       <section style={{
@@ -1467,7 +1467,7 @@ function ReportThreadCard({ report, teacher }: any) {
         border: `1px solid ${T.border}`,
         borderRadius: 18,
         padding: 14,
-        boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
+        boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -1655,7 +1655,7 @@ function ParentTeacherPageSkeleton() {
 
       <div style={{
         flexShrink: 0,
-        padding: '10px 12px 14px',
+        padding: '5px 10px calc(var(--sc-compose-bottom, 2px) + env(safe-area-inset-bottom))',
         background: 'rgba(252,252,255,0.96)',
       }}>
         <div style={{
@@ -1664,9 +1664,9 @@ function ParentTeacherPageSkeleton() {
           gap: 8,
           background: T.white,
           border: `1px solid ${T.border}`,
-          borderRadius: 20,
-          padding: '7px 7px 7px 10px',
-          boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
+          borderRadius: 18,
+          padding: '5px 6px 5px 9px',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.035)',
         }}>
           <SkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
           <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
