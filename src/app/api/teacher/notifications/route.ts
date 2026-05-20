@@ -48,6 +48,22 @@ export async function GET(req: NextRequest) {
   const parentNameById: Record<string, string> = {}
   for (const p of (parentProfiles ?? [])) parentNameById[p.id] = p.full_name || 'Parent'
 
+  // message unread is thread-based:
+  // The bell should only clear a parent's message when that specific thread is opened/read.
+  // Do not use teachers.last_seen_at for parent messages.
+  const { data: teacherThreads } = parentIds.length > 0
+    ? await sb
+        .from('teacher_parent_threads')
+        .select('parent_id, unread_for_teacher')
+        .eq('teacher_id', teacher.id)
+        .in('parent_id', parentIds)
+    : { data: [] }
+
+  const unreadByParentId: Record<string, number> = {}
+  for (const t of (teacherThreads ?? [])) {
+    unreadByParentId[t.parent_id] = Number(t.unread_for_teacher || 0)
+  }
+
   // 2) Reactions on the teacher's class posts
   // First find the teacher's posts
   const { data: myPosts } = await sb.from('posts')
@@ -101,7 +117,7 @@ export async function GET(req: NextRequest) {
       parent_name: parentNameById[u.parent_id] || 'Parent',
       preview:     u.body || '[photo]',
       created_at:  u.created_at,
-      unread:      u.created_at > since,
+      unread:      Number(unreadByParentId[u.parent_id] || 0) > 0,
     })
   }
   for (const r of postReactions) {
@@ -136,7 +152,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ items, unread_count, last_seen_at: teacher.last_seen_at })
 }
 
-// POST → mark all read (set last_seen_at = now)
+// POST → mark feed activity notifications read only (reactions/replies via last_seen_at).
+// Parent message unread is controlled by teacher_parent_threads.unread_for_teacher.
 export async function POST(req: NextRequest) {
   const teacher = await getTeacher(req)
   if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })

@@ -275,7 +275,6 @@ function AttachmentCard({ attachment, compact = false, onRemove, flush = false }
 }
 
 
-
 function AttachmentPreviewTray({ attachment, onRemove }: any) {
   if (!attachment) return null
 
@@ -586,7 +585,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         <NotificationsSheet
           teacher={teacher}
           onClose={() => setShowNotifs(false)}
-          onRead={() => setUnread(0)}
+          onRead={() => {}}
         />
       )}
 
