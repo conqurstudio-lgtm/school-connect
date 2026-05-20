@@ -76,26 +76,78 @@ function updateAttachment(update: any): AttachmentDraft | null {
   return null
 }
 
-function AttachmentCard({ attachment, compact = false, onRemove }: any) {
+function AttachmentCard({ attachment, compact = false, onRemove, flush = false }: any) {
   if (!attachment) return null
 
   const isImage = attachment.is_image || attachment.type?.startsWith?.('image/')
+  const fileName = attachment.name || (isImage ? 'image' : 'document')
 
   if (isImage) {
     return (
-      <div style={{ marginTop: 8, position: 'relative', maxWidth: compact ? 130 : '100%' }}>
-        <img
-          src={attachment.url}
-          alt={attachment.name || 'Attachment'}
+      <div style={{
+        marginTop: flush ? 0 : 8,
+        position: 'relative',
+        maxWidth: compact ? 132 : '100%',
+        width: flush ? '100%' : undefined,
+      }}>
+        <a
+          href={attachment.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Open image"
           style={{
-            width: compact ? 96 : '100%',
-            maxHeight: compact ? 96 : 280,
-            objectFit: 'cover',
-            borderRadius: 14,
             display: 'block',
-            border: `1px solid ${T.border}`,
+            lineHeight: 0,
+            borderRadius: flush ? 0 : 14,
+            overflow: 'hidden',
           }}
-        />
+        >
+          <img
+            src={attachment.url}
+            alt={fileName}
+            style={{
+              width: compact ? 104 : '100%',
+              maxHeight: compact ? 104 : 320,
+              objectFit: 'cover',
+              borderRadius: flush ? 0 : 14,
+              display: 'block',
+              border: flush ? 'none' : `1px solid ${T.border}`,
+              cursor: 'zoom-in',
+            }}
+          />
+        </a>
+
+        {!compact && (
+          <a
+            href={attachment.url}
+            download={fileName}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: flush ? 'absolute' : 'static',
+              right: flush ? 8 : undefined,
+              bottom: flush ? 8 : undefined,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: flush ? 0 : 7,
+              height: 28,
+              padding: '0 10px',
+              borderRadius: 999,
+              background: flush ? 'rgba(255,255,255,0.88)' : '#F4F4F6',
+              backdropFilter: flush ? 'blur(10px)' : undefined,
+              WebkitBackdropFilter: flush ? 'blur(10px)' : undefined,
+              color: T.ink2,
+              border: `1px solid ${T.border}`,
+              fontSize: 11,
+              fontWeight: 750,
+              textDecoration: 'none',
+            }}
+          >
+            Download
+          </a>
+        )}
+
         {onRemove && (
           <button onClick={onRemove} style={{
             position: 'absolute',
@@ -120,59 +172,79 @@ function AttachmentCard({ attachment, compact = false, onRemove }: any) {
   }
 
   return (
-    <a
-      href={attachment.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{
-        marginTop: 8,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: compact ? '8px 9px' : '10px 12px',
-        borderRadius: 14,
-        background: '#F4F4F6',
-        border: `1px solid ${T.border}`,
-        color: T.ink,
-        textDecoration: 'none',
-        maxWidth: compact ? 220 : '100%',
-      }}
-    >
-      <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
-      <span style={{
-        fontSize: compact ? 12 : 13,
-        fontWeight: 700,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        flex: 1,
-      }}>
-        {attachment.name || 'Document'}
-      </span>
+    <div style={{
+      marginTop: 8,
+      position: 'relative',
+      maxWidth: compact ? 230 : '100%',
+    }}>
+      <a
+        href={attachment.url}
+        download={fileName}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: compact ? '8px 9px' : '10px 12px',
+          borderRadius: 14,
+          background: '#F4F4F6',
+          border: `1px solid ${T.border}`,
+          color: T.ink,
+          textDecoration: 'none',
+        }}
+      >
+        <FileText size={17} strokeWidth={1.9} style={{ flexShrink: 0 }} />
+        <span style={{
+          fontSize: compact ? 12 : 13,
+          fontWeight: 700,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          flex: 1,
+        }}>
+          {fileName}
+        </span>
+        {!compact && (
+          <span style={{
+            fontSize: 11,
+            color: T.ink3,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}>
+            Open
+          </span>
+        )}
+      </a>
+
       {onRemove && (
         <button
           type="button"
           onClick={(e) => { e.preventDefault(); onRemove() }}
           style={{
-            width: 22,
-            height: 22,
+            position: 'absolute',
+            top: -7,
+            right: -7,
+            width: 24,
+            height: 24,
             borderRadius: '50%',
-            border: 'none',
-            background: 'rgba(0,0,0,0.05)',
+            border: `1px solid ${T.border}`,
+            background: T.white,
             color: T.ink2,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            flexShrink: 0,
           }}
         >
           <X size={12} strokeWidth={2.2} />
         </button>
       )}
-    </a>
+    </div>
   )
 }
+
+
 
 type ThreadItem =
   | { kind: 'message'; created_at: string; data: any }
@@ -770,10 +842,13 @@ export function TeacherProfileClient({ teacherId }: Props) {
 }
 
 function MessageRow({ update, teacher }: any) {
-  // parent-message-bubble-v2
-  // This mirrors the teacher thread layout so images/documents sit INSIDE the chat bubble.
+  // parent-image-bubble-frame-v2
+  // Parent relationship thread now uses the same image-inside-bubble treatment as the teacher thread.
   const isTeacher = update.author_kind === 'teacher'
   const attachment = updateAttachment(update)
+  const imageOnly = !!attachment
+    && (attachment.is_image || attachment.type?.startsWith?.('image/'))
+    && !String(update.body || '').trim()
 
   const initials = isTeacher
     ? teacher.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -817,7 +892,7 @@ function MessageRow({ update, teacher }: any) {
           background: isTeacher ? T.white : '#F4F4F6',
           color: T.ink,
           border: isTeacher ? `1px solid ${T.border}` : 'none',
-          padding: '9px 12px',
+          padding: imageOnly ? 0 : '9px 12px',
           overflow: 'hidden',
         }}>
           {update.body && (
@@ -830,6 +905,8 @@ function MessageRow({ update, teacher }: any) {
               {update.body}
             </p>
           )}
+
+          {attachment && <AttachmentCard attachment={attachment} flush={imageOnly} />}
         </div>
 
         <p style={{
@@ -844,7 +921,6 @@ function MessageRow({ update, teacher }: any) {
     </article>
   )
 }
-
 
 function ReplyBubble({ reply, teacher }: any) {
   const isTeacher = !!reply.teacher_id
