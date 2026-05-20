@@ -56,6 +56,122 @@ const [showJoin, setShowJoin] = useState(false)
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const composerDockRef = useRef<HTMLDivElement | null>(null)
+  const scrollRafRef = useRef<number | null>(null)
+  const previousThreadCountRef = useRef(0)
+
+  const isMessageListNearBottom = () => {
+    const el = threadScrollRef.current
+    if (!el) return true
+
+    const distance = el.scrollHeight - el.scrollTop - el.clientHeight
+    return distance < 180
+  }
+
+  const scrollToLatestMessage = (
+    reason = 'latest',
+    behavior: ScrollBehavior = 'auto',
+    force = true,
+  ) => {
+    const el = threadScrollRef.current
+    if (!el) return
+    if (!force && !isMessageListNearBottom()) return
+
+    const run = () => {
+      const current = threadScrollRef.current
+      if (!current) return
+      try {
+        bottomRef.current?.scrollIntoView({ block: 'end', behavior })
+      } catch {}
+      current.scrollTop = current.scrollHeight
+    }
+
+    if (scrollRafRef.current !== null) cancelAnimationFrame(scrollRafRef.current)
+
+    scrollRafRef.current = requestAnimationFrame(() => {
+      run()
+      window.setTimeout(run, 40)
+      window.setTimeout(run, 140)
+      window.setTimeout(run, 320)
+    })
+  }
+
+  // sc-scroll-anchor-v2
+  useEffect(() => {
+    previousThreadCountRef.current = 0
+  }, [teacherId])
+
+  useEffect(() => {
+    if (!canMessage || classSpaceTab !== 'messages') return
+    scrollToLatestMessage('messages-tab-open', 'auto', true)
+  }, [classSpaceTab, canMessage, teacherId])
+
+  useEffect(() => {
+    if (!canMessage || classSpaceTab !== 'messages') return
+    if (threadLoading) return
+
+    const totalItems = (updates?.length || 0) + (reports?.length || 0)
+    const firstThreadLoad = previousThreadCountRef.current === 0 && totalItems > 0
+    const countChanged = previousThreadCountRef.current !== totalItems
+
+    if (firstThreadLoad || countChanged || isMessageListNearBottom()) {
+      scrollToLatestMessage(
+        'thread-items-ready',
+        'auto',
+        firstThreadLoad || isMessageListNearBottom()
+      )
+    }
+
+    previousThreadCountRef.current = totalItems
+  }, [
+    updates.length,
+    reports.length,
+    threadLoading,
+    canMessage,
+    classSpaceTab,
+    teacherId,
+  ])
+
+  useEffect(() => {
+    if (classSpaceTab !== 'messages') return
+
+    const el = threadScrollRef.current
+    if (!el) return
+
+    const onMediaLoad = (event: Event) => {
+      const target = event.target as HTMLElement | null
+      if (!target) return
+
+      if (target.tagName === 'IMG' && isMessageListNearBottom()) {
+        scrollToLatestMessage('media-loaded', 'auto', false)
+      }
+    }
+
+    el.addEventListener('load', onMediaLoad, true)
+
+    return () => {
+      el.removeEventListener('load', onMediaLoad, true)
+    }
+  }, [classSpaceTab, updates.length, reports.length])
+
+  useEffect(() => {
+    if (classSpaceTab !== 'messages') return
+
+    const dock = composerDockRef.current
+    if (!dock || typeof ResizeObserver === 'undefined') return
+
+    const observer = new ResizeObserver(() => {
+      if (isMessageListNearBottom()) {
+        scrollToLatestMessage('composer-resized', 'auto', false)
+      }
+    })
+
+    observer.observe(dock)
+
+    return () => observer.disconnect()
+  }, [classSpaceTab])
+
+
   const threadScrollRef = useRef<HTMLDivElement>(null)
 
   const forceScrollToBottom = (smooth = true) => {
@@ -541,7 +657,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div style={{
+          <div ref={composerDockRef} style={{
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
