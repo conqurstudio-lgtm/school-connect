@@ -66,3 +66,52 @@ input {
     background: var(--sc-mobile-bg);
   }
 }
+
+/* sc-pwa-shell-polish-v1
+   Makes the saved-to-home-screen experience feel less like a browser page.
+   This does not change message scroll logic or composer behavior. */
+html,
+body {
+  min-height: 100svh;
+  background: var(--sc-mobile-bg, #FCFCFF);
+}
+
+@supports (height: 100dvh) {
+  html,
+  body {
+    min-height: 100dvh;
+  }
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body > div {
+  min-height: inherit;
+  background: var(--sc-mobile-bg, #FCFCFF);
+}
+
+@media (display-mode: standalone) {
+  html,
+  body,
+  body > div {
+    background: var(--sc-mobile-bg, #FCFCFF);
+  }
+
+  body {
+    overscroll-behavior: none;
+  }
+}
+
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button {
+    touch-action: manipulation;
+  }
+}
