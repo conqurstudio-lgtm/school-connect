@@ -517,25 +517,7 @@ const handlePickAttachment = async (file?: File | null) => {
 
 
   if (loading) {
-    return (
-      <div style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: T.bg,
-        fontFamily: 'Inter, -apple-system, sans-serif',
-      }}>
-        <div style={{
-          width: 22,
-          height: 22,
-          borderRadius: '50%',
-          border: `2px solid ${T.border}`,
-          borderTopColor: T.ink,
-          animation: 'spin 0.7s linear infinite',
-        }} />
-      </div>
-    )
+    return <ParentTeacherPageSkeleton />
   }
 
   if (!teacher) {
@@ -1075,28 +1057,138 @@ function ReportThreadCard({ report, teacher }: any) {
 }
 
 
-function ConversationLoading() {
+function SkeletonBlock({ style = {} }: any) {
+  return (
+    <div
+      className="sc-skeleton-block"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(90deg, #F1F1F5 0%, #F7F7FA 45%, #F1F1F5 100%)',
+        backgroundSize: '220% 100%',
+        animation: 'scSkeleton 1.25s ease-in-out infinite',
+        ...style,
+      }}
+    />
+  )
+}
+
+function MessageGhostRows() {
+  return (
+    <div style={{ padding: '8px 16px 20px' }}>
+      {[0, 1, 2, 3, 4].map((i) => {
+        const mine = i % 2 === 1
+        return (
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              flexDirection: mine ? 'row-reverse' : 'row',
+              gap: 10,
+              marginBottom: 14,
+            }}
+          >
+            <SkeletonBlock style={{
+              width: 30,
+              height: 30,
+              borderRadius: 9,
+              flexShrink: 0,
+              marginTop: 2,
+            }} />
+
+            <div style={{
+              width: i === 2 ? '58%' : mine ? '62%' : '70%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: mine ? 'flex-end' : 'flex-start',
+            }}>
+              <SkeletonBlock style={{
+                width: '100%',
+                height: i === 3 ? 74 : 42,
+                borderRadius: mine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+              }} />
+              <SkeletonBlock style={{
+                width: 42,
+                height: 8,
+                borderRadius: 999,
+                marginTop: 6,
+              }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function ParentTeacherPageSkeleton() {
   return (
     <div style={{
-      padding: '70px 28px',
-      textAlign: 'center',
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.bg,
+      maxWidth: 520,
+      margin: '0 auto',
+      fontFamily: 'Inter, -apple-system, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <div style={{
-        width: 20,
-        height: 20,
-        borderRadius: '50%',
-        border: `2px solid ${T.border}`,
-        borderTopColor: T.ink,
-        animation: 'spin 0.7s linear infinite',
-        margin: '0 auto 12px',
-      }} />
-      <p style={{
-        fontSize: 13,
-        color: T.ink3,
-        margin: 0,
+        flexShrink: 0,
+        background: 'rgba(252,252,255,0.98)',
+        padding: '14px 16px 12px',
       }}>
-        Loading messages...
-      </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+          <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
+          <SkeletonBlock style={{ width: 38, height: 38, borderRadius: 10 }} />
+          <div style={{ flex: 1 }}>
+            <SkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
+            <SkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', paddingTop: 10 }}>
+        <MessageGhostRows />
+      </div>
+
+      <div style={{
+        flexShrink: 0,
+        padding: '10px 12px 14px',
+        background: 'rgba(252,252,255,0.96)',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 22,
+          padding: '8px 8px 8px 10px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+        }}>
+          <SkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
+          <SkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+        </div>
+      </div>
+
+      <style jsx global>{`
+        @keyframes scSkeleton {
+          0% { background-position: 120% 0; }
+          100% { background-position: -120% 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+
+function ConversationLoading() {
+  return (
+    <div style={{ paddingTop: 12 }}>
+      <MessageGhostRows />
     </div>
   )
 }
