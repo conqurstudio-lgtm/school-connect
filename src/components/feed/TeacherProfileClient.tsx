@@ -57,7 +57,11 @@ const [showJoin, setShowJoin] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const composerDockRef = useRef<HTMLDivElement | null>(null)
+  const scrollRafRef = useRef<number | null>(null)
+  const previousThreadCountRef = useRef(0)
   const messageLandingRef = useRef(false)
+  const messageScrollReadyRef = useRef(false)
 
   const isMessageListNearBottom = () => {
     const el = threadScrollRef.current
@@ -67,7 +71,33 @@ const [showJoin, setShowJoin] = useState(false)
     return distance < 180
   }
 
-  
+  const scrollToLatestMessage = (
+  reason = 'latest',
+  behavior: ScrollBehavior = 'auto',
+  force = true,
+) => {
+  const el = threadScrollRef.current
+  if (!el) return
+  if (!force && !isMessageListNearBottom()) return
+
+  if (scrollRafRef.current !== null) {
+    cancelAnimationFrame(scrollRafRef.current)
+  }
+
+  scrollRafRef.current = requestAnimationFrame(() => {
+    const current = threadScrollRef.current
+    if (!current) return
+
+    const targetTop = Math.max(0, current.scrollHeight - current.clientHeight)
+    if (Math.abs(current.scrollTop - targetTop) < 3) return
+
+    if (behavior === 'smooth') {
+      current.scrollTo({ top: targetTop, behavior })
+    } else {
+      current.scrollTop = targetTop
+    }
+  })
+}
 
   // sc-scroll-anchor-v3
   useEffect(() => {
@@ -164,38 +194,6 @@ const [showJoin, setShowJoin] = useState(false)
 
   requestAnimationFrame(run)
 }
-
-  // message-landing-animation-only-v1
-  useEffect(() => {
-    if (!canMessage || classSpaceTab !== 'messages' || threadLoading) return
-
-    messageLandingRef.current = true
-
-    const startTimer = window.setTimeout(() => {
-      forceScrollToBottom(false)
-    }, 80)
-
-    const releaseTimer = window.setTimeout(() => {
-      messageLandingRef.current = false
-    }, 620)
-
-    return () => {
-      window.clearTimeout(startTimer)
-      window.clearTimeout(releaseTimer)
-      messageLandingRef.current = false
-    }
-  }, [classSpaceTab, canMessage, threadLoading, teacherId])
-
-  // parent-composer-auto-expand-v1
-  useEffect(() => {
-    const el = messageTextareaRef.current
-    if (!el) return
-
-    el.style.height = 'auto'
-    const nextHeight = Math.min(el.scrollHeight, 92)
-    el.style.height = `${Math.max(nextHeight, 22)}px`
-  }, [message, classSpaceTab])
-
 
   // message-landing-slide-v1
   useEffect(() => {
@@ -323,6 +321,12 @@ try {
   // parent-thread-fast-open-v2:
   // Keep the thread feeling instant. When messages arrive, useLayoutEffect
   // positions the internal message container before the browser paints.
+  useLayoutEffect(() => {
+    if (loading || threadLoading || !canMessage || classSpaceTab !== 'messages') return
+    if (messageLandingRef.current) return
+
+    forceScrollToBottom(false)
+  }, [loading, threadLoading, canMessage, classSpaceTab, teacherId])
 
   // parent-composer-auto-expand-v1
   useEffect(() => {
@@ -700,7 +704,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div style={{
+          <div ref={composerDockRef} style={{
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
