@@ -2368,7 +2368,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [attachment, setAttachment] = useState<AttachmentDraft | null>(null)
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [showQuickReplies, setShowQuickReplies] = useState(false)
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -2430,12 +2429,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   }, [loading, updates.length, parent.id])
 
 
-
-
-
-
-
-
   const handlePickAttachment = async (file?: File | null) => {
     if (!file) return
 
@@ -2485,7 +2478,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
     setReply('')
     setAttachment(null)
-    setShowQuickReplies(false)
     setUpdates(prev => [...prev, optimisticMessage])
     forceScrollToBottom(true)
     setSending(true)
@@ -2740,31 +2732,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                       {relTime(u.created_at)}
                     </p>
 
-                    {!isTeacher && (
-                      <button
-                        type="button"
-                        className="quick-reply-under-message"
-                        onClick={() => {
-                          setReply('')
-                          setShowQuickReplies(true)
-                          window.setTimeout(() => forceScrollToBottom(true), 40)
-                        }}
-                        style={{
-                          margin: '5px 4px 0',
-                          padding: 0,
-                          border: 'none',
-                          background: 'transparent',
-                          color: T.blue,
-                          fontSize: 11,
-                          fontWeight: 800,
-                          fontFamily: 'inherit',
-                          cursor: 'pointer',
-                          alignSelf: 'flex-start',
-                        }}
-                      >
-                        Quick reply
-                      </button>
-                    )}
                   </div>
                 </div>
               )
@@ -2782,36 +2749,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           WebkitBackdropFilter: 'none',
           padding: '8px 12px 14px',
         }}>
-          <div style={{
-            position: 'absolute',
-            left: 12,
-            right: 12,
-            top: -44,
-            display: showQuickReplies && !reply.trim() ? 'flex' : 'none',
-            gap: 8,
-            marginBottom: 0,
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            zIndex: 2,
-            pointerEvents: 'auto',
-          }}>
-            {['Sure', 'OK', '❤️', 'Thank you'].map(text => (
-              <button key={text} onClick={() => sendText(text)} disabled={sending} style={{
-                border: 'none',
-                borderRadius: 999,
-                background: '#F4F4F6',
-                color: T.ink2,
-                padding: '7px 11px',
-                fontSize: 12,
-                fontWeight: 750,
-                cursor: sending ? 'wait' : 'pointer',
-                fontFamily: 'inherit',
-                flexShrink: 0,
-              }}>
-                {text}
-              </button>
-            ))}
-          </div>
+          
+
 
           <AttachmentPreviewTray
             attachment={attachment}
@@ -2866,7 +2805,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
 <textarea
               value={reply}
-              onChange={e => { setReply(e.target.value); if (e.target.value.trim()) setShowQuickReplies(false) }}
+              onChange={e => setReply(e.target.value)}
               onFocus={() => setShowQuickReplies(true)}
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
