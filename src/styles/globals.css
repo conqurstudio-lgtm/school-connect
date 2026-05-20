@@ -967,3 +967,44 @@ html::after {
   }
 }
 
+
+/* sc-feed-topbar-white-cover-fix-v1
+   The visible "safe-area cover" was the feed topbar area:
+   - .topbar child was 118px tall with 30px top padding
+   - .feed-scroll still had 18px top padding
+   Keep the app shell, but stop the large white header block from covering the page. */
+@media (max-width: 640px) {
+  .app-root .feed-scroll,
+  .app-root [data-scroll-container] {
+    padding-top: 0 !important;
+  }
+
+  .app-root .topbar {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+
+  .app-root .topbar > div:first-child {
+    padding-top: 10px !important;
+    padding-right: 16px !important;
+    padding-bottom: 10px !important;
+    padding-left: 16px !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  .app-root .feed-scroll,
+  .app-root [data-scroll-container] {
+    padding-top: 0 !important;
+  }
+
+  .app-root .topbar > div:first-child {
+    padding-top: 8px !important;
+    padding-bottom: 9px !important;
+  }
+}
+
