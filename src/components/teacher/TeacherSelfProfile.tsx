@@ -3335,6 +3335,52 @@ function AddChildOverlay({ onAdd, onClose }: any) {
 
 
 /* GROUPED TEACHER NOTIFICATIONS */
+
+function NotificationGhostRows() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 4 }}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <div key={i} style={{
+          padding: '12px 12px',
+          display: 'flex',
+          gap: 12,
+          alignItems: 'flex-start',
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 16,
+        }}>
+          <TeacherSkeletonBlock style={{
+            width: 38,
+            height: 38,
+            borderRadius: 12,
+            flexShrink: 0,
+          }} />
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <TeacherSkeletonBlock style={{
+              width: i % 2 === 0 ? '58%' : '44%',
+              height: 12,
+              borderRadius: 999,
+              marginBottom: 8,
+            }} />
+            <TeacherSkeletonBlock style={{
+              width: i === 2 ? '70%' : '86%',
+              height: 10,
+              borderRadius: 999,
+              marginBottom: 8,
+            }} />
+            <TeacherSkeletonBlock style={{
+              width: 42,
+              height: 8,
+              borderRadius: 999,
+            }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function NotificationsSheet({ teacher, onClose }: any) {
   const [items, setItems] = useState<any[]>([])
   const [parents, setParents] = useState<any[]>([])
@@ -3342,20 +3388,25 @@ function NotificationsSheet({ teacher, onClose }: any) {
   const [openThread, setOpenThread] = useState<any>(null)
 
   const load = async () => {
+    // teacher-notifications-fast-load-v1:
+    // Do not wait for parents before showing notifications.
+    // Notifications are the screen's main content; parent details can hydrate in the background.
     setLoading(true)
+
     try {
-      const [notifRes, parentsRes] = await Promise.all([
-        fetch('/api/teacher/notifications'),
-        fetch('/api/teacher/parents'),
-      ])
-
-      const notifJson = await notifRes.json()
-      const parentsJson = await parentsRes.json().catch(() => ({ parents: [] }))
-
+      const notifRes = await fetch('/api/teacher/notifications')
+      const notifJson = await notifRes.json().catch(() => ({ items: [] }))
       setItems(notifJson.items ?? [])
-      setParents(parentsJson.parents ?? [])
-    } catch {}
-    setLoading(false)
+      setLoading(false)
+
+      // Background hydrate parent details for child labels/thread fallback.
+      fetch('/api/teacher/parents')
+        .then(r => r.json())
+        .then(j => setParents(j.parents ?? []))
+        .catch(() => {})
+    } catch {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [])
@@ -3504,16 +3555,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
           padding: '8px 16px 28px',
         }}>
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
-              <div style={{
-                width: 18,
-                height: 18,
-                borderRadius: '50%',
-                border: `2px solid ${T.border}`,
-                borderTopColor: T.ink,
-                animation: 'spin 0.7s linear infinite',
-              }} />
-            </div>
+            <NotificationGhostRows />
           ) : items.length === 0 ? (
             <div style={{ padding: '70px 24px', textAlign: 'center' }}>
               <Bell size={22} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 10px' }} />
