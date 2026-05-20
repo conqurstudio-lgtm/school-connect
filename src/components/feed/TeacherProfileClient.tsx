@@ -497,13 +497,20 @@ const handlePickAttachment = async (file?: File | null) => {
 
           {classSpaceTab === 'messages' && (
             <>
+              <MessageSpaceIntro
+                teacher={teacher}
+                reportsCount={reports.length}
+                onOpenLife={() => setClassSpaceTab('life')}
+                onOpenReports={() => setClassSpaceTab('reports')}
+              />
+
           <div ref={threadScrollRef} style={{
             flex: 1,
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '10px 0 90px',
+            padding: '4px 0 calc(78px + env(safe-area-inset-bottom))',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -538,10 +545,11 @@ const handlePickAttachment = async (file?: File | null) => {
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.96)',
+            background: 'rgba(252,252,255,0.98)',
+            borderTop: `1px solid ${T.border}`,
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '10px 12px 14px',
+            padding: '6px 12px calc(8px + env(safe-area-inset-bottom))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -554,9 +562,9 @@ const handlePickAttachment = async (file?: File | null) => {
               gap: 8,
               background: T.white,
               border: `1px solid ${T.border}`,
-              borderRadius: 20,
-              padding: '7px 7px 7px 10px',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+              borderRadius: 18,
+              padding: '6px 6px 6px 10px',
+              boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
             }}>
               <input
                 ref={fileInputRef}
@@ -576,8 +584,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingAttachment}
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   borderRadius: '50%',
                   border: 'none',
                   background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -612,9 +620,9 @@ const handlePickAttachment = async (file?: File | null) => {
                   color: T.ink,
                   fontSize: 16,
                   lineHeight: 1.35,
-                  maxHeight: 90,
+                  maxHeight: 82,
                   fontFamily: 'inherit',
-                  padding: '8px 0',
+                  padding: '7px 0',
                 }}
               />
 
@@ -623,8 +631,8 @@ const handlePickAttachment = async (file?: File | null) => {
                 disabled={(!message.trim() && !attachment) || sending}
                 aria-label="Send"
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   borderRadius: '50%',
                   border: 'none',
                   background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
@@ -647,6 +655,95 @@ const handlePickAttachment = async (file?: File | null) => {
     </div>
   )
 }
+
+function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReports }: any) {
+  return (
+    <section style={{
+      margin: '8px 14px 8px',
+      padding: 10,
+      borderRadius: 16,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 9,
+      }}>
+        <div style={{
+          width: 26,
+          height: 26,
+          borderRadius: '50%',
+          background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+          color: T.ink2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 9.5,
+          fontWeight: 850,
+          flexShrink: 0,
+        }}>
+          {!teacher.photo_url && teacher.name?.charAt(0)}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 11.2,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            Private teacher inbox
+          </p>
+          <p style={{
+            fontSize: 9.5,
+            color: T.ink3,
+            margin: '-2px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} stays connected to class life.
+          </p>
+        </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: reportsCount > 0 ? '1fr 1fr' : '1fr',
+        gap: 7,
+        marginTop: 9,
+      }}>
+        <button type="button" onClick={onOpenLife} style={messageMiniActionBtn}>
+          View Class Life
+        </button>
+
+        {reportsCount > 0 && (
+          <button type="button" onClick={onOpenReports} style={messageMiniActionBtn}>
+            Reports {reportsCount}
+          </button>
+        )}
+      </div>
+    </section>
+  )
+}
+
+const messageMiniActionBtn: any = {
+  height: 30,
+  borderRadius: 999,
+  border: `1px solid ${T.border}`,
+  background: '#F8F8FB',
+  color: T.ink2,
+  fontSize: 10.2,
+  fontWeight: 850,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
 
 function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
   const tabs = [
@@ -1090,7 +1187,7 @@ function ReportThreadCard({ report, teacher }: any) {
         border: `1px solid ${T.border}`,
         borderRadius: 18,
         padding: 14,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+        boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -1289,7 +1386,7 @@ function ParentTeacherPageSkeleton() {
           border: `1px solid ${T.border}`,
           borderRadius: 20,
           padding: '7px 7px 7px 10px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+          boxShadow: '0 8px 22px rgba(0,0,0,0.045)',
         }}>
           <SkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
           <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
@@ -1343,7 +1440,7 @@ function EmptyConversation({ teacher }: any) {
         fontWeight: 750,
         margin: '0 0 5px',
       }}>
-        Start a private message
+        Message teacher
       </p>
       <p style={{
         fontSize: 13,
@@ -1351,7 +1448,7 @@ function EmptyConversation({ teacher }: any) {
         margin: 0,
         lineHeight: 1.5,
       }}>
-        Send a short note to {teacher.name}. Class posts still stay on the main feed.
+        Send a note to {teacher.name}. Class Life, Reports and messages stay together in this space.
       </p>
     </div>
   )
