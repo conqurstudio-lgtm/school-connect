@@ -1,5 +1,6 @@
 // /api/teachers/[id]/profile
-// Supports normal Supabase parents and lightweight parent_token sessions.
+// Supports normal Supabase parents, lightweight parent_token sessions,
+// and public class invite preview mode.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -64,6 +65,24 @@ async function getCaller(req: NextRequest) {
   return null
 }
 
+function publicTeacherPayload(teacher: any) {
+  return {
+    teacher: {
+      id: teacher.id,
+      name: teacher.name,
+      photo_url: teacher.photo_url,
+      grade: teacher.grade,
+      class_name: teacher.class_name,
+    },
+    is_my_teacher: false,
+    join_status: 'none',
+    join_request: null,
+    posts: [],
+    reports: [],
+    public_mode: true,
+  }
+}
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const sb = adminClient()
   const publicMode = req.nextUrl.searchParams.get('public') === '1'
@@ -76,30 +95,19 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   if (!teacher) return NextResponse.json({ error: 'not found' }, { status: 404 })
 
-  if (publicMode) {
-    return NextResponse.json({
-      teacher: {
-        id: teacher.id,
-        name: teacher.name,
-        photo_url: teacher.photo_url,
-        grade: teacher.grade,
-        class_name: teacher.class_name,
-      },
-      is_my_teacher: false,
-      join_status: 'none',
-      join_request: null,
-      posts: [],
-      reports: [],
-      public_mode: true,
-    })
-  }
-
   const caller = await getCaller(req)
-  if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  // public-class-invite-profile-v1
+  // No session yet: show public class preview instead of redirecting to auth login.
+  if (!caller?.profile) {
+    if (publicMode) return NextResponse.json(publicTeacherPayload(teacher))
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  }
 
   const profile = caller.profile
 
   if (profile.school_id !== teacher.school_id) {
+    if (publicMode) return NextResponse.json(publicTeacherPayload(teacher))
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 

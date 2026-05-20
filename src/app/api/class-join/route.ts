@@ -1,11 +1,13 @@
 // /api/class-join
 // Parent requests to join a teacher's class.
-// Supports normal Supabase parents and lightweight parent_token sessions.
+// Supports normal Supabase parents, lightweight parent_token sessions,
+// and first-time public class invite visitors.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { randomUUID } from 'crypto'
 
 function adminClient() {
   return createClient(
@@ -45,7 +47,7 @@ async function getCaller(req: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.school_id) return { profile }
+    if (profile?.school_id) return { profile, createdToken: null as string | null }
   }
 
   const parentToken = req.cookies.get('parent_token')?.value
@@ -62,17 +64,68 @@ async function getCaller(req: NextRequest) {
         .eq('id', session.parent_id)
         .single()
 
-      if (profile?.school_id) return { profile }
+      if (profile?.school_id) return { profile, createdToken: null as string | null }
     }
   }
 
   return null
 }
 
-export async function POST(req: NextRequest) {
-  const caller = await getCaller(req)
-  if (!caller?.profile) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+async function createPublicParentSession(
+  sb: ReturnType<typeof adminClient>,
+  teacher: any,
+  childFirstName: string,
+  childLastName: string,
+  relationship: string,
+) {
+  const parentId = randomUUID()
+  const token = randomUUID().replace(/-/g, '') + randomUUID().replace(/-/g, '')
+  const childName = `${childFirstName} ${childLastName}`.trim()
+  const fullName = `${relationship || 'Parent/Guardian'} of ${childName}`.trim()
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString()
 
+  const { data: profile, error: profileError } = await sb.from('profiles')
+    .insert({
+      id: parentId,
+      school_id: teacher.school_id,
+      role: 'parent',
+      full_name: fullName,
+      child_name: childName,
+    })
+    .select('id, school_id, role')
+    .single()
+
+  if (profileError) throw new Error(profileError.message)
+
+  const { error: sessionError } = await sb.from('parent_sessions')
+    .insert({
+      parent_id: parentId,
+      access_token: token,
+      expires_at: expiresAt,
+    })
+
+  if (sessionError) throw new Error(sessionError.message)
+
+  return { profile, createdToken: token }
+}
+
+function jsonWithOptionalParentCookie(payload: any, status = 200, token?: string | null) {
+  const res = NextResponse.json(payload, { status })
+
+  if (token) {
+    res.cookies.set('parent_token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+    })
+  }
+
+  return res
+}
+
+export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
 
   const teacherId = clean(body.teacher_id)
@@ -86,7 +139,6 @@ export async function POST(req: NextRequest) {
   }
 
   const sb = adminClient()
-  const profile = caller.profile
 
   const { data: teacher } = await sb.from('teachers')
     .select('id, school_id, grade, class_name, status')
@@ -95,7 +147,33 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (!teacher) return NextResponse.json({ error: 'teacher not found' }, { status: 404 })
-  if (profile.school_id !== teacher.school_id) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+
+  let caller = await getCaller(req)
+
+  // public-class-join-request-v1
+  // A first-time parent opening /class/{teacherId} has no Supabase auth session yet.
+  // Create a lightweight parent profile/session so the teacher can approve the request.
+  if (!caller?.profile) {
+    try {
+      caller = await createPublicParentSession(
+        sb,
+        teacher,
+        childFirstName,
+        childLastName,
+        relationship,
+      )
+    } catch (e: any) {
+      return NextResponse.json({
+        error: e?.message || 'Could not create parent request session',
+      }, { status: 500 })
+    }
+  }
+
+  const profile = caller.profile
+
+  if (profile.school_id !== teacher.school_id) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  }
 
   const { data: links } = await sb.from('child_guardians')
     .select('child_id')
@@ -115,7 +193,9 @@ export async function POST(req: NextRequest) {
       (kid.class_name || null) === (teacher.class_name || null)
     )
 
-    if (alreadyLinked) return NextResponse.json({ already_joined: true })
+    if (alreadyLinked) {
+      return jsonWithOptionalParentCookie({ already_joined: true }, 200, caller.createdToken)
+    }
   }
 
   const { data: existingPending } = await sb.from('class_join_requests')
@@ -128,7 +208,11 @@ export async function POST(req: NextRequest) {
     .maybeSingle()
 
   if (existingPending) {
-    return NextResponse.json({ request: existingPending, already_pending: true })
+    return jsonWithOptionalParentCookie(
+      { request: existingPending, already_pending: true },
+      200,
+      caller.createdToken,
+    )
   }
 
   const { data, error } = await sb.from('class_join_requests')
@@ -145,5 +229,6 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ request: data })
+
+  return jsonWithOptionalParentCookie({ request: data }, 200, caller.createdToken)
 }
