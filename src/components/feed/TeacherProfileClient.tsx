@@ -1150,7 +1150,23 @@ function ParentTeacherPageSkeleton() {
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', paddingTop: 10 }}>
-        <MessageGhostRows />
+        <div style={{ padding: '8px 16px 20px' }}>
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} style={{
+              display: 'flex',
+              flexDirection: i % 2 === 1 ? 'row-reverse' : 'row',
+              gap: 10,
+              marginBottom: 14,
+            }}>
+              <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0 }} />
+              <SkeletonBlock style={{
+                width: i % 2 === 1 ? '62%' : '70%',
+                height: i === 2 ? 74 : 42,
+                borderRadius: i % 2 === 1 ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+              }} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div style={{
@@ -1185,12 +1201,101 @@ function ParentTeacherPageSkeleton() {
 }
 
 
-function ConversationLoading() {
+
+function ParentSoftLoaderDots() {
   return (
-    <div style={{ paddingTop: 12 }}>
-      <MessageGhostRows />
+    <span style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 4,
+      marginLeft: 6,
+    }}>
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          style={{
+            width: 5,
+            height: 5,
+            borderRadius: '50%',
+            background: T.ink3,
+            opacity: 0.45,
+            animation: `parentSoftDot 1.05s ease-in-out ${i * 0.14}s infinite`,
+          }}
+        />
+      ))}
+    </span>
+  )
+}
+
+function ParentSoftConversationLoader() {
+  return (
+    <div style={{
+      padding: '58px 24px 34px',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: 44,
+        height: 44,
+        borderRadius: 16,
+        background: '#F4F4F6',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 auto 12px',
+      }}>
+        <span style={{
+          width: 18,
+          height: 12,
+          borderRadius: 999,
+          background: T.ink3,
+          opacity: 0.5,
+          display: 'inline-block',
+          position: 'relative',
+        }}>
+          <span style={{
+            position: 'absolute',
+            left: 4,
+            bottom: -4,
+            width: 7,
+            height: 7,
+            background: T.ink3,
+            clipPath: 'polygon(0 0, 100% 0, 0 100%)',
+          }} />
+        </span>
+      </div>
+
+      <p style={{
+        fontSize: 13,
+        fontWeight: 750,
+        color: T.ink,
+        margin: 0,
+      }}>
+        Opening conversation
+        <ParentSoftLoaderDots />
+      </p>
+
+      <p style={{
+        fontSize: 12,
+        color: T.ink3,
+        margin: '6px 0 0',
+        lineHeight: 1.45,
+      }}>
+        Messages will appear here in a moment.
+      </p>
+
+      <style jsx global>{`
+        @keyframes parentSoftDot {
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+          40% { transform: translateY(-4px); opacity: 0.9; }
+        }
+      `}</style>
     </div>
   )
+}
+
+
+function ConversationLoading() {
+  return <ParentSoftConversationLoader />
 }
 
 
