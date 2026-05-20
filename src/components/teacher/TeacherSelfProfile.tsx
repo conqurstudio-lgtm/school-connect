@@ -367,18 +367,9 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
   const goToFeed = () => router.push('/feed')
 
   if (loading) {
-    return (
-      <div style={{
-        minHeight: '100dvh', display: 'flex',
-        alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'Inter, sans-serif',
-      }}>
-        <div style={{ width: 22, height: 22, borderRadius: '50%',
-                      border: `2px solid ${T.border}`, borderTopColor: T.ink,
-                      animation: 'spin 0.7s linear infinite' }} />
-      </div>
-    )
+    return <TeacherPageSkeleton />
   }
+
   if (!session) {
     return (
       <div style={{
@@ -2620,16 +2611,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           padding: '10px 0 190px',
         }}>
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '50px 0' }}>
-              <div style={{
-                width: 18,
-                height: 18,
-                borderRadius: '50%',
-                border: `2px solid ${T.border}`,
-                borderTopColor: T.ink,
-                animation: 'spin 0.7s linear infinite',
-              }} />
-            </div>
+            <TeacherThreadSkeleton />
           ) : updates.length === 0 ? (
             <div style={{ padding: '70px 28px', textAlign: 'center' }}>
               <div style={{
@@ -3047,6 +3029,169 @@ function InlineRename({ value, onCancel, onSave }: any) {
   )
 }
 
+
+
+function TeacherSkeletonBlock({ style = {} }: any) {
+  return (
+    <div
+      className="sc-teacher-skeleton-block"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(90deg, #F1F1F5 0%, #F7F7FA 45%, #F1F1F5 100%)',
+        backgroundSize: '220% 100%',
+        animation: 'scTeacherSkeleton 1.25s ease-in-out infinite',
+        ...style,
+      }}
+    />
+  )
+}
+
+function TeacherMessageGhostRows() {
+  return (
+    <div style={{ padding: '10px 16px 24px' }}>
+      {[0, 1, 2, 3, 4].map((i) => {
+        const mine = i % 2 === 1
+        return (
+          <div
+            key={i}
+            style={{
+              display: 'flex',
+              flexDirection: mine ? 'row-reverse' : 'row',
+              gap: 10,
+              marginBottom: 14,
+            }}
+          >
+            <TeacherSkeletonBlock style={{
+              width: 30,
+              height: 30,
+              borderRadius: 9,
+              flexShrink: 0,
+              marginTop: 2,
+            }} />
+
+            <div style={{
+              width: i === 2 ? '58%' : mine ? '62%' : '70%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: mine ? 'flex-end' : 'flex-start',
+            }}>
+              <TeacherSkeletonBlock style={{
+                width: '100%',
+                height: i === 3 ? 74 : 42,
+                borderRadius: mine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+              }} />
+              <TeacherSkeletonBlock style={{
+                width: 42,
+                height: 8,
+                borderRadius: 999,
+                marginTop: 6,
+              }} />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function TeacherPageSkeleton() {
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.bg,
+      maxWidth: 520,
+      margin: '0 auto',
+      fontFamily: 'Inter, -apple-system, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <div style={{
+        flexShrink: 0,
+        background: 'rgba(252,252,255,0.98)',
+        padding: '20px 20px 12px',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+        }}>
+          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
+            <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: 999 }} />
+          </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 11,
+          marginTop: 18,
+        }}>
+          <TeacherSkeletonBlock style={{ width: 42, height: 42, borderRadius: 12, flexShrink: 0 }} />
+          <div style={{ flex: 1 }}>
+            <TeacherSkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
+            <TeacherSkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        padding: '8px 20px 14px',
+        display: 'flex',
+        gap: 8,
+      }}>
+        <TeacherSkeletonBlock style={{ width: 86, height: 32, borderRadius: 999 }} />
+        <TeacherSkeletonBlock style={{ width: 92, height: 32, borderRadius: 999 }} />
+        <TeacherSkeletonBlock style={{ width: 104, height: 32, borderRadius: 999 }} />
+      </div>
+
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <TeacherMessageGhostRows />
+      </div>
+
+      <div style={{
+        flexShrink: 0,
+        padding: '10px 12px 14px',
+        background: 'rgba(252,252,255,0.96)',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 22,
+          padding: '8px 8px 8px 10px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+        }}>
+          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
+          <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+        </div>
+      </div>
+
+      <style jsx global>{`
+        @keyframes scTeacherSkeleton {
+          0% { background-position: 120% 0; }
+          100% { background-position: -120% 0; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+function TeacherThreadSkeleton() {
+  return (
+    <div style={{ paddingTop: 12 }}>
+      <TeacherMessageGhostRows />
+    </div>
+  )
+}
 
 function PendingClassRequests({ onChanged }: any) {
   const [requests, setRequests] = useState<any[]>([])
