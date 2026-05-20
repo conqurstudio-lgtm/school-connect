@@ -2806,7 +2806,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 <textarea
               value={reply}
               onChange={e => setReply(e.target.value)}
-              onFocus={() => setShowQuickReplies(true)}
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
