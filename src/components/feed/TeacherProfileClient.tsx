@@ -300,7 +300,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
+        padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -310,8 +310,8 @@ const handlePickAttachment = async (file?: File | null) => {
             }}
             aria-label="Back"
             style={{
-              width: 34,
-              height: 34,
+              width: 32,
+              height: 32,
               borderRadius: 999,
               border: `1px solid ${T.border}`,
               background: 'transparent',
@@ -360,7 +360,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '2px 0 0',
+              margin: '0px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -500,7 +500,7 @@ const handlePickAttachment = async (file?: File | null) => {
               background: T.white,
               border: `1px solid ${T.border}`,
               borderRadius: 22,
-              padding: '8px 8px 8px 10px',
+              padding: '7px 7px 7px 10px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
             }}>
               <input
@@ -679,7 +679,7 @@ function ReportThreadCard({ report, teacher }: any) {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '2px 0 0',
+              margin: '0px 0 0',
             }}>
               {formatWeek(report.week_starting)} · {avg.toFixed(1)}/5
             </p>
@@ -801,7 +801,7 @@ function ParentTeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
+        padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
@@ -845,7 +845,7 @@ function ParentTeacherPageSkeleton() {
           background: T.white,
           border: `1px solid ${T.border}`,
           borderRadius: 22,
-          padding: '8px 8px 8px 10px',
+          padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
           <SkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
@@ -992,7 +992,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             }}>
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
               Teacher approval is required before access is granted.
             </p>
           </div>

@@ -271,7 +271,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             fontWeight: 500,
             color: T.ink3,
             letterSpacing: '0.02em',
-            margin: '2px 0 0',
+            margin: '0px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -716,7 +716,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create class post
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -834,7 +834,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           background: '#FAFAFC',
           color: T.ink2,
           cursor: 'pointer',
-          fontSize: 13.5,
+          fontSize: 13,
           fontWeight: 800,
         }}>
           <Camera size={14} strokeWidth={1.9} />
@@ -1170,7 +1170,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0' }}>
               {inferred} · {teacher.grade}{teacher.class_name ? ` ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -1811,7 +1811,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     }}>
                       {child.name}
                     </p>
-                    <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+                    <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
                       {child.guardian_count === 0 ? 'No parents linked'
                       : child.guardian_count === 1 ? '1 parent linked'
                       : `${child.guardian_count} parents linked`}
@@ -1946,7 +1946,7 @@ function ClassRoster({ kids, onChanged }: any) {
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
                     {c.guardian_count === 0 ? 'No parents yet'
                     : c.guardian_count === 1 ? '1 parent linked'
                     : `${c.guardian_count} parents linked`}
@@ -2057,11 +2057,11 @@ function UpdatesInbox({ teacher }: any) {
                             whiteSpace: 'nowrap' }}>
                   {p.name}
                 </p>
-                <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+                <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
                   {p.child_names.join(', ')}
                 </p>
                 {p.latest_update && (
-                  <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0',
+                  <p style={{ fontSize: 12, color: T.ink3, margin: '0px 0 0',
                               overflow: 'hidden', textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap', maxWidth: 240 }}>
                     {p.latest_update.author_kind === 'teacher' ? 'You: ' : ''}
@@ -2279,7 +2279,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          padding: 'calc(11px + env(safe-area-inset-top)) 16px 10px',
+          padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -2334,7 +2334,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '2px 0 0',
+              margin: '0px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -2420,11 +2420,11 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           <div style={{
             display: 'flex',
             alignItems: 'flex-end',
-            gap: 8,
+            gap: 7,
             background: T.white,
             border: `1px solid ${T.border}`,
             borderRadius: 22,
-            padding: '8px 8px 8px 14px',
+            padding: '7px 7px 7px 12px',
             boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
           }}>
                         <input
@@ -2445,8 +2445,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAttachment}
               style={{
-                width: 34,
-                height: 34,
+                width: 32,
+                height: 32,
                 borderRadius: '50%',
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -2490,8 +2490,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             />
 
             <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               borderRadius: '50%',
               background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
               color: T.white,
@@ -2644,7 +2644,7 @@ function BroadcastCompose({ teacher }: any) {
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {p.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
                     {p.child_names.join(', ')}
                   </p>
                 </div>
@@ -2790,7 +2790,7 @@ function TeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: 'calc(11px + env(safe-area-inset-top)) 20px 10px',
+        padding: 'calc(7px + env(safe-area-inset-top)) 20px 8px',
       }}>
         <div style={{
           display: 'flex',
@@ -2845,7 +2845,7 @@ function TeacherPageSkeleton() {
           background: T.white,
           border: `1px solid ${T.border}`,
           borderRadius: 22,
-          padding: '8px 8px 8px 10px',
+          padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
           <TeacherSkeletonBlock style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
@@ -3186,7 +3186,7 @@ function AddChildOverlay({ onAdd, onClose }: any) {
           onKeyDown={e => { if (e.key === 'Enter') submit() }}
           placeholder="Emma Johnson"
           style={{
-            width: '100%', padding: '12px 14px', fontSize: 15,
+            width: '100%', padding: '12px 14px', fontSize: 16,
             border: `1px solid ${T.border}`, borderRadius: 12,
             background: T.white, color: T.ink, outline: 'none',
             fontFamily: 'inherit', boxSizing: 'border-box',
@@ -3783,7 +3783,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '2px 0 0',
+            margin: '0px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3794,7 +3794,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
           {relTime(latest.created_at)}
         </p>
       </div>
@@ -3903,7 +3903,7 @@ function NotifRow({ item, onOpen }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            margin: '2px 0 0',
+            margin: '0px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -3914,7 +3914,7 @@ function NotifRow({ item, onOpen }: any) {
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '2px 0 0' }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '0px 0 0' }}>
           {relTime(item.created_at)}
         </p>
       </div>
