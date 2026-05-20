@@ -303,6 +303,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [reports, setReports] = useState<any[]>([])
   const [updates, setUpdates] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [threadLoading, setThreadLoading] = useState(false)
   const [showJoin, setShowJoin] = useState(false)
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
@@ -360,7 +361,12 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   const load = async () => {
+    // parent-message-fast-load-v1:
+    // Load the teacher profile first, then show the page immediately.
+    // Messages load as an inline thread state instead of blocking the whole screen.
     setLoading(true)
+    setThreadLoading(false)
+
     try {
       const res = await fetch(`/api/teachers/${teacherId}/profile`, { cache: 'no-store' })
       const json = await res.json()
@@ -377,19 +383,23 @@ export function TeacherProfileClient({ teacherId }: Props) {
       setCanMessage(!!json.is_my_teacher)
       setReports(json.reports ?? [])
 
+      // Stop the full-page spinner as soon as the teacher/profile data is ready.
+      setLoading(false)
+
       if (json.is_my_teacher) {
-        await loadThread(json.teacher.id)
+        loadThread(json.teacher.id)
       } else {
         setUpdates([])
       }
     } catch (e: any) {
-      toast.error(e.message || 'Could not load teacher')
-    } finally {
       setLoading(false)
+      toast.error(e.message || 'Could not load teacher')
     }
   }
 
   const loadThread = async (id = teacherId) => {
+    setThreadLoading(true)
+
     try {
       const res = await fetch(`/api/updates?teacher_id=${encodeURIComponent(id)}`, { cache: 'no-store' })
       const json = await res.json()
@@ -397,12 +407,16 @@ export function TeacherProfileClient({ teacherId }: Props) {
       if (res.ok) {
         const list = json.updates ?? []
         setUpdates(list)
-        forceScrollToBottom(false)
         setCanMessage(!!json.can_message)
 
         try { await markThreadSeen(id) } catch {}
+
+        window.requestAnimationFrame(() => forceScrollToBottom(false))
       }
-    } catch {}
+    } catch {
+    } finally {
+      setThreadLoading(false)
+    }
   }
 
   useEffect(() => { load() }, [teacherId])
@@ -747,7 +761,9 @@ export function TeacherProfileClient({ teacherId }: Props) {
             overscrollBehavior: 'contain',
             padding: '10px 0 90px',
           }}>
-            {threadItems.length === 0 ? (
+            {threadLoading && threadItems.length === 0 ? (
+              <ConversationLoading />
+            ) : threadItems.length === 0 ? (
               <EmptyConversation teacher={teacher} />
             ) : (
               threadItems.map((item, index) => {
@@ -1073,6 +1089,34 @@ function ReportThreadCard({ report, teacher }: any) {
     </div>
   )
 }
+
+
+function ConversationLoading() {
+  return (
+    <div style={{
+      padding: '70px 28px',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: 20,
+        height: 20,
+        borderRadius: '50%',
+        border: `2px solid ${T.border}`,
+        borderTopColor: T.ink,
+        animation: 'spin 0.7s linear infinite',
+        margin: '0 auto 12px',
+      }} />
+      <p style={{
+        fontSize: 13,
+        color: T.ink3,
+        margin: 0,
+      }}>
+        Loading messages...
+      </p>
+    </div>
+  )
+}
+
 
 function EmptyConversation({ teacher }: any) {
   return (
