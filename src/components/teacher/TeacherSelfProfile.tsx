@@ -11,6 +11,7 @@ import {
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
 import { AttachmentCard, AttachmentPreviewTray, updateAttachment, type AttachmentDraft } from '@/components/messages/MessageAttachment'
+import { MessageBubble } from '@/components/messages/MessageBubble'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
@@ -2387,76 +2388,14 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               </p>
             </div>
           ) : (
-            sortMessagesOldestFirst(updates).map((u: any) => {
-              const isTeacher = u.author_kind === 'teacher'
-                const attachment = updateAttachment(u)
-                const imageOnly = !!attachment
-                  && (attachment.is_image || attachment.type?.startsWith?.('image/'))
-                  && !String(u.body || '').trim()
-              return (
-                <div key={u.id} style={{
-                  display: 'flex',
-                  gap: 10,
-                  padding: '8px 16px',
-                  flexDirection: isTeacher ? 'row-reverse' : 'row',
-                }}>
-                  <div style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 9,
-                    overflow: 'hidden',
-                    background: isTeacher && teacher.photo_url
-                      ? `url(${teacher.photo_url}) center/cover`
-                      : '#F0F0F4',
-                    color: T.ink2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 10,
-                    fontWeight: 800,
-                    flexShrink: 0,
-                    marginTop: 2,
-                  }}>
-                    {isTeacher
-                      ? (!teacher.photo_url && teacher.name?.charAt(0))
-                      : parentInitial}
-                  </div>
-
-                  <div style={{
-                    maxWidth: '74%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: isTeacher ? 'flex-end' : 'flex-start',
-                  }}>
-                    <div style={{
-                      borderRadius: isTeacher ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      background: isTeacher ? '#F4F4F6' : T.white,
-                      color: T.ink,
-                      border: imageOnly ? 'none' : (isTeacher ? 'none' : `1px solid ${T.border}`),
-                      padding: imageOnly ? 0 : '9px 12px',
-                      overflow: 'hidden',
-                    }}>
-                      {u.body && (
-                        <p style={{
-                          fontSize: 13.5,
-                          lineHeight: 1.45,
-                          margin: 0,
-                          whiteSpace: 'pre-wrap',
-                        }}>
-                          {u.body}
-                        </p>
-                      )}
-                      {attachment && <AttachmentCard attachment={attachment} flush={imageOnly} />}
-                    </div>
-
-                    <p style={{ fontSize: 10, color: T.ink3, margin: '4px 4px 0' }}>
-                      {relTime(u.created_at)}
-                    </p>
-
-                  </div>
-                </div>
-              )
-            })
+            sortMessagesOldestFirst(updates).map((u: any) => (
+              <TeacherThreadMessageRow
+                key={u.id}
+                update={u}
+                teacher={teacher}
+                parentInitial={parentInitial}
+              />
+            ))
           )}
           <div ref={bottomRef} />
         </div>
@@ -3235,6 +3174,27 @@ function SoftConversationLoader() {
     </div>
   )
 }
+
+function TeacherThreadMessageRow({ update, teacher, parentInitial }: any) {
+  const teacherInitials = teacher.name
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <MessageBubble
+      update={update}
+      perspective="teacher"
+      teacherName={teacher.name}
+      teacherPhotoUrl={teacher.photo_url}
+      teacherInitials={teacherInitials}
+      parentInitial={parentInitial}
+    />
+  )
+}
+
 
 function NotificationsSheet({ teacher, onClose }: any) {
   const [items, setItems] = useState<any[]>([])

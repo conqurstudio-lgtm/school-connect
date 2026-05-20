@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, FileText, Info, Send, X, Paperclip } from 'lucide-react'
 import { AttachmentCard, AttachmentPreviewTray, updateAttachment, type AttachmentDraft } from '@/components/messages/MessageAttachment'
+import { MessageBubble } from '@/components/messages/MessageBubble'
 import toast from 'react-hot-toast'
 
 
@@ -591,81 +592,22 @@ const handlePickAttachment = async (file?: File | null) => {
 }
 
 function MessageRow({ update, teacher }: any) {
-  const isTeacher = update.author_kind === 'teacher'
-  const attachment = updateAttachment(update)
-  const imageOnly = !!attachment
-    && (attachment.is_image || attachment.type?.startsWith?.('image/'))
-    && !String(update.body || '').trim()
-
-  const initials = isTeacher
-    ? teacher.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-    : 'Y'
+  const teacherInitials = teacher.name
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
-    <article style={{
-      display: 'flex',
-      gap: 10,
-      padding: '8px 16px',
-      flexDirection: isTeacher ? 'row' : 'row-reverse',
-    }}>
-      <div style={{
-        width: 30,
-        height: 30,
-        borderRadius: 9,
-        overflow: 'hidden',
-        background: isTeacher && teacher.photo_url
-          ? `url(${teacher.photo_url}) center/cover`
-          : '#F0F0F4',
-        color: T.ink2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 10,
-        fontWeight: 800,
-        flexShrink: 0,
-        marginTop: 2,
-      }}>
-        {!(isTeacher && teacher.photo_url) && initials}
-      </div>
-
-      <div style={{
-        maxWidth: '74%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: isTeacher ? 'flex-start' : 'flex-end',
-      }}>
-        <div style={{
-          borderRadius: isTeacher ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
-          background: isTeacher ? T.white : '#F4F4F6',
-          color: T.ink,
-          border: imageOnly ? 'none' : (isTeacher ? `1px solid ${T.border}` : 'none'),
-          padding: imageOnly ? 0 : '9px 12px',
-          overflow: 'hidden',
-        }}>
-          {update.body && (
-            <p style={{
-              fontSize: 13.5,
-              lineHeight: 1.45,
-              margin: 0,
-              whiteSpace: 'pre-wrap',
-            }}>
-              {update.body}
-            </p>
-          )}
-
-          {attachment && <AttachmentCard attachment={attachment} flush={imageOnly} />}
-        </div>
-
-        <p style={{
-          fontSize: 10,
-          color: T.ink3,
-          margin: '4px 4px 0',
-          textAlign: isTeacher ? 'left' : 'right',
-        }}>
-          {relTime(update.created_at)}
-        </p>
-      </div>
-    </article>
+    <MessageBubble
+      update={update}
+      perspective="parent"
+      teacherName={teacher.name}
+      teacherPhotoUrl={teacher.photo_url}
+      teacherInitials={teacherInitials}
+      parentInitial="Y"
+    />
   )
 }
 
