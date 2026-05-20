@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, FileText, Info, Send, X, Paperclip } from 'lucide-react'
 import { AttachmentCard, AttachmentPreviewTray, updateAttachment, type AttachmentDraft } from '@/components/messages/MessageAttachment'
 import { MessageBubble } from '@/components/messages/MessageBubble'
+import { BackIcon } from '@/components/ui/BackIcon'
 import toast from 'react-hot-toast'
 
 
@@ -310,13 +311,14 @@ const handlePickAttachment = async (file?: File | null) => {
             }}
             aria-label="Back"
             style={{
-                width: 'auto',
-                height: 'auto',
+                width: 24,
+                height: 28,
                 borderRadius: 0,
                 border: 'none',
                 background: 'transparent',
                 color: T.ink2,
-                padding: '5px 4px',
+                padding: 0,
+                marginRight: 1,
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -324,7 +326,7 @@ const handlePickAttachment = async (file?: File | null) => {
                 flexShrink: 0,
               }}
           >
-            <ArrowLeft size={15} strokeWidth={1.8} />
+            <BackIcon size={17} />
           </button>
 
           <div style={{
@@ -361,7 +363,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '-1px 0 0',
+              margin: '-2px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -680,7 +682,7 @@ function ReportThreadCard({ report, teacher }: any) {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '-1px 0 0',
+              margin: '-2px 0 0',
             }}>
               {formatWeek(report.week_starting)} · {avg.toFixed(1)}/5
             </p>
@@ -756,7 +758,7 @@ function MessageGhostRows() {
             <SkeletonBlock style={{
               width: 30,
               height: 30,
-              borderRadius: 9,
+              borderRadius: '50%',
               flexShrink: 0,
               marginTop: 2,
             }} />
@@ -805,8 +807,8 @@ function ParentTeacherPageSkeleton() {
         padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-          <SkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
-          <SkeletonBlock style={{ width: 32, height: 32, borderRadius: 10 }} />
+          <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 999 }} />
+          <SkeletonBlock style={{ width: 29, height: 29, borderRadius: 10 }} />
           <div style={{ flex: 1 }}>
             <SkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
             <SkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
@@ -823,7 +825,7 @@ function ParentTeacherPageSkeleton() {
               gap: 8,
               marginBottom: 14,
             }}>
-              <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 9, flexShrink: 0 }} />
+              <SkeletonBlock style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0 }} />
               <SkeletonBlock style={{
                 width: i % 2 === 1 ? '62%' : '70%',
                 height: i === 2 ? 74 : 42,
@@ -849,9 +851,9 @@ function ParentTeacherPageSkeleton() {
           padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
-          <SkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
+          <SkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
           <SkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
-          <SkeletonBlock style={{ width: 31, height: 31, borderRadius: '50%', flexShrink: 0 }} />
+          <SkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
         </div>
       </div>
 
@@ -993,7 +995,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             }}>
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '-1px 0 0' }}>
+            <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0' }}>
               Teacher approval is required before access is granted.
             </p>
           </div>
