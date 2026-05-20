@@ -182,6 +182,18 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
     window.location.href = '/teacher'
   }
 
+  const copyClassLink = async () => {
+    const base = typeof window !== 'undefined' ? window.location.origin : ''
+    const link = `${base}/teachers/${teacher.id}`
+
+    try {
+      await navigator.clipboard.writeText(link)
+      toast.success('Class link copied')
+    } catch {
+      toast.error('Could not copy class link')
+    }
+  }
+
   return (
     <div style={{
       minHeight: '100dvh', height: 'auto',
@@ -284,6 +296,28 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={copyClassLink}
+            aria-label="Copy class invite link"
+            title="Copy class invite link"
+            style={{
+              height: 29,
+              minWidth: 46,
+              borderRadius: 999,
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              padding: '0 10px',
+              fontSize: 11,
+              fontWeight: 850,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Link
+          </button>
+
           <button onClick={() => setShowNotifs(true)} aria-label="Activity"
             style={{ ...iconBtn, position: 'relative' }}>
             <Bell size={15} strokeWidth={1.7} />
