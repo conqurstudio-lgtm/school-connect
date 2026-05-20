@@ -838,7 +838,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 11.2,
+            fontSize: 12.4,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -849,7 +849,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
             Private teacher inbox
           </p>
           <p style={{
-            fontSize: 9.5,
+            fontSize: 10.5,
             color: T.ink3,
             margin: '-2px 0 0',
             overflow: 'hidden',
@@ -889,7 +889,7 @@ const messageMiniActionBtn: any = {
   border: `1px solid ${T.border}`,
   background: '#F8F8FB',
   color: T.ink2,
-  fontSize: 10.2,
+  fontSize: 11.2,
   fontWeight: 850,
   cursor: 'pointer',
   fontFamily: 'inherit',
@@ -977,7 +977,7 @@ function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
                 border: 'none',
                 background: selected ? T.white : 'transparent',
                 color: selected ? T.ink : T.ink3,
-                fontSize: 10.5,
+                fontSize: 11.5,
                 fontWeight: selected ? 850 : 750,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -1048,7 +1048,7 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 11.5,
+            fontSize: 12.5,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -1058,7 +1058,7 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
           </p>
 
           <p style={{
-            fontSize: 10.5,
+            fontSize: 11.2,
             color: T.ink3,
             margin: '2px 0 10px',
             lineHeight: 1.35,
@@ -1150,8 +1150,8 @@ function ClassLifePostCard({ post, teacher }: any) {
 
         {post.body && (
           <p style={{
-            fontSize: 12.2,
-            lineHeight: 1.38,
+            fontSize: 13,
+            lineHeight: 1.45,
             color: T.ink2,
             margin: 0,
             whiteSpace: 'pre-wrap',
@@ -1289,7 +1289,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
         }}>
           <FileText size={22} color={T.ink3} strokeWidth={1.6} />
           <p style={{
-            fontSize: 12.5,
+            fontSize: 13.2,
             color: T.ink,
             fontWeight: 850,
             margin: '10px 0 4px',
@@ -1297,7 +1297,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
             No reports yet
           </p>
           <p style={{
-            fontSize: 11,
+            fontSize: 12,
             color: T.ink3,
             lineHeight: 1.45,
             margin: 0,
@@ -1381,7 +1381,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
             Weekly Report
           </p>
           <p style={{
-            fontSize: 9.8,
+            fontSize: 10.5,
             color: T.ink3,
             margin: '-2px 0 0',
           }}>
@@ -1415,7 +1415,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
         borderRadius: 999,
         background: '#F4F6FB',
         color: T.ink2,
-        fontSize: 9.8,
+        fontSize: 10.8,
         fontWeight: 850,
       }}>
         {scoreLabel}
@@ -1423,7 +1423,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
 
       {report.comment && (
         <p style={{
-          fontSize: 11.5,
+          fontSize: 12.5,
           color: T.ink2,
           lineHeight: 1.4,
           margin: '9px 0 0',
@@ -1443,7 +1443,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
           borderRadius: 999,
           background: T.ink,
           color: T.white,
-          fontSize: 10.8,
+          fontSize: 11.5,
           fontWeight: 850,
           cursor: 'pointer',
           fontFamily: 'inherit',
@@ -1473,7 +1473,7 @@ function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
         margin: '0 auto 12px',
       }} />
       <p style={{
-        fontSize: 13,
+        fontSize: 13.5,
         color: T.ink,
         fontWeight: 850,
         margin: '0 0 4px',
@@ -1481,7 +1481,7 @@ function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
         Class Life will appear here
       </p>
       <p style={{
-        fontSize: 11.5,
+        fontSize: 12.2,
         color: T.ink3,
         lineHeight: 1.45,
         margin: 0,
@@ -1530,7 +1530,7 @@ function ClassLifeSkeleton() {
 function PoweredByBar() {
   return (
     <p style={{
-      fontSize: 9.5,
+      fontSize: 10,
       color: T.ink3,
       textAlign: 'center',
       margin: '14px 0 0',
@@ -1548,7 +1548,7 @@ const classSpaceActionBtn: any = {
   border: `1px solid ${T.border}`,
   background: '#F8F8FB',
   color: T.ink2,
-  fontSize: 10.8,
+  fontSize: 11.5,
   fontWeight: 850,
   cursor: 'pointer',
   fontFamily: 'inherit',
