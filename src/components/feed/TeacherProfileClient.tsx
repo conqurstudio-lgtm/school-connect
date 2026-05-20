@@ -58,6 +58,9 @@ const [showJoin, setShowJoin] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const messageLandingRef = useRef(false)
+  const messageLandingDoneRef = useRef(false)
+  const messageUserInteractedRef = useRef(false)
   const composerDockRef = useRef<HTMLDivElement | null>(null)
   const scrollRafRef = useRef<number | null>(null)
   const previousThreadCountRef = useRef(0)
@@ -76,30 +79,12 @@ const [showJoin, setShowJoin] = useState(false)
   behavior: ScrollBehavior = 'auto',
   force = true,
 ) => {
-  const el = threadScrollRef.current
-  if (!el) return
-  if (!force && !isMessageListNearBottom()) return
-
-  if (scrollRafRef.current !== null) {
-    cancelAnimationFrame(scrollRafRef.current)
-  }
-
-  scrollRafRef.current = requestAnimationFrame(() => {
-    const current = threadScrollRef.current
-    if (!current) return
-
-    const targetTop = Math.max(0, current.scrollHeight - current.clientHeight)
-    if (Math.abs(current.scrollTop - targetTop) < 3) return
-
-    if (behavior === 'smooth') {
-      current.scrollTo({ top: targetTop, behavior })
-    } else {
-      current.scrollTop = targetTop
-    }
-  })
+  // parent-message-scroll-freedom-v1:
+  // Background scroll control disabled.
+  // Messages use one-time landing only, then user scroll is free.
 }
 
-  // sc-scroll-anchor-v3
+  // scroll-anchor-disabled-v1
   useEffect(() => {
     previousThreadCountRef.current = 0
   }, [teacherId])
@@ -194,6 +179,14 @@ const [showJoin, setShowJoin] = useState(false)
 
     requestAnimationFrame(run)
   }
+
+  // parent-message-scroll-freedom-reset-v1
+  useEffect(() => {
+    if (classSpaceTab !== 'messages') {
+      messageLandingDoneRef.current = false
+      messageUserInteractedRef.current = false
+    }
+  }, [classSpaceTab, teacherId])
 
 
   // parent-class-space-hydration-guard-v1
@@ -297,8 +290,14 @@ try {
   // positions the internal message container before the browser paints.
   useLayoutEffect(() => {
     if (loading || threadLoading || !canMessage || classSpaceTab !== 'messages') return
-    forceScrollToBottom(false)
-  }, [loading, threadLoading, canMessage, classSpaceTab, updates.length, reports.length, teacherId])
+    if (messageLandingDoneRef.current) return
+
+    messageLandingDoneRef.current = true
+
+    requestAnimationFrame(() => {
+      forceScrollToBottom(false)
+    })
+  }, [loading, threadLoading, canMessage, classSpaceTab, teacherId])
 
   // parent-composer-auto-expand-v1
   useEffect(() => {
@@ -643,7 +642,10 @@ const handlePickAttachment = async (file?: File | null) => {
                 onOpenReports={() => setClassSpaceTab('reports')}
               />
 
-          <div ref={threadScrollRef} style={{
+          <div ref={threadScrollRef}
+            onTouchStart={() => { messageUserInteractedRef.current = true }}
+            onWheel={() => { messageUserInteractedRef.current = true }}
+            style={{
             flex: 1,
             overflowY: 'auto',
             WebkitOverflowScrolling: 'touch',
