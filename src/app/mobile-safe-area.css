@@ -56,9 +56,9 @@ input {
 
 @media (display-mode: standalone) {
   :root {
-    --sc-bottom-extra: 14px;
+    --sc-bottom-extra: 12px;
     --sc-compose-bottom: 0px;
-    --sc-thread-bottom: 40px;
+    --sc-thread-bottom: 42px;
   }
 
   html,

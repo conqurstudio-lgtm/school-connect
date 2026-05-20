@@ -605,290 +605,7 @@ select:focus-visible {
   }
 }
 
-/* ============================================================
-   School Connect - Feed Under Home Indicator
-   Purpose:
-   - Remove the fake bottom menu/safe-area strip.
-   - Let actual feed content/background continue to the bottom edge.
-   - Keep the floating action button independent as an overlay.
-   ============================================================ */
 
-@media (max-width: 640px) {
-  /* Do not create a reserved footer area. The feed owns the bottom edge. */
-  .feed-scroll,
-  [data-scroll-container] {
-    padding-bottom: 0px !important;
-    margin-bottom: 0px !important;
-    background: var(--bg) !important;
-  }
-
-  /* Stretch the fixed app shell slightly into the iOS home-indicator zone. */
-  .app-root {
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
-    height: auto !important;
-    min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
-    background: var(--bg) !important;
-  }
-
-  /* The feed scroll area fills the extended shell, not a shortened viewport. */
-  .feed-scroll {
-    height: 100% !important;
-    min-height: 100% !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    overscroll-behavior-y: contain !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  /* Any artificial bottom paint layer must not become a visible strip. */
-  body::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  /* Floating button floats above content; it does not reserve layout space. */
-  .fab {
-    bottom: 14px !important;
-    z-index: 80 !important;
-  }
-
-  .fab:active {
-    transform: translateX(-50%) scale(0.92) !important;
-  }
-}
-
-/* Installed PWA: be even more aggressive because the iOS home indicator
-   area can otherwise look like a separate white footer. */
-@media (display-mode: standalone) and (max-width: 640px) {
-  html,
-  body {
-    background: var(--bg) !important;
-  }
-
-  .app-root {
-    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
-    min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    padding-bottom: 0px !important;
-    background: var(--bg) !important;
-  }
-
-  .fab {
-    bottom: 14px !important;
-  }
-}
-
-/* Where supported, prefer dynamic viewport and extend past the bottom inset. */
-@supports (height: 100dvh) {
-  @media (max-width: 640px) {
-    .app-root {
-      min-height: calc(100dvh + env(safe-area-inset-bottom, 0px)) !important;
-    }
-  }
-}
-
-/* ============================================================
-   School Connect - Fullscreen Feed, No Bottom Rules
-   This is the final mobile shell override for the feed:
-   - No sticky category bar.
-   - No fake bottom menu/safe-area reserve.
-   - Feed/background extends to all edges.
-   - Floating button moved away from bottom edge.
-   ============================================================ */
-
-html {
-  background: var(--bg) !important;
-  height: 100% !important;
-  min-height: 100% !important;
-  height: -webkit-fill-available;
-}
-
-body {
-  background: var(--bg) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 100vh !important;
-  min-height: -webkit-fill-available;
-  overflow: hidden !important;
-}
-
-@media (max-width: 640px) {
-  :root {
-    --sat: 0px !important;
-    --sab: 0px !important;
-  }
-
-  body {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    min-height: -webkit-fill-available;
-    background: var(--bg) !important;
-  }
-
-  body::before,
-  body::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  .app-root {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    max-width: none !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-    min-height: -webkit-fill-available;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: var(--bg) !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    flex: 1 1 auto !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    margin: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    background: var(--bg) !important;
-  }
-
-  /* Categories must move with the feed, not stick to the top. */
-  .feed-filterbar {
-    position: relative !important;
-    top: auto !important;
-    z-index: auto !important;
-  }
-
-  /* No bottom bar reservation. The button becomes an overlay near the side,
-     not a reason to create bottom whitespace. */
-  .fab {
-    position: fixed !important;
-    left: auto !important;
-    right: 14px !important;
-    bottom: auto !important;
-    top: 92px !important;
-    transform: none !important;
-    width: 50px !important;
-    height: 50px !important;
-    border-radius: 16px !important;
-    z-index: 90 !important;
-  }
-
-  .fab:active {
-    transform: scale(0.92) !important;
-  }
-}
-
-/* Installed PWA mode: no separate bottom safe area/fake footer. */
-@media (display-mode: standalone) and (max-width: 640px) {
-  html,
-  body,
-  .app-root,
-  .feed-scroll,
-  [data-scroll-container] {
-    background: var(--bg) !important;
-  }
-
-  .app-root {
-    inset: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    padding-bottom: 0 !important;
-  }
-
-  .fab {
-    top: 92px !important;
-    bottom: auto !important;
-  }
-}
-
-/* ============================================================
-   School Connect - Final Bottom Seam Fix
-   Purpose:
-   - Remove the white bottom seam/strip in Safari and installed PWA.
-   - Prevent feed content from looking cut off at the bottom.
-   - Keep the feed fullscreen and keep the floating button independent.
-   ============================================================ */
-
-@media (max-width: 640px) {
-  html,
-  body {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  /* Safari sometimes paints the home-indicator gutter from the root canvas.
-     This forces that canvas to match the app and removes the visible white line. */
-  html::before {
-    content: "";
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: calc(env(safe-area-inset-bottom, 0px) + 28px);
-    background: var(--bg);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body,
-  .app-root {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  /* Extend the app slightly beyond the viewport so Safari does not expose
-     a separate white browser/PWA gutter below the feed. */
-  .app-root {
-    inset: 0 0 -36px 0 !important;
-    height: auto !important;
-    min-height: calc(100dvh + 36px) !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-    padding-bottom: 36px !important;
-    margin-bottom: -36px !important;
-    scroll-padding-bottom: 0 !important;
-  }
-
-  /* Remove any previous artificial bottom layers that may create a visible rule. */
-  body::after,
-  .app-root::after,
-  .feed-scroll::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  /* Make the last feed item breathe so it does not look chopped by the
-     bottom edge/home indicator, without creating a visible bottom bar. */
-  .feed-scroll > *:last-child {
-    margin-bottom: 36px !important;
-  }
-}
 
 @media (display-mode: standalone) and (max-width: 640px) {
   html,
@@ -917,205 +634,7 @@ body {
   }
 }
 
-/* ============================================================
-   School Connect - Balanced Feed Offset + Bottom Blend
-   Final direction:
-   - The feed should feel full-screen, but not pushed too high.
-   - The bottom should look like the same page, not a reserved menu bar.
-   - The floating button should not create layout space.
-   ============================================================ */
 
-@media (max-width: 640px) {
-  html,
-  body {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-
-  body::before,
-  body::after,
-  html::before,
-  html::after {
-    display: none !important;
-    content: none !important;
-  }
-
-  /* Reset older aggressive bottom-extension patches. */
-  .app-root {
-    position: fixed !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    max-width: none !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  /* The feed scrolls as one page. A little top padding restores balance after
-     removing the safe-area gap. Bottom padding creates breathing room for the
-     last item without looking like a separate bottom menu. */
-  .feed-scroll,
-  [data-scroll-container] {
-    position: relative !important;
-    height: 100% !important;
-    min-height: 100% !important;
-    margin: 0 !important;
-    padding-top: 6px !important;
-    padding-bottom: 96px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-    scroll-padding-bottom: 0 !important;
-  }
-
-  /* Paint a same-background tail inside the scroll content so Safari/PWA does
-     not expose a white browser gutter at the bottom. */
-  .feed-scroll::after,
-  [data-scroll-container]::after {
-    content: "" !important;
-    display: block !important;
-    height: 42px !important;
-    width: 100% !important;
-    background: var(--bg) !important;
-    pointer-events: none !important;
-  }
-
-  /* Categories continue to scroll with the feed. */
-  .feed-filterbar {
-    position: relative !important;
-    top: auto !important;
-    z-index: auto !important;
-  }
-
-  /* FAB is a floating overlay only. It must not create or imply a bottom nav. */
-  .fab {
-    position: fixed !important;
-    left: auto !important;
-    right: 14px !important;
-    top: 104px !important;
-    bottom: auto !important;
-    width: 50px !important;
-    height: 50px !important;
-    transform: none !important;
-    z-index: 90 !important;
-  }
-
-  .fab:active {
-    transform: scale(0.92) !important;
-  }
-}
-
-@media (display-mode: standalone) and (max-width: 640px) {
-  html,
-  body,
-  .app-root,
-  .feed-scroll,
-  [data-scroll-container] {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  .app-root {
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    padding-top: 8px !important;
-    padding-bottom: 104px !important;
-  }
-
-  .feed-scroll::after,
-  [data-scroll-container]::after {
-    height: 48px !important;
-    background: var(--bg) !important;
-  }
-}
-
-/* ============================================================
-   School Connect - Feed Bottom Breathing Space
-   Direction:
-   - Do not fight the iPhone/PWA bottom system area.
-   - Keep feed posts comfortably above it.
-   - Make the bottom feel intentional instead of cut off.
-   - No bottom menu, no sticky footer.
-   ============================================================ */
-
-@media (max-width: 640px) {
-  html,
-  body,
-  .app-root {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  /* Reset older negative-bottom experiments so the viewport is stable. */
-  .app-root {
-    top: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    height: 100dvh !important;
-    min-height: 100dvh !important;
-    max-width: none !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* The feed scrolls normally, but keeps its last content above the iOS bottom
-     area/home indicator. This prevents posts/images/reactions from looking cut. */
-  .feed-scroll,
-  [data-scroll-container] {
-    height: 100% !important;
-    min-height: 100% !important;
-    margin: 0 !important;
-    padding-top: 8px !important;
-    padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
-    margin-bottom: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-    scroll-padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* A same-background tail inside the feed. It is not a menu bar. It only gives
-     the last post room to finish before the bottom system area. */
-  .feed-scroll::after,
-  [data-scroll-container]::after {
-    content: "" !important;
-    display: block !important;
-    height: calc(44px + env(safe-area-inset-bottom, 0px)) !important;
-    width: 100% !important;
-    background: var(--bg) !important;
-    pointer-events: none !important;
-  }
-
-  /* Keep the FAB independent from bottom spacing. */
-  .fab {
-    bottom: auto !important;
-  }
-}
 
 @media (display-mode: standalone) and (max-width: 640px) {
   .feed-scroll,
@@ -1130,132 +649,7 @@ body {
   }
 }
 
-/* ============================================================
-   School Connect - Lower Feed Content + Push Bottom Seam Down
-   Direction:
-   - Add breathing room at the top of the feed.
-   - Push the remaining iOS/PWA bottom seam lower/out of focus.
-   - Keep posts from looking cut.
-   - Keep categories scrolling naturally.
-   ============================================================ */
 
-@media (max-width: 640px) {
-  html,
-  body,
-  .app-root {
-    background: var(--bg) !important;
-    background-color: var(--bg) !important;
-  }
-
-  body {
-    position: fixed !important;
-    inset: 0 !important;
-    overflow: hidden !important;
-  }
-
-  /* Move the app canvas slightly below the top edge and extend it slightly
-     beyond the bottom. This makes the feed feel less stuck to the top while
-     pushing the bottom seam lower on Safari/PWA. */
-  .app-root {
-    position: fixed !important;
-    top: 0 !important;
-    right: 0 !important;
-    bottom: -28px !important;
-    left: 0 !important;
-    height: auto !important;
-    min-height: calc(100dvh + 28px) !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-    background: var(--bg) !important;
-  }
-
-  .topbar {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-    background: var(--bg) !important;
-  }
-
-  /* The feed starts lower now. The bottom still gets enough tail space so
-     the last post never sits directly on the system area. */
-  .feed-scroll,
-  [data-scroll-container] {
-    height: 100% !important;
-    min-height: 100% !important;
-    padding-top: 18px !important;
-    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
-    margin: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    background: var(--bg) !important;
-    scroll-padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  .feed-scroll::after,
-  [data-scroll-container]::after {
-    content: "" !important;
-    display: block !important;
-    height: calc(58px + env(safe-area-inset-bottom, 0px)) !important;
-    background: var(--bg) !important;
-    pointer-events: none !important;
-  }
-
-  .feed-filterbar {
-    position: relative !important;
-    top: auto !important;
-    z-index: auto !important;
-  }
-
-  /* Keep FAB away from the bottom and slightly lower than before so it feels
-     aligned with the lowered feed header. */
-  .fab {
-    position: fixed !important;
-    left: auto !important;
-    right: 14px !important;
-    top: 124px !important;
-    bottom: auto !important;
-    transform: none !important;
-    z-index: 90 !important;
-  }
-
-  .fab:active {
-    transform: scale(0.92) !important;
-  }
-}
-
-@media (display-mode: standalone) and (max-width: 640px) {
-  .app-root {
-    bottom: -34px !important;
-    min-height: calc(100dvh + 34px) !important;
-  }
-
-  .feed-scroll,
-  [data-scroll-container] {
-    padding-top: 20px !important;
-    padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
-    scroll-padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  .feed-scroll::after,
-  [data-scroll-container]::after {
-    height: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-}
-
-/* ============================================================
-   School Connect - Feed Top Action
-   The main feed action now lives in the header next to the bell.
-   Hide the old floating feed FAB so the bottom edge stays clean.
-   ============================================================ */
-
-@media (max-width: 640px) {
-  .fab {
-    display: none !important;
-  }
-}
 
 /* ============================================================
    School Connect - Browser Scroll Mode / PWA Paused
@@ -1418,3 +812,79 @@ html::after {
     background: var(--bg) !important;
   }
 }
+
+/* sc-safe-area-cleanup-v1
+   Neutralises old global safe-area experiments that created large white
+   bottom/top overlays. Keep page-specific safe-area handling inside the page. */
+@media (max-width: 640px) {
+  html::before,
+  body::before,
+  body::after,
+  .app-root::before,
+  .app-root::after,
+  .feed-scroll::before,
+  .feed-scroll::after,
+  [data-scroll-container]::before,
+  [data-scroll-container]::after {
+    content: none !important;
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    pointer-events: none !important;
+  }
+
+  html,
+  body {
+    min-height: 100dvh !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+
+  body {
+    position: static !important;
+    inset: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .app-root {
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    margin-bottom: 0 !important;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    scroll-padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  body,
+  .app-root {
+    bottom: 0 !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    scroll-padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    margin-bottom: 0 !important;
+  }
+}
+
