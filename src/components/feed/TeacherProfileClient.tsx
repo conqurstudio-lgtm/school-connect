@@ -59,6 +59,7 @@ const [showJoin, setShowJoin] = useState(false)
   const composerDockRef = useRef<HTMLDivElement | null>(null)
   const scrollRafRef = useRef<number | null>(null)
   const previousThreadCountRef = useRef(0)
+  const messageScrollReadyRef = useRef(false)
 
   const isMessageListNearBottom = () => {
     const el = threadScrollRef.current
@@ -69,34 +70,34 @@ const [showJoin, setShowJoin] = useState(false)
   }
 
   const scrollToLatestMessage = (
-    reason = 'latest',
-    behavior: ScrollBehavior = 'auto',
-    force = true,
-  ) => {
-    const el = threadScrollRef.current
-    if (!el) return
-    if (!force && !isMessageListNearBottom()) return
+  reason = 'latest',
+  behavior: ScrollBehavior = 'auto',
+  force = true,
+) => {
+  const el = threadScrollRef.current
+  if (!el) return
+  if (!force && !isMessageListNearBottom()) return
 
-    const run = () => {
-      const current = threadScrollRef.current
-      if (!current) return
-      try {
-        bottomRef.current?.scrollIntoView({ block: 'end', behavior })
-      } catch {}
-      current.scrollTop = current.scrollHeight
-    }
-
-    if (scrollRafRef.current !== null) cancelAnimationFrame(scrollRafRef.current)
-
-    scrollRafRef.current = requestAnimationFrame(() => {
-      run()
-      window.setTimeout(run, 40)
-      window.setTimeout(run, 140)
-      window.setTimeout(run, 320)
-    })
+  if (scrollRafRef.current !== null) {
+    cancelAnimationFrame(scrollRafRef.current)
   }
 
-  // sc-scroll-anchor-v2
+  scrollRafRef.current = requestAnimationFrame(() => {
+    const current = threadScrollRef.current
+    if (!current) return
+
+    const targetTop = Math.max(0, current.scrollHeight - current.clientHeight)
+    if (Math.abs(current.scrollTop - targetTop) < 3) return
+
+    if (behavior === 'smooth') {
+      current.scrollTo({ top: targetTop, behavior })
+    } else {
+      current.scrollTop = targetTop
+    }
+  })
+}
+
+  // sc-scroll-anchor-v3
   useEffect(() => {
     previousThreadCountRef.current = 0
   }, [teacherId])
