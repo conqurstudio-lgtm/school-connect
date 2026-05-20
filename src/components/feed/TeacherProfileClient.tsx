@@ -303,8 +303,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const [updates, setUpdates] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [threadLoading, setThreadLoading] = useState(false)
-  const [threadSettled, setThreadSettled] = useState(false)
-  const [showJoin, setShowJoin] = useState(false)
+const [showJoin, setShowJoin] = useState(false)
   const [message, setMessage] = useState('')
   const [sending, setSending] = useState(false)
   const [attachment, setAttachment] = useState<AttachmentDraft | null>(null)
@@ -314,10 +313,6 @@ export function TeacherProfileClient({ teacherId }: Props) {
   const threadScrollRef = useRef<HTMLDivElement>(null)
 
   const forceScrollToBottom = (smooth = true) => {
-    // parent-internal-scroll-only-v1:
-    // Only scroll the message thread container.
-    // Do not use bottomRef.scrollIntoView or window.scrollTo here because those can
-    // make the parent/feed page jump to the bottom.
     const run = () => {
       const el = threadScrollRef.current
       if (!el) return
@@ -333,7 +328,6 @@ export function TeacherProfileClient({ teacherId }: Props) {
     run()
     window.requestAnimationFrame(run)
     window.setTimeout(run, 80)
-    window.setTimeout(run, 240)
   }
 
   const markThreadSeen = async (id = teacherId) => {
@@ -353,9 +347,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
     // Messages load as an inline thread state instead of blocking the whole screen.
     setLoading(true)
     setThreadLoading(false)
-    setThreadSettled(false)
-
-    try {
+try {
       const res = await fetch(`/api/teachers/${teacherId}/profile`, { cache: 'no-store' })
       const json = await res.json()
 
@@ -378,8 +370,7 @@ export function TeacherProfileClient({ teacherId }: Props) {
         loadThread(json.teacher.id)
       } else {
         setUpdates([])
-        setThreadSettled(true)
-      }
+}
     } catch (e: any) {
       setLoading(false)
       toast.error(e.message || 'Could not load teacher')
@@ -387,12 +378,10 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   const loadThread = async (id = teacherId) => {
-    // parent-thread-open-no-jump-v1:
-    // Keep the thread covered by the inline loader until we have positioned the
-    // internal scroll container at the latest message. This prevents the user
-    // seeing old messages first and then watching the page jump to the bottom.
+    // parent-thread-fast-open-v2:
+    // Do not keep a blocking loader while positioning the thread.
+    // The useLayoutEffect below scrolls the internal message container before paint.
     setThreadLoading(true)
-    setThreadSettled(false)
 
     try {
       const res = await fetch(`/api/updates?teacher_id=${encodeURIComponent(id)}`, { cache: 'no-store' })
@@ -404,30 +393,20 @@ export function TeacherProfileClient({ teacherId }: Props) {
         setCanMessage(!!json.can_message)
 
         try { await markThreadSeen(id) } catch {}
-
-        window.requestAnimationFrame(() => {
-          forceScrollToBottom(false)
-          window.requestAnimationFrame(() => {
-            forceScrollToBottom(false)
-            setThreadSettled(true)
-            setThreadLoading(false)
-          })
-        })
-        return
       }
-    } catch {}
-
-    setThreadSettled(true)
-    setThreadLoading(false)
+    } catch {
+    } finally {
+      setThreadLoading(false)
+    }
   }
   useEffect(() => { load() }, [teacherId])
-  // parent-thread-scroll-v1:
-  // One reliable scroll trigger after the visible thread data is ready.
-  // Avoid duplicate delayed scroll effects that can create jumpiness.
+  // parent-thread-fast-open-v2:
+  // Keep the thread feeling instant. When messages arrive, useLayoutEffect
+  // positions the internal message container before the browser paints.
   useLayoutEffect(() => {
-    if (loading || threadLoading || !threadSettled || !canMessage) return
+    if (loading || threadLoading || !canMessage) return
     forceScrollToBottom(false)
-  }, [loading, threadLoading, threadSettled, canMessage, updates.length, reports.length, teacherId])
+  }, [loading, threadLoading, canMessage, updates.length, reports.length, teacherId])
 
 const handlePickAttachment = async (file?: File | null) => {
     if (!file) return
@@ -729,7 +708,7 @@ const handlePickAttachment = async (file?: File | null) => {
             overscrollBehavior: 'contain',
             padding: '10px 0 90px',
           }}>
-            {(!threadSettled || threadLoading) ? (
+            {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
             ) : threadItems.length === 0 ? (
               <EmptyConversation teacher={teacher} />
