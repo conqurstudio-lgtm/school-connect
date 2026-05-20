@@ -813,7 +813,7 @@ html::after {
   }
 }
 
-/* sc-safe-area-cleanup-v1
+
    Neutralises old global safe-area experiments that created large white
    bottom/top overlays. Keep page-specific safe-area handling inside the page. */
 @media (max-width: 640px) {
@@ -884,6 +884,85 @@ html::after {
   [data-scroll-container] {
     padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
     scroll-padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+
+/* sc-safe-area-hard-reset-v2
+   Keep the global shell simple. No fake safe-area overlays, no negative viewport offsets. */
+@media (max-width: 640px) {
+  html::before,
+  body::before,
+  body::after,
+  .app-root::before,
+  .app-root::after,
+  .feed-scroll::before,
+  .feed-scroll::after,
+  [data-scroll-container]::before,
+  [data-scroll-container]::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  html,
+  body {
+    min-height: 100dvh !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+
+  body {
+    position: static !important;
+    inset: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .app-root {
+    position: fixed !important;
+    inset: 0 !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-width: 520px !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    background: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    background-color: var(--bg, var(--sc-mobile-bg, #FCFCFF)) !important;
+    padding-bottom: 72px !important;
+    scroll-padding-bottom: 72px !important;
+  }
+
+  .fab {
+    bottom: auto !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 640px) {
+  body,
+  .app-root {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    bottom: auto !important;
+  }
+
+  .feed-scroll,
+  [data-scroll-container] {
+    padding-bottom: 78px !important;
+    scroll-padding-bottom: 78px !important;
     margin-bottom: 0 !important;
   }
 }

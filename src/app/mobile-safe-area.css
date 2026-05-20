@@ -10,9 +10,9 @@
     Message composer should use the iPhone safe-area instead of floating far above it.
     The thread reserve only needs to protect the compact composer height.
   */
-  --sc-bottom-extra: 12px;
+  --sc-bottom-extra: 8px;
   --sc-compose-bottom: 0px;
-  --sc-thread-bottom: 42px;
+  --sc-thread-bottom: 38px;
 }
 
 html {
@@ -56,9 +56,9 @@ input {
 
 @media (display-mode: standalone) {
   :root {
-    --sc-bottom-extra: 12px;
+    --sc-bottom-extra: 8px;
     --sc-compose-bottom: 0px;
-    --sc-thread-bottom: 42px;
+    --sc-thread-bottom: 38px;
   }
 
   html,
