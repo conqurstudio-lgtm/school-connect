@@ -301,7 +301,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
+        padding: 'calc(4px + env(safe-area-inset-top)) 14px 5px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -311,14 +311,14 @@ const handlePickAttachment = async (file?: File | null) => {
             }}
             aria-label="Back"
             style={{
-                width: 24,
-                height: 28,
+                width: 20,
+                height: 24,
                 borderRadius: 0,
                 border: 'none',
                 background: 'transparent',
                 color: T.ink2,
                 padding: 0,
-                marginRight: 1,
+                marginRight: 0,
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -326,7 +326,7 @@ const handlePickAttachment = async (file?: File | null) => {
                 flexShrink: 0,
               }}
           >
-            <BackIcon size={17} />
+            <BackIcon size={15} />
           </button>
 
           <div style={{
@@ -363,7 +363,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '-2px 0 0',
+              margin: '-3px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',

@@ -46,12 +46,12 @@ export function MessageBubble({
     <article style={{
       display: 'flex',
       gap: 10,
-      padding: '6px 19px',
+      padding: '5px 20px',
       flexDirection: isMine ? 'row-reverse' : 'row',
     }}>
       <div style={{
-        width: 26,
-        height: 26,
+        width: 24,
+        height: 24,
         borderRadius: '50%',
         overflow: 'hidden',
         background: isTeacher && teacherPhotoUrl
@@ -61,7 +61,7 @@ export function MessageBubble({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 9,
+        fontSize: 8.5,
         fontWeight: 800,
         flexShrink: 0,
         marginTop: 2,
@@ -70,7 +70,7 @@ export function MessageBubble({
       </div>
 
       <div style={{
-        maxWidth: '68%',
+        maxWidth: '66%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: isMine ? 'flex-end' : 'flex-start',
@@ -80,13 +80,13 @@ export function MessageBubble({
           background: isMine ? '#F4F4F6' : T.white,
           color: T.ink,
           border: imageOnly ? 'none' : (isMine ? 'none' : `1px solid ${T.border}`),
-          padding: imageOnly ? 0 : '6px 9px',
+          padding: imageOnly ? 0 : '5px 8px',
           overflow: 'hidden',
         }}>
           {update?.body && (
             <p style={{
-              fontSize: 12,
-              lineHeight: 1.31,
+              fontSize: 11.5,
+              lineHeight: 1.28,
               margin: 0,
               whiteSpace: 'pre-wrap',
             }}>
@@ -98,7 +98,7 @@ export function MessageBubble({
         </div>
 
         <p style={{
-          fontSize: 9,
+          fontSize: 8.5,
           color: T.ink3,
           margin: '1px 4px 0',
           textAlign: isMine ? 'right' : 'left',
