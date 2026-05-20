@@ -10,9 +10,9 @@
     Message composer should use the iPhone safe-area instead of floating far above it.
     The thread reserve only needs to protect the compact composer height.
   */
-  --sc-bottom-extra: 8px;
+  --sc-bottom-extra: 12px;
   --sc-compose-bottom: 0px;
-  --sc-thread-bottom: 38px;
+  --sc-thread-bottom: 42px;
 }
 
 html {
@@ -56,62 +56,13 @@ input {
 
 @media (display-mode: standalone) {
   :root {
-    --sc-bottom-extra: 8px;
+    --sc-bottom-extra: 14px;
     --sc-compose-bottom: 0px;
-    --sc-thread-bottom: 38px;
+    --sc-thread-bottom: 40px;
   }
 
   html,
   body {
     background: var(--sc-mobile-bg);
-  }
-}
-
-/* sc-pwa-shell-polish-v1
-   Makes the saved-to-home-screen experience feel less like a browser page.
-   This does not change message scroll logic or composer behavior. */
-html,
-body {
-  min-height: 100svh;
-  background: var(--sc-mobile-bg, #FCFCFF);
-}
-
-@supports (height: 100dvh) {
-  html,
-  body {
-    min-height: 100dvh;
-  }
-}
-
-body {
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-body > div {
-  min-height: inherit;
-  background: var(--sc-mobile-bg, #FCFCFF);
-}
-
-@media (display-mode: standalone) {
-  html,
-  body,
-  body > div {
-    background: var(--sc-mobile-bg, #FCFCFF);
-  }
-
-  body {
-    overscroll-behavior: none;
-  }
-}
-
-@media (max-width: 768px) {
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  button {
-    touch-action: manipulation;
   }
 }

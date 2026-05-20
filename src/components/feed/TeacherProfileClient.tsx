@@ -464,7 +464,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: '6px 14px 5px',
+        padding: 'calc(4px + env(safe-area-inset-top)) 14px 5px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -651,7 +651,7 @@ const handlePickAttachment = async (file?: File | null) => {
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '4px 0 var(--sc-thread-bottom, 38px)',
+            padding: '4px 0 calc(var(--sc-thread-bottom, 42px) + env(safe-area-inset-bottom))',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -690,7 +690,7 @@ const handlePickAttachment = async (file?: File | null) => {
             borderTop: 'none',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '3px 10px 6px',
+            padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -1000,7 +1000,7 @@ function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOp
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px 14px',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
     }}>
       <ClassSpaceWelcome
         teacher={teacher}
@@ -1197,7 +1197,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
       minHeight: 0,
       overflowY: 'auto',
       WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px 14px',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
     }}>
       {!reportsGuideHidden && (
       <section style={{
@@ -1765,7 +1765,7 @@ function ParentTeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: '7px 16px 8px',
+        padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 999 }} />
@@ -1799,7 +1799,7 @@ function ParentTeacherPageSkeleton() {
 
       <div style={{
         flexShrink: 0,
-        padding: '3px 10px 6px',
+        padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
         background: 'rgba(252,252,255,0.96)',
       }}>
         <div style={{
