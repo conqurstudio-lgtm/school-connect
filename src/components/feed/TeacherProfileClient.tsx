@@ -290,7 +290,6 @@ function AttachmentCard({ attachment, compact = false, onRemove, flush = false }
 }
 
 
-
 type ThreadItem =
   | { kind: 'message'; created_at: string; data: any }
   | { kind: 'report'; created_at: string; data: any }
@@ -420,30 +419,15 @@ export function TeacherProfileClient({ teacherId }: Props) {
   }
 
   useEffect(() => { load() }, [teacherId])
-
-  // scroll-after-loading: the thread is not mounted while the loading screen is showing.
-  // So we scroll only after loading becomes false and the real message container exists.
+  // parent-thread-scroll-v1:
+  // One reliable scroll trigger after the visible thread data is ready.
+  // Avoid duplicate delayed scroll effects that can create jumpiness.
   useLayoutEffect(() => {
-    if (loading || !canMessage) return
+    if (loading || threadLoading || !canMessage) return
     forceScrollToBottom(false)
-  }, [loading, canMessage, updates.length, reports.length, teacherId])
+  }, [loading, threadLoading, canMessage, updates.length, reports.length, teacherId])
 
-
-
-
-
-
-
-
-  useEffect(() => {
-    if (!canMessage) return
-    const id = window.setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    }, 120)
-    return () => window.clearTimeout(id)
-  }, [loading, canMessage, updates.length, reports.length])
-
-  const handlePickAttachment = async (file?: File | null) => {
+const handlePickAttachment = async (file?: File | null) => {
     if (!file) return
 
     setUploadingAttachment(true)
