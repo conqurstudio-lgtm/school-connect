@@ -363,7 +363,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <p style={{
               fontSize: 11,
               color: T.ink3,
-              margin: '-3px 0 0',
+              margin: '-2px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
