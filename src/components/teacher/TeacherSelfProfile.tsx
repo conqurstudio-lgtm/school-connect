@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-composer-simplification-v1
 // broadcast-composer-shared-controls-v1
 // add-child-slidein-shared-controls-v1
 // teacher-top-profile-parent-style-v1
@@ -1164,7 +1165,31 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
   const [eventDate, setEventDate] = useState('')
   const [eventTime, setEventTime] = useState('')
   const [eventLocation, setEventLocation] = useState('')
+  const [messageParents, setMessageParents] = useState(false)
+  const [parents, setParents] = useState<any[]>([])
+  const [parentsLoading, setParentsLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    let alive = true
+
+    fetch('/api/teacher/parents')
+      .then(r => r.json())
+      .then(j => {
+        if (alive) setParents(j.parents ?? [])
+      })
+      .catch(() => {
+        if (alive) setParents([])
+      })
+      .finally(() => {
+        if (alive) setParentsLoading(false)
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const hasEvent = showEvent && (eventDate || eventTime || eventLocation.trim())
   const canSubmit = body.trim() || files.length > 0 || hasEvent
@@ -1198,12 +1223,12 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
     if (!canSubmit || saving) return
 
     setSaving(true)
-    const tid = toast.loading('Publishing…')
+    const tid = toast.loading(messageParents ? 'Publishing and messaging parents…' : 'Publishing…')
 
     try {
       const image_urls = files.length > 0 ? await uploadImages() : []
 
-      const res = await fetch('/api/teacher/post', {
+      const postRes = await fetch('/api/teacher/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1215,10 +1240,35 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
         }),
       })
 
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error || 'Could not publish')
+      const postJson = await postRes.json()
+      if (!postRes.ok) throw new Error(postJson.error || 'Could not publish')
 
-      toast.success('Published', { id: tid })
+      if (messageParents && parents.length > 0) {
+        const notifyText = body.trim()
+          || `${teacher?.name || 'Teacher'} shared a new class update. Please open School Connect to view it.`
+
+        const updateRes = await fetch('/api/teacher/updates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parent_ids: parents.map((p: any) => p.id),
+            body: notifyText,
+          }),
+        })
+
+        const updateJson = await updateRes.json()
+        if (!updateRes.ok) {
+          toast.success('Published, but parent message could not be sent', { id: tid })
+        } else {
+          toast.success(
+            `Published and messaged ${updateJson.count || parents.length} ${parents.length === 1 ? 'parent' : 'parents'}`,
+            { id: tid }
+          )
+        }
+      } else {
+        toast.success('Published', { id: tid })
+      }
+
       onCreated()
     } catch (e: any) {
       toast.error(e.message || 'Could not publish', { id: tid })
@@ -1227,140 +1277,181 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
     setSaving(false)
   }
 
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const canMessageParents = parents.length > 0
+
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 240,
-      background: 'rgba(0,0,0,0.38)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      animation: 'fadeIn 0.2s ease',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        background: T.white,
-        borderRadius: '22px 22px 0 0',
-        padding: 20,
-        animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
-        maxHeight: '88dvh',
-        overflowY: 'auto',
-      }}>
+    <div
+      onClick={() => {
+        if (!saving) onClose()
+      }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 240,
+        background: 'rgba(0,0,0,0.38)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        animation: 'fadeIn 0.2s ease',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          background: T.white,
+          borderRadius: '22px 22px 0 0',
+          padding: '16px 14px calc(16px + env(safe-area-inset-bottom, 0px))',
+          boxShadow: '0 -18px 50px rgba(0,0,0,0.14)',
+          animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+          boxSizing: 'border-box',
+        }}
+      >
+        <div style={{
+          width: 38,
+          height: 4,
+          borderRadius: 999,
+          background: '#E5E5EA',
+          margin: '0 auto 12px',
+        }} />
+
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 14,
+          gap: 12,
+          marginBottom: 12,
         }}>
-          <div>
-            <h3 style={{
+          <div style={{ minWidth: 0 }}>
+            <p style={{
               fontSize: 15,
               fontWeight: 900,
               color: T.ink,
-              letterSpacing: '-0.035em',
+              letterSpacing: '-0.025em',
               margin: 0,
             }}>
-              Create
-            </h3>
-            <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
-              {inferred} · {teacher.grade}{teacher.class_name ? ` ${teacher.class_name}` : ''}
+              Create class update
+            </p>
+            <p style={{
+              fontSize: 12.2,
+              color: T.ink3,
+              margin: '3px 0 0',
+              lineHeight: 1.35,
+            }}>
+              {inferred} for {teacher?.grade || 'Class'}{teacher?.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
 
-          <button onClick={onClose} aria-label="Close" style={{
-            width: 34,
-            height: 34,
-            borderRadius: '50%',
-            border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
-            color: T.ink3,
-            cursor: 'pointer',
-          }}>
-            <X size={16} strokeWidth={1.8} />
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            aria-label="Close composer"
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: `1px solid ${T.border}`,
+              background: '#F7F7FA',
+              color: T.ink2,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: saving ? 'not-allowed' : 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <X size={15} strokeWidth={2.2} />
           </button>
         </div>
 
         <textarea
+          autoFocus
           value={body}
           onChange={e => setBody(e.target.value)}
-          rows={5}
-          placeholder="Share with your class..."
+          rows={4}
+          placeholder="Share a class update, reminder, moment or announcement…"
           style={{
-            width: '100%',
-            boxSizing: 'border-box',
-            padding: '12px 13px',
-            borderRadius: 14,
-            border: `1px solid ${T.border}`,
+            ...classSpaceTextareaStyle,
+            minHeight: 106,
             background: '#FAFAFC',
-            color: T.ink,
-            fontSize: 16,
-            outline: 'none',
-            resize: 'none',
-            fontFamily: 'inherit',
-            lineHeight: 1.5,
           }}
         />
 
-        <div style={{
-          display: 'flex',
-          gap: 8,
-          marginTop: 10,
-        }}>
-          <label style={composerActionStyle}>
-            <Camera size={14} strokeWidth={1.9} />
-            Photo
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: 'none' }}
-              onChange={e => {
-                const picked = Array.from(e.target.files || [])
-                setFiles(picked.slice(0, 4))
-                e.target.value = ''
-              }}
-            />
-          </label>
-
-          <button
-            onClick={() => setShowEvent(!showEvent)}
-            style={{
-              ...composerActionStyle,
-              background: showEvent ? '#F0F4FF' : '#FAFAFC',
-              color: showEvent ? T.blue : T.ink2,
-              border: showEvent ? `1px solid ${T.blue}` : `1px solid ${T.border}`,
-            }}
-          >
-            Event
-          </button>
-        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={e => {
+            const selected = Array.from(e.target.files || [])
+            if (selected.length) {
+              setFiles(prev => [...prev, ...selected].slice(0, 6))
+            }
+            e.currentTarget.value = ''
+          }}
+        />
 
         {files.length > 0 && (
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 6,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 7,
             marginTop: 10,
           }}>
-            {files.map((file, i) => (
-              <div key={`${file.name}-${i}`} style={{
-                borderRadius: '50%',
-                overflow: 'hidden',
-                height: 58,
-                background: '#F0F0F4',
-              }}>
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt=""
+            {files.map((file, index) => (
+              <div
+                key={`${file.name}-${index}`}
+                style={{
+                  minHeight: 38,
+                  borderRadius: 14,
+                  border: `1px solid ${T.border}`,
+                  background: '#FAFAFC',
+                  padding: '7px 8px 7px 10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 9,
+                }}
+              >
+                <Paperclip size={14} color={T.ink3} strokeWidth={2.1} />
+                <p style={{
+                  flex: 1,
+                  minWidth: 0,
+                  fontSize: 12.5,
+                  color: T.ink2,
+                  margin: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {file.name}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => removeFile(index)}
+                  aria-label="Remove file"
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
+                    width: 28,
+                    height: 28,
+                    borderRadius: 999,
+                    border: 'none',
+                    background: '#F0F0F4',
+                    color: T.ink3,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    flexShrink: 0,
                   }}
-                />
+                >
+                  <X size={13} strokeWidth={2.2} />
+                </button>
               </div>
             ))}
           </div>
@@ -1368,52 +1459,152 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
 
         {showEvent && (
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
             marginTop: 10,
+            padding: 10,
+            borderRadius: 16,
+            border: `1px solid ${T.border}`,
+            background: '#F7F8FC',
+            display: 'grid',
+            gap: 8,
           }}>
             <input
+              type="date"
               value={eventDate}
               onChange={e => setEventDate(e.target.value)}
-              type="date"
-              style={simpleInputStyle}
+              style={classSpaceInputStyle}
             />
             <input
+              type="time"
               value={eventTime}
               onChange={e => setEventTime(e.target.value)}
-              type="time"
-              style={simpleInputStyle}
+              style={classSpaceInputStyle}
             />
             <input
               value={eventLocation}
               onChange={e => setEventLocation(e.target.value)}
-              placeholder="Place"
-              style={{ ...simpleInputStyle, gridColumn: '1 / -1' }}
+              placeholder="Event location"
+              style={classSpaceInputStyle}
             />
           </div>
         )}
 
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 8,
+          marginTop: 10,
+        }}>
+          <ClassSpaceButton
+            type="button"
+            variant="secondary"
+            compact
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Paperclip size={14} strokeWidth={2.1} />
+            Photos
+          </ClassSpaceButton>
+
+          <ClassSpaceButton
+            type="button"
+            variant={showEvent ? 'primary' : 'secondary'}
+            compact
+            onClick={() => setShowEvent(v => !v)}
+          >
+            <FileText size={14} strokeWidth={2.1} />
+            Event
+          </ClassSpaceButton>
+        </div>
+
         <button
-          onClick={submit}
-          disabled={!canSubmit || saving}
+          type="button"
+          disabled={!canMessageParents || parentsLoading}
+          onClick={() => {
+            if (canMessageParents) setMessageParents(v => !v)
+          }}
           style={{
             width: '100%',
-            marginTop: 14,
-            minHeight: 46,
-            padding: '14px 16px',
-            borderRadius: 999,
-            border: 'none',
-            background: !canSubmit || saving ? '#D4D4D8' : T.ink,
-            color: T.white,
-            fontSize: 15,
-            fontWeight: 850,
-            cursor: !canSubmit || saving ? 'not-allowed' : 'pointer',
+            marginTop: 10,
+            minHeight: 44,
+            borderRadius: 16,
+            border: `1px solid ${messageParents ? 'rgba(120,166,254,0.45)' : T.border}`,
+            background: messageParents ? '#F0F4FF' : '#FAFAFC',
+            color: T.ink,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '10px 12px',
+            cursor: canMessageParents && !parentsLoading ? 'pointer' : 'not-allowed',
             fontFamily: 'inherit',
+            opacity: canMessageParents || parentsLoading ? 1 : 0.65,
           }}
         >
-          {saving ? 'Publishing…' : 'Publish'}
+          <span style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+            <Users size={15} color={messageParents ? T.blue : T.ink3} strokeWidth={2.1} />
+            <span style={{ minWidth: 0 }}>
+              <span style={{
+                display: 'block',
+                fontSize: 13.2,
+                fontWeight: 850,
+                color: T.ink,
+                lineHeight: 1.2,
+              }}>
+                Also message parents
+              </span>
+              <span style={{
+                display: 'block',
+                fontSize: 11.5,
+                color: T.ink3,
+                lineHeight: 1.25,
+                marginTop: 2,
+              }}>
+                {parentsLoading
+                  ? 'Checking linked parents…'
+                  : parents.length > 0
+                    ? `${parents.length} linked ${parents.length === 1 ? 'parent' : 'parents'}`
+                    : 'No linked parents yet'}
+              </span>
+            </span>
+          </span>
+
+          <span style={{
+            width: 38,
+            height: 22,
+            borderRadius: 999,
+            background: messageParents ? T.ink : '#D9D9E0',
+            position: 'relative',
+            flexShrink: 0,
+            transition: 'background 0.18s ease',
+          }}>
+            <span style={{
+              position: 'absolute',
+              top: 3,
+              left: messageParents ? 19 : 3,
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              background: T.white,
+              transition: 'left 0.18s ease',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.16)',
+            }} />
+          </span>
         </button>
+
+        <ClassSpaceButton
+          type="button"
+          fullWidth
+          variant="primary"
+          disabled={!canSubmit || saving}
+          onClick={submit}
+          style={{ marginTop: 12 }}
+        >
+          <Send size={15} strokeWidth={2.2} />
+          {saving
+            ? 'Publishing…'
+            : messageParents
+              ? 'Post and message parents'
+              : 'Post to Class Life'}
+        </ClassSpaceButton>
       </div>
     </div>
   )
