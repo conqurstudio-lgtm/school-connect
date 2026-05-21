@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// add-child-slidein-shared-controls-v1
 // teacher-top-profile-parent-style-v1
 // teacher-shell-parent-match-force-v2
 // teacher-shell-from-parent-template-v1
@@ -30,7 +31,7 @@ import { BackIcon } from '@/components/ui/BackIcon'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
-import { ClassSpaceTabs as SharedClassSpaceTabs, ClassSpaceButton } from '@/components/class-space/ClassSpacePrimitives'
+import { ClassSpaceTabs as SharedClassSpaceTabs, ClassSpaceButton, classSpaceInputStyle } from '@/components/class-space/ClassSpacePrimitives'
 
 
 function sortMessagesOldestFirst(list: any[]) {
@@ -3387,38 +3388,99 @@ const requestChipStyle: any = {
 
 function AddChildOverlay({ onAdd, onClose }: any) {
   const [name, setName] = useState('')
-  const submit = () => { const n = name.trim(); if (n) onAdd(n) }
+
+  const submit = () => {
+    const n = name.trim()
+    if (n) onAdd(n)
+  }
+
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed', inset: 0, zIndex: 100,
-      background: 'rgba(0,0,0,0.35)',
-      display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-      animation: 'fadeIn 0.2s ease',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%', maxWidth: 520, background: T.white,
-        borderRadius: '20px 20px 0 0', padding: 24,
-        animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
-      }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: T.ink,
-                     letterSpacing: '-0.02em', margin: '0 0 16px' }}>
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 100,
+        background: 'rgba(0,0,0,0.32)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        animation: 'fadeIn 0.2s ease',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          background: T.white,
+          borderRadius: '22px 22px 0 0',
+          padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+          boxShadow: '0 -18px 50px rgba(0,0,0,0.12)',
+          animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+        }}
+      >
+        <div style={{
+          width: 38,
+          height: 4,
+          borderRadius: 999,
+          background: '#E5E5EA',
+          margin: '0 auto 14px',
+        }} />
+
+        <h3 style={{
+          fontSize: 17,
+          fontWeight: 900,
+          color: T.ink,
+          letterSpacing: '-0.025em',
+          margin: '0 0 5px',
+        }}>
           Add a child
         </h3>
-        <input autoFocus value={name}
+
+        <p style={{
+          fontSize: 12.8,
+          color: T.ink3,
+          margin: '0 0 14px',
+          lineHeight: 1.4,
+        }}>
+          Add the child’s name so this class can be linked correctly.
+        </p>
+
+        <input
+          autoFocus
+          value={name}
           onChange={e => setName(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') submit() }}
           placeholder="Child full name"
-          style={{
-            width: '100%', padding: '12px 14px', fontSize: 16,
-            border: `1px solid ${T.border}`, borderRadius: 14,
-            background: T.white, color: T.ink, outline: 'none',
-            fontFamily: 'inherit', boxSizing: 'border-box',
-          }} />
-        <button onClick={submit} style={{
-          width: '100%', marginTop: 12, padding: '14px',
-          borderRadius: 999, background: T.ink, color: T.white, border: 'none',
-          fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
-        }}>Add child</button>
+          style={classSpaceInputStyle}
+        />
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 8,
+          marginTop: 12,
+        }}>
+          <ClassSpaceButton
+            type="button"
+            variant="ghost"
+            compact
+            onClick={onClose}
+          >
+            Cancel
+          </ClassSpaceButton>
+
+          <ClassSpaceButton
+            type="button"
+            variant="primary"
+            compact
+            disabled={!name.trim()}
+            onClick={submit}
+          >
+            Add child
+          </ClassSpaceButton>
+        </div>
       </div>
     </div>
   )
