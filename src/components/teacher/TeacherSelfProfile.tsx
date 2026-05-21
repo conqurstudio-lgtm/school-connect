@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
   Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone,
-  Paperclip, FileText
-} from 'lucide-react'
+  Paperclip, FileText,
+  Info} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { PhotoCropper } from './PhotoCropper'
 import { AttachmentCard, AttachmentPreviewTray, updateAttachment, type AttachmentDraft } from '@/components/messages/MessageAttachment'
@@ -184,7 +184,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
   const copyClassLink = async () => {
     const base = typeof window !== 'undefined' ? window.location.origin : ''
-    const link = `${base}/teachers/${teacher.id}`
+    const link = `${base}/class/${teacher.id}`
 
     try {
       await navigator.clipboard.writeText(link)
@@ -1754,7 +1754,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
   }, [])
 
   const classLabel = `${teacher.grade}${teacher.class_name ? ` · ${teacher.class_name}` : ''}`
-  const classLink = origin ? `${origin}/teachers/${teacher.id}` : `/teachers/${teacher.id}`
+  const classLink = origin ? `${origin}/class/${teacher.id}` : `/class/${teacher.id}`
   const totalChildren = list.length
   const claimedChildren = list.filter((child: any) => Number(child.guardian_count || 0) > 0).length
   const unclaimedChildren = Math.max(totalChildren - claimedChildren, 0)
@@ -3275,7 +3275,7 @@ function PendingClassRequests({ onChanged }: any) {
         alignItems: 'flex-start',
         marginBottom: 10,
       }}>
-        <AlertCircle size={15} color={T.blue} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
+        <Info size={15} color={T.blue} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
         <p style={{
           fontSize: 11.5,
           color: T.ink2,
