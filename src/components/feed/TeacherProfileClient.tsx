@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// parent-shell-teacher-pattern-v1
 // shared-tabs-restore-and-apply-v3
 // shared-ui-architecture-pass-v1
 // composer-send-button-balance-v1
@@ -460,17 +461,20 @@ const handlePickAttachment = async (file?: File | null) => {
   }))
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      height: '100dvh',
-      overflow: 'hidden',
-      background: T.bg,
-      maxWidth: 520,
-      margin: '0 auto',
-      fontFamily: 'Inter, -apple-system, sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <div
+      className="parent-class-space-shell"
+      style={{
+        minHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'hidden',
+        background: T.bg,
+        maxWidth: 520,
+        margin: '0 auto',
+        fontFamily: 'Inter, -apple-system, sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* Top header */}
       <div style={{
         position: 'sticky',
@@ -480,7 +484,7 @@ const handlePickAttachment = async (file?: File | null) => {
         background: 'rgba(252,252,255,0.98)',
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
-        padding: 'calc(4px + env(safe-area-inset-top)) 14px 5px',
+        padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
           <button
@@ -667,7 +671,7 @@ const handlePickAttachment = async (file?: File | null) => {
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '4px 0 calc(var(--sc-thread-bottom, 42px) + env(safe-area-inset-bottom))',
+            padding: '4px 0 8px',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -698,15 +702,15 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div ref={composerDockRef} style={{
+          <div ref={composerDockRef} className="parent-message-composer-dock" style={{
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.92)',
+            background: 'rgba(252,252,255,0.96)',
             borderTop: 'none',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
+            padding: '3px 10px calc(6px + env(safe-area-inset-bottom, 0px))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
