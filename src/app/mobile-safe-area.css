@@ -222,3 +222,49 @@ body {
   letter-spacing: -0.025em !important;
 }
 
+
+
+/* message-thread-alignment-repair-v1 */
+.message-thread-person-header {
+  position: relative;
+  z-index: 5;
+}
+
+.sc-message-composer-dock {
+  background: #FCFCFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 95 !important;
+}
+
+.sc-message-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-message-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  align-self: center !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-message-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.sc-message-composer-shell textarea {
+  align-self: center !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+}

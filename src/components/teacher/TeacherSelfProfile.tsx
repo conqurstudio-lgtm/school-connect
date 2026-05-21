@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-thread-alignment-repair-v1
 // ui-polish-audit-fixes-v1
 // ui-alignment-shapes-pass-v1
 // teacher-feed-scroll-stability-v1
@@ -2749,7 +2750,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           WebkitBackdropFilter: 'blur(14px)',
           position: 'sticky',
           top: 0,
-          zIndex: 10,
+          zIndex: 90,
         }}>
           <button onClick={onClose} aria-label="Back" style={{
             width: 34,
@@ -2814,7 +2815,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           WebkitOverflowScrolling: 'touch',
           minHeight: 0,
           overscrollBehavior: 'contain',
-          padding: '10px 0 190px',
+          padding: '10px 0 18px',
         }}>
           {loading ? (
             <SoftConversationLoader />
@@ -2866,14 +2867,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
         <div className="teacher-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-teacher-composer-dock" style={{
           position: 'sticky',
+          flexShrink: 0,
           bottom: 0,
-          zIndex: 80,
+          zIndex: 95,
           background: T.bg,
               borderTop: `1px solid ${T.border}`,
               padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
-          backdropFilter: 'none',
-          WebkitBackdropFilter: 'none',
-          padding: '8px 12px 14px',
+                              padding: '8px 12px 14px',
         }}>
           
 
@@ -2886,12 +2886,12 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           <div className="sc-message-composer-shell sc-teacher-composer-shell" style={{
             minHeight: 52,
               display: 'flex',
-            alignItems: 'flex-end',
-            gap: 7,
+            alignItems: 'center',
+            gap: 8,
             background: T.white,
             border: `1px solid ${T.border}`,
             borderRadius: 22,
-            padding: '6px 7px 6px 11px',
+            padding: '7px 7px 7px 12px',
             boxShadow: '0 10px 28px rgba(0,0,0,0.055)',
           }}>
                         <input
@@ -2913,8 +2913,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               disabled={uploadingAttachment}
               style={{
                 width: 42,
-                height: 42,
-                borderRadius: 999,
+              height: 42,
+              borderRadius: 999,
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
                 color: attachment ? T.blue : T.ink2,

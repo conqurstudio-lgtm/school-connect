@@ -90,9 +90,38 @@ const [showJoin, setShowJoin] = useState(false)
   behavior: ScrollBehavior = 'auto',
   force = true,
 ) => {
-  // parent-message-scroll-freedom-v1:
-  // Background scroll control disabled.
-  // Messages use one-time landing only, then user scroll is free.
+  const el = threadScrollRef.current
+  if (!el) return
+
+  if (!force && !isMessageListNearBottom()) return
+
+  if (scrollRafRef.current) {
+    cancelAnimationFrame(scrollRafRef.current)
+    scrollRafRef.current = null
+  }
+
+  const run = () => {
+    const targetTop = Math.max(0, el.scrollHeight - el.clientHeight)
+
+    if (typeof el.scrollTo === 'function') {
+      el.scrollTo({ top: targetTop, behavior })
+    } else {
+      el.scrollTop = targetTop
+    }
+
+    bottomRef.current?.scrollIntoView({
+      behavior,
+      block: 'end',
+      inline: 'nearest',
+    })
+  }
+
+  scrollRafRef.current = requestAnimationFrame(run)
+
+  if (force) {
+    window.setTimeout(run, 90)
+    window.setTimeout(run, 260)
+  }
 }
 
   // scroll-anchor-disabled-v1
@@ -659,11 +688,11 @@ const handlePickAttachment = async (file?: File | null) => {
 
           {classSpaceTab === 'messages' && (
             <>
-              <MessageSpaceIntro
-                teacher={teacher}
-                reportsCount={reports.length}
-                onOpenLife={() => setClassSpaceTab('life')}
-                onOpenReports={() => setClassSpaceTab('reports')}
+              <MessageThreadPersonHeader
+                name={teacher?.name || teacher?.display_name || 'Teacher'}
+                subtitle={teacher?.class_name ? `${teacher?.grade || 'Class'} · ${teacher.class_name}` : teacher?.grade || 'Teacher messages'}
+                imageUrl={teacher?.photo_url || teacher?.avatar_url || teacher?.profile_photo_url}
+                fallback="T"
               />
 
           <div ref={threadScrollRef}
@@ -710,12 +739,10 @@ const handlePickAttachment = async (file?: File | null) => {
             flexShrink: 0,
               position: 'sticky',
             bottom: 0,
-            zIndex: 30,
+            zIndex: 80,
             background: T.bg,
-            borderTop: 'none',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
+            borderTop: `1px solid ${T.border}`,
+                                    padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -725,12 +752,12 @@ const handlePickAttachment = async (file?: File | null) => {
             <div className="sc-message-composer-shell sc-parent-composer-shell" style={{
               minHeight: 52,
               display: 'flex',
-              alignItems: 'flex-end',
-              gap: 7,
+              alignItems: 'center',
+              gap: 8,
               background: T.white,
               border: `1px solid ${T.border}`,
               borderRadius: 22,
-              padding: '6px 7px 6px 11px',
+              padding: '7px 7px 7px 12px',
               boxShadow: '0 10px 28px rgba(0,0,0,0.055)',
             }}>
               <input
@@ -751,9 +778,9 @@ const handlePickAttachment = async (file?: File | null) => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingAttachment}
                 style={{
-                  width: 27,
-                  height: 27,
-                  borderRadius: '50%',
+                  width: 42,
+                  height: 42,
+                  borderRadius: 999,
                   border: 'none',
                   background: attachment ? '#EAF1FF' : '#F4F4F6',
                   color: attachment ? T.blue : T.ink2,
@@ -764,7 +791,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   flexShrink: 0,
                 }}
               >
-                <Paperclip size={13} strokeWidth={2.1} />
+                <Paperclip size={16} strokeWidth={2.1} />
               </button>
 
               <textarea
@@ -801,9 +828,9 @@ const handlePickAttachment = async (file?: File | null) => {
                 disabled={(!message.trim() && !attachment) || sending}
                 aria-label="Send"
                 style={{
-                  width: 27,
-                  height: 27,
-                  borderRadius: '50%',
+                  width: 42,
+                  height: 42,
+                  borderRadius: 999,
                   border: 'none',
                   background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
                   color: T.white,
@@ -1546,6 +1573,77 @@ const classSpaceActionBtn: any = {
   fontFamily: 'inherit',
 }
 
+
+// message-thread-alignment-repair-v1
+function MessageThreadPersonHeader({ name, subtitle, imageUrl, fallback }: any) {
+  const initials = String(name || fallback || 'M')
+    .split(' ')
+    .map((part: string) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <div
+      className="message-thread-person-header"
+      style={{
+        flexShrink: 0,
+        margin: '0 14px 8px',
+        padding: '9px 10px',
+        borderRadius: 18,
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+      }}
+    >
+      <div style={{
+        width: 38,
+        height: 38,
+        borderRadius: 14,
+        overflow: 'hidden',
+        background: imageUrl ? `url(${imageUrl}) center / cover` : '#F0F0F4',
+        color: T.ink2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 12.8,
+        fontWeight: 900,
+        flexShrink: 0,
+      }}>
+        {!imageUrl && initials}
+      </div>
+
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <p style={{
+          fontSize: 13.8,
+          fontWeight: 900,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.015em',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {name || 'Messages'}
+        </p>
+
+        <p style={{
+          fontSize: 12.1,
+          color: T.ink3,
+          margin: '2px 0 0',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {subtitle || 'Conversation'}
+        </p>
+      </div>
+    </div>
+  )
+}
 
 function MessageRow({ update, teacher }: any) {
   const teacherInitials = teacher.name
