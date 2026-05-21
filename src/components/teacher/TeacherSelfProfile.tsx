@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-shell-from-parent-template-v1
 // teacher-app-screen-safe-top-compact-v1
 // teacher-pending-requests-full-shared-v2
 // teacher-request-buttons-shared-controls-v1
@@ -209,20 +210,23 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
   return (
     <div style={{
-      minHeight: '100dvh', height: 'auto',
-      overflowY: 'visible', WebkitOverflowScrolling: 'auto',
-      background: T.bg, maxWidth: 520, margin: '0 auto',
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.bg,
+      maxWidth: 520,
+      margin: '0 auto',
       fontFamily: 'Inter, -apple-system, sans-serif',
-      paddingTop: 0,
-      paddingBottom: 96,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
 
       {/* Compact teacher header */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        padding: '18px 18px 14px',
+        gap: 11,
+        padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
         position: 'sticky',
         top: 0,
         zIndex: 40,
@@ -234,9 +238,9 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       }}>
         <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
           position: 'relative',
-          width: 29,
-          height: 29,
-          borderRadius: '50%',
+          width: 42,
+          height: 42,
+          borderRadius: 15,
           border: 'none',
           padding: 0,
           overflow: 'visible',
@@ -255,10 +259,10 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           {!teacher.photo_url && initials}
           <span style={{
             position: 'absolute',
-            right: -7,
-            bottom: -7,
-            width: 19,
-            height: 19,
+            right: -5,
+            bottom: -5,
+            width: 18,
+            height: 18,
             borderRadius: '50%',
             background: T.ink,
             color: T.white,
@@ -315,8 +319,8 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             aria-label="Copy class invite link"
             title="Copy class invite link"
             style={{
-              height: 29,
-              minWidth: 46,
+              height: 34,
+              minWidth: 54,
               borderRadius: 999,
               border: `1px solid ${T.border}`,
               background: T.white,
@@ -347,6 +351,20 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             unreadCount={unread}
           />
 
+      <div
+        className="teacher-class-space-scroll"
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          background: T.bg,
+          paddingBottom: 58,
+        }}
+      >
+
       {teacherClassSpaceTab === 'life' && (
         <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
       )}
@@ -363,6 +381,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           <ClassRoster kids={children} onChanged={load} />
         </>
       )}
+      </div>
 
       {showNotifs && (
         <NotificationsSheet
