@@ -1,12 +1,13 @@
 // @ts-nocheck
 'use client'
+// teacher-bell-header-cleanup-v1
 // teacher-button-shape-pass-v1
 // readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
-  ArrowLeft, Bell, Camera, LogOut, Plus, MoreHorizontal,
+  ArrowLeft, Camera, LogOut, Plus, MoreHorizontal,
   Pencil, Trash2, X, Check, Users, MessageCircle, Send, Megaphone,
   Paperclip, FileText,
   Info} from 'lucide-react'
@@ -319,25 +320,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           >
             Link
           </button>
-
-          <button onClick={() => setShowNotifs(true)} aria-label="Activity"
-            style={{ ...iconBtn, position: 'relative' }}>
-            <Bell size={15} strokeWidth={1.7} />
-            {unread > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: 6,
-                right: 6,
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                background: T.red,
-                border: `2px solid ${T.bg}`,
-              }} />
-            )}
-          </button>
-
-          <button
+<button
             onClick={() => setShowClassComposer(true)}
             aria-label="Create"
             style={{ ...iconBtn, background: T.ink, color: T.white, border: 'none' }}
@@ -3589,7 +3572,7 @@ function SoftNotificationLoader() {
         justifyContent: 'center',
         margin: '0 auto 12px',
       }}>
-        <Bell size={18} color={T.ink3} strokeWidth={1.7} />
+        <MessageCircle size={18} color={T.ink3} strokeWidth={1.7} />
       </div>
 
       <p style={{
@@ -3860,7 +3843,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
             <SoftNotificationLoader />
           ) : items.length === 0 ? (
             <div style={{ padding: '70px 24px', textAlign: 'center' }}>
-              <Bell size={22} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 10px' }} />
+              <MessageCircle size={22} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 10px' }} />
               <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 5px' }}>
                 You're all caught up
               </p>
