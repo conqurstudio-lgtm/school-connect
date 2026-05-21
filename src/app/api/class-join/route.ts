@@ -162,6 +162,14 @@ async function createPublicParentSession(
 
   const { error: sessionError } = await sb.from('parent_sessions')
     .insert({
+      // public-class-join-session-school-v4
+      // parent_sessions.school_id is required by this database.
+      school_id: teacher.school_id,
+      // public-class-join-session-phone-v5
+      // parent_sessions.phone is required by this database.
+      // The current public invite form only asks for child details, so we store
+      // a safe placeholder until parent details are collected in the next step.
+      phone: 'not-provided',
       parent_id: parentId,
       access_token: token,
       expires_at: expiresAt,
