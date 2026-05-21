@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-composer-submit-repair-v2
 // teacher-composer-simplification-v1
 // broadcast-composer-shared-controls-v1
 // add-child-slidein-shared-controls-v1
@@ -1171,10 +1172,19 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
   const [saving, setSaving] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const apiUrl = (path: string) => {
+    if (typeof window === 'undefined') return path
+    return new URL(path, window.location.origin).toString()
+  }
+
+  const apiFetch = (path: string, init?: RequestInit) => {
+    return fetch(apiUrl(path), init)
+  }
+
   useEffect(() => {
     let alive = true
 
-    fetch('/api/teacher/parents')
+    apiFetch('/api/teacher/parents')
       .then(r => r.json())
       .then(j => {
         if (alive) setParents(j.parents ?? [])
@@ -1191,8 +1201,13 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
     }
   }, [])
 
-  const hasEvent = showEvent && (eventDate || eventTime || eventLocation.trim())
-  const canSubmit = body.trim() || files.length > 0 || hasEvent
+  const cleanBody = body.trim()
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(eventDate) ? eventDate : ''
+  const validTime = /^\d{2}:\d{2}$/.test(eventTime) ? eventTime : ''
+  const cleanLocation = eventLocation.trim()
+
+  const hasEvent = showEvent && (!!validDate || !!validTime || !!cleanLocation)
+  const canSubmit = !!cleanBody || files.length > 0 || hasEvent
 
   const inferred =
     hasEvent ? 'Event'
@@ -1206,12 +1221,12 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
       const form = new FormData()
       form.append('file', file)
 
-      const res = await fetch('/api/teacher/post-image', {
+      const res = await apiFetch('/api/teacher/post-image', {
         method: 'POST',
         body: form,
       })
 
-      const json = await res.json()
+      const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not upload photo')
       urls.push(json.url)
     }
@@ -1228,42 +1243,55 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
     try {
       const image_urls = files.length > 0 ? await uploadImages() : []
 
-      const postRes = await fetch('/api/teacher/post', {
+      const payload: any = {
+        body: cleanBody,
+        image_urls,
+      }
+
+      if (hasEvent) {
+        payload.event_date = validDate || null
+        payload.event_time = validTime || null
+        payload.event_location = cleanLocation || null
+      }
+
+      const postRes = await apiFetch('/api/teacher/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          body: body.trim(),
-          image_urls,
-          event_date: hasEvent ? eventDate : null,
-          event_time: hasEvent ? eventTime : null,
-          event_location: hasEvent ? eventLocation.trim() : null,
-        }),
+        body: JSON.stringify(payload),
       })
 
-      const postJson = await postRes.json()
+      const postJson = await postRes.json().catch(() => ({}))
       if (!postRes.ok) throw new Error(postJson.error || 'Could not publish')
 
-      if (messageParents && parents.length > 0) {
-        const notifyText = body.trim()
-          || `${teacher?.name || 'Teacher'} shared a new class update. Please open School Connect to view it.`
+      if (messageParents) {
+        const validParents = parents
+          .map((p: any) => p?.id)
+          .filter((id: any) => typeof id === 'string' && id.trim().length > 0)
 
-        const updateRes = await fetch('/api/teacher/updates', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            parent_ids: parents.map((p: any) => p.id),
-            body: notifyText,
-          }),
-        })
+        if (validParents.length > 0) {
+          const notifyText = cleanBody
+            || `${teacher?.name || 'Teacher'} shared a new class update. Please open School Connect to view it.`
 
-        const updateJson = await updateRes.json()
-        if (!updateRes.ok) {
-          toast.success('Published, but parent message could not be sent', { id: tid })
+          const updateRes = await apiFetch('/api/teacher/updates', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              parent_ids: validParents,
+              body: notifyText,
+            }),
+          })
+
+          const updateJson = await updateRes.json().catch(() => ({}))
+          if (!updateRes.ok) {
+            toast.success('Published, but parent message could not be sent', { id: tid })
+          } else {
+            toast.success(
+              `Published and messaged ${updateJson.count || validParents.length} ${validParents.length === 1 ? 'parent' : 'parents'}`,
+              { id: tid }
+            )
+          }
         } else {
-          toast.success(
-            `Published and messaged ${updateJson.count || parents.length} ${parents.length === 1 ? 'parent' : 'parents'}`,
-            { id: tid }
-          )
+          toast.success('Published. No linked parents to message yet.', { id: tid })
         }
       } else {
         toast.success('Published', { id: tid })
@@ -1271,7 +1299,12 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
 
       onCreated()
     } catch (e: any) {
-      toast.error(e.message || 'Could not publish', { id: tid })
+      console.error('Teacher composer submit failed:', e)
+      const raw = String(e?.message || '')
+      const friendly = raw.includes('expected pattern')
+        ? 'Could not publish because the request was not accepted by the browser. Please try again.'
+        : raw || 'Could not publish'
+      toast.error(friendly, { id: tid })
     }
 
     setSaving(false)
