@@ -217,6 +217,15 @@ const [showJoin, setShowJoin] = useState(false)
     setClassLifeLoading(false)
   }
 
+  // parent-class-life-load-fix-v1
+  // Class Life posts were fetched by loadClassLife(), but that function was not
+  // being triggered when the approved parent landed on the Class Life tab.
+  // Load/reload teacher posts whenever the parent opens Class Life.
+  useEffect(() => {
+    if (!hydrated || !canMessage || classSpaceTab !== 'life' || !teacher?.id) return
+    loadClassLife(teacher.id)
+  }, [hydrated, canMessage, classSpaceTab, teacher?.id])
+
   const markThreadSeen = async (id = teacherId) => {
     try {
       await fetch('/api/thread-status', {
@@ -262,8 +271,9 @@ try {
       if (json.is_my_teacher) {
         loadThread(json.teacher.id)
       } else {
+        setClassLifePosts([])
         setUpdates([])
-}
+      }
     } catch (e: any) {
       setLoading(false)
       toast.error(e.message || 'Could not load teacher')
