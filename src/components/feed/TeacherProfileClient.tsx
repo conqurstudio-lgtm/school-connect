@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// shared-tabs-restore-and-apply-v3
 // shared-ui-architecture-pass-v1
 // composer-send-button-balance-v1
 // readable-content-typography-restore-v1
@@ -11,6 +12,7 @@ import { AttachmentCard, AttachmentPreviewTray, updateAttachment, type Attachmen
 import { MessageBubble } from '@/components/messages/MessageBubble'
 import { BackIcon } from '@/components/ui/BackIcon'
 import toast from 'react-hot-toast'
+import { ClassSpaceTabs as SharedClassSpaceTabs } from '@/components/class-space/ClassSpacePrimitives'
 
 
 function sortMessagesOldestFirst(list: any[]) {
@@ -960,50 +962,16 @@ function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
   const tabs = [
     { key: 'life', label: 'Class Life' },
     { key: 'messages', label: 'Messages' },
-    { key: 'reports', label: reportsCount > 0 ? `Reports ${reportsCount}` : 'Reports' },
+    { key: 'reports', label: reportsCount ? `Reports ${reportsCount}` : 'Reports' },
   ]
 
   return (
-    <div style={{
-      flexShrink: 0,
-      padding: '6px 14px 7px',
-      background: 'rgba(252,252,255,0.98)',
-      borderBottom: `1px solid ${T.border}`,
-    }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gap: 6,
-        padding: 3,
-        borderRadius: 999,
-        background: '#F4F4F6',
-      }}>
-        {tabs.map((tab: any) => {
-          const selected = active === tab.key
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => onChange(tab.key)}
-              style={{
-                height: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: selected ? T.white : 'transparent',
-                color: selected ? T.ink : T.ink3,
-                fontSize: 13.2,
-                fontWeight: selected ? 850 : 750,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                boxShadow: selected ? '0 5px 14px rgba(0,0,0,0.06)' : 'none',
-              }}
-            >
-              {tab.label}
-            </button>
-          )
-        })}
-      </div>
-    </div>
+    <SharedClassSpaceTabs
+      tabs={tabs}
+      active={active}
+      onChange={onChange}
+      columns={3}
+    />
   )
 }
 
