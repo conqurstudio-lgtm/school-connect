@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-bottom-cut-page-bg-v1
 // teacher-minimal-composer-image-preview-v1
 // restore-working-teacher-composer-v1
 // teacher-composer-relative-fetch-repair-v3
@@ -417,6 +418,20 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           }}
         />
       )}
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 'env(safe-area-inset-bottom, 0px)',
+          background: T.bg,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
 
       {/* Cropper */}
       {cropFile && (

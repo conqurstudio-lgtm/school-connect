@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// parent-messages-match-teacher-experience-v1
 // parent-shell-teacher-pattern-v1
 // shared-tabs-restore-and-apply-v3
 // shared-ui-architecture-pass-v1
@@ -671,7 +672,7 @@ const handlePickAttachment = async (file?: File | null) => {
             WebkitOverflowScrolling: 'touch',
             minHeight: 0,
             overscrollBehavior: 'contain',
-            padding: '4px 0 8px',
+            padding: '10px 0 190px',
           }}>
             {threadLoading && threadItems.length === 0 ? (
               <ConversationLoading />
@@ -702,15 +703,15 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div ref={composerDockRef} className="parent-message-composer-dock" style={{
+          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock" style={{
             position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.96)',
+            background: 'rgba(252,252,255,0.98)',
             borderTop: 'none',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '3px 10px calc(6px + env(safe-area-inset-bottom, 0px))',
+            padding: '8px 12px calc(8px + env(safe-area-inset-bottom, 0px))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -808,7 +809,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   flexShrink: 0,
                 }}
               >
-                <Send size={15} strokeWidth={2.2} />
+                <Send size={16} strokeWidth={2.2} />
               </button>
             </div>
           </div>
@@ -1785,7 +1786,7 @@ function ParentTeacherPageSkeleton() {
 
       <div style={{
         flexShrink: 0,
-        padding: '3px 10px calc(var(--sc-compose-bottom, 0px) + env(safe-area-inset-bottom))',
+        padding: '8px 12px calc(8px + env(safe-area-inset-bottom, 0px))',
         background: 'rgba(252,252,255,0.96)',
       }}>
         <div style={{

@@ -66,3 +66,17 @@ input {
     background: var(--sc-mobile-bg);
   }
 }
+
+
+/* teacher-parent-safe-strip-bg-v1
+   Keep installed-bookmark/PWA bottom cut area the same colour as School Connect pages. */
+html,
+body {
+  background-color: #FCFCFF !important;
+}
+
+@media (max-width: 640px) {
+  body::after {
+    background: #FCFCFF !important;
+  }
+}
