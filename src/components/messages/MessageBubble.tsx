@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// ui-message-size-restore-v1
 
 import { AttachmentCard, updateAttachment } from '@/components/messages/MessageAttachment'
 
@@ -61,7 +62,7 @@ export function MessageBubble({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 8.5,
+        fontSize: 10.5,
         fontWeight: 800,
         flexShrink: 0,
         marginTop: 2,
@@ -85,8 +86,8 @@ export function MessageBubble({
         }}>
           {update?.body && (
             <p style={{
-              fontSize: 11.5,
-              lineHeight: 1.28,
+              fontSize: 14,
+              lineHeight: 1.5,
               margin: 0,
               whiteSpace: 'pre-wrap',
             }}>
@@ -98,7 +99,7 @@ export function MessageBubble({
         </div>
 
         <p style={{
-          fontSize: 8.5,
+          fontSize: 10.5,
           color: T.ink3,
           margin: '1px 4px 0',
           textAlign: isMine ? 'right' : 'left',
