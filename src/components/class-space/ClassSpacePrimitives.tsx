@@ -209,8 +209,8 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
 
               {!!tab.badge && tab.badge > 0 && (
                 <span style={{
-                  minWidth: 17,
-                  height: 17,
+                  minWidth: 18,
+                  height: 18,
                   padding: '0 5px',
                   borderRadius: 999,
                   background: CLASS_SPACE_UI.color.red,
@@ -221,6 +221,9 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
                   fontSize: 10.5,
                   fontWeight: 900,
                   lineHeight: 1,
+                  fontVariantNumeric: 'tabular-nums',
+                  textAlign: 'center',
+                  boxSizing: 'border-box',
                 }}>
                   {tab.badge > 9 ? '9+' : tab.badge}
                 </span>

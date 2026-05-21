@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// ui-polish-audit-fixes-v1
 // ui-alignment-shapes-pass-v1
 // teacher-feed-scroll-stability-v1
 // message-composer-safe-area-alignment-v1
@@ -223,7 +224,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
   }
 
   return (
-    <div style={{
+    <div className="sc-teacher-ui-root" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1480,7 +1481,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
                   }}
                 />
 
-                <button
+                <button className="sc-soft-report-button"
                   type="button"
                   onClick={() => removeImage(item.id)}
                   aria-label="Remove image"
@@ -1493,7 +1494,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
                     borderRadius: 999,
                     border: 'none',
                     background: 'rgba(0,0,0,0.58)',
-                    color: T.white,
+                    color: T.ink2,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2224,7 +2225,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                 .toUpperCase()
 
               return (
-                <button
+                <button className="sc-soft-report-button"
                   key={child.id}
                   onClick={() => openReport(child)}
                   style={{
@@ -4207,6 +4208,9 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
             fontSize: 13.8,
             fontWeight: 850,
             lineHeight: 1,
+                  fontVariantNumeric: 'tabular-nums',
+                  textAlign: 'center',
+                  boxSizing: 'border-box',
             border: `2px solid ${unread ? '#F4F6FB' : T.white}`,
           }}
         >
@@ -4273,7 +4277,10 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          background: T.red,
+          display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: T.red,
           marginTop: 4,
           flexShrink: 0,
         }} />
@@ -4393,7 +4400,10 @@ function NotifRow({ item, onOpen }: any) {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          background: T.red,
+          display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: T.red,
           marginTop: 4,
           flexShrink: 0,
         }} />

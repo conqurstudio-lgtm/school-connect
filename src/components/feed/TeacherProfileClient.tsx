@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// ui-polish-audit-fixes-v1
 // ui-alignment-shapes-pass-v1
 // message-composer-safe-area-alignment-v1
 // parent-messages-match-teacher-experience-v1
@@ -465,7 +466,7 @@ const handlePickAttachment = async (file?: File | null) => {
 
   return (
     <div
-      className="parent-class-space-shell"
+      className="parent-class-space-shell sc-parent-ui-root"
       style={{
         minHeight: '100dvh',
         height: '100dvh',
@@ -1652,15 +1653,15 @@ function ReportThreadCard({ report, teacher }: any) {
           </p>
         )}
 
-        <button
+        <button className="sc-soft-report-button"
           onClick={() => { window.location.href = '/reports' }}
           style={{
             width: '100%',
             marginTop: 12,
             border: 'none',
             borderRadius: 999,
-            background: T.ink,
-            color: T.white,
+            background: '#F4F4F6',
+            color: T.ink2,
             padding: '13px 12px',
             fontSize: 13.8,
             fontWeight: 700,
