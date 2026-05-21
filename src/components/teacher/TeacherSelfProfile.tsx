@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-thread-match-parent-ui-v1
 // message-thread-alignment-repair-v1
 // ui-polish-audit-fixes-v1
 // ui-alignment-shapes-pass-v1
@@ -2568,34 +2569,22 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
   const threadScrollRef = useRef<HTMLDivElement>(null)
-
   const forceScrollToBottom = (smooth = true) => {
     const run = () => {
       const el = threadScrollRef.current
+      if (!el) return
 
-      if (el) {
-        const top = el.scrollHeight + 9999
-        if (typeof el.scrollTo === 'function') {
-          el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
-        } else {
-          el.scrollTop = top
-        }
+      const top = Math.max(0, el.scrollHeight - el.clientHeight)
+      if (typeof el.scrollTo === 'function') {
+        el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
+      } else {
+        el.scrollTop = top
       }
-
-      bottomRef.current?.scrollIntoView({
-        behavior: smooth ? 'smooth' : 'auto',
-        block: 'end',
-        inline: 'nearest',
-      })
     }
 
-    run()
     window.requestAnimationFrame(run)
-    window.setTimeout(run, 80)
-    window.setTimeout(run, 240)
-    window.setTimeout(run, 600)
+    if (!smooth) window.setTimeout(run, 80)
   }
-
 
   const load = async () => {
     setLoading(true)
@@ -2714,10 +2703,16 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     }
   }
 
-  const parentInitial = (parent.name || 'P').charAt(0).toUpperCase()
   const childLine = Array.isArray(parent.child_names)
     ? parent.child_names.join(', ')
     : parent.child_name || ''
+
+  const childThreadTitle = childLine || 'Child'
+  const parentThreadLine = parent.name
+    ? `${parent.name} · Parent/Guardian`
+    : 'Parent/Guardian'
+
+  const childInitial = childThreadTitle.charAt(0).toUpperCase()
 
   return (
     <div style={{
@@ -2744,13 +2739,12 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
-          background: 'rgba(252,252,255,0.98)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
+          padding: 'calc(5px + env(safe-area-inset-top, 0px)) 14px 7px',
+          background: T.bg,
           position: 'sticky',
           top: 0,
-          zIndex: 90,
+          zIndex: 95,
+          borderBottom: `1px solid ${T.border}`,
         }}>
           <button onClick={onClose} aria-label="Back" style={{
             width: 34,
@@ -2781,7 +2775,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             fontWeight: 800,
             flexShrink: 0,
           }}>
-            {parentInitial}
+            {childInitial}
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -2794,7 +2788,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}>
-              {parent.name || 'Parent'}
+              {childThreadTitle}
             </h3>
             <p style={{
               fontSize: 12.2,
@@ -2804,7 +2798,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}>
-              {childLine || 'Parent message'}
+              {parentThreadLine}
             </p>
           </div>
         </div>
@@ -2833,7 +2827,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 justifyContent: 'center',
                 fontWeight: 800,
               }}>
-                {parentInitial}
+                {childInitial}
               </div>
               <p style={{
                 fontSize: 16,
@@ -2858,7 +2852,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 key={u.id}
                 update={u}
                 teacher={teacher}
-                parentInitial={parentInitial}
+                parentInitial={childInitial}
               />
             ))
           )}
@@ -2866,14 +2860,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         </div>
 
         <div className="teacher-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-teacher-composer-dock" style={{
-          position: 'sticky',
           flexShrink: 0,
+          position: 'sticky',
           bottom: 0,
           zIndex: 95,
           background: T.bg,
-              borderTop: `1px solid ${T.border}`,
-              padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
-                              padding: '8px 12px 14px',
+          borderTop: `1px solid ${T.border}`,
+          padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
         }}>
           
 
@@ -2885,7 +2878,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
           <div className="sc-message-composer-shell sc-teacher-composer-shell" style={{
             minHeight: 52,
-              display: 'flex',
+            display: 'flex',
             alignItems: 'center',
             gap: 8,
             background: T.white,
