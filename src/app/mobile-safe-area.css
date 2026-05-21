@@ -478,3 +478,61 @@ body {
   padding: 9px 0 !important;
   align-self: center !important;
 }
+
+
+/* teacher-composer-fixed-visible-dock-v4
+   Teacher composer was present in JSX but could render below the usable viewport.
+   This forces it into a fixed visible safe-area dock with the same measurements as Parent. */
+.teacher-message-composer-dock.sc-message-composer-dock {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 0 !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  z-index: 999 !important;
+  background: #FCFCFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+  border-radius: 22px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  padding: 0 !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.sc-teacher-composer-shell textarea {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+  align-self: center !important;
+}
