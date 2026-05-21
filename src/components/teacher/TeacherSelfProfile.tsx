@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// broadcast-composer-shared-controls-v1
 // add-child-slidein-shared-controls-v1
 // teacher-top-profile-parent-style-v1
 // teacher-shell-parent-match-force-v2
@@ -31,7 +32,7 @@ import { BackIcon } from '@/components/ui/BackIcon'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
-import { ClassSpaceTabs as SharedClassSpaceTabs, ClassSpaceButton, classSpaceInputStyle } from '@/components/class-space/ClassSpacePrimitives'
+import { ClassSpaceTabs as SharedClassSpaceTabs, ClassSpaceButton, classSpaceInputStyle, classSpaceTextareaStyle } from '@/components/class-space/ClassSpacePrimitives'
 
 
 function sortMessagesOldestFirst(list: any[]) {
@@ -2838,8 +2839,8 @@ function BroadcastCompose({ teacher }: any) {
   return (
     <div style={{ padding: '0 14px 18px' }}>
       <div style={{
-        padding: '12px 14px', borderRadius: 14,
-        background: '#F4F6FB',
+        padding: '12px 14px', borderRadius: 16,
+        background: '#F7F8FC',
         display: 'flex', gap: 10, alignItems: 'flex-start',
         marginBottom: 18,
       }}>
@@ -2851,16 +2852,13 @@ function BroadcastCompose({ teacher }: any) {
         </p>
       </div>
 
-      <textarea value={body} onChange={e => setBody(e.target.value)}
+      <textarea
+        value={body}
+        onChange={e => setBody(e.target.value)}
         rows={4}
         placeholder="Write your message…"
-        style={{
-          width: '100%', minHeight: 46, padding: '12px 14px', fontSize: 16,
-          border: `1px solid ${T.border}`, borderRadius: 14,
-          background: T.white, color: T.ink, outline: 'none',
-          fontFamily: 'inherit', resize: 'none', boxSizing: 'border-box',
-          lineHeight: 1.5,
-        }} />
+        style={classSpaceTextareaStyle}
+      />
 
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -2930,20 +2928,17 @@ function BroadcastCompose({ teacher }: any) {
         </div>
       )}
 
-      <button onClick={send} disabled={sending || !body.trim() || picked.size === 0}
-        style={{
-          width: '100%', minHeight: 46, padding: '14px 16px', marginTop: 16,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          borderRadius: 999,
-          background: !body.trim() || picked.size === 0 ? '#E0E0E4' : T.ink,
-          color: T.white, border: 'none',
-          fontSize: 14, fontWeight: 600,
-          cursor: sending || !body.trim() || picked.size === 0 ? 'not-allowed' : 'pointer',
-          opacity: sending ? 0.6 : 1, fontFamily: 'inherit',
-        }}>
+      <ClassSpaceButton
+        type="button"
+        fullWidth
+        variant="primary"
+        disabled={sending || !body.trim() || picked.size === 0}
+        onClick={send}
+        style={{ marginTop: 16 }}
+      >
         <Send size={15} strokeWidth={2.2} />
         {sending ? 'Sending…' : 'Send broadcast'}
-      </button>
+      </ClassSpaceButton>
     </div>
   )
 }
