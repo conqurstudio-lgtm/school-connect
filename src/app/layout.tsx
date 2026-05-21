@@ -15,13 +15,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  // remove-pwa-runtime-v1-layout
   title:       { default: 'School Connect', template: '%s - School Connect' },
   description: 'Your school feed - moments, updates and events.',
-  appleWebApp: {
-    capable:        true,
-    statusBarStyle: 'black-translucent',
-    title:          'School Connect',
-  },
   formatDetection: { telephone: false },
   icons: {
     apple: [{ url: '/icons/icon-192.png', sizes: '192x192' }],
