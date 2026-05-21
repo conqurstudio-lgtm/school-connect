@@ -78,3 +78,6 @@ scripts/*parent*.py
 scripts/*parent*.sh
 /next
 /school-connect@*
+
+# Local env backup
+.env.local.save
