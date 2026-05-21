@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-shell-parent-match-force-v2
 // teacher-shell-from-parent-template-v1
 // teacher-app-screen-safe-top-compact-v1
 // teacher-pending-requests-full-shared-v2
@@ -299,7 +300,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             {teacher.name}
           </h1>
           <p style={{
-            fontSize: 13.8,
+            fontSize: 12.5,
             fontWeight: 500,
             color: T.ink3,
             letterSpacing: '0.02em',
@@ -375,7 +376,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
       {teacherClassSpaceTab === 'children' && (
         <>
-          <div style={{ padding: '14px 20px 0' }}>
+          <div style={{ padding: '10px 14px 0' }}>
             <ClassInviteCard teacher={teacher} school={school} kids={children} />
           </div>
           <ClassRoster kids={children} onChanged={load} />
@@ -504,7 +505,7 @@ function ClassPosts({ teacher }: any) {
   }
 
   return (
-    <div style={{ padding: '0 20px 24px' }}>
+    <div style={{ padding: '0 14px 18px' }}>
       <div style={{
         padding: '12px 14px',
         borderRadius: 14,
@@ -2155,7 +2156,7 @@ function ClassRoster({ kids, onChanged }: any) {
   }
 
   return (
-    <div style={{ padding: '0 20px 24px' }}>
+    <div style={{ padding: '0 14px 18px' }}>
       <PendingClassRequests onChanged={onChanged} />
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -2282,7 +2283,7 @@ function UpdatesInbox({ teacher }: any) {
   useEffect(() => { load() }, [])
 
   return (
-    <div style={{ padding: '0 20px 24px' }}>
+    <div style={{ padding: '0 14px 18px' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '30px 0' }}>
           <div style={{ width: 16, height: 16, borderRadius: '50%',
@@ -2833,7 +2834,7 @@ function BroadcastCompose({ teacher }: any) {
   }
 
   return (
-    <div style={{ padding: '0 20px 24px' }}>
+    <div style={{ padding: '0 14px 18px' }}>
       <div style={{
         padding: '12px 14px', borderRadius: 14,
         background: '#F4F6FB',
@@ -3001,7 +3002,7 @@ function TeacherSkeletonBlock({ style = {} }: any) {
 
 function TeacherMessageGhostRows() {
   return (
-    <div style={{ padding: '10px 16px 24px' }}>
+    <div style={{ padding: '8px 14px 18px' }}>
       {[0, 1, 2, 3, 4].map((i) => {
         const mine = i % 2 === 1
         return (
