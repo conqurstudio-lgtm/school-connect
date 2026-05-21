@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// shared-ui-architecture-pass-v1
 // teacher-ui-unified-structure-v1
 // composer-send-button-balance-v1
 // teacher-bell-header-cleanup-v1
@@ -407,7 +408,7 @@ function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0 }: any) {
       position: 'sticky',
       top: 57,
       zIndex: 35,
-      padding: '6px 18px 8px',
+      padding: '6px 14px 8px',
       background: 'rgba(252,252,255,0.96)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
@@ -430,13 +431,13 @@ function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0 }: any) {
               type="button"
               onClick={() => onChange(tab.key)}
               style={{
-                height: 35,
+                height: 38,
                 borderRadius: 999,
                 border: 'none',
                 background: selected ? T.white : 'transparent',
                 color: selected ? T.ink : T.ink3,
-                fontSize: 13.8,
-                fontWeight: selected ? 850 : 720,
+                fontSize: 13.2,
+                fontWeight: selected ? 850 : 750,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
                 boxShadow: selected ? '0 5px 14px rgba(0,0,0,0.06)' : 'none',
@@ -536,8 +537,9 @@ function ClassPosts({ teacher }: any) {
 
       <button onClick={() => setShowCreate(true)} style={{
         width: '100%',
+        minHeight: 46,
         padding: '13px 14px',
-        borderRadius: 14,
+        borderRadius: 999,
         border: 'none',
         background: T.ink,
         color: T.white,
@@ -988,8 +990,9 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           style={{
             width: '100%',
             marginTop: 14,
-            padding: '14px',
-            borderRadius: 14,
+            minHeight: 46,
+            padding: '14px 16px',
+            borderRadius: 999,
             border: 'none',
             background: !canSubmit || saving ? '#D4D4D8' : T.ink,
             color: T.white,
@@ -1010,7 +1013,7 @@ const classPostInputStyle: any = {
   width: '100%',
   boxSizing: 'border-box',
   padding: '11px 12px',
-  borderRadius: 13,
+  borderRadius: 14,
   border: `1px solid ${T.border}`,
   background: '#FAFAFC',
   color: T.ink,
@@ -1407,8 +1410,9 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           style={{
             width: '100%',
             marginTop: 14,
-            padding: '14px',
-            borderRadius: 14,
+            minHeight: 46,
+            padding: '14px 16px',
+            borderRadius: 999,
             border: 'none',
             background: !canSubmit || saving ? '#D4D4D8' : T.ink,
             color: T.white,
@@ -1432,7 +1436,7 @@ const composerActionStyle: any = {
   justifyContent: 'center',
   gap: 7,
   padding: '10px 12px',
-  borderRadius: 13,
+  borderRadius: 14,
   border: `1px solid ${T.border}`,
   background: '#FAFAFC',
   color: T.ink2,
@@ -1446,7 +1450,7 @@ const simpleInputStyle: any = {
   width: '100%',
   boxSizing: 'border-box',
   padding: '11px 12px',
-  borderRadius: 13,
+  borderRadius: 14,
   border: `1px solid ${T.border}`,
   background: '#FAFAFC',
   color: T.ink,
@@ -1712,8 +1716,9 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
           style={{
             width: '100%',
             marginTop: 14,
-            padding: '14px',
-            borderRadius: 14,
+            minHeight: 46,
+            padding: '14px 16px',
+            borderRadius: 999,
             border: 'none',
             background: saving ? '#D4D4D8' : T.ink,
             color: T.white,
@@ -2316,8 +2321,11 @@ function UpdatesInbox({ teacher }: any) {
           {parents.map((p: any) => (
             <button key={p.id} onClick={() => setOpenThread(p)}
               style={{
-                padding: '12px 14px', borderRadius: 16,
-                background: T.white, border: `1px solid ${T.border}`,
+                padding: '13px 2px',
+                borderRadius: 0,
+                background: 'transparent',
+                border: 'none',
+                borderBottom: `1px solid ${T.border}`,
                 display: 'flex', alignItems: 'center', gap: 12,
                 cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
               }}>
@@ -2858,7 +2866,7 @@ function BroadcastCompose({ teacher }: any) {
         rows={4}
         placeholder="Write your message…"
         style={{
-          width: '100%', padding: '12px 14px', fontSize: 14,
+          width: '100%', minHeight: 46, padding: '12px 14px', fontSize: 16,
           border: `1px solid ${T.border}`, borderRadius: 14,
           background: T.white, color: T.ink, outline: 'none',
           fontFamily: 'inherit', resize: 'none', boxSizing: 'border-box',
@@ -3463,7 +3471,7 @@ function AddChildOverlay({ onAdd, onClose }: any) {
         <input autoFocus value={name}
           onChange={e => setName(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') submit() }}
-          placeholder="Emma Johnson"
+          placeholder="Child full name"
           style={{
             width: '100%', padding: '12px 14px', fontSize: 16,
             border: `1px solid ${T.border}`, borderRadius: 14,

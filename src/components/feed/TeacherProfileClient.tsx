@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// shared-ui-architecture-pass-v1
 // composer-send-button-balance-v1
 // readable-content-typography-restore-v1
 
@@ -1046,7 +1047,7 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
 
   return (
     <section style={{
-      padding: 12,
+      padding: 14,
       borderRadius: 18,
       background: T.white,
       border: `1px solid ${T.border}`,
@@ -2106,7 +2107,7 @@ const joinInputStyle: any = {
   width: '100%',
   boxSizing: 'border-box',
   padding: '12px 13px',
-  borderRadius: 13,
+  borderRadius: 14,
   border: `1px solid ${T.border}`,
   background: '#FAFAFC',
   color: T.ink,
