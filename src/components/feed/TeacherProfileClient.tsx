@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-composer-safe-area-alignment-v1
 // parent-messages-match-teacher-experience-v1
 // parent-shell-teacher-pattern-v1
 // shared-tabs-restore-and-apply-v3
@@ -703,15 +704,16 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock" style={{
-            position: 'sticky',
+          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock parent-message-composer-dock premium-message-composer-dock" style={{
+            flexShrink: 0,
+              position: 'sticky',
             bottom: 0,
             zIndex: 30,
-            background: 'rgba(252,252,255,0.98)',
+            background: T.bg,
             borderTop: 'none',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(14px)',
-            padding: '8px 12px calc(8px + env(safe-area-inset-bottom, 0px))',
+            padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
           }}>
             <AttachmentPreviewTray
               attachment={attachment}
@@ -719,6 +721,7 @@ const handlePickAttachment = async (file?: File | null) => {
             />
 
             <div style={{
+              minHeight: 52,
               display: 'flex',
               alignItems: 'flex-end',
               gap: 7,
@@ -773,7 +776,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   }
                 }}
                 rows={1}
-                placeholder="Message..."
+                placeholder="Message"
                 style={{
                   flex: 1,
                   border: 'none',

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-composer-safe-area-alignment-v1
 // event-date-time-labels-v1
 // teacher-bottom-cut-page-bg-v1
 // teacher-minimal-composer-image-preview-v1
@@ -422,6 +423,21 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
       <div
         aria-hidden="true"
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: 'env(safe-area-inset-bottom, 0px)',
+          background: T.bg,
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+
+      <div
+        aria-hidden="true"
+        className="teacher-bottom-page-bg-strip-v1"
         style={{
           position: 'fixed',
           left: 0,
@@ -2822,11 +2838,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           <div ref={bottomRef} />
         </div>
 
-        <div style={{
+        <div className="teacher-message-composer-dock premium-message-composer-dock" style={{
           position: 'sticky',
           bottom: 0,
-          zIndex: 30,
-          background: 'transparent',
+          zIndex: 80,
+          background: T.bg,
+              borderTop: `1px solid ${T.border}`,
+              padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
           padding: '8px 12px 14px',
@@ -2840,7 +2858,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           />
 
           <div style={{
-            display: 'flex',
+            minHeight: 52,
+              display: 'flex',
             alignItems: 'flex-end',
             gap: 7,
             background: T.white,
@@ -2867,8 +2886,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAttachment}
               style={{
-                width: 38,
-                height: 38,
+                width: 42,
+                height: 42,
                 borderRadius: 999,
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -2895,7 +2914,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 }
               }}
               rows={1}
-              placeholder="Message..."
+              placeholder="Message"
               style={{
                 flex: 1,
                 border: 'none',
@@ -2905,9 +2924,9 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 color: T.ink,
                 fontSize: 16,
                 lineHeight: 1.45,
-                maxHeight: 90,
+                maxHeight: 92,
                 fontFamily: 'inherit',
-                padding: '8px 0',
+                padding: '9px 0',
               }}
             />
 

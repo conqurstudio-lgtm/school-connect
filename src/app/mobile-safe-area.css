@@ -80,3 +80,16 @@ body {
     background: #FCFCFF !important;
   }
 }
+
+
+/* message-composer-safe-area-bg-v1 */
+html,
+body {
+  background-color: #FCFCFF !important;
+}
+
+.premium-message-composer-dock,
+.parent-message-composer-dock,
+.teacher-message-composer-dock {
+  background-color: #FCFCFF !important;
+}
