@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// event-date-time-labels-v1
 // teacher-bottom-cut-page-bg-v1
 // teacher-minimal-composer-image-preview-v1
 // restore-working-teacher-composer-v1
@@ -1475,18 +1476,40 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             display: 'grid',
             gap: 8,
           }}>
-            <input
-              type="date"
-              value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
-              style={classSpaceInputStyle}
-            />
-            <input
-              type="time"
-              value={eventTime}
-              onChange={(e) => setEventTime(e.target.value)}
-              style={classSpaceInputStyle}
-            />
+            <label style={{ display: 'grid', gap: 5 }}>
+              <span style={{
+                fontSize: 11.5,
+                fontWeight: 850,
+                color: T.ink3,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}>
+                Event date
+              </span>
+              <input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                style={classSpaceInputStyle}
+              />
+            </label>
+            <label style={{ display: 'grid', gap: 5 }}>
+              <span style={{
+                fontSize: 11.5,
+                fontWeight: 850,
+                color: T.ink3,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}>
+                Event time
+              </span>
+              <input
+                type="time"
+                value={eventTime}
+                onChange={(e) => setEventTime(e.target.value)}
+                style={classSpaceInputStyle}
+              />
+            </label>
             <input
               value={eventLocation}
               onChange={(e) => setEventLocation(e.target.value)}
