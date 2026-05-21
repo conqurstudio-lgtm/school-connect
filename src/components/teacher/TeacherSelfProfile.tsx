@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-pending-requests-full-shared-v2
 // teacher-request-buttons-shared-controls-v1
 // shared-tabs-restore-and-apply-v3
 // teacher-request-buttons-shape-fix-v1
@@ -3177,7 +3178,7 @@ function PendingClassRequests({ onChanged }: any) {
       marginBottom: 16,
       padding: 14,
       borderRadius: 18,
-      background: '#F4F6FB',
+      background: '#F7F8FC',
       border: `1px solid ${T.border}`,
     }}>
       <div style={{
@@ -3213,12 +3214,13 @@ function PendingClassRequests({ onChanged }: any) {
           height: 24,
           padding: '0 8px',
           borderRadius: 999,
-          background: T.ink,
-          color: T.white,
+          background: T.white,
+          border: `1px solid ${T.border}`,
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 13.8,
+          color: T.ink,
+          fontSize: 12,
           fontWeight: 850,
           flexShrink: 0,
         }}>
@@ -3226,30 +3228,9 @@ function PendingClassRequests({ onChanged }: any) {
         </span>
       </div>
 
-      <div style={{
-        padding: '10px 11px',
-        borderRadius: 14,
-        background: 'rgba(255,255,255,0.72)',
-        border: `1px solid ${T.border}`,
-        display: 'flex',
-        gap: 9,
-        alignItems: 'flex-start',
-        marginBottom: 10,
-      }}>
-        <Info size={15} color={T.blue} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
-        <p style={{
-          fontSize: 13.2,
-          color: T.ink2,
-          lineHeight: 1.45,
-          margin: 0,
-        }}>
-          Approving creates or links the child to your class and allows this parent to see class updates and teacher communication.
-        </p>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {requests.map((request: any) => {
-          const childName = String(
+          const childName = (
             request.child_full_name ||
             `${request.child_first_name || ''} ${request.child_last_name || ''}`
           ).trim().replace(/\s+/g, ' ') || 'Child'
@@ -3272,11 +3253,11 @@ function PendingClassRequests({ onChanged }: any) {
 
           return (
             <article key={request.id} style={{
-              padding: 13,
-              borderRadius: 16,
+              padding: 14,
+              borderRadius: 18,
               background: T.white,
               border: `1px solid ${T.border}`,
-              boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+              boxShadow: '0 10px 26px rgba(0,0,0,0.045)',
             }}>
               <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
                 <div style={{
@@ -3310,33 +3291,25 @@ function PendingClassRequests({ onChanged }: any) {
                   </p>
 
                   <p style={{
-                    fontSize: 13.8,
-                    color: T.ink2,
-                    margin: '-2px 0 0',
+                    fontSize: 13.2,
+                    color: T.ink3,
+                    margin: '2px 0 0',
+                    lineHeight: 1.35,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                   }}>
-                    {parentName}
-                    {parentPhone ? ` · ${parentPhone}` : ''}
+                    {parentName}{parentPhone ? ` · ${parentPhone}` : ''}
                   </p>
 
                   <div style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
                     flexWrap: 'wrap',
+                    gap: 6,
                     marginTop: 8,
                   }}>
-                    <span style={requestChipStyle}>
-                      {relationship}
-                    </span>
-
-                    {submittedAt && (
-                      <span style={requestChipStyle}>
-                        Requested {submittedAt}
-                      </span>
-                    )}
+                    <span style={requestChipStyle}>{relationship}</span>
+                    {submittedAt && <span style={requestChipStyle}>{submittedAt}</span>}
                   </div>
                 </div>
               </div>
@@ -3353,7 +3326,6 @@ function PendingClassRequests({ onChanged }: any) {
                   variant="danger"
                   disabled={busy}
                   onClick={() => review(request.id, 'reject')}
-                  style={{ flex: 1 }}
                 >
                   <X size={14} strokeWidth={2.2} />
                   Reject
@@ -3365,7 +3337,6 @@ function PendingClassRequests({ onChanged }: any) {
                   variant="primary"
                   disabled={busy}
                   onClick={() => review(request.id, 'approve')}
-                  style={{ flex: 1 }}
                 >
                   <Check size={14} strokeWidth={2.4} />
                   Approve
