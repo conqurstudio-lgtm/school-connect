@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-button-shape-pass-v1
 // readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -2248,7 +2249,7 @@ function ClassRoster({ kids, onChanged }: any) {
               {!editing && (
                 <button onClick={() => setOpenMenu(openMenu === c.id ? null : c.id)}
                   aria-label="Options" style={{
-                    width: 30, height: 38, borderRadius: '50%',
+                    width: 38, height: 38, borderRadius: 999,
                     background: 'none', border: 'none', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: T.ink3,
@@ -2329,7 +2330,7 @@ function UpdatesInbox({ teacher }: any) {
           {parents.map((p: any) => (
             <button key={p.id} onClick={() => setOpenThread(p)}
               style={{
-                padding: '12px 14px', borderRadius: '50%',
+                padding: '12px 14px', borderRadius: 16,
                 background: T.white, border: `1px solid ${T.border}`,
                 display: 'flex', alignItems: 'center', gap: 12,
                 cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
@@ -2783,8 +2784,8 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
             <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
               width: 30,
-              height: 38,
-              borderRadius: '50%',
+              height: 42,
+              borderRadius: 999,
               background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
               color: T.white,
               border: 'none',
@@ -2914,7 +2915,7 @@ function BroadcastCompose({ teacher }: any) {
             return (
               <button key={p.id} onClick={() => togglePick(p.id)}
                 style={{
-                  padding: '10px 12px', borderRadius: '50%',
+                  padding: '10px 12px', borderRadius: 999,
                   background: isPicked ? '#F0F4FF' : T.white,
                   border: isPicked ? `1px solid ${T.blue}` : `1px solid ${T.border}`,
                   display: 'flex', alignItems: 'center', gap: 8,
@@ -2987,12 +2988,12 @@ function InlineRename({ value, onCancel, onSave }: any) {
           border: `1px solid ${T.border}`, borderRadius: '50%',
           fontFamily: 'inherit', outline: 'none' }} />
       <button onClick={() => onSave(v.trim())} style={{
-        width: 30, height: 38, borderRadius: '50%',
+        width: 38, height: 38, borderRadius: 999,
         background: T.ink, color: T.white, border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}><Check size={12} strokeWidth={2.4} /></button>
       <button onClick={onCancel} style={{
-        width: 30, height: 38, borderRadius: '50%',
+        width: 38, height: 38, borderRadius: 999,
         background: 'none', border: `1px solid ${T.border}`, cursor: 'pointer',
         color: T.ink3, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
@@ -3035,8 +3036,8 @@ function TeacherMessageGhostRows() {
           >
             <TeacherSkeletonBlock style={{
               width: 30,
-              height: 38,
-              borderRadius: '50%',
+              height: 42,
+              borderRadius: 999,
               flexShrink: 0,
               marginTop: 2,
             }} />
@@ -3103,7 +3104,7 @@ function TeacherPageSkeleton() {
           gap: 8,
           marginTop: 18,
         }}>
-          <TeacherSkeletonBlock style={{ width: 30, height: 38, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 38, height: 38, borderRadius: 999, flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <TeacherSkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
             <TeacherSkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
