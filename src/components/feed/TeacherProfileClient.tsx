@@ -100,7 +100,7 @@ const [showJoin, setShowJoin] = useState(false)
     if (!hydrated || !canMessage || classSpaceTab !== 'messages') return
     if (threadLoading) return
 
-    const totalItems = (updates?.length || 0) + (reports?.length || 0)
+    const totalItems = (updates?.length || 0)
     const firstThreadLoad = previousThreadCountRef.current === 0 && totalItems > 0
     const countChanged = previousThreadCountRef.current !== totalItems
 
@@ -115,7 +115,6 @@ const [showJoin, setShowJoin] = useState(false)
     previousThreadCountRef.current = totalItems
   }, [
     updates.length,
-    reports.length,
     threadLoading,
     canMessage,
     classSpaceTab,
@@ -142,7 +141,7 @@ const [showJoin, setShowJoin] = useState(false)
     return () => {
       el.removeEventListener('load', onMediaLoad, true)
     }
-  }, [classSpaceTab, updates.length, reports.length])
+  }, [classSpaceTab, updates.length])
 
   useEffect(() => {
     if (classSpaceTab !== 'messages') return
@@ -438,18 +437,13 @@ const handlePickAttachment = async (file?: File | null) => {
     .slice(0, 2)
     .toUpperCase()
 
-  const threadItems: ThreadItem[] = [
-    ...sortMessagesOldestFirst(updates).map((u: any) => ({
-      kind: 'message' as const,
-      created_at: u.created_at,
-      data: u,
-    })),
-    ...[...(reports || [])].sort((a: any, b: any) => new Date(a?.published_at || a?.created_at || a?.week_starting || 0).getTime() - new Date(b?.published_at || b?.created_at || b?.week_starting || 0).getTime()).map((r: any) => ({
-      kind: 'report' as const,
-      created_at: r.published_at || r.created_at || r.week_starting,
-      data: r,
-    })),
-  ].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+  // remove-reports-from-messages-only-v1
+  // Reports now stay in the Reports tab only. The message thread shows messages only.
+  const threadItems: ThreadItem[] = sortMessagesOldestFirst(updates).map((u: any) => ({
+    kind: 'message' as const,
+    created_at: u.created_at,
+    data: u,
+  }))
 
   return (
     <div style={{
