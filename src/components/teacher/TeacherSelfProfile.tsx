@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-top-profile-parent-style-v1
 // teacher-shell-parent-match-force-v2
 // teacher-shell-from-parent-template-v1
 // teacher-app-screen-safe-top-compact-v1
@@ -327,7 +328,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
               background: T.white,
               color: T.ink2,
               padding: '0 10px',
-              fontSize: 13.8,
+              fontSize: 12.5,
               fontWeight: 850,
               cursor: 'pointer',
               fontFamily: 'inherit',
