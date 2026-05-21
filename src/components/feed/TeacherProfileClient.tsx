@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-scroll-stabilize-teacher-composer-v1
 // ui-polish-audit-fixes-v1
 // ui-alignment-shapes-pass-v1
 // message-composer-safe-area-alignment-v1
@@ -85,44 +86,40 @@ const [showJoin, setShowJoin] = useState(false)
     return distance < 180
   }
 
-  const scrollToLatestMessage = (
-  reason = 'latest',
-  behavior: ScrollBehavior = 'auto',
-  force = true,
-) => {
-  const el = threadScrollRef.current
-  if (!el) return
+    const scrollToLatestMessage = (
+    reason = 'latest',
+    behavior: ScrollBehavior = 'auto',
+    force = true,
+  ) => {
+    const el = threadScrollRef.current
+    if (!el) return
 
-  if (!force && !isMessageListNearBottom()) return
+    // Do not keep pulling the user down after they start reading older messages.
+    if (!force && !isMessageListNearBottom()) return
+    if (force && messageUserInteractedRef.current && previousThreadCountRef.current > 0) return
 
-  if (scrollRafRef.current) {
-    cancelAnimationFrame(scrollRafRef.current)
-    scrollRafRef.current = null
-  }
-
-  const run = () => {
-    const targetTop = Math.max(0, el.scrollHeight - el.clientHeight)
-
-    if (typeof el.scrollTo === 'function') {
-      el.scrollTo({ top: targetTop, behavior })
-    } else {
-      el.scrollTop = targetTop
+    if (scrollRafRef.current) {
+      cancelAnimationFrame(scrollRafRef.current)
+      scrollRafRef.current = null
     }
 
-    bottomRef.current?.scrollIntoView({
-      behavior,
-      block: 'end',
-      inline: 'nearest',
-    })
-  }
+    const run = () => {
+      const top = Math.max(0, el.scrollHeight - el.clientHeight)
 
-  scrollRafRef.current = requestAnimationFrame(run)
+      if (typeof el.scrollTo === 'function') {
+        el.scrollTo({ top, behavior })
+      } else {
+        el.scrollTop = top
+      }
+    }
 
-  if (force) {
-    window.setTimeout(run, 90)
-    window.setTimeout(run, 260)
+    scrollRafRef.current = requestAnimationFrame(run)
+
+    // One extra pass only for first render/media-height settling.
+    if (force) {
+      window.setTimeout(run, 90)
+    }
   }
-}
 
   // scroll-anchor-disabled-v1
   useEffect(() => {
@@ -150,6 +147,12 @@ const [showJoin, setShowJoin] = useState(false)
       )
     }
 
+    if (firstThreadLoad) {
+      window.setTimeout(() => {
+        messageLandingDoneRef.current = true
+      }, 140)
+    }
+
     previousThreadCountRef.current = totalItems
   }, [
     updates.length,
@@ -169,7 +172,11 @@ const [showJoin, setShowJoin] = useState(false)
       const target = event.target as HTMLElement | null
       if (!target) return
 
-      if (target.tagName === 'IMG' && isMessageListNearBottom()) {
+      if (
+        target.tagName === 'IMG' &&
+        messageLandingDoneRef.current &&
+        isMessageListNearBottom()
+      ) {
         scrollToLatestMessage('media-loaded', 'auto', false)
       }
     }
@@ -188,7 +195,7 @@ const [showJoin, setShowJoin] = useState(false)
     if (!dock || typeof ResizeObserver === 'undefined') return
 
     const observer = new ResizeObserver(() => {
-      if (isMessageListNearBottom()) {
+      if (messageLandingDoneRef.current && isMessageListNearBottom()) {
         scrollToLatestMessage('composer-resized', 'auto', false)
       }
     })

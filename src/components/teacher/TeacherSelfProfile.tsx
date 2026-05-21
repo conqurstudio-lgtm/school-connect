@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-scroll-stabilize-teacher-composer-v1
 // teacher-thread-copy-parent-template-v2
 // teacher-thread-match-parent-ui-v1
 // message-thread-alignment-repair-v1
@@ -2570,11 +2571,19 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
   const threadScrollRef = useRef<HTMLDivElement>(null)
-  const forceScrollToBottom = (smooth = true) => {
-    const run = () => {
-      const el = threadScrollRef.current
-      if (!el) return
+    const isThreadNearBottom = () => {
+    const el = threadScrollRef.current
+    if (!el) return true
+    return el.scrollHeight - el.scrollTop - el.clientHeight < 180
+  }
 
+  const forceScrollToBottom = (smooth = true, force = true) => {
+    const el = threadScrollRef.current
+    if (!el) return
+
+    if (!force && !isThreadNearBottom()) return
+
+    const run = () => {
       const top = Math.max(0, el.scrollHeight - el.clientHeight)
 
       if (typeof el.scrollTo === 'function') {
@@ -2585,7 +2594,11 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     }
 
     window.requestAnimationFrame(run)
-    if (!smooth) window.setTimeout(run, 80)
+
+    // One extra pass only for initial content height settling.
+    if (!smooth) {
+      window.setTimeout(run, 90)
+    }
   }
 
   const load = async () => {
@@ -2594,7 +2607,6 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       const res = await fetch(`/api/teacher/updates?parent_id=${parent.id}`)
       const json = await res.json()
       setUpdates(json.updates ?? [])
-      forceScrollToBottom(false)
       try {
         await fetch('/api/teacher/thread-status', {
           method: 'POST',
@@ -2899,6 +2911,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           background: T.bg,
           borderTop: `1px solid ${T.border}`,
           padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
+          display: 'block',
         }}>
           
 
