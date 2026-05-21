@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-composer-visible-dock-v3
 // message-threads-free-scroll-teacher-composer-v2
 // message-scroll-stabilize-teacher-composer-v1
 // teacher-thread-copy-parent-template-v2
@@ -2860,12 +2861,13 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           onTouchStart={() => { threadUserInteractedRef.current = true }}
           onWheel={() => { threadUserInteractedRef.current = true }}
           style={{
-          flex: 1,
+          flex: '1 1 auto',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           minHeight: 0,
           overscrollBehavior: 'contain',
-          padding: '10px 0 18px',
+          padding: '10px 0 14px',
+          scrollPaddingBottom: 18,
         }}>
           {loading ? (
             <SoftConversationLoader />
@@ -2916,14 +2918,16 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         </div>
 
         <div className="teacher-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-teacher-composer-dock" style={{
+          flex: '0 0 auto',
           flexShrink: 0,
-          position: 'sticky',
-          bottom: 0,
-          zIndex: 95,
+          position: 'relative',
+          zIndex: 120,
           background: T.bg,
           borderTop: `1px solid ${T.border}`,
           padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
           display: 'block',
+          visibility: 'visible',
+          opacity: 1,
         }}>
           
 
