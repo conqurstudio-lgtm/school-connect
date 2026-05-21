@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// composer-send-button-balance-v1
 // teacher-bell-header-cleanup-v1
 // teacher-button-shape-pass-v1
 // readable-content-typography-restore-v1
@@ -2699,9 +2700,9 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             gap: 7,
             background: T.white,
             border: `1px solid ${T.border}`,
-            borderRadius: 20,
+            borderRadius: 22,
             padding: '6px 7px 6px 11px',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+            boxShadow: '0 10px 28px rgba(0,0,0,0.055)',
           }}>
                         <input
               ref={fileInputRef}
@@ -2721,9 +2722,9 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingAttachment}
               style={{
-                width: 30,
+                width: 38,
                 height: 38,
-                borderRadius: '50%',
+                borderRadius: 999,
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
                 color: attachment ? T.blue : T.ink2,
@@ -2734,7 +2735,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 flexShrink: 0,
               }}
             >
-              <Paperclip size={15} strokeWidth={2.1} />
+              <Paperclip size={16} strokeWidth={2.1} />
             </button>
             
 
@@ -2766,7 +2767,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             />
 
             <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
-              width: 30,
+              width: 42,
               height: 42,
               borderRadius: 999,
               background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
@@ -2778,7 +2779,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               justifyContent: 'center',
               flexShrink: 0,
             }}>
-              <Send size={15} strokeWidth={2.2} />
+              <Send size={16} strokeWidth={2.2} />
             </button>
           </div>
         </div>
@@ -2932,16 +2933,16 @@ function BroadcastCompose({ teacher }: any) {
 
       <button onClick={send} disabled={sending || !body.trim() || picked.size === 0}
         style={{
-          width: '100%', padding: '14px', marginTop: 16,
+          width: '100%', minHeight: 46, padding: '14px 16px', marginTop: 16,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          borderRadius: '50%',
+          borderRadius: 999,
           background: !body.trim() || picked.size === 0 ? '#E0E0E4' : T.ink,
           color: T.white, border: 'none',
           fontSize: 14, fontWeight: 600,
           cursor: sending || !body.trim() || picked.size === 0 ? 'not-allowed' : 'pointer',
           opacity: sending ? 0.6 : 1, fontFamily: 'inherit',
         }}>
-        <Send size={13} strokeWidth={2.2} />
+        <Send size={15} strokeWidth={2.2} />
         {sending ? 'Sending…' : 'Send broadcast'}
       </button>
     </div>
@@ -2968,7 +2969,7 @@ function InlineRename({ value, onCancel, onSave }: any) {
           if (e.key === 'Escape') onCancel()
         }}
         style={{ flex: 1, padding: '7px 10px', fontSize: 13.8,
-          border: `1px solid ${T.border}`, borderRadius: '50%',
+          border: `1px solid ${T.border}`, borderRadius: 14,
           fontFamily: 'inherit', outline: 'none' }} />
       <button onClick={() => onSave(v.trim())} style={{
         width: 38, height: 38, borderRadius: 999,
@@ -3018,7 +3019,7 @@ function TeacherMessageGhostRows() {
             }}
           >
             <TeacherSkeletonBlock style={{
-              width: 30,
+              width: 42,
               height: 42,
               borderRadius: 999,
               flexShrink: 0,

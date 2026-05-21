@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// composer-send-button-balance-v1
 // readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -702,12 +703,12 @@ const handlePickAttachment = async (file?: File | null) => {
             <div style={{
               display: 'flex',
               alignItems: 'flex-end',
-              gap: 5,
+              gap: 7,
               background: T.white,
               border: `1px solid ${T.border}`,
-              borderRadius: 16,
-              padding: '3px 5px 3px 8px',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+              borderRadius: 22,
+              padding: '6px 7px 6px 11px',
+              boxShadow: '0 10px 28px rgba(0,0,0,0.055)',
             }}>
               <input
                 ref={fileInputRef}
@@ -790,7 +791,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   flexShrink: 0,
                 }}
               >
-                <Send size={13} strokeWidth={2.2} />
+                <Send size={15} strokeWidth={2.2} />
               </button>
             </div>
           </div>
@@ -1719,9 +1720,9 @@ function MessageGhostRows() {
             }}
           >
             <SkeletonBlock style={{
-              width: 30,
+              width: 38,
               height: 38,
-              borderRadius: '50%',
+              borderRadius: 999,
               flexShrink: 0,
               marginTop: 2,
             }} />
