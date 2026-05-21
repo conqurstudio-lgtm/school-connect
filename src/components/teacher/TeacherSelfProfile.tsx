@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -282,7 +283,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             {teacher.name}
           </h1>
           <p style={{
-            fontSize: 11,
+            fontSize: 13.8,
             fontWeight: 500,
             color: T.ink3,
             letterSpacing: '0.02em',
@@ -309,7 +310,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
               background: T.white,
               color: T.ink2,
               padding: '0 10px',
-              fontSize: 11,
+              fontSize: 13.8,
               fontWeight: 850,
               cursor: 'pointer',
               fontFamily: 'inherit',
@@ -442,12 +443,12 @@ function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0 }: any) {
               type="button"
               onClick={() => onChange(tab.key)}
               style={{
-                height: 31,
+                height: 35,
                 borderRadius: 999,
                 border: 'none',
                 background: selected ? T.white : 'transparent',
                 color: selected ? T.ink : T.ink3,
-                fontSize: 12,
+                fontSize: 13.8,
                 fontWeight: selected ? 850 : 720,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -480,7 +481,7 @@ function TabPill({ active, onClick, label, icon }: any) {
       background: active ? T.ink : 'transparent',
       color: active ? T.white : T.ink3,
       border: active ? 'none' : `1px solid ${T.border}`,
-      fontSize: 13, fontWeight: 600, cursor: 'pointer',
+      fontSize: 13.8, fontWeight: 600, cursor: 'pointer',
       fontFamily: 'inherit',
       transition: 'all 0.2s ease',
     }}>
@@ -541,7 +542,7 @@ function ClassPosts({ teacher }: any) {
       }}>
         <Megaphone size={14} color={T.blue} strokeWidth={1.8}
           style={{ flexShrink: 0, marginTop: 2 }} />
-        <p style={{ fontSize: 12, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: 13.8, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
           These are official class updates. Approved parents can view them, but only you can post here.
         </p>
       </div>
@@ -588,7 +589,7 @@ function ClassPosts({ teacher }: any) {
           <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 4px' }}>
             No class posts yet
           </p>
-          <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
             Post class updates, moments or events for approved parents to see.
           </p>
         </div>
@@ -648,12 +649,12 @@ function TeacherClassPostCard({ post, onDelete }: any) {
               borderRadius: 999,
               background: '#F0F4FF',
               color: T.blue,
-              fontSize: 11,
+              fontSize: 13.8,
               fontWeight: 800,
             }}>
               {typeLabel}
             </span>
-            <span style={{ marginLeft: 8, fontSize: 11, color: T.ink3 }}>
+            <span style={{ marginLeft: 8, fontSize: 13.8, color: T.ink3 }}>
               {relTime(post.created_at)}
             </span>
           </div>
@@ -692,7 +693,7 @@ function TeacherClassPostCard({ post, onDelete }: any) {
             padding: '9px 10px',
             borderRadius: '50%',
             background: '#F4F6FB',
-            fontSize: 12,
+            fontSize: 13.8,
             color: T.ink2,
             lineHeight: 1.5,
           }}>
@@ -829,7 +830,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create class post
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0' }}>
+            <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -867,7 +868,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
                 border: type === value ? 'none' : `1px solid ${T.border}`,
                 background: type === value ? T.ink : '#FAFAFC',
                 color: type === value ? T.white : T.ink3,
-                fontSize: 13,
+                fontSize: 13.8,
                 fontWeight: 800,
                 fontFamily: 'inherit',
                 cursor: 'pointer',
@@ -1137,7 +1138,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
         <div style={{ padding: '28px 0', textAlign: 'center' }}>
           <Megaphone size={18} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 8px' }} />
           <p style={{ fontSize: 14, fontWeight: 700, color: T.ink, margin: '0 0 4px' }}>Nothing shared yet</p>
-          <p style={{ fontSize: 12, color: T.ink3, margin: 0, lineHeight: 1.5 }}>Tap + to share with parents.</p>
+          <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>Tap + to share with parents.</p>
         </div>
       </section>
     )
@@ -1283,7 +1284,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             }}>
               Create
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0' }}>
+            <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
               {inferred} · {teacher.grade}{teacher.class_name ? ` ${teacher.class_name}` : ''}
             </p>
           </div>
@@ -1449,7 +1450,7 @@ const composerActionStyle: any = {
   background: '#FAFAFC',
   color: T.ink2,
   cursor: 'pointer',
-  fontSize: 13,
+  fontSize: 13.8,
   fontWeight: 850,
   fontFamily: 'inherit',
 }
@@ -1563,7 +1564,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             alignItems: 'center',
             justifyContent: 'center',
             color: T.ink2,
-            fontSize: 13,
+            fontSize: 13.8,
             fontWeight: 800,
             flexShrink: 0,
           }}>
@@ -1581,7 +1582,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
               Report
             </h3>
             <p style={{
-              fontSize: 12,
+              fontSize: 13.8,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -1609,7 +1610,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
 
         <label style={{
           display: 'block',
-          fontSize: 11,
+          fontSize: 13.8,
           fontWeight: 800,
           color: T.ink3,
           marginBottom: 6,
@@ -1648,7 +1649,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
                 marginBottom: 8,
               }}>
                 <p style={{
-                  fontSize: 13,
+                  fontSize: 13.8,
                   color: T.ink,
                   fontWeight: 650,
                   margin: 0,
@@ -1656,7 +1657,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
                   {subject}
                 </p>
                 <span style={{
-                  fontSize: 12,
+                  fontSize: 13.8,
                   color: T.ink3,
                   fontWeight: 800,
                 }}>
@@ -1676,12 +1677,12 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
                       key={score}
                       onClick={() => setScore(subject, score)}
                       style={{
-                        height: 34,
+                        height: 38,
                         borderRadius: 999,
                         border: active ? 'none' : `1px solid ${T.border}`,
                         background: active ? T.ink : '#FAFAFC',
                         color: active ? T.white : T.ink2,
-                        fontSize: 12,
+                        fontSize: 13.8,
                         fontWeight: 850,
                         cursor: 'pointer',
                         fontFamily: 'inherit',
@@ -1786,7 +1787,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 13,
+            fontSize: 13.8,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -1796,7 +1797,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
           </p>
 
           <p style={{
-            fontSize: 11.5,
+            fontSize: 13.2,
             color: T.ink3,
             margin: '2px 0 0',
             lineHeight: 1.45,
@@ -1811,7 +1812,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
           borderRadius: 999,
           background: allClaimed ? '#F0FDF4' : '#F4F6FB',
           color: allClaimed ? '#15803D' : T.ink2,
-          fontSize: 10.5,
+          fontSize: 13.2,
           fontWeight: 850,
           whiteSpace: 'nowrap',
         }}>
@@ -1828,12 +1829,12 @@ function ClassInviteCard({ teacher, school, kids }: any) {
       }}>
         <div style={{
           minWidth: 0,
-          height: 34,
+          height: 38,
           borderRadius: 999,
           background: '#FAFAFC',
           border: `1px solid ${T.border}`,
           color: T.ink3,
-          fontSize: 11,
+          fontSize: 13.8,
           display: 'flex',
           alignItems: 'center',
           padding: '0 11px',
@@ -1848,13 +1849,13 @@ function ClassInviteCard({ teacher, school, kids }: any) {
           type="button"
           onClick={copyLink}
           style={{
-            height: 34,
+            height: 38,
             borderRadius: 999,
             border: 'none',
             background: T.ink,
             color: T.white,
             padding: '0 13px',
-            fontSize: 11.5,
+            fontSize: 13.2,
             fontWeight: 850,
             cursor: 'pointer',
             fontFamily: 'inherit',
@@ -1877,10 +1878,10 @@ function ClassInviteCard({ teacher, school, kids }: any) {
 
       {allClaimed && (
         <p style={{
-          fontSize: 11,
+          fontSize: 13.8,
           color: T.ink3,
           margin: '10px 0 0',
-          lineHeight: 1.4,
+          lineHeight: 1.48,
         }}>
           Every child has at least one linked parent. Keep the link available for extra guardians or new children.
         </p>
@@ -1908,7 +1909,7 @@ function ClassInviteStat({ label, value }: any) {
         {value}
       </p>
       <p style={{
-        fontSize: 10.2,
+        fontSize: 13.8,
         color: T.ink3,
         margin: '3px 0 0',
         overflow: 'hidden',
@@ -1946,7 +1947,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
         marginBottom: 10,
       }}>
         <p style={{
-          fontSize: 12,
+          fontSize: 13.8,
           fontWeight: 700,
           color: T.ink,
           margin: 0,
@@ -2042,7 +2043,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
           gap: 8,
         }}>
           {list.length === 0 ? (
-            <p style={{ fontSize: 12, color: T.ink3, margin: 0 }}>
+            <p style={{ fontSize: 13.8, color: T.ink3, margin: 0 }}>
               No children have been added yet.
             </p>
           ) : (
@@ -2083,7 +2084,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 12,
+                    fontSize: 13.8,
                     fontWeight: 800,
                     flexShrink: 0,
                   }}>
@@ -2092,7 +2093,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{
-                      fontSize: 13,
+                      fontSize: 13.8,
                       fontWeight: 600,
                       color: T.ink,
                       margin: 0,
@@ -2102,7 +2103,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     }}>
                       {child.name}
                     </p>
-                    <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+                    <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
                       {child.guardian_count === 0 ? 'No parents linked'
                       : child.guardian_count === 1 ? '1 parent linked'
                       : `${child.guardian_count} parents linked`}
@@ -2115,7 +2116,7 @@ function ClassChildrenSummary({ kids, onReport }: any) {
                     color: T.ink2,
                     borderRadius: 999,
                     padding: '7px 11px',
-                    fontSize: 11,
+                    fontSize: 13.8,
                     fontWeight: 800,
                     flexShrink: 0,
                   }}>
@@ -2182,7 +2183,7 @@ function ClassRoster({ kids, onChanged }: any) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         marginBottom: 14,
       }}>
-        <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
+        <p style={{ fontSize: 13.8, color: T.ink3, margin: 0 }}>
           {kids.length === 0
             ? 'No children yet'
             : `${kids.length} ${kids.length === 1 ? 'child' : 'children'} in your class`}
@@ -2191,7 +2192,7 @@ function ClassRoster({ kids, onChanged }: any) {
           display: 'inline-flex', alignItems: 'center', gap: 5,
           padding: '7px 12px', borderRadius: 999,
           background: T.ink, color: T.white, border: 'none',
-          fontSize: 12, fontWeight: 600, cursor: 'pointer',
+          fontSize: 13.8, fontWeight: 600, cursor: 'pointer',
           fontFamily: 'inherit',
         }}>
           <Plus size={12} strokeWidth={2.4} /> Add child
@@ -2205,7 +2206,7 @@ function ClassRoster({ kids, onChanged }: any) {
         }}>
           <Users size={20} color={T.ink3} strokeWidth={1.5}
             style={{ margin: '0 auto 8px' }} />
-          <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
             Add children so parents can claim them when they join.
           </p>
         </div>
@@ -2222,7 +2223,7 @@ function ClassRoster({ kids, onChanged }: any) {
                 width: 29, height: 29, borderRadius: '50%',
                 background: '#F0F0F4',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, fontSize: 12, color: T.ink2, fontWeight: 600,
+                flexShrink: 0, fontSize: 13.8, color: T.ink2, fontWeight: 600,
               }}>
                 {c.name.split(' ').map((n: string) => n[0]).join('').slice(0,2).toUpperCase()}
               </div>
@@ -2237,7 +2238,7 @@ function ClassRoster({ kids, onChanged }: any) {
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {c.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+                  <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
                     {c.guardian_count === 0 ? 'No parents yet'
                     : c.guardian_count === 1 ? '1 parent linked'
                     : `${c.guardian_count} parents linked`}
@@ -2247,7 +2248,7 @@ function ClassRoster({ kids, onChanged }: any) {
               {!editing && (
                 <button onClick={() => setOpenMenu(openMenu === c.id ? null : c.id)}
                   aria-label="Options" style={{
-                    width: 30, height: 30, borderRadius: '50%',
+                    width: 30, height: 38, borderRadius: '50%',
                     background: 'none', border: 'none', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: T.ink3,
@@ -2319,7 +2320,7 @@ function UpdatesInbox({ teacher }: any) {
             style={{ margin: '0 auto 8px' }} />
           <p style={{ fontSize: 14, color: T.ink, fontWeight: 600,
                       margin: '0 0 4px' }}>No parent threads yet</p>
-          <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
             Parent messages appear here.
           </p>
         </div>
@@ -2337,7 +2338,7 @@ function UpdatesInbox({ teacher }: any) {
                 width: 29, height: 29, borderRadius: '50%',
                 background: '#F0F0F4',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, fontSize: 13, color: T.ink2, fontWeight: 600,
+                flexShrink: 0, fontSize: 13.8, color: T.ink2, fontWeight: 600,
               }}>
                 {(p.name || 'P').charAt(0).toUpperCase()}
               </div>
@@ -2348,11 +2349,11 @@ function UpdatesInbox({ teacher }: any) {
                             whiteSpace: 'nowrap' }}>
                   {p.name}
                 </p>
-                <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+                <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
                   {p.child_names.join(', ')}
                 </p>
                 {p.latest_update && (
-                  <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0',
+                  <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0',
                               overflow: 'hidden', textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap', maxWidth: 240 }}>
                     {p.latest_update.author_kind === 'teacher' ? 'You: ' : ''}
@@ -2361,7 +2362,7 @@ function UpdatesInbox({ teacher }: any) {
                 )}
               </div>
               {p.latest_update && (
-                <p style={{ fontSize: 11, color: T.ink3, flexShrink: 0 }}>
+                <p style={{ fontSize: 13.8, color: T.ink3, flexShrink: 0 }}>
                   {relTime(p.latest_update.created_at)}
                 </p>
               )}
@@ -2603,7 +2604,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
+            fontSize: 13.8,
             fontWeight: 800,
             flexShrink: 0,
           }}>
@@ -2623,7 +2624,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               {parent.name || 'Parent'}
             </h3>
             <p style={{
-              fontSize: 11,
+              fontSize: 13.8,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -2670,7 +2671,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 No messages yet
               </p>
               <p style={{
-                fontSize: 13,
+                fontSize: 13.8,
                 color: T.ink3,
                 margin: 0,
                 lineHeight: 1.5,
@@ -2737,7 +2738,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               disabled={uploadingAttachment}
               style={{
                 width: 30,
-                height: 30,
+                height: 38,
                 borderRadius: '50%',
                 border: 'none',
                 background: attachment ? '#EAF1FF' : '#F4F4F6',
@@ -2773,7 +2774,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
                 background: 'transparent',
                 color: T.ink,
                 fontSize: 16,
-                lineHeight: 1.35,
+                lineHeight: 1.45,
                 maxHeight: 90,
                 fontFamily: 'inherit',
                 padding: '8px 0',
@@ -2782,7 +2783,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
 
             <button onClick={() => sendText(reply)} disabled={(!reply.trim() && !attachment) || sending} style={{
               width: 30,
-              height: 30,
+              height: 38,
               borderRadius: '50%',
               background: (reply.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
               color: T.white,
@@ -2860,7 +2861,7 @@ function BroadcastCompose({ teacher }: any) {
       }}>
         <Megaphone size={14} color={T.blue} strokeWidth={1.8}
           style={{ flexShrink: 0, marginTop: 2 }} />
-        <p style={{ fontSize: 12, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: 13.8, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
           Broadcast sends a private message to selected parents.
           It doesn't appear on the public feed.
         </p>
@@ -2881,14 +2882,14 @@ function BroadcastCompose({ teacher }: any) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         marginTop: 18, marginBottom: 10,
       }}>
-        <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
+        <p style={{ fontSize: 13.8, fontWeight: 600, color: T.ink3,
                     letterSpacing: '0.1em', textTransform: 'uppercase', margin: 0 }}>
           To · {picked.size} of {parents.length}
         </p>
         {parents.length > 0 && (
           <button onClick={toggleAll} style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 12, fontWeight: 600, color: T.blue,
+            fontSize: 13.8, fontWeight: 600, color: T.blue,
             fontFamily: 'inherit', padding: 0,
           }}>
             {picked.size === parents.length ? 'Deselect all' : 'Select all'}
@@ -2903,7 +2904,7 @@ function BroadcastCompose({ teacher }: any) {
                         animation: 'spin 0.7s linear infinite' }} />
         </div>
       ) : parents.length === 0 ? (
-        <p style={{ fontSize: 13, color: T.ink3, textAlign: 'center', padding: '20px 0' }}>
+        <p style={{ fontSize: 13.8, color: T.ink3, textAlign: 'center', padding: '20px 0' }}>
           No parents linked yet.
         </p>
       ) : (
@@ -2930,12 +2931,12 @@ function BroadcastCompose({ teacher }: any) {
                   {isPicked && <Check size={11} color={T.white} strokeWidth={3} />}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: T.ink,
+                  <p style={{ fontSize: 13.8, fontWeight: 500, color: T.ink,
                               margin: 0, overflow: 'hidden',
                               textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {p.name}
                   </p>
-                  <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+                  <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
                     {p.child_names.join(', ')}
                   </p>
                 </div>
@@ -2969,7 +2970,7 @@ function BroadcastCompose({ teacher }: any) {
 const menuItemStyle: any = {
   width: '100%', display: 'flex', alignItems: 'center', gap: 9,
   padding: '9px 12px', background: 'none', border: 'none',
-  cursor: 'pointer', fontSize: 13, fontWeight: 500,
+  cursor: 'pointer', fontSize: 13.8, fontWeight: 500,
   color: T.ink, fontFamily: 'inherit', textAlign: 'left',
 }
 
@@ -2982,16 +2983,16 @@ function InlineRename({ value, onCancel, onSave }: any) {
           if (e.key === 'Enter') onSave(v.trim())
           if (e.key === 'Escape') onCancel()
         }}
-        style={{ flex: 1, padding: '7px 10px', fontSize: 13,
+        style={{ flex: 1, padding: '7px 10px', fontSize: 13.8,
           border: `1px solid ${T.border}`, borderRadius: '50%',
           fontFamily: 'inherit', outline: 'none' }} />
       <button onClick={() => onSave(v.trim())} style={{
-        width: 30, height: 30, borderRadius: '50%',
+        width: 30, height: 38, borderRadius: '50%',
         background: T.ink, color: T.white, border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}><Check size={12} strokeWidth={2.4} /></button>
       <button onClick={onCancel} style={{
-        width: 30, height: 30, borderRadius: '50%',
+        width: 30, height: 38, borderRadius: '50%',
         background: 'none', border: `1px solid ${T.border}`, cursor: 'pointer',
         color: T.ink3, display: 'flex',
         alignItems: 'center', justifyContent: 'center',
@@ -3034,7 +3035,7 @@ function TeacherMessageGhostRows() {
           >
             <TeacherSkeletonBlock style={{
               width: 30,
-              height: 30,
+              height: 38,
               borderRadius: '50%',
               flexShrink: 0,
               marginTop: 2,
@@ -3102,7 +3103,7 @@ function TeacherPageSkeleton() {
           gap: 8,
           marginTop: 18,
         }}>
-          <TeacherSkeletonBlock style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 30, height: 38, borderRadius: '50%', flexShrink: 0 }} />
           <div style={{ flex: 1 }}>
             <TeacherSkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
             <TeacherSkeletonBlock style={{ width: '34%', height: 9, borderRadius: 999 }} />
@@ -3228,7 +3229,7 @@ function PendingClassRequests({ onChanged }: any) {
       }}>
         <div>
           <p style={{
-            fontSize: 12,
+            fontSize: 13.8,
             fontWeight: 850,
             color: T.ink,
             letterSpacing: '-0.01em',
@@ -3238,7 +3239,7 @@ function PendingClassRequests({ onChanged }: any) {
           </p>
 
           <p style={{
-            fontSize: 11.5,
+            fontSize: 13.2,
             color: T.ink3,
             margin: 0,
             lineHeight: 1.45,
@@ -3257,7 +3258,7 @@ function PendingClassRequests({ onChanged }: any) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 11,
+          fontSize: 13.8,
           fontWeight: 850,
           flexShrink: 0,
         }}>
@@ -3277,7 +3278,7 @@ function PendingClassRequests({ onChanged }: any) {
       }}>
         <Info size={15} color={T.blue} strokeWidth={1.8} style={{ flexShrink: 0, marginTop: 1 }} />
         <p style={{
-          fontSize: 11.5,
+          fontSize: 13.2,
           color: T.ink2,
           lineHeight: 1.45,
           margin: 0,
@@ -3327,7 +3328,7 @@ function PendingClassRequests({ onChanged }: any) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: T.ink2,
-                  fontSize: 13,
+                  fontSize: 13.8,
                   fontWeight: 850,
                   flexShrink: 0,
                 }}>
@@ -3349,7 +3350,7 @@ function PendingClassRequests({ onChanged }: any) {
                   </p>
 
                   <p style={{
-                    fontSize: 12,
+                    fontSize: 13.8,
                     color: T.ink2,
                     margin: '-2px 0 0',
                     overflow: 'hidden',
@@ -3399,7 +3400,7 @@ function PendingClassRequests({ onChanged }: any) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 6,
-                    fontSize: 12.5,
+                    fontSize: 13.2,
                     fontWeight: 850,
                     cursor: busy ? 'wait' : 'pointer',
                     fontFamily: 'inherit',
@@ -3422,7 +3423,7 @@ function PendingClassRequests({ onChanged }: any) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 6,
-                    fontSize: 12.5,
+                    fontSize: 13.2,
                     fontWeight: 850,
                     cursor: busy ? 'wait' : 'pointer',
                     fontFamily: 'inherit',
@@ -3448,7 +3449,7 @@ const requestChipStyle: any = {
   borderRadius: 999,
   background: '#F4F4F6',
   color: T.ink3,
-  fontSize: 10.5,
+  fontSize: 13.2,
   fontWeight: 750,
 }
 
@@ -3591,7 +3592,7 @@ function SoftNotificationLoader() {
       </div>
 
       <p style={{
-        fontSize: 13,
+        fontSize: 13.8,
         fontWeight: 750,
         color: T.ink,
         margin: 0,
@@ -3601,7 +3602,7 @@ function SoftNotificationLoader() {
       </p>
 
       <p style={{
-        fontSize: 12,
+        fontSize: 13.8,
         color: T.ink3,
         margin: '6px 0 0',
         lineHeight: 1.45,
@@ -3639,7 +3640,7 @@ function SoftConversationLoader() {
       </div>
 
       <p style={{
-        fontSize: 13,
+        fontSize: 13.8,
         fontWeight: 750,
         color: T.ink,
         margin: 0,
@@ -3649,7 +3650,7 @@ function SoftConversationLoader() {
       </p>
 
       <p style={{
-        fontSize: 12,
+        fontSize: 13.8,
         color: T.ink3,
         margin: '6px 0 0',
         lineHeight: 1.45,
@@ -3822,7 +3823,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
               Notifications
             </h3>
             <p style={{
-              fontSize: 12,
+              fontSize: 13.8,
               color: T.ink3,
               margin: '-2px 0 0',
             }}>
@@ -3862,7 +3863,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
               <p style={{ fontSize: 14, color: T.ink, fontWeight: 700, margin: '0 0 5px' }}>
                 You're all caught up
               </p>
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
                 New parent messages, requests and reactions will appear here.
               </p>
             </div>
@@ -3963,7 +3964,7 @@ function MessageGroups({ title, messages, parents = [], onOpen, unread = false }
   return (
     <section style={{ marginBottom: 18 }}>
       <p style={{
-        fontSize: 11,
+        fontSize: 13.8,
         fontWeight: 800,
         color: T.ink3,
         letterSpacing: '0.1em',
@@ -4026,7 +4027,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 10,
+            fontSize: 13.8,
             fontWeight: 850,
             lineHeight: 1,
             border: `2px solid ${unread ? '#F4F6FB' : T.white}`,
@@ -4046,7 +4047,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
-        fontSize: 13,
+        fontSize: 13.8,
         fontWeight: 800,
       }}>
         {(label || 'P').replace('Parent of ', '').charAt(0).toUpperCase()}
@@ -4058,7 +4059,7 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
         paddingRight: showCountBadge ? 28 : 0,
       }}>
         <p style={{
-          fontSize: 13,
+          fontSize: 13.8,
           fontWeight: 700,
           color: T.ink,
           margin: 0,
@@ -4072,20 +4073,20 @@ function MessageGroupRow({ group, unread, onOpen }: any) {
 
         {preview && (
           <p style={{
-            fontSize: 12,
+            fontSize: 13.8,
             color: T.ink3,
             margin: '-2px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             maxWidth: 320,
-            lineHeight: 1.4,
+            lineHeight: 1.48,
           }}>
             {preview}
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+        <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
           {relTime(latest.created_at)}
         </p>
       </div>
@@ -4111,7 +4112,7 @@ function NotifSection({ title, items, onOpen }: any) {
   return (
     <section style={{ marginBottom: 18 }}>
       <p style={{
-        fontSize: 11,
+        fontSize: 13.8,
         fontWeight: 800,
         color: T.ink3,
         letterSpacing: '0.1em',
@@ -4181,7 +4182,7 @@ function NotifRow({ item, onOpen }: any) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          fontSize: 13,
+          fontSize: 13.8,
           fontWeight: 700,
           color: T.ink,
           margin: 0,
@@ -4192,20 +4193,20 @@ function NotifRow({ item, onOpen }: any) {
 
         {(item.preview || item.post_preview) && (
           <p style={{
-            fontSize: 12,
+            fontSize: 13.8,
             color: T.ink3,
             margin: '-2px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             maxWidth: 320,
-            lineHeight: 1.4,
+            lineHeight: 1.48,
           }}>
             {item.kind === 'reaction' ? `"${item.post_preview}..."` : (item.preview || item.post_preview)}
           </p>
         )}
 
-        <p style={{ fontSize: 11, color: T.ink3, margin: '-2px 0 0' }}>
+        <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
           {relTime(item.created_at)}
         </p>
       </div>

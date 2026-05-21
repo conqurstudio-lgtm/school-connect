@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -511,7 +512,7 @@ const handlePickAttachment = async (file?: File | null) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
+            fontSize: 13.8,
             fontWeight: 700,
             flexShrink: 0,
           }}>
@@ -531,7 +532,7 @@ const handlePickAttachment = async (file?: File | null) => {
               {teacher.name}
             </h1>
             <p style={{
-              fontSize: 11,
+              fontSize: 13.8,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -571,7 +572,7 @@ const handlePickAttachment = async (file?: File | null) => {
                     : 'Join this class'}
               </p>
               <p style={{
-                fontSize: 13,
+                fontSize: 13.8,
                 color: T.ink3,
                 margin: 0,
                 lineHeight: 1.5,
@@ -593,7 +594,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   color: T.white,
                   cursor: 'pointer',
                   fontFamily: 'inherit',
-                  fontSize: 13,
+                  fontSize: 13.8,
                   fontWeight: 750,
                 }}>
                   {joinStatus === 'rejected' ? 'Send new request' : 'Join'}
@@ -768,7 +769,7 @@ const handlePickAttachment = async (file?: File | null) => {
                   background: 'transparent',
                   color: T.ink,
                   fontSize: 16,
-                  lineHeight: 1.35,
+                  lineHeight: 1.45,
                   minHeight: 22,
                   maxHeight: 92,
                   overflowY: 'auto',
@@ -835,7 +836,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 9.5,
+          fontSize: 13.2,
           fontWeight: 850,
           flexShrink: 0,
           marginTop: 1,
@@ -845,7 +846,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 12.4,
+            fontSize: 13.2,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -856,7 +857,7 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
             Private teacher inbox
           </p>
           <p style={{
-            fontSize: 10.5,
+            fontSize: 13.2,
             color: T.ink3,
             margin: '-2px 0 0',
             overflow: 'hidden',
@@ -891,12 +892,12 @@ function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReport
 }
 
 const messageMiniActionBtn: any = {
-  height: 30,
+  height: 38,
   borderRadius: 999,
   border: `1px solid ${T.border}`,
   background: '#F8F8FB',
   color: T.ink2,
-  fontSize: 11.2,
+  fontSize: 13.8,
   fontWeight: 850,
   cursor: 'pointer',
   fontFamily: 'inherit',
@@ -979,12 +980,12 @@ function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
               type="button"
               onClick={() => onChange(tab.key)}
               style={{
-                height: 30,
+                height: 38,
                 borderRadius: 999,
                 border: 'none',
                 background: selected ? T.white : 'transparent',
                 color: selected ? T.ink : T.ink3,
-                fontSize: 11.5,
+                fontSize: 13.2,
                 fontWeight: selected ? 850 : 750,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -1055,7 +1056,7 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 12.5,
+            fontSize: 13.2,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -1065,10 +1066,10 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
           </p>
 
           <p style={{
-            fontSize: 11.2,
+            fontSize: 13.8,
             color: T.ink3,
             margin: '2px 0 10px',
-            lineHeight: 1.35,
+            lineHeight: 1.45,
           }}>
             Class memories, teacher updates, reports and communication stay together here.
           </p>
@@ -1126,7 +1127,7 @@ function ClassLifePostCard({ post, teacher }: any) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 10,
+            fontSize: 13.8,
             fontWeight: 850,
             flexShrink: 0,
           }}>
@@ -1135,7 +1136,7 @@ function ClassLifePostCard({ post, teacher }: any) {
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontSize: 11.2,
+              fontSize: 13.8,
               fontWeight: 850,
               color: T.ink,
               margin: 0,
@@ -1146,7 +1147,7 @@ function ClassLifePostCard({ post, teacher }: any) {
               {teacher.name}
             </p>
             <p style={{
-              fontSize: 9.5,
+              fontSize: 13.2,
               color: T.ink3,
               margin: '-2px 0 0',
             }}>
@@ -1157,8 +1158,8 @@ function ClassLifePostCard({ post, teacher }: any) {
 
         {post.body && (
           <p style={{
-            fontSize: 13,
-            lineHeight: 1.45,
+            fontSize: 14,
+            lineHeight: 1.5,
             color: T.ink2,
             margin: 0,
             whiteSpace: 'pre-wrap',
@@ -1232,7 +1233,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontSize: 11.5,
+              fontSize: 13.2,
               fontWeight: 850,
               color: T.ink,
               margin: 0,
@@ -1243,7 +1244,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
               Reports and progress
             </p>
             <p style={{
-              fontSize: 9.8,
+              fontSize: 13.2,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -1266,7 +1267,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
             border: `1px solid ${T.border}`,
           }}>
             <p style={{
-              fontSize: 10.5,
+              fontSize: 13.2,
               fontWeight: 850,
               color: T.ink,
               margin: 0,
@@ -1274,7 +1275,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
               Latest report ready
             </p>
             <p style={{
-              fontSize: 9.5,
+              fontSize: 13.2,
               color: T.ink3,
               margin: '-1px 0 0',
             }}>
@@ -1304,7 +1305,7 @@ function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
             No reports yet
           </p>
           <p style={{
-            fontSize: 12,
+            fontSize: 13.8,
             color: T.ink3,
             lineHeight: 1.45,
             margin: 0,
@@ -1363,7 +1364,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
       }}>
         <div style={{
           width: 36,
-          height: 36,
+          height: 40,
           borderRadius: '50%',
           background: '#F0F4FF',
           color: T.blue,
@@ -1377,7 +1378,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
-            fontSize: 12.2,
+            fontSize: 13.8,
             fontWeight: 850,
             color: T.ink,
             margin: 0,
@@ -1388,7 +1389,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
             Weekly Report
           </p>
           <p style={{
-            fontSize: 10.5,
+            fontSize: 13.2,
             color: T.ink3,
             margin: '-2px 0 0',
           }}>
@@ -1398,7 +1399,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
 
         <div style={{
           minWidth: 44,
-          height: 34,
+          height: 38,
           padding: '0 9px',
           borderRadius: 999,
           background: '#F8F8FB',
@@ -1407,7 +1408,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
           alignItems: 'center',
           justifyContent: 'center',
           color: T.ink,
-          fontSize: 11,
+          fontSize: 13.8,
           fontWeight: 900,
           flexShrink: 0,
         }}>
@@ -1422,7 +1423,7 @@ function ClassSpaceReportCard({ report, teacher }: any) {
         borderRadius: 999,
         background: '#F4F6FB',
         color: T.ink2,
-        fontSize: 10.8,
+        fontSize: 13.2,
         fontWeight: 850,
       }}>
         {scoreLabel}
@@ -1430,9 +1431,9 @@ function ClassSpaceReportCard({ report, teacher }: any) {
 
       {report.comment && (
         <p style={{
-          fontSize: 12.5,
+          fontSize: 13.2,
           color: T.ink2,
-          lineHeight: 1.4,
+          lineHeight: 1.48,
           margin: '9px 0 0',
         }}>
           {report.comment}
@@ -1444,13 +1445,13 @@ function ClassSpaceReportCard({ report, teacher }: any) {
         onClick={() => { window.location.href = '/reports' }}
         style={{
           width: '100%',
-          height: 36,
+          height: 40,
           marginTop: 11,
           border: 'none',
           borderRadius: 999,
           background: T.ink,
           color: T.white,
-          fontSize: 11.5,
+          fontSize: 13.2,
           fontWeight: 850,
           cursor: 'pointer',
           fontFamily: 'inherit',
@@ -1480,7 +1481,7 @@ function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
         margin: '0 auto 12px',
       }} />
       <p style={{
-        fontSize: 13.5,
+        fontSize: 14.2,
         color: T.ink,
         fontWeight: 850,
         margin: '0 0 4px',
@@ -1488,7 +1489,7 @@ function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
         Class Life will appear here
       </p>
       <p style={{
-        fontSize: 12.2,
+        fontSize: 13.8,
         color: T.ink3,
         lineHeight: 1.45,
         margin: 0,
@@ -1537,7 +1538,7 @@ function ClassLifeSkeleton() {
 function PoweredByBar() {
   return (
     <p style={{
-      fontSize: 10,
+      fontSize: 13.8,
       color: T.ink3,
       textAlign: 'center',
       margin: '14px 0 0',
@@ -1550,12 +1551,12 @@ function PoweredByBar() {
 }
 
 const classSpaceActionBtn: any = {
-  height: 34,
+  height: 38,
   borderRadius: 999,
   border: `1px solid ${T.border}`,
   background: '#F8F8FB',
   color: T.ink2,
-  fontSize: 11.5,
+  fontSize: 13.2,
   fontWeight: 850,
   cursor: 'pointer',
   fontFamily: 'inherit',
@@ -1593,10 +1594,10 @@ function ReplyBubble({ reply, teacher }: any) {
       background: isTeacher ? '#F0F4FF' : '#F4F4F6',
       color: T.ink2,
     }}>
-      <p style={{ fontSize: 11, fontWeight: 700, margin: '0 0 2px' }}>
+      <p style={{ fontSize: 13.8, fontWeight: 700, margin: '0 0 2px' }}>
         {isTeacher ? teacher.name : 'You'}
       </p>
-      <p style={{ fontSize: 12, lineHeight: 1.4, margin: 0, whiteSpace: 'pre-wrap' }}>
+      <p style={{ fontSize: 13.8, lineHeight: 1.48, margin: 0, whiteSpace: 'pre-wrap' }}>
         {reply.body}
       </p>
     </div>
@@ -1637,7 +1638,7 @@ function ReportThreadCard({ report, teacher }: any) {
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{
-              fontSize: 13,
+              fontSize: 13.8,
               fontWeight: 650,
               color: T.ink,
               margin: 0,
@@ -1648,7 +1649,7 @@ function ReportThreadCard({ report, teacher }: any) {
               Weekly Report
             </p>
             <p style={{
-              fontSize: 11,
+              fontSize: 13.8,
               color: T.ink3,
               margin: '-2px 0 0',
             }}>
@@ -1659,7 +1660,7 @@ function ReportThreadCard({ report, teacher }: any) {
 
         {report.comment && (
           <p style={{
-            fontSize: 12.5,
+            fontSize: 13.2,
             color: T.ink2,
             lineHeight: 1.45,
             margin: '10px 0 0',
@@ -1678,7 +1679,7 @@ function ReportThreadCard({ report, teacher }: any) {
             background: T.ink,
             color: T.white,
             padding: '13px 12px',
-            fontSize: 12,
+            fontSize: 13.8,
             fontWeight: 700,
             cursor: 'pointer',
             fontFamily: 'inherit',
@@ -1725,7 +1726,7 @@ function MessageGhostRows() {
           >
             <SkeletonBlock style={{
               width: 30,
-              height: 30,
+              height: 38,
               borderRadius: '50%',
               flexShrink: 0,
               marginTop: 2,
@@ -1775,7 +1776,7 @@ function ParentTeacherPageSkeleton() {
         padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-          <SkeletonBlock style={{ width: 30, height: 30, borderRadius: 999 }} />
+          <SkeletonBlock style={{ width: 30, height: 38, borderRadius: 999 }} />
           <SkeletonBlock style={{ width: 29, height: 29, borderRadius: 10 }} />
           <div style={{ flex: 1 }}>
             <SkeletonBlock style={{ width: '48%', height: 12, borderRadius: 999, marginBottom: 8 }} />
@@ -1793,7 +1794,7 @@ function ParentTeacherPageSkeleton() {
               gap: 8,
               marginBottom: 14,
             }}>
-              <SkeletonBlock style={{ width: 30, height: 30, borderRadius: '50%', flexShrink: 0 }} />
+              <SkeletonBlock style={{ width: 30, height: 38, borderRadius: '50%', flexShrink: 0 }} />
               <SkeletonBlock style={{
                 width: i % 2 === 1 ? '62%' : '70%',
                 height: i === 2 ? 74 : 42,
@@ -1874,7 +1875,7 @@ function EmptyConversation({ teacher }: any) {
         Message teacher
       </p>
       <p style={{
-        fontSize: 13,
+        fontSize: 13.8,
         color: T.ink3,
         margin: 0,
         lineHeight: 1.5,
@@ -1974,7 +1975,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             }}>
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
-            <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0' }}>
+            <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
               Add your details so the teacher can confirm your child.
             </p>
           </div>
@@ -1993,7 +1994,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
         </div>
 
         <p style={{
-          fontSize: 11.5,
+          fontSize: 13.2,
           fontWeight: 850,
           color: T.ink,
           margin: '0 0 7px',
@@ -2037,7 +2038,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
         </select>
 
         <p style={{
-          fontSize: 11.5,
+          fontSize: 13.2,
           fontWeight: 850,
           color: T.ink,
           margin: '14px 0 7px',
@@ -2083,7 +2084,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
         </button>
 
         <p style={{
-          fontSize: 11.2,
+          fontSize: 13.8,
           color: T.ink3,
           textAlign: 'center',
           lineHeight: 1.45,
