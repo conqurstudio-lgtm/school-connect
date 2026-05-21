@@ -1,5 +1,8 @@
 // @ts-nocheck
 'use client'
+// teacher-minimal-composer-image-preview-v1
+// restore-working-teacher-composer-v1
+// teacher-composer-relative-fetch-repair-v3
 // teacher-composer-submit-repair-v2
 // teacher-composer-simplification-v1
 // broadcast-composer-shared-controls-v1
@@ -1161,72 +1164,82 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
 
 function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
   const [body, setBody] = useState('')
-  const [files, setFiles] = useState<File[]>([])
+  const [imageItems, setImageItems] = useState<any[]>([])
   const [showEvent, setShowEvent] = useState(false)
   const [eventDate, setEventDate] = useState('')
   const [eventTime, setEventTime] = useState('')
   const [eventLocation, setEventLocation] = useState('')
-  const [messageParents, setMessageParents] = useState(false)
-  const [parents, setParents] = useState<any[]>([])
-  const [parentsLoading, setParentsLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const apiUrl = (path: string) => {
-    if (typeof window === 'undefined') return path
-    return new URL(path, window.location.origin).toString()
-  }
-
-  const apiFetch = (path: string, init?: RequestInit) => {
-    return fetch(apiUrl(path), init)
-  }
-
-  useEffect(() => {
-    let alive = true
-
-    apiFetch('/api/teacher/parents')
-      .then(r => r.json())
-      .then(j => {
-        if (alive) setParents(j.parents ?? [])
-      })
-      .catch(() => {
-        if (alive) setParents([])
-      })
-      .finally(() => {
-        if (alive) setParentsLoading(false)
-      })
-
-    return () => {
-      alive = false
-    }
-  }, [])
+  const previewUrlsRef = useRef<string[]>([])
 
   const cleanBody = body.trim()
-  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(eventDate) ? eventDate : ''
-  const validTime = /^\d{2}:\d{2}$/.test(eventTime) ? eventTime : ''
-  const cleanLocation = eventLocation.trim()
-
-  const hasEvent = showEvent && (!!validDate || !!validTime || !!cleanLocation)
-  const canSubmit = !!cleanBody || files.length > 0 || hasEvent
+  const hasEvent = showEvent && (eventDate || eventTime || eventLocation.trim())
+  const canSubmit = cleanBody || imageItems.length > 0 || hasEvent
 
   const inferred =
     hasEvent ? 'Event'
-    : files.length > 0 ? 'Moment'
+    : imageItems.length > 0 ? 'Moment'
     : 'Update'
+
+  const cleanupPreviews = () => {
+    previewUrlsRef.current.forEach((url) => {
+      try { URL.revokeObjectURL(url) } catch {}
+    })
+    previewUrlsRef.current = []
+  }
+
+  const closeComposer = () => {
+    if (saving) return
+    cleanupPreviews()
+    onClose()
+  }
+
+  const addImages = (selected: File[]) => {
+    if (!selected.length) return
+
+    const nextItems = selected
+      .filter((file) => file.type.startsWith('image/'))
+      .slice(0, Math.max(0, 6 - imageItems.length))
+      .map((file) => {
+        const url = URL.createObjectURL(file)
+        previewUrlsRef.current.push(url)
+        return {
+          id: `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(16).slice(2)}`,
+          file,
+          url,
+        }
+      })
+
+    if (nextItems.length) {
+      setImageItems((prev) => [...prev, ...nextItems].slice(0, 6))
+    }
+  }
+
+  const removeImage = (id: string) => {
+    setImageItems((prev) => {
+      const found = prev.find((item: any) => item.id === id)
+      if (found?.url) {
+        try { URL.revokeObjectURL(found.url) } catch {}
+        previewUrlsRef.current = previewUrlsRef.current.filter((url) => url !== found.url)
+      }
+      return prev.filter((item: any) => item.id !== id)
+    })
+  }
 
   const uploadImages = async () => {
     const urls: string[] = []
 
-    for (const file of files) {
+    for (const item of imageItems) {
       const form = new FormData()
-      form.append('file', file)
+      form.append('file', item.file)
 
-      const res = await apiFetch('/api/teacher/post-image', {
+      const res = await fetch('/api/teacher/post-image', {
         method: 'POST',
         body: form,
       })
 
-      const json = await res.json().catch(() => ({}))
+      const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Could not upload photo')
       urls.push(json.url)
     }
@@ -1238,94 +1251,44 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
     if (!canSubmit || saving) return
 
     setSaving(true)
-    const tid = toast.loading(messageParents ? 'Publishing and messaging parents…' : 'Publishing…')
+    const tid = toast.loading('Publishing…')
 
     try {
-      const image_urls = files.length > 0 ? await uploadImages() : []
+      const image_urls = imageItems.length > 0 ? await uploadImages() : []
 
-      const payload: any = {
-        body: cleanBody,
-        image_urls,
-      }
-
-      if (hasEvent) {
-        payload.event_date = validDate || null
-        payload.event_time = validTime || null
-        payload.event_location = cleanLocation || null
-      }
-
-      const postRes = await apiFetch('/api/teacher/post', {
+      const res = await fetch('/api/teacher/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          body: cleanBody,
+          image_urls,
+          event_date: hasEvent ? eventDate : null,
+          event_time: hasEvent ? eventTime : null,
+          event_location: hasEvent ? eventLocation.trim() : null,
+        }),
       })
 
-      const postJson = await postRes.json().catch(() => ({}))
-      if (!postRes.ok) throw new Error(postJson.error || 'Could not publish')
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Could not publish')
 
-      if (messageParents) {
-        const validParents = parents
-          .map((p: any) => p?.id)
-          .filter((id: any) => typeof id === 'string' && id.trim().length > 0)
-
-        if (validParents.length > 0) {
-          const notifyText = cleanBody
-            || `${teacher?.name || 'Teacher'} shared a new class update. Please open School Connect to view it.`
-
-          const updateRes = await apiFetch('/api/teacher/updates', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              parent_ids: validParents,
-              body: notifyText,
-            }),
-          })
-
-          const updateJson = await updateRes.json().catch(() => ({}))
-          if (!updateRes.ok) {
-            toast.success('Published, but parent message could not be sent', { id: tid })
-          } else {
-            toast.success(
-              `Published and messaged ${updateJson.count || validParents.length} ${validParents.length === 1 ? 'parent' : 'parents'}`,
-              { id: tid }
-            )
-          }
-        } else {
-          toast.success('Published. No linked parents to message yet.', { id: tid })
-        }
-      } else {
-        toast.success('Published', { id: tid })
-      }
-
+      cleanupPreviews()
+      toast.success('Published', { id: tid })
       onCreated()
     } catch (e: any) {
-      console.error('Teacher composer submit failed:', e)
-      const raw = String(e?.message || '')
-      const friendly = raw.includes('expected pattern')
-        ? 'Could not publish because the request was not accepted by the browser. Please try again.'
-        : raw || 'Could not publish'
-      toast.error(friendly, { id: tid })
+      toast.error(e.message || 'Could not publish', { id: tid })
     }
 
     setSaving(false)
   }
 
-  const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index))
-  }
-
-  const canMessageParents = parents.length > 0
-
   return (
     <div
-      onClick={() => {
-        if (!saving) onClose()
-      }}
+      onClick={closeComposer}
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 240,
-        background: 'rgba(0,0,0,0.38)',
+        background: 'rgba(0,0,0,0.34)',
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
@@ -1333,13 +1296,15 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
       }}
     >
       <div
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: 520,
+          maxHeight: '88dvh',
+          overflowY: 'auto',
           background: T.white,
           borderRadius: '22px 22px 0 0',
-          padding: '16px 14px calc(16px + env(safe-area-inset-bottom, 0px))',
+          padding: '14px 14px calc(14px + env(safe-area-inset-bottom, 0px))',
           boxShadow: '0 -18px 50px rgba(0,0,0,0.14)',
           animation: 'slideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
           boxSizing: 'border-box',
@@ -1357,32 +1322,32 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: 12,
-          marginBottom: 12,
+          gap: 10,
+          marginBottom: 10,
         }}>
           <div style={{ minWidth: 0 }}>
             <p style={{
               fontSize: 15,
               fontWeight: 900,
               color: T.ink,
-              letterSpacing: '-0.025em',
               margin: 0,
+              letterSpacing: '-0.025em',
             }}>
-              Create class update
+              New class post
             </p>
             <p style={{
               fontSize: 12.2,
               color: T.ink3,
               margin: '3px 0 0',
-              lineHeight: 1.35,
+              lineHeight: 1.3,
             }}>
-              {inferred} for {teacher?.grade || 'Class'}{teacher?.class_name ? ` · ${teacher.class_name}` : ''}
+              {inferred}{teacher?.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={closeComposer}
             disabled={saving}
             aria-label="Close composer"
             style={{
@@ -1406,12 +1371,12 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
         <textarea
           autoFocus
           value={body}
-          onChange={e => setBody(e.target.value)}
-          rows={4}
-          placeholder="Share a class update, reminder, moment or announcement…"
+          onChange={(e) => setBody(e.target.value)}
+          rows={3}
+          placeholder="Write an update for parents…"
           style={{
             ...classSpaceTextareaStyle,
-            minHeight: 106,
+            minHeight: 92,
             background: '#FAFAFC',
           }}
         />
@@ -1422,68 +1387,63 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           accept="image/*"
           multiple
           style={{ display: 'none' }}
-          onChange={e => {
-            const selected = Array.from(e.target.files || [])
-            if (selected.length) {
-              setFiles(prev => [...prev, ...selected].slice(0, 6))
-            }
+          onChange={(e) => {
+            addImages(Array.from(e.target.files || []))
             e.currentTarget.value = ''
           }}
         />
 
-        {files.length > 0 && (
+        {imageItems.length > 0 && (
           <div style={{
-            display: 'flex',
-            flexDirection: 'column',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
             gap: 7,
             marginTop: 10,
           }}>
-            {files.map((file, index) => (
+            {imageItems.map((item: any) => (
               <div
-                key={`${file.name}-${index}`}
+                key={item.id}
                 style={{
-                  minHeight: 38,
+                  position: 'relative',
+                  aspectRatio: '1 / 1',
                   borderRadius: 14,
+                  overflow: 'hidden',
+                  background: '#F1F1F4',
                   border: `1px solid ${T.border}`,
-                  background: '#FAFAFC',
-                  padding: '7px 8px 7px 10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 9,
                 }}
               >
-                <Paperclip size={14} color={T.ink3} strokeWidth={2.1} />
-                <p style={{
-                  flex: 1,
-                  minWidth: 0,
-                  fontSize: 12.5,
-                  color: T.ink2,
-                  margin: 0,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {file.name}
-                </p>
+                <img
+                  src={item.url}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+
                 <button
                   type="button"
-                  onClick={() => removeFile(index)}
-                  aria-label="Remove file"
+                  onClick={() => removeImage(item.id)}
+                  aria-label="Remove image"
                   style={{
-                    width: 28,
-                    height: 28,
+                    position: 'absolute',
+                    top: 5,
+                    right: 5,
+                    width: 24,
+                    height: 24,
                     borderRadius: 999,
                     border: 'none',
-                    background: '#F0F0F4',
-                    color: T.ink3,
+                    background: 'rgba(0,0,0,0.58)',
+                    color: T.white,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    flexShrink: 0,
                   }}
                 >
-                  <X size={13} strokeWidth={2.2} />
+                  <X size={12} strokeWidth={2.4} />
                 </button>
               </div>
             ))}
@@ -1503,18 +1463,18 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             <input
               type="date"
               value={eventDate}
-              onChange={e => setEventDate(e.target.value)}
+              onChange={(e) => setEventDate(e.target.value)}
               style={classSpaceInputStyle}
             />
             <input
               type="time"
               value={eventTime}
-              onChange={e => setEventTime(e.target.value)}
+              onChange={(e) => setEventTime(e.target.value)}
               style={classSpaceInputStyle}
             />
             <input
               value={eventLocation}
-              onChange={e => setEventLocation(e.target.value)}
+              onChange={(e) => setEventLocation(e.target.value)}
               placeholder="Event location"
               style={classSpaceInputStyle}
             />
@@ -1532,96 +1492,23 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
             variant="secondary"
             compact
             onClick={() => fileInputRef.current?.click()}
+            disabled={saving || imageItems.length >= 6}
           >
             <Paperclip size={14} strokeWidth={2.1} />
-            Photos
+            {imageItems.length ? `${imageItems.length}/6` : 'Photos'}
           </ClassSpaceButton>
 
           <ClassSpaceButton
             type="button"
             variant={showEvent ? 'primary' : 'secondary'}
             compact
-            onClick={() => setShowEvent(v => !v)}
+            onClick={() => setShowEvent((v) => !v)}
+            disabled={saving}
           >
             <FileText size={14} strokeWidth={2.1} />
             Event
           </ClassSpaceButton>
         </div>
-
-        <button
-          type="button"
-          disabled={!canMessageParents || parentsLoading}
-          onClick={() => {
-            if (canMessageParents) setMessageParents(v => !v)
-          }}
-          style={{
-            width: '100%',
-            marginTop: 10,
-            minHeight: 44,
-            borderRadius: 16,
-            border: `1px solid ${messageParents ? 'rgba(120,166,254,0.45)' : T.border}`,
-            background: messageParents ? '#F0F4FF' : '#FAFAFC',
-            color: T.ink,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-            padding: '10px 12px',
-            cursor: canMessageParents && !parentsLoading ? 'pointer' : 'not-allowed',
-            fontFamily: 'inherit',
-            opacity: canMessageParents || parentsLoading ? 1 : 0.65,
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
-            <Users size={15} color={messageParents ? T.blue : T.ink3} strokeWidth={2.1} />
-            <span style={{ minWidth: 0 }}>
-              <span style={{
-                display: 'block',
-                fontSize: 13.2,
-                fontWeight: 850,
-                color: T.ink,
-                lineHeight: 1.2,
-              }}>
-                Also message parents
-              </span>
-              <span style={{
-                display: 'block',
-                fontSize: 11.5,
-                color: T.ink3,
-                lineHeight: 1.25,
-                marginTop: 2,
-              }}>
-                {parentsLoading
-                  ? 'Checking linked parents…'
-                  : parents.length > 0
-                    ? `${parents.length} linked ${parents.length === 1 ? 'parent' : 'parents'}`
-                    : 'No linked parents yet'}
-              </span>
-            </span>
-          </span>
-
-          <span style={{
-            width: 38,
-            height: 22,
-            borderRadius: 999,
-            background: messageParents ? T.ink : '#D9D9E0',
-            position: 'relative',
-            flexShrink: 0,
-            transition: 'background 0.18s ease',
-          }}>
-            <span style={{
-              position: 'absolute',
-              top: 3,
-              left: messageParents ? 19 : 3,
-              width: 16,
-              height: 16,
-              borderRadius: '50%',
-              background: T.white,
-              transition: 'left 0.18s ease',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.16)',
-            }} />
-          </span>
-        </button>
 
         <ClassSpaceButton
           type="button"
@@ -1629,14 +1516,10 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           variant="primary"
           disabled={!canSubmit || saving}
           onClick={submit}
-          style={{ marginTop: 12 }}
+          style={{ marginTop: 10 }}
         >
           <Send size={15} strokeWidth={2.2} />
-          {saving
-            ? 'Publishing…'
-            : messageParents
-              ? 'Post and message parents'
-              : 'Post to Class Life'}
+          {saving ? 'Publishing…' : 'Publish'}
         </ClassSpaceButton>
       </div>
     </div>
