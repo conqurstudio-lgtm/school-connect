@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// message-threads-free-scroll-teacher-composer-v2
 // message-scroll-stabilize-teacher-composer-v1
 // teacher-thread-copy-parent-template-v2
 // teacher-thread-match-parent-ui-v1
@@ -2577,28 +2578,36 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
     return el.scrollHeight - el.scrollTop - el.clientHeight < 180
   }
 
+    const threadLandingDoneRef = useRef(false)
+  const threadUserInteractedRef = useRef(false)
+
   const forceScrollToBottom = (smooth = true, force = true) => {
     const el = threadScrollRef.current
     if (!el) return
 
-    if (!force && !isThreadNearBottom()) return
+    if (threadLandingDoneRef.current && !force) return
+    if (threadLandingDoneRef.current && threadUserInteractedRef.current) return
 
     const run = () => {
       const top = Math.max(0, el.scrollHeight - el.clientHeight)
 
       if (typeof el.scrollTo === 'function') {
-        el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
+        el.scrollTo({ top, behavior: smooth ? 'auto' : 'auto' })
       } else {
         el.scrollTop = top
       }
     }
 
-    window.requestAnimationFrame(run)
+    window.requestAnimationFrame(() => {
+      run()
 
-    // One extra pass only for initial content height settling.
-    if (!smooth) {
-      window.setTimeout(run, 90)
-    }
+      if (!threadLandingDoneRef.current) {
+        window.setTimeout(() => {
+          run()
+          threadLandingDoneRef.current = true
+        }, 80)
+      }
+    })
   }
 
   const load = async () => {
@@ -2847,7 +2856,10 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           </div>
         </div>
 
-        <div ref={threadScrollRef} style={{
+        <div ref={threadScrollRef}
+          onTouchStart={() => { threadUserInteractedRef.current = true }}
+          onWheel={() => { threadUserInteractedRef.current = true }}
+          style={{
           flex: 1,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',

@@ -86,7 +86,7 @@ const [showJoin, setShowJoin] = useState(false)
     return distance < 180
   }
 
-    const scrollToLatestMessage = (
+      const scrollToLatestMessage = (
     reason = 'latest',
     behavior: ScrollBehavior = 'auto',
     force = true,
@@ -94,9 +94,10 @@ const [showJoin, setShowJoin] = useState(false)
     const el = threadScrollRef.current
     if (!el) return
 
-    // Do not keep pulling the user down after they start reading older messages.
-    if (!force && !isMessageListNearBottom()) return
-    if (force && messageUserInteractedRef.current && previousThreadCountRef.current > 0) return
+    // Message threads behave like a feed that opens at the latest item once.
+    // After the first landing, user scrolling is never pulled back down.
+    if (messageLandingDoneRef.current && !force) return
+    if (messageLandingDoneRef.current && messageUserInteractedRef.current) return
 
     if (scrollRafRef.current) {
       cancelAnimationFrame(scrollRafRef.current)
@@ -107,18 +108,21 @@ const [showJoin, setShowJoin] = useState(false)
       const top = Math.max(0, el.scrollHeight - el.clientHeight)
 
       if (typeof el.scrollTo === 'function') {
-        el.scrollTo({ top, behavior })
+        el.scrollTo({ top, behavior: behavior === 'smooth' ? 'auto' : behavior })
       } else {
         el.scrollTop = top
       }
     }
 
-    scrollRafRef.current = requestAnimationFrame(run)
-
-    // One extra pass only for first render/media-height settling.
-    if (force) {
-      window.setTimeout(run, 90)
-    }
+    scrollRafRef.current = requestAnimationFrame(() => {
+      run()
+      if (!messageLandingDoneRef.current) {
+        window.setTimeout(() => {
+          run()
+          messageLandingDoneRef.current = true
+        }, 80)
+      }
+    })
   }
 
   // scroll-anchor-disabled-v1
@@ -161,49 +165,8 @@ const [showJoin, setShowJoin] = useState(false)
     classSpaceTab,
     teacherId,
   ])
-
-  useEffect(() => {
-    if (classSpaceTab !== 'messages') return
-
-    const el = threadScrollRef.current
-    if (!el) return
-
-    const onMediaLoad = (event: Event) => {
-      const target = event.target as HTMLElement | null
-      if (!target) return
-
-      if (
-        target.tagName === 'IMG' &&
-        messageLandingDoneRef.current &&
-        isMessageListNearBottom()
-      ) {
-        scrollToLatestMessage('media-loaded', 'auto', false)
-      }
-    }
-
-    el.addEventListener('load', onMediaLoad, true)
-
-    return () => {
-      el.removeEventListener('load', onMediaLoad, true)
-    }
-  }, [classSpaceTab, updates.length])
-
-  useEffect(() => {
-    if (classSpaceTab !== 'messages') return
-
-    const dock = composerDockRef.current
-    if (!dock || typeof ResizeObserver === 'undefined') return
-
-    const observer = new ResizeObserver(() => {
-      if (messageLandingDoneRef.current && isMessageListNearBottom()) {
-        scrollToLatestMessage('composer-resized', 'auto', false)
-      }
-    })
-
-    observer.observe(dock)
-
-    return () => observer.disconnect()
-  }, [classSpaceTab])
+  // message-threads-free-scroll-teacher-composer-v2: media-load auto-scroll removed.
+  // message-threads-free-scroll-teacher-composer-v2: composer-resize auto-scroll removed.
 
 
   // parent-composer-smooth-v1: using the simpler teacher-style scroll behaviour.
