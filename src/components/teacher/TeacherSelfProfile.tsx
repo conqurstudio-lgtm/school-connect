@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-app-screen-safe-top-compact-v1
 // teacher-pending-requests-full-shared-v2
 // teacher-request-buttons-shared-controls-v1
 // shared-tabs-restore-and-apply-v3
@@ -415,13 +416,13 @@ function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0, unreadCoun
       active={active}
       onChange={onChange}
       columns={3}
-      stickyTop={57}
+      stickyTop={52}
     />
   )
 }
 
 const iconBtn: any = {
-  width: 29, height: 29, borderRadius: 999,
+  width: 34, height: 34, borderRadius: 999,
   background: 'none', border: `1px solid ${T.border}`,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
   cursor: 'pointer', color: T.ink2,
@@ -777,8 +778,8 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
         }}>
           <div>
             <h3 style={{
-              fontSize: 18,
-              fontWeight: 800,
+              fontSize: 15,
+              fontWeight: 900,
               color: T.ink,
               letterSpacing: '-0.025em',
               margin: 0,
@@ -1232,8 +1233,8 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
         }}>
           <div>
             <h3 style={{
-              fontSize: 18,
-              fontWeight: 850,
+              fontSize: 15,
+              fontWeight: 900,
               color: T.ink,
               letterSpacing: '-0.035em',
               margin: 0,
@@ -1539,7 +1540,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
               Report
             </h3>
             <p style={{
-              fontSize: 13.8,
+              fontSize: 12.2,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -2178,7 +2179,7 @@ function ClassRoster({ kids, onChanged }: any) {
               position: 'relative',
             }}>
               <div style={{
-                width: 29, height: 29, borderRadius: '50%',
+                width: 34, height: 34, borderRadius: 999,
                 background: '#F0F0F4',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, fontSize: 13.8, color: T.ink2, fontWeight: 600,
@@ -2296,7 +2297,7 @@ function UpdatesInbox({ teacher }: any) {
                 cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
               }}>
               <div style={{
-                width: 29, height: 29, borderRadius: '50%',
+                width: 34, height: 34, borderRadius: 999,
                 background: '#F0F0F4',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0, fontSize: 13.8, color: T.ink2, fontWeight: 600,
@@ -2532,7 +2533,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
+          padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -2585,7 +2586,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
               {parent.name || 'Parent'}
             </h3>
             <p style={{
-              fontSize: 13.8,
+              fontSize: 12.2,
               color: T.ink3,
               margin: '-2px 0 0',
               overflow: 'hidden',
@@ -3043,7 +3044,7 @@ function TeacherPageSkeleton() {
       <div style={{
         flexShrink: 0,
         background: 'rgba(252,252,255,0.98)',
-        padding: 'calc(7px + env(safe-area-inset-top)) 20px 8px',
+        padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
       }}>
         <div style={{
           display: 'flex',
@@ -3051,10 +3052,10 @@ function TeacherPageSkeleton() {
           justifyContent: 'space-between',
           gap: 12,
         }}>
-          <TeacherSkeletonBlock style={{ width: 29, height: 29, borderRadius: 999 }} />
+          <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
           <div style={{ display: 'flex', gap: 8 }}>
-            <TeacherSkeletonBlock style={{ width: 29, height: 29, borderRadius: 999 }} />
-            <TeacherSkeletonBlock style={{ width: 29, height: 29, borderRadius: 999 }} />
+            <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
+            <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: 999 }} />
           </div>
         </div>
 
@@ -3101,9 +3102,9 @@ function TeacherPageSkeleton() {
           padding: '7px 7px 7px 10px',
           boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
         }}>
-          <TeacherSkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: 999, flexShrink: 0 }} />
           <TeacherSkeletonBlock style={{ height: 14, borderRadius: 999, flex: 1 }} />
-          <TeacherSkeletonBlock style={{ width: 29, height: 29, borderRadius: '50%', flexShrink: 0 }} />
+          <TeacherSkeletonBlock style={{ width: 34, height: 34, borderRadius: 999, flexShrink: 0 }} />
         </div>
       </div>
 
@@ -3713,7 +3714,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 12,
-          padding: '16px 18px 12px',
+          padding: '12px 14px 8px',
           background: 'rgba(252,252,255,0.98)',
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -3732,7 +3733,7 @@ function NotificationsSheet({ teacher, onClose }: any) {
               Notifications
             </h3>
             <p style={{
-              fontSize: 13.8,
+              fontSize: 12.2,
               color: T.ink3,
               margin: '-2px 0 0',
             }}>

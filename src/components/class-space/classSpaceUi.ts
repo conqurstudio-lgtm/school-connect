@@ -22,7 +22,7 @@ export const CLASS_SPACE_UI = {
   },
 
   topProfile: {
-    padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
+    padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
     avatar: 42,
     avatarRadius: 15,
     titleSize: 15,
