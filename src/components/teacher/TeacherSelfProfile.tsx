@@ -1,6 +1,5 @@
 // @ts-nocheck
 'use client'
-// cards-ui-restore-v1
 // readable-content-typography-restore-v1
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'

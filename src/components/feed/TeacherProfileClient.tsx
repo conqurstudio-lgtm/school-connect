@@ -100,7 +100,7 @@ const [showJoin, setShowJoin] = useState(false)
     if (!hydrated || !canMessage || classSpaceTab !== 'messages') return
     if (threadLoading) return
 
-    const totalItems = (updates?.length || 0)
+    const totalItems = (updates?.length || 0) + (reports?.length || 0)
     const firstThreadLoad = previousThreadCountRef.current === 0 && totalItems > 0
     const countChanged = previousThreadCountRef.current !== totalItems
 
@@ -115,6 +115,7 @@ const [showJoin, setShowJoin] = useState(false)
     previousThreadCountRef.current = totalItems
   }, [
     updates.length,
+    reports.length,
     threadLoading,
     canMessage,
     classSpaceTab,
@@ -1604,9 +1605,108 @@ function ReplyBubble({ reply, teacher }: any) {
 }
 
 function ReportThreadCard({ report, teacher }: any) {
-  // message-thread-report-removal-v1
-  // Reports now live only in the Reports section, not inside the message thread.
-  return null
+  const scoreValues = Object.values(report.scores || {})
+  const avg = scoreValues.length
+    ? scoreValues.reduce((a: number, b: any) => a + Number(b || 0), 0) / scoreValues.length
+    : 0
+
+  return (
+    <div style={{ padding: '10px 16px' }}>
+      <div style={{
+        margin: '0 auto',
+        maxWidth: 360,
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 18,
+        padding: 14,
+        boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            background: '#F0F4FF',
+            color: T.blue,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <FileText size={18} strokeWidth={1.8} />
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 13.8,
+              fontWeight: 650,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              Weekly Report
+            </p>
+            <p style={{
+              fontSize: 13.8,
+              color: T.ink3,
+              margin: '-2px 0 0',
+            }}>
+              {formatWeek(report.week_starting)} · {avg.toFixed(1)}/5
+            </p>
+          </div>
+        </div>
+
+        {report.comment && (
+          <p style={{
+            fontSize: 13.2,
+            color: T.ink2,
+            lineHeight: 1.45,
+            margin: '10px 0 0',
+          }}>
+            {report.comment}
+          </p>
+        )}
+
+        <button
+          onClick={() => { window.location.href = '/reports' }}
+          style={{
+            width: '100%',
+            marginTop: 12,
+            border: 'none',
+            borderRadius: 999,
+            background: T.ink,
+            color: T.white,
+            padding: '13px 12px',
+            fontSize: 13.8,
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          View report
+        </button>
+      </div>
+    </div>
+  )
+}
+
+
+function SkeletonBlock({ style = {} }: any) {
+  return (
+    <div
+      className="sc-skeleton-block"
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(90deg, #F1F1F5 0%, #F7F7FA 45%, #F1F1F5 100%)',
+        backgroundSize: '220% 100%',
+        animation: 'scSkeleton 1.25s ease-in-out infinite',
+        ...style,
+      }}
+    />
+  )
 }
 
 function MessageGhostRows() {
