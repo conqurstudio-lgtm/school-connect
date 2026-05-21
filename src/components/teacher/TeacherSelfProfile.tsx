@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// ui-alignment-shapes-pass-v1
 // teacher-feed-scroll-stability-v1
 // message-composer-safe-area-alignment-v1
 // event-date-time-labels-v1
@@ -2862,7 +2863,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
           <div ref={bottomRef} />
         </div>
 
-        <div className="teacher-message-composer-dock premium-message-composer-dock" style={{
+        <div className="teacher-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-teacher-composer-dock" style={{
           position: 'sticky',
           bottom: 0,
           zIndex: 80,
@@ -2881,7 +2882,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
             onRemove={() => setAttachment(null)}
           />
 
-          <div style={{
+          <div className="sc-message-composer-shell sc-teacher-composer-shell" style={{
             minHeight: 52,
               display: 'flex',
             alignItems: 'flex-end',

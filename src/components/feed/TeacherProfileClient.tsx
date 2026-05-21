@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// ui-alignment-shapes-pass-v1
 // message-composer-safe-area-alignment-v1
 // parent-messages-match-teacher-experience-v1
 // parent-shell-teacher-pattern-v1
@@ -704,7 +705,7 @@ const handlePickAttachment = async (file?: File | null) => {
             <div ref={bottomRef} />
           </div>
 
-          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock parent-message-composer-dock premium-message-composer-dock" style={{
+          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock parent-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-parent-composer-dock" style={{
             flexShrink: 0,
               position: 'sticky',
             bottom: 0,
@@ -720,7 +721,7 @@ const handlePickAttachment = async (file?: File | null) => {
               onRemove={() => setAttachment(null)}
             />
 
-            <div style={{
+            <div className="sc-message-composer-shell sc-parent-composer-shell" style={{
               minHeight: 52,
               display: 'flex',
               alignItems: 'flex-end',

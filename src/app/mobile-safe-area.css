@@ -93,3 +93,76 @@ body {
 .teacher-message-composer-dock {
   background-color: #FCFCFF !important;
 }
+
+/* ui-alignment-shapes-pass-v1
+   One focused style layer for Parent/Teacher message composer shape alignment.
+   This does not change APIs or logic. */
+html,
+body {
+  background: #FCFCFF !important;
+}
+
+.sc-message-composer-dock {
+  background: #FCFCFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 90 !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell {
+  min-height: 52px !important;
+  border-radius: 22px !important;
+  padding: 7px 7px 7px 12px !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.055) !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell textarea {
+  min-height: 36px !important;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  resize: none !important;
+}
+
+.sc-message-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+.sc-message-composer-dock *,
+.sc-message-composer-shell * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 640px) {
+  .sc-message-composer-dock {
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
