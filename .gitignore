@@ -35,3 +35,46 @@ next-env.d.ts
 
 # supabase
 supabase/.temp/
+# Local cleanup / patch artifacts generated during ChatGPT-assisted development
+.*-backup-*/
+.manual-rollback-checkpoint-*/
+.broken-client-exception-*/
+README_*_V*.md
+README_*_v*.md
+README_PARENT_*.md
+README_TEACHER_*.md
+README_MESSAGE_*.md
+README_CLASS_*.md
+README_PUBLIC_*.md
+README_SHARED_*.md
+README_UI_*.md
+README_SAFE_AREA_*.md
+README_RESTORE_*.md
+README_BROADCAST_*.md
+README_ADD_CHILD_*.md
+README_COMPOSER_*.md
+README_COPY_*.md
+README_DEPLOY_*.md
+README_FEED_*.md
+README_FORCE_*.md
+README_MOBILE_*.md
+README_PWA_*.md
+README_READABLE_*.md
+README_RELATIONSHIP_*.md
+README_REMOVE_*.md
+scripts/*-v*.py
+scripts/*-v*.sh
+scripts/*backup*.py
+scripts/*backup*.sh
+scripts/*repair*.py
+scripts/*repair*.sh
+scripts/*restore*.py
+scripts/*restore*.sh
+scripts/*composer*.py
+scripts/*composer*.sh
+scripts/*teacher*.py
+scripts/*teacher*.sh
+scripts/*parent*.py
+scripts/*parent*.sh
+/next
+/school-connect@*

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-feed-scroll-stability-v1
 // message-composer-safe-area-alignment-v1
 // event-date-time-labels-v1
 // teacher-bottom-cut-page-bg-v1
@@ -371,9 +372,13 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'contain',
+          overscrollBehaviorY: 'contain',
           background: T.bg,
           paddingBottom: 58,
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          willChange: 'scroll-position',
         }}
       >
 
@@ -1151,7 +1156,16 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
 
   if (posts.length === 0) {
     return (
-      <section style={{ padding: '8px 20px 24px' }}>
+      <section
+        className="teacher-feed-stable-empty"
+        style={{
+          padding: '8px 14px 18px',
+          minHeight: '100%',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+      >
         <div style={{ padding: '28px 0', textAlign: 'center' }}>
           <Megaphone size={18} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 8px' }} />
           <p style={{ fontSize: 14, fontWeight: 700, color: T.ink, margin: '0 0 4px' }}>Nothing shared yet</p>
@@ -1162,8 +1176,18 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   }
 
   return (
-    <PullToRefresh onRefresh={load}>
-      <section style={{ padding: '0 0 24px' }}>
+    <div className="teacher-feed-stable-list">
+      <section
+        className="teacher-feed-stable-section"
+        style={{
+          padding: '0 0 18px',
+          minHeight: '100%',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          willChange: 'transform',
+        }}
+      >
         {posts.map((post: any, index: number) => (
           <PostCard
           key={post.id}
@@ -1190,7 +1214,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
           />
         ))}
       </section>
-    </PullToRefresh>
+    </div>
   )
 }
 
