@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-ui-unified-structure-v1
 // composer-send-button-balance-v1
 // teacher-bell-header-cleanup-v1
 // teacher-button-shape-pass-v1
@@ -335,7 +336,8 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         active={teacherClassSpaceTab}
         onChange={setTeacherClassSpaceTab}
         childrenCount={children?.length || 0}
-      />
+            unreadCount={unread}
+          />
 
       {teacherClassSpaceTab === 'life' && (
         <TeacherOwnClassFeed teacher={teacher} school={school} refreshKey={postRefreshKey} />
@@ -3464,13 +3466,13 @@ function AddChildOverlay({ onAdd, onClose }: any) {
           placeholder="Emma Johnson"
           style={{
             width: '100%', padding: '12px 14px', fontSize: 16,
-            border: `1px solid ${T.border}`, borderRadius: '50%',
+            border: `1px solid ${T.border}`, borderRadius: 14,
             background: T.white, color: T.ink, outline: 'none',
             fontFamily: 'inherit', boxSizing: 'border-box',
           }} />
         <button onClick={submit} style={{
           width: '100%', marginTop: 12, padding: '14px',
-          borderRadius: '50%', background: T.ink, color: T.white, border: 'none',
+          borderRadius: 999, background: T.ink, color: T.white, border: 'none',
           fontSize: 15, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
         }}>Add child</button>
       </div>
