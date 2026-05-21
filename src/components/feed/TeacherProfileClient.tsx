@@ -1886,14 +1886,25 @@ function EmptyConversation({ teacher }: any) {
 }
 
 function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [parentFirstName, setParentFirstName] = useState('')
+  const [parentLastName, setParentLastName] = useState('')
+  const [parentPhone, setParentPhone] = useState('')
+  const [childFirstName, setChildFirstName] = useState('')
+  const [childLastName, setChildLastName] = useState('')
   const [relationship, setRelationship] = useState('Parent/Guardian')
   const [sending, setSending] = useState(false)
 
   const submit = async () => {
-    const child_first_name = firstName.trim()
-    const child_last_name = lastName.trim()
+    const parent_first_name = parentFirstName.trim()
+    const parent_last_name = parentLastName.trim()
+    const parent_phone = parentPhone.trim()
+    const child_first_name = childFirstName.trim()
+    const child_last_name = childLastName.trim()
+
+    if (!parent_first_name || !parent_last_name || !parent_phone) {
+      toast.error('Enter parent name and phone number')
+      return
+    }
 
     if (!child_first_name || !child_last_name) {
       toast.error('Enter child name and surname')
@@ -1907,6 +1918,9 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           teacher_id: teacher.id,
+          parent_first_name,
+          parent_last_name,
+          parent_phone,
           child_first_name,
           child_last_name,
           relationship,
@@ -1916,42 +1930,39 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Could not send request')
 
-      if (json.already_joined) toast.success('You are already linked to this class')
-      else if (json.already_pending) toast.success('Your request is already waiting')
-      else toast.success('Request sent to teacher')
-
-      onSubmitted()
+      toast.success(json.already_pending ? 'Request already pending' : 'Request sent to teacher')
+      onSubmitted?.()
     } catch (e: any) {
       toast.error(e.message || 'Could not send request')
     }
-
     setSending(false)
   }
 
   return (
-    <div onClick={onClose} style={{
+    <div style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 220,
-      background: 'rgba(0,0,0,0.38)',
+      background: 'rgba(0,0,0,0.32)',
+      zIndex: 80,
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',
-      animation: 'fadeIn 0.2s ease',
+      padding: 14,
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div style={{
         width: '100%',
-        maxWidth: 520,
+        maxWidth: 420,
         background: T.white,
-        borderRadius: '22px 22px 0 0',
-        padding: 20,
+        borderRadius: 24,
+        padding: 18,
+        boxShadow: '0 24px 70px rgba(0,0,0,0.22)',
         animation: 'slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 16,
+          marginBottom: 14,
         }}>
           <div>
             <h3 style={{
@@ -1964,7 +1975,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
             <p style={{ fontSize: 12, color: T.ink3, margin: '-2px 0 0' }}>
-              Teacher approval is required before access is granted.
+              Add your details so the teacher can confirm your child.
             </p>
           </div>
 
@@ -1981,21 +1992,38 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           </button>
         </div>
 
+        <p style={{
+          fontSize: 11.5,
+          fontWeight: 850,
+          color: T.ink,
+          margin: '0 0 7px',
+        }}>
+          Parent details
+        </p>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <input
-            autoFocus
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
-            placeholder="Child first name"
+            value={parentFirstName}
+            onChange={e => setParentFirstName(e.target.value)}
+            placeholder="Parent first name"
             style={joinInputStyle}
           />
           <input
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-            placeholder="Child surname"
+            value={parentLastName}
+            onChange={e => setParentLastName(e.target.value)}
+            placeholder="Parent surname"
             style={joinInputStyle}
           />
         </div>
+
+        <input
+          value={parentPhone}
+          onChange={e => setParentPhone(e.target.value)}
+          placeholder="Phone number"
+          type="tel"
+          inputMode="tel"
+          style={{ ...joinInputStyle, marginTop: 10 }}
+        />
 
         <select
           value={relationship}
@@ -2006,24 +2034,63 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           <option>Mother</option>
           <option>Father</option>
           <option>Guardian</option>
-          <option>Other</option>
         </select>
 
-        <button onClick={submit} disabled={sending} style={{
-          width: '100%',
-          marginTop: 14,
-          padding: '14px',
-          borderRadius: 14,
-          border: 'none',
-          background: sending ? '#D4D4D8' : T.ink,
-          color: T.white,
-          fontSize: 15,
-          fontWeight: 800,
-          cursor: sending ? 'wait' : 'pointer',
-          fontFamily: 'inherit',
+        <p style={{
+          fontSize: 11.5,
+          fontWeight: 850,
+          color: T.ink,
+          margin: '14px 0 7px',
         }}>
-          {sending ? 'Sending request...' : 'Send request'}
+          Child details
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <input
+            autoFocus
+            value={childFirstName}
+            onChange={e => setChildFirstName(e.target.value)}
+            placeholder="Child first name"
+            style={joinInputStyle}
+          />
+          <input
+            value={childLastName}
+            onChange={e => setChildLastName(e.target.value)}
+            placeholder="Child surname"
+            style={joinInputStyle}
+          />
+        </div>
+
+        <button
+          onClick={submit}
+          disabled={sending}
+          style={{
+            width: '100%',
+            height: 46,
+            borderRadius: 999,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
+            marginTop: 16,
+            fontSize: 14,
+            fontWeight: 800,
+            fontFamily: 'inherit',
+            cursor: sending ? 'wait' : 'pointer',
+            opacity: sending ? 0.7 : 1,
+          }}
+        >
+          {sending ? 'Sending…' : 'Send request'}
         </button>
+
+        <p style={{
+          fontSize: 11.2,
+          color: T.ink3,
+          textAlign: 'center',
+          lineHeight: 1.45,
+          margin: '10px 6px 0',
+        }}>
+          The teacher will approve your request before messages, reports and class updates open.
+        </p>
       </div>
     </div>
   )

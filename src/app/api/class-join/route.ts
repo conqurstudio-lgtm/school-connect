@@ -78,17 +78,20 @@ async function getCaller(req: NextRequest) {
 async function createPublicParentSession(
   sb: ReturnType<typeof adminClient>,
   teacher: any,
+  parentFirstName: string,
+  parentLastName: string,
+  parentPhone: string,
   childFirstName: string,
   childLastName: string,
   relationship: string,
 ) {
   const childName = `${childFirstName} ${childLastName}`.trim()
-  const fullName = `${relationship || 'Parent/Guardian'} of ${childName}`.trim()
+  const fullName = `${parentFirstName} ${parentLastName}`.trim()
   const token = makeToken()
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toISOString()
 
-  // profiles.id has a foreign key to auth.users.id, so we must first create
-  // a lightweight auth user for public invite parents.
+  // profiles.id has a foreign key to auth.users.id, so create a lightweight
+  // auth user first, then create/update the profile.
   const authEmail = `parent-${randomUUID().replace(/-/g, '')}@schoolconnect.local`
   const authPassword = makeToken()
 
@@ -96,9 +99,12 @@ async function createPublicParentSession(
     email: authEmail,
     password: authPassword,
     email_confirm: true,
+    phone: undefined,
     user_metadata: {
       source: 'public_class_invite',
       school_id: teacher.school_id,
+      parent_name: fullName,
+      parent_phone: parentPhone,
       child_name: childName,
       relationship,
     },
@@ -110,11 +116,8 @@ async function createPublicParentSession(
 
   const parentId = authData.user.id
 
-  // public-class-join-profile-upsert-v3
   // Some projects have a database trigger that creates profiles automatically
-  // when an auth user is created. If that happened, insert would violate
-  // profiles_pkey. So we first update the existing profile, then insert only
-  // when no profile row exists yet.
+  // when an auth user is created. Update it if it exists, otherwise insert it.
   let profile: any = null
 
   const { data: existingProfile } = await sb.from('profiles')
@@ -162,14 +165,8 @@ async function createPublicParentSession(
 
   const { error: sessionError } = await sb.from('parent_sessions')
     .insert({
-      // public-class-join-session-school-v4
-      // parent_sessions.school_id is required by this database.
       school_id: teacher.school_id,
-      // public-class-join-session-phone-v5
-      // parent_sessions.phone is required by this database.
-      // The current public invite form only asks for child details, so we store
-      // a safe placeholder until parent details are collected in the next step.
-      phone: 'not-provided',
+      phone: parentPhone,
       parent_id: parentId,
       access_token: token,
       expires_at: expiresAt,
@@ -203,11 +200,17 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
 
   const teacherId = clean(body.teacher_id)
+  const parentFirstName = clean(body.parent_first_name)
+  const parentLastName = clean(body.parent_last_name)
+  const parentPhone = clean(body.parent_phone || body.phone)
   const childFirstName = clean(body.child_first_name)
   const childLastName = clean(body.child_last_name)
   const relationship = clean(body.relationship) || 'Parent/Guardian'
 
   if (!teacherId) return NextResponse.json({ error: 'teacher_id required' }, { status: 400 })
+  if (!parentFirstName || !parentLastName || !parentPhone) {
+    return NextResponse.json({ error: 'parent name and phone required' }, { status: 400 })
+  }
   if (!childFirstName || !childLastName) {
     return NextResponse.json({ error: 'child first name and surname required' }, { status: 400 })
   }
@@ -224,14 +227,18 @@ export async function POST(req: NextRequest) {
 
   let caller = await getCaller(req)
 
-  // public-class-join-auth-user-fix-v2
-  // First-time parents opening /class/{teacherId} have no Supabase auth session.
-  // Create a lightweight auth user + profile + parent_token session for them.
+  // public-join-parent-details-v1
+  // First-time parents opening /class/{teacherId} have no session.
+  // Create a lightweight auth-backed parent profile/session using the details
+  // they entered on the public join form.
   if (!caller?.profile) {
     try {
       caller = await createPublicParentSession(
         sb,
         teacher,
+        parentFirstName,
+        parentLastName,
+        parentPhone,
         childFirstName,
         childLastName,
         relationship,
