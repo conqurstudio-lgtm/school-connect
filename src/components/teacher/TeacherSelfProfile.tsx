@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-thread-copy-parent-template-v2
 // teacher-thread-match-parent-ui-v1
 // message-thread-alignment-repair-v1
 // ui-polish-audit-fixes-v1
@@ -2575,6 +2576,7 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
       if (!el) return
 
       const top = Math.max(0, el.scrollHeight - el.clientHeight)
+
       if (typeof el.scrollTo === 'function') {
         el.scrollTo({ top, behavior: smooth ? 'smooth' : 'auto' })
       } else {
@@ -2734,72 +2736,102 @@ function ParentThreadSheet({ parent, teacher, onClose }: any) {
         background: T.bg,
         fontFamily: 'Inter, -apple-system, sans-serif',
       }}>
-        <div style={{
-          flexShrink: 0,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 8,
-          padding: 'calc(5px + env(safe-area-inset-top, 0px)) 14px 7px',
-          background: T.bg,
-          position: 'sticky',
-          top: 0,
-          zIndex: 95,
-          borderBottom: `1px solid ${T.border}`,
-        }}>
-          <button onClick={onClose} aria-label="Back" style={{
-            width: 34,
-            height: 34,
-            borderRadius: 999,
-            border: `1px solid ${T.border}`,
-            background: 'transparent',
-            color: T.ink2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
+        <div
+          className="teacher-thread-parent-template-header"
+          style={{
             flexShrink: 0,
-          }}>
-            <X size={16} strokeWidth={1.8} />
-          </button>
-
+            padding: 'calc(5px + env(safe-area-inset-top, 0px)) 14px 8px',
+            background: T.bg,
+            position: 'sticky',
+            top: 0,
+            zIndex: 95,
+            borderBottom: `1px solid ${T.border}`,
+          }}
+        >
           <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: '50%',
-            background: '#F0F0F4',
-            color: T.ink2,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 13.8,
-            fontWeight: 800,
-            flexShrink: 0,
+            gap: 8,
           }}>
-            {childInitial}
-          </div>
+            <button
+              onClick={onClose}
+              aria-label="Back"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: `1px solid ${T.border}`,
+                background: T.white,
+                color: T.ink,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+                boxShadow: '0 8px 20px rgba(0,0,0,0.035)',
+              }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 24, lineHeight: 1, marginTop: -2 }}>‹</span>
+            </button>
 
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{
-              fontSize: 14,
-              color: T.ink,
-              fontWeight: 650,
-              margin: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {childThreadTitle}
-            </h3>
-            <p style={{
-              fontSize: 12.2,
-              color: T.ink3,
-              margin: '-2px 0 0',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {parentThreadLine}
-            </p>
+            <div
+              className="message-thread-person-header teacher-thread-person-header"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                padding: '9px 10px',
+                borderRadius: 18,
+                background: T.white,
+                border: `1px solid ${T.border}`,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+              }}
+            >
+              <div style={{
+                width: 38,
+                height: 38,
+                borderRadius: 14,
+                overflow: 'hidden',
+                background: '#F0F0F4',
+                color: T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12.8,
+                fontWeight: 900,
+                flexShrink: 0,
+              }}>
+                {childInitial}
+              </div>
+
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{
+                  fontSize: 13.8,
+                  fontWeight: 900,
+                  color: T.ink,
+                  margin: 0,
+                  letterSpacing: '-0.015em',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {childThreadTitle}
+                </p>
+
+                <p style={{
+                  fontSize: 12.1,
+                  color: T.ink3,
+                  margin: '2px 0 0',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {parentThreadLine}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
