@@ -65,3 +65,25 @@ Teacher invite should focus on:
 
 ### Phase 6: Larger teacher rebuild
 Once primitives are stable, rebuild teacher from the parent class-space shell and add teacher-only tools.
+
+## Added to migration list
+
+### Shared app-screen feel
+Teacher must use the same mobile shell feeling as Parent:
+- same max width
+- same full-height app container
+- same background
+- same sticky top behavior
+- same safe top padding pattern
+- same profile header spacing
+
+### Shared top profile/header
+Parent and Teacher top profiles should match:
+- same avatar size
+- same title size
+- same subtitle size
+- same action button size
+- same text weight
+- same header spacing
+
+This will be migrated after shared controls are stable.

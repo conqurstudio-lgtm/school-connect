@@ -3,6 +3,146 @@
 import React from 'react'
 import { CLASS_SPACE_UI, type ClassSpaceTabItem } from './classSpaceUi'
 
+type ShellProps = {
+  children: React.ReactNode
+  style?: React.CSSProperties
+}
+
+export function ClassSpaceMobileShell({ children, style }: ShellProps) {
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: CLASS_SPACE_UI.color.bg,
+      maxWidth: CLASS_SPACE_UI.shell.maxWidth,
+      margin: '0 auto',
+      fontFamily: CLASS_SPACE_UI.shell.fontFamily,
+      display: 'flex',
+      flexDirection: 'column',
+      ...style,
+    }}>
+      {children}
+    </div>
+  )
+}
+
+type TopProfileProps = {
+  title: React.ReactNode
+  subtitle?: React.ReactNode
+  avatarUrl?: string | null
+  initials?: string
+  leftAction?: React.ReactNode
+  rightAction?: React.ReactNode
+  children?: React.ReactNode
+  style?: React.CSSProperties
+}
+
+export function ClassSpaceTopProfile({
+  title,
+  subtitle,
+  avatarUrl,
+  initials = '',
+  leftAction,
+  rightAction,
+  children,
+  style,
+}: TopProfileProps) {
+  return (
+    <header style={{
+      flexShrink: 0,
+      padding: CLASS_SPACE_UI.topProfile.padding,
+      background: 'rgba(252,252,255,0.98)',
+      backdropFilter: 'blur(14px)',
+      WebkitBackdropFilter: 'blur(14px)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 40,
+      borderBottom: `1px solid ${CLASS_SPACE_UI.color.border}`,
+      ...style,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        minWidth: 0,
+      }}>
+        {leftAction && (
+          <div style={{ flexShrink: 0 }}>
+            {leftAction}
+          </div>
+        )}
+
+        <div style={{
+          width: CLASS_SPACE_UI.topProfile.avatar,
+          height: CLASS_SPACE_UI.topProfile.avatar,
+          borderRadius: CLASS_SPACE_UI.topProfile.avatarRadius,
+          background: avatarUrl
+            ? `url("${avatarUrl}") center / cover`
+            : 'linear-gradient(135deg, #F0F0F4, #E8E8EE)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: CLASS_SPACE_UI.color.ink2,
+          fontSize: 13.5,
+          fontWeight: 900,
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}>
+          {!avatarUrl && initials}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: CLASS_SPACE_UI.topProfile.titleSize,
+            fontWeight: 900,
+            color: CLASS_SPACE_UI.color.ink,
+            letterSpacing: '-0.025em',
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            lineHeight: 1.15,
+          }}>
+            {title}
+          </p>
+
+          {subtitle && (
+            <p style={{
+              fontSize: CLASS_SPACE_UI.topProfile.subtitleSize,
+              color: CLASS_SPACE_UI.color.ink3,
+              margin: '3px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              lineHeight: 1.25,
+            }}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        {rightAction && (
+          <div style={{
+            flexShrink: 0,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 7,
+          }}>
+            {rightAction}
+          </div>
+        )}
+      </div>
+
+      {children && (
+        <div style={{ marginTop: 10 }}>
+          {children}
+        </div>
+      )}
+    </header>
+  )
+}
+
 type TabsProps = {
   tabs: ClassSpaceTabItem[]
   active: string
@@ -156,6 +296,36 @@ export function ClassSpaceButton({
   )
 }
 
+type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  active?: boolean
+  size?: number
+}
+
+export function ClassSpaceIconButton({ active, size = 38, style, children, disabled, ...props }: IconButtonProps) {
+  return (
+    <button
+      {...props}
+      disabled={disabled}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 999,
+        border: `1px solid ${CLASS_SPACE_UI.color.border}`,
+        background: active ? '#EAF1FF' : CLASS_SPACE_UI.color.soft,
+        color: active ? CLASS_SPACE_UI.color.blue : CLASS_SPACE_UI.color.ink2,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: disabled ? 'wait' : 'pointer',
+        flexShrink: 0,
+        ...style,
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
 export const classSpaceInputStyle: React.CSSProperties = {
   width: '100%',
   minHeight: CLASS_SPACE_UI.input.minHeight,
@@ -182,4 +352,41 @@ export const classSpaceCardStyle: React.CSSProperties = {
   borderRadius: CLASS_SPACE_UI.card.radius,
   padding: CLASS_SPACE_UI.card.padding,
   boxShadow: CLASS_SPACE_UI.card.softShadow,
+}
+
+export function ClassSpaceDividerRow({
+  children,
+  onClick,
+  unread,
+  style,
+}: {
+  children: React.ReactNode
+  onClick?: () => void
+  unread?: boolean
+  style?: React.CSSProperties
+}) {
+  const Comp: any = onClick ? 'button' : 'div'
+
+  return (
+    <Comp
+      onClick={onClick}
+      style={{
+        width: '100%',
+        minHeight: CLASS_SPACE_UI.listRow.minHeight,
+        padding: CLASS_SPACE_UI.listRow.padding,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        background: unread ? '#F7F8FC' : 'transparent',
+        border: 'none',
+        borderBottom: `1px solid ${CLASS_SPACE_UI.color.border}`,
+        cursor: onClick ? 'pointer' : 'default',
+        fontFamily: 'inherit',
+        textAlign: 'left',
+        ...style,
+      }}
+    >
+      {children}
+    </Comp>
+  )
 }

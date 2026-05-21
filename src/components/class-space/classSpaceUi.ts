@@ -21,6 +21,15 @@ export const CLASS_SPACE_UI = {
     red: '#EF4444',
   },
 
+  topProfile: {
+    padding: 'calc(7px + env(safe-area-inset-top)) 16px 8px',
+    avatar: 42,
+    avatarRadius: 15,
+    titleSize: 15,
+    subtitleSize: 12.2,
+    actionSize: 34,
+  },
+
   tabs: {
     outerPadding: '6px 14px 8px',
     groupPadding: 3,
@@ -38,6 +47,13 @@ export const CLASS_SPACE_UI = {
     fontSize: 14,
     fontWeight: 850,
     padding: '12px 16px',
+  },
+
+  iconButton: {
+    small: 34,
+    medium: 38,
+    large: 42,
+    radius: 999,
   },
 
   input: {
@@ -59,6 +75,12 @@ export const CLASS_SPACE_UI = {
     minHeight: 58,
     padding: '13px 2px',
     avatar: 38,
+  },
+
+  message: {
+    bodyFontSize: 14,
+    bodyLineHeight: 1.5,
+    metaFontSize: 10.5,
   },
 } as const
 
