@@ -156,36 +156,6 @@ export function ClassSpaceButton({
   )
 }
 
-type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  active?: boolean
-  size?: number
-}
-
-export function ClassSpaceIconButton({ active, size = 38, style, children, disabled, ...props }: IconButtonProps) {
-  return (
-    <button
-      {...props}
-      disabled={disabled}
-      style={{
-        width: size,
-        height: size,
-        borderRadius: 999,
-        border: 'none',
-        background: active ? '#EAF1FF' : CLASS_SPACE_UI.color.soft,
-        color: active ? '#4F7DF7' : CLASS_SPACE_UI.color.ink2,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: disabled ? 'wait' : 'pointer',
-        flexShrink: 0,
-        ...style,
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
 export const classSpaceInputStyle: React.CSSProperties = {
   width: '100%',
   minHeight: CLASS_SPACE_UI.input.minHeight,
@@ -212,41 +182,4 @@ export const classSpaceCardStyle: React.CSSProperties = {
   borderRadius: CLASS_SPACE_UI.card.radius,
   padding: CLASS_SPACE_UI.card.padding,
   boxShadow: CLASS_SPACE_UI.card.softShadow,
-}
-
-export function ClassSpaceDividerRow({
-  children,
-  onClick,
-  unread,
-  style,
-}: {
-  children: React.ReactNode
-  onClick?: () => void
-  unread?: boolean
-  style?: React.CSSProperties
-}) {
-  const Comp: any = onClick ? 'button' : 'div'
-
-  return (
-    <Comp
-      onClick={onClick}
-      style={{
-        width: '100%',
-        minHeight: CLASS_SPACE_UI.listRow.minHeight,
-        padding: CLASS_SPACE_UI.listRow.padding,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        background: unread ? '#F7F8FC' : 'transparent',
-        border: 'none',
-        borderBottom: `1px solid ${CLASS_SPACE_UI.color.border}`,
-        cursor: onClick ? 'pointer' : 'default',
-        fontFamily: 'inherit',
-        textAlign: 'left',
-        ...style,
-      }}
-    >
-      {children}
-    </Comp>
-  )
 }

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-request-buttons-shared-controls-v1
 // shared-tabs-restore-and-apply-v3
 // teacher-request-buttons-shape-fix-v1
 // shared-ui-architecture-pass-v1
@@ -24,7 +25,7 @@ import { BackIcon } from '@/components/ui/BackIcon'
 import { createClient } from '@/lib/supabase/client'
 import { PostCard } from '@/components/feed/PostCard'
 import { PullToRefresh } from '@/components/feed/PullToRefresh'
-import { ClassSpaceTabs as SharedClassSpaceTabs } from '@/components/class-space/ClassSpacePrimitives'
+import { ClassSpaceTabs as SharedClassSpaceTabs, ClassSpaceButton } from '@/components/class-space/ClassSpacePrimitives'
 
 
 function sortMessagesOldestFirst(list: any[]) {
@@ -3323,7 +3324,7 @@ function PendingClassRequests({ onChanged }: any) {
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 6,
+                    gap: 8,
                     flexWrap: 'wrap',
                     marginTop: 8,
                   }}>
@@ -3346,51 +3347,29 @@ function PendingClassRequests({ onChanged }: any) {
                 gap: 8,
                 marginTop: 12,
               }}>
-                <button
+                <ClassSpaceButton
+                  type="button"
+                  compact
+                  variant="danger"
                   disabled={busy}
                   onClick={() => review(request.id, 'reject')}
-                  style={{
-                    height: 40,
-                    borderRadius: '50%',
-                    border: `1px solid ${T.border}`,
-                    background: T.white,
-                    color: T.red,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 6,
-                    fontSize: 13.2,
-                    fontWeight: 850,
-                    cursor: busy ? 'wait' : 'pointer',
-                    fontFamily: 'inherit',
-                    opacity: busy ? 0.6 : 1,
-                  }}
+                  style={{ flex: 1 }}
                 >
-                  <X size={14} strokeWidth={2.2} /> Reject
-                </button>
+                  <X size={14} strokeWidth={2.2} />
+                  Reject
+                </ClassSpaceButton>
 
-                <button
+                <ClassSpaceButton
+                  type="button"
+                  compact
+                  variant="primary"
                   disabled={busy}
                   onClick={() => review(request.id, 'approve')}
-                  style={{
-                    height: 40,
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: T.ink,
-                    color: T.white,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 6,
-                    fontSize: 13.2,
-                    fontWeight: 850,
-                    cursor: busy ? 'wait' : 'pointer',
-                    fontFamily: 'inherit',
-                    opacity: busy ? 0.72 : 1,
-                  }}
+                  style={{ flex: 1 }}
                 >
-                  <Check size={14} strokeWidth={2.4} /> Approve
-                </button>
+                  <Check size={14} strokeWidth={2.4} />
+                  Approve
+                </ClassSpaceButton>
               </div>
             </article>
           )
