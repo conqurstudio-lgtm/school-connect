@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-profile-clean-light-card-v4
 
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
@@ -10,6 +11,7 @@ import {
   ChevronDown,
   GraduationCap,
   LogOut,
+  Mail,
   MapPin,
   Pencil,
   Phone,
@@ -36,7 +38,7 @@ const supabase = createClient()
 const T = {
   ink:    '#1A1A1A',
   ink2:   '#4A4A4A',
-  ink3:   '#9A9A9A',
+  ink3:   '#8E8E93',
   border: 'rgba(0,0,0,0.07)',
   bg:     '#FCFCFF',
   soft:   '#F4F4F6',
@@ -47,7 +49,7 @@ const T = {
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '11px 13px',
-  fontSize: 14,
+  fontSize: 16,
   border: `1px solid ${T.border}`,
   borderRadius: 14,
   background: T.white,
@@ -60,10 +62,10 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 11,
-  fontWeight: 850,
+  fontWeight: 650,
   color: T.ink3,
   textTransform: 'uppercase',
-  letterSpacing: '0.06em',
+  letterSpacing: '0.055em',
   margin: '0 0 6px',
 }
 
@@ -74,7 +76,7 @@ const quietButton: React.CSSProperties = {
   background: T.white,
   color: T.ink2,
   fontSize: 13,
-  fontWeight: 850,
+  fontWeight: 650,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -108,7 +110,7 @@ function SectionCard({ children, style = {} }: any) {
       borderRadius: 22,
       background: T.white,
       border: `1px solid ${T.border}`,
-      boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
+      boxShadow: '0 10px 28px rgba(0,0,0,0.028)',
       ...style,
     }}>
       {children}
@@ -122,27 +124,27 @@ function SectionTitle({ eyebrow, title, subtitle }: any) {
       {eyebrow && (
         <p style={{
           fontSize: 11,
-          fontWeight: 900,
+          fontWeight: 650,
           color: T.ink3,
           textTransform: 'uppercase',
-          letterSpacing: '0.08em',
+          letterSpacing: '0.07em',
           margin: '0 0 4px',
         }}>
           {eyebrow}
         </p>
       )}
       <h2 style={{
-        fontSize: 17,
-        fontWeight: 950,
+        fontSize: 16,
+        fontWeight: 650,
         color: T.ink,
-        letterSpacing: '-0.035em',
+        letterSpacing: '-0.02em',
         margin: 0,
       }}>
         {title}
       </h2>
       {subtitle && (
         <p style={{
-          fontSize: 13.2,
+          fontSize: 13,
           color: T.ink3,
           lineHeight: 1.45,
           margin: '4px 0 0',
@@ -163,7 +165,7 @@ function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }:
       background: T.white,
       border: `1px solid ${T.border}`,
       overflow: 'hidden',
-      boxShadow: '0 8px 22px rgba(0,0,0,0.03)',
+      boxShadow: '0 8px 22px rgba(0,0,0,0.022)',
     }}>
       <button
         type="button"
@@ -198,16 +200,16 @@ function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }:
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
             fontSize: 14,
-            fontWeight: 900,
+            fontWeight: 650,
             color: T.ink,
             margin: 0,
-            letterSpacing: '-0.015em',
+            letterSpacing: '-0.01em',
           }}>
             {title}
           </p>
           {subtitle && (
             <p style={{
-              fontSize: 12.4,
+              fontSize: 12.5,
               color: T.ink3,
               margin: '2px 0 0',
               lineHeight: 1.35,
@@ -219,7 +221,7 @@ function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }:
 
         <ChevronDown
           size={16}
-          strokeWidth={2}
+          strokeWidth={1.9}
           style={{
             color: T.ink3,
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -232,12 +234,46 @@ function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }:
       {open && (
         <div style={{
           borderTop: `1px solid ${T.border}`,
-          padding: 13,
-          background: T.soft2,
+          padding: '3px 13px 13px',
+          background: T.white,
         }}>
           {children}
         </div>
       )}
+    </div>
+  )
+}
+
+function DetailLine({ label, value }: any) {
+  if (!value) return null
+
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: 14,
+      padding: '12px 0',
+      borderBottom: `1px solid ${T.border}`,
+    }}>
+      <span style={{
+        fontSize: 12.5,
+        color: T.ink3,
+        fontWeight: 500,
+      }}>
+        {label}
+      </span>
+      <span style={{
+        fontSize: 13,
+        color: T.ink2,
+        fontWeight: 500,
+        textAlign: 'right',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        maxWidth: '62%',
+      }}>
+        {value}
+      </span>
     </div>
   )
 }
@@ -282,7 +318,7 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 10 }}>
       <div>
         <label style={labelStyle}>School name</label>
         <input value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
@@ -319,7 +355,7 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 2 }}>
         <button type="button" onClick={onCancel} style={quietButton}>
-          <X size={14} strokeWidth={2.1} />
+          <X size={14} strokeWidth={2} />
           Cancel
         </button>
         <button type="button" disabled={saving} onClick={save} style={{
@@ -327,8 +363,8 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
           opacity: saving ? 0.6 : 1,
           cursor: saving ? 'wait' : 'pointer',
         }}>
-          <Save size={14} strokeWidth={2.1} />
-          {saving ? 'Saving…' : 'Save'}
+          <Save size={14} strokeWidth={2} />
+          {saving ? 'Saving...' : 'Save'}
         </button>
       </div>
     </div>
@@ -352,7 +388,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     }
 
     setUploading(true)
-    const toastId = toast.loading('Updating logo…')
+    const toastId = toast.loading('Updating logo...')
 
     try {
       const ext = file.name.split('.').pop()
@@ -388,14 +424,19 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     window.location.href = '/auth/login'
   }
 
-  const renderSchoolCard = () => (
-    <SectionCard>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ position: 'relative', flexShrink: 0 }}>
+  const renderSchoolProfileCard = () => (
+    <SectionCard style={{ padding: 16 }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+        <div style={{ position: 'relative' }}>
           <div style={{
-            width: 68,
-            height: 68,
-            borderRadius: 22,
+            width: 78,
+            height: 78,
+            borderRadius: 24,
             background: school.logo_url ? T.white : T.soft,
             border: `1px solid ${T.border}`,
             overflow: 'hidden',
@@ -407,10 +448,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               <img
                 src={school.logo_url}
                 alt={school.name}
-                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 7 }}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }}
               />
             ) : (
-              <span style={{ fontSize: 23, fontWeight: 950, color: T.ink3 }}>
+              <span style={{ fontSize: 24, fontWeight: 600, color: T.ink3 }}>
                 {initialsFrom(school.name)}
               </span>
             )}
@@ -457,68 +498,80 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           )}
         </div>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontSize: 18,
-            fontWeight: 950,
-            color: T.ink,
-            margin: 0,
-            letterSpacing: '-0.04em',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            {school.name}
-          </p>
+        <h1 style={{
+          fontSize: 18,
+          fontWeight: 600,
+          color: T.ink,
+          margin: '12px 0 0',
+          letterSpacing: '-0.02em',
+        }}>
+          {school.name}
+        </h1>
 
-          <p style={{
-            fontSize: 13.2,
-            color: T.ink3,
-            lineHeight: 1.38,
-            margin: '3px 0 8px',
-          }}>
-            {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
-          </p>
+        <p style={{
+          fontSize: 13.2,
+          color: T.ink3,
+          lineHeight: 1.42,
+          margin: '5px 0 0',
+          maxWidth: 320,
+        }}>
+          {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
+        </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {(school.province || school.address || school.phone || school.email) && (
+          <div style={{
+            width: '100%',
+            marginTop: 14,
+            borderTop: `1px solid ${T.border}`,
+            paddingTop: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 7,
+            alignItems: 'center',
+          }}>
             {(school.province || school.address) && (
-              <span style={{
-                minHeight: 28,
+              <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '0 9px',
-                borderRadius: 999,
-                border: `1px solid ${T.border}`,
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.4,
-                fontWeight: 750,
+                fontSize: 12.6,
+                color: T.ink3,
+                lineHeight: 1.35,
               }}>
-                <MapPin size={12} strokeWidth={1.8} />
-                {school.province || school.address}
-              </span>
+                <MapPin size={13} strokeWidth={1.7} />
+                <span>{school.province || school.address}</span>
+              </div>
             )}
+
             {school.phone && (
-              <span style={{
-                minHeight: 28,
+              <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '0 9px',
-                borderRadius: 999,
-                border: `1px solid ${T.border}`,
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.4,
-                fontWeight: 750,
+                fontSize: 12.6,
+                color: T.ink3,
+                lineHeight: 1.35,
               }}>
-                <Phone size={12} strokeWidth={1.8} />
-                {school.phone}
-              </span>
+                <Phone size={13} strokeWidth={1.7} />
+                <span>{school.phone}</span>
+              </div>
+            )}
+
+            {school.email && (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 12.6,
+                color: T.ink3,
+                lineHeight: 1.35,
+              }}>
+                <Mail size={13} strokeWidth={1.7} />
+                <span>{school.email}</span>
+              </div>
             )}
           </div>
-        </div>
+        )}
       </div>
     </SectionCard>
   )
@@ -574,10 +627,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
               <p style={{
                 fontSize: 14,
-                fontWeight: 950,
+                fontWeight: 650,
                 color: T.ink,
                 margin: 0,
-                letterSpacing: '-0.025em',
+                letterSpacing: '-0.015em',
               }}>
                 School
               </p>
@@ -630,7 +683,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                     background: tab === key ? T.ink : T.white,
                     color: tab === key ? T.white : T.ink2,
                     fontSize: 12,
-                    fontWeight: 850,
+                    fontWeight: 650,
                     fontFamily: 'inherit',
                     cursor: 'pointer',
                     padding: '0 6px',
@@ -652,14 +705,14 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         }}>
           {tab === 'profile' && (
             <>
-              {renderSchoolCard()}
+              {renderSchoolProfileCard()}
 
               <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <AccordionCard
                   defaultOpen
                   icon={<Building2 size={17} strokeWidth={1.8} />}
-                  title="School profile"
-                  subtitle="Edit the identity people see."
+                  title="School details"
+                  subtitle="Update profile information."
                 >
                   {editing ? (
                     <EditSchoolDetails
@@ -673,42 +726,15 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                     />
                   ) : (
                     <div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {[
-                          ['School name', school.name],
-                          ['Tagline', school.tagline],
-                          ['Location', school.province || school.address],
-                          ['Phone', school.phone],
-                          ['Email', school.email],
-                          ['Website', school.website],
-                        ].filter(([, value]) => Boolean(value)).map(([label, value]) => (
-                          <div key={label} style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            gap: 12,
-                            padding: '9px 10px',
-                            borderRadius: 14,
-                            background: T.white,
-                            border: `1px solid ${T.border}`,
-                          }}>
-                            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 750 }}>{label}</span>
-                            <span style={{
-                              fontSize: 12.8,
-                              color: T.ink2,
-                              fontWeight: 750,
-                              textAlign: 'right',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                            }}>
-                              {value}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+                      <DetailLine label="School name" value={school.name} />
+                      <DetailLine label="Tagline" value={school.tagline} />
+                      <DetailLine label="Location" value={school.province || school.address} />
+                      <DetailLine label="Phone" value={school.phone} />
+                      <DetailLine label="Email" value={school.email} />
+                      <DetailLine label="Website" value={school.website} />
 
                       {isAdmin && (
-                        <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 11 }}>
+                        <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 12 }}>
                           <Pencil size={14} strokeWidth={2} />
                           Edit profile
                         </button>
@@ -741,7 +767,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 <GraduationCap size={17} strokeWidth={1.8} color={T.ink2} />
                 <p style={{
                   fontSize: 13.5,
-                  fontWeight: 900,
+                  fontWeight: 650,
                   color: T.ink,
                   margin: '8px 0 3px',
                 }}>
@@ -786,7 +812,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 <Sparkles size={17} strokeWidth={1.8} color={T.ink2} />
                 <p style={{
                   fontSize: 13,
-                  fontWeight: 900,
+                  fontWeight: 650,
                   color: T.ink,
                   margin: '8px 0 2px',
                 }}>
@@ -825,7 +851,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             textAlign: 'center',
             margin: '16px 0 0',
             letterSpacing: '0.04em',
-            fontWeight: 700,
+            fontWeight: 600,
           }}>
             Powered by School Connect
           </p>
