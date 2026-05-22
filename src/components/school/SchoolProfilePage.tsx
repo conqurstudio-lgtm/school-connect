@@ -1,6 +1,7 @@
 // @ts-nocheck
 'use client'
 // school-profile-clean-light-card-v4
+// school-profile-spacing-icon-cleanup-v5
 
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
@@ -9,7 +10,6 @@ import {
   Building2,
   Camera,
   ChevronDown,
-  GraduationCap,
   LogOut,
   Mail,
   MapPin,
@@ -18,7 +18,6 @@ import {
   Save,
   Settings,
   ShieldCheck,
-  Sparkles,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -529,31 +528,42 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             gap: 7,
             alignItems: 'center',
           }}>
-            {(school.province || school.address) && (
+            {(school.province || school.address || school.phone) && (
               <div style={{
-                display: 'inline-flex',
+                display: 'flex',
                 alignItems: 'center',
-                gap: 6,
-                fontSize: 12.6,
-                color: T.ink3,
-                lineHeight: 1.35,
+                justifyContent: 'center',
+                gap: 12,
+                flexWrap: 'wrap',
+                width: '100%',
               }}>
-                <MapPin size={13} strokeWidth={1.7} />
-                <span>{school.province || school.address}</span>
-              </div>
-            )}
+                {(school.province || school.address) && (
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12.6,
+                    color: T.ink3,
+                    lineHeight: 1.35,
+                  }}>
+                    <MapPin size={13} strokeWidth={1.7} />
+                    <span>{school.province || school.address}</span>
+                  </div>
+                )}
 
-            {school.phone && (
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                fontSize: 12.6,
-                color: T.ink3,
-                lineHeight: 1.35,
-              }}>
-                <Phone size={13} strokeWidth={1.7} />
-                <span>{school.phone}</span>
+                {school.phone && (
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 12.6,
+                    color: T.ink3,
+                    lineHeight: 1.35,
+                  }}>
+                    <Phone size={13} strokeWidth={1.7} />
+                    <span>{school.phone}</span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -764,12 +774,11 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           {tab === 'classes' && isAdmin && (
             <div style={{ padding: '0 14px' }}>
               <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2, boxShadow: 'none' }}>
-                <GraduationCap size={17} strokeWidth={1.8} color={T.ink2} />
                 <p style={{
                   fontSize: 13.5,
                   fontWeight: 650,
                   color: T.ink,
-                  margin: '8px 0 3px',
+                  margin: '0 0 3px',
                 }}>
                   Classes
                 </p>
@@ -809,12 +818,11 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               </SectionCard>
 
               <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2 }}>
-                <Sparkles size={17} strokeWidth={1.8} color={T.ink2} />
                 <p style={{
                   fontSize: 13,
                   fontWeight: 650,
                   color: T.ink,
-                  margin: '8px 0 2px',
+                  margin: '0 0 2px',
                 }}>
                   Product principle
                 </p>
