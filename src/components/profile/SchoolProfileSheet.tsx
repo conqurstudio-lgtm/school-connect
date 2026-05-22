@@ -62,7 +62,7 @@ export function SchoolProfileSheet({
 
   const [inviteUrl, setInviteUrl] = useState(`/join/${school.slug}`)
   useEffect(() => {
-    setInviteUrl(`${window.location.origin}/join/${school.slug}`)
+    setInviteUrl(`${window.location.origin}/parent-join/${school.slug}`)
   }, [school.slug])
 
   const fetchStats = useCallback(async () => {

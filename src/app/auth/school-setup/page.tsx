@@ -431,7 +431,7 @@ export default function SchoolSetupPage() {
               </p>
               <p style={{ fontSize: 13, color: T.ink2, margin: 0,
                            wordBreak: 'break-all', fontFamily: 'monospace' }}>
-                {origin}/join/{schoolSlug}
+                {origin}/parent-join/{schoolSlug}
               </p>
             </div>
 
@@ -440,7 +440,7 @@ export default function SchoolSetupPage() {
                 const { createClient } = await import('@/lib/supabase/client')
                 const sb = createClient()
                 await sb.auth.getSession()
-                window.location.href = '/feed'
+                window.location.href = '/school'
               }} style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               width: '100%', padding: '13px 0',
