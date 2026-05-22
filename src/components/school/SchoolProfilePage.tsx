@@ -13,6 +13,7 @@
 // school-life-feed-unification-v1
 // school-life-admin-images-v3
 // school-life-image-edge-scroll-v4
+// school-life-image-lightbox-v5
 // school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
@@ -633,6 +634,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
 
 function ActivityCard({ post }: any) {
+  const [openImage, setOpenImage] = useState<string | null>(null)
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const teacher = post.teacher || null
 
@@ -659,168 +661,249 @@ function ActivityCard({ post }: any) {
   const body = post.body || post.title || post.caption || ''
   const mediaBleedLeft = 62
 
+  const openViewer = (src: string) => {
+    setOpenImage(src)
+  }
+
   return (
-    <article style={{
-      display: 'grid',
-      gridTemplateColumns: '38px 1fr',
-      gap: 10,
-      padding: '2px 0 18px',
-      borderBottom: `1px solid ${T.border}`,
-    }}>
-      <div style={{
-        width: 38,
-        height: 38,
-        borderRadius: 14,
-        background: avatarUrl ? `url(${avatarUrl}) center/cover` : T.soft,
-        border: `1px solid ${T.border}`,
-        color: T.ink2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-        fontWeight: 600,
-        overflow: 'hidden',
+    <>
+      <article style={{
+        display: 'grid',
+        gridTemplateColumns: '38px 1fr',
+        gap: 10,
+        padding: '2px 0 18px',
+        borderBottom: `1px solid ${T.border}`,
       }}>
-        {!avatarUrl && authorInitials}
-      </div>
-
-      <div style={{ minWidth: 0 }}>
         <div style={{
+          width: 38,
+          height: 38,
+          borderRadius: 14,
+          background: avatarUrl ? `url(${avatarUrl}) center/cover` : T.soft,
+          border: `1px solid ${T.border}`,
+          color: T.ink2,
           display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          fontWeight: 600,
+          overflow: 'hidden',
         }}>
-          <div style={{ minWidth: 0 }}>
-            <p style={{
-              fontSize: 13.5,
-              fontWeight: 600,
-              color: T.ink,
-              margin: 0,
-              letterSpacing: '-0.01em',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {authorName}
-            </p>
-
-            <p style={{
-              fontSize: 12.2,
-              color: T.ink3,
-              margin: '2px 0 0',
-              lineHeight: 1.35,
-            }}>
-              {[typeLabel, context, formatShortDate(post.created_at)].filter(Boolean).join(' · ')}
-            </p>
-          </div>
-
-          <button type="button" aria-label="Post options" style={{
-            width: 28,
-            height: 28,
-            borderRadius: 999,
-            border: `1px solid ${T.border}`,
-            background: T.white,
-            color: T.ink3,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}>
-            <MoreHorizontal size={15} strokeWidth={1.8} />
-          </button>
+          {!avatarUrl && authorInitials}
         </div>
 
-        {body && (
-          <p style={{
-            fontSize: 13.6,
-            color: T.ink2,
-            lineHeight: 1.5,
-            margin: '8px 0 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {body}
-          </p>
-        )}
-
-        {images.length === 1 && (
-          <div style={{ marginTop: 10 }}>
-            <img
-              src={images[0]}
-              alt=""
-              style={{
-                width: '100%',
-                height: 260,
-                objectFit: 'cover',
-                borderRadius: 20,
-                border: `1px solid ${T.border}`,
-                display: 'block',
-                background: T.soft,
-              }}
-            />
-          </div>
-        )}
-
-        {images.length > 1 && (
+        <div style={{ minWidth: 0 }}>
           <div style={{
-            marginTop: 10,
             display: 'flex',
-            gap: 8,
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-            scrollBehavior: 'smooth',
-            scrollSnapType: 'x proximity',
-            marginLeft: -mediaBleedLeft,
-            marginRight: -14,
-            padding: `0 14px 3px ${mediaBleedLeft}px`,
-            scrollPaddingLeft: mediaBleedLeft,
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 10,
           }}>
-            {images.map((src: string, index: number) => (
-              <div
-                key={`${src}-${index}`}
-                style={{
-                  width: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
-                  minWidth: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
-                  height: 260,
-                  borderRadius: 20,
-                  overflow: 'hidden',
-                  background: T.soft,
-                  border: `1px solid ${T.border}`,
-                  scrollSnapAlign: 'start',
-                  flexShrink: 0,
-                }}
-              >
-                <img
-                  src={src}
-                  alt=""
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+            <div style={{ minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 600,
+                color: T.ink,
+                margin: 0,
+                letterSpacing: '-0.01em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {authorName}
+              </p>
 
-        {(post.event_date || post.event_time || post.event_location) && (
-          <div style={{
-            marginTop: 10,
-            padding: '9px 0 0',
-            borderTop: `1px solid ${T.border}`,
-            fontSize: 12.5,
-            color: T.ink3,
-            lineHeight: 1.45,
-          }}>
-            {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+              <p style={{
+                fontSize: 12.2,
+                color: T.ink3,
+                margin: '2px 0 0',
+                lineHeight: 1.35,
+              }}>
+                {[typeLabel, context, formatShortDate(post.created_at)].filter(Boolean).join(' · ')}
+              </p>
+            </div>
+
+            <button type="button" aria-label="Post options" style={{
+              width: 28,
+              height: 28,
+              borderRadius: 999,
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink3,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}>
+              <MoreHorizontal size={15} strokeWidth={1.8} />
+            </button>
           </div>
-        )}
-      </div>
-    </article>
+
+          {body && (
+            <p style={{
+              fontSize: 13.6,
+              color: T.ink2,
+              lineHeight: 1.5,
+              margin: '8px 0 0',
+              whiteSpace: 'pre-wrap',
+            }}>
+              {body}
+            </p>
+          )}
+
+          {images.length === 1 && (
+            <button type="button" onClick={() => openViewer(images[0])} style={{
+              marginTop: 10,
+              padding: 0,
+              border: 'none',
+              background: 'transparent',
+              width: '100%',
+              display: 'block',
+              cursor: 'zoom-in',
+              fontFamily: 'inherit',
+            }}>
+              <img
+                src={images[0]}
+                alt=""
+                style={{
+                  width: '100%',
+                  height: 260,
+                  objectFit: 'cover',
+                  borderRadius: 20,
+                  border: `1px solid ${T.border}`,
+                  display: 'block',
+                  background: T.soft,
+                }}
+              />
+            </button>
+          )}
+
+          {images.length > 1 && (
+            <div style={{
+              marginTop: 10,
+              display: 'flex',
+              gap: 8,
+              overflowX: 'auto',
+              overflowY: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              scrollBehavior: 'smooth',
+              scrollSnapType: 'x proximity',
+              marginLeft: -mediaBleedLeft,
+              marginRight: -14,
+              padding: `0 14px 3px ${mediaBleedLeft}px`,
+              scrollPaddingLeft: mediaBleedLeft,
+            }}>
+              {images.map((src: string, index: number) => (
+                <button
+                  key={`${src}-${index}`}
+                  type="button"
+                  onClick={() => openViewer(src)}
+                  style={{
+                    width: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
+                    minWidth: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
+                    height: 260,
+                    borderRadius: 20,
+                    overflow: 'hidden',
+                    background: T.soft,
+                    border: `1px solid ${T.border}`,
+                    scrollSnapAlign: 'start',
+                    flexShrink: 0,
+                    padding: 0,
+                    cursor: 'zoom-in',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+          {(post.event_date || post.event_time || post.event_location) && (
+            <div style={{
+              marginTop: 10,
+              padding: '9px 0 0',
+              borderTop: `1px solid ${T.border}`,
+              fontSize: 12.5,
+              color: T.ink3,
+              lineHeight: 1.45,
+            }}>
+              {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+            </div>
+          )}
+        </div>
+      </article>
+
+      {openImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpenImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 2200,
+            background: 'rgba(0,0,0,0.82)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px))',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Close image"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenImage(null)
+            }}
+            style={{
+              position: 'absolute',
+              top: 'calc(12px + env(safe-area-inset-top, 0px))',
+              right: 14,
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.22)',
+              background: 'rgba(255,255,255,0.12)',
+              color: '#FFFFFF',
+              fontSize: 22,
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            ×
+          </button>
+
+          <img
+            src={openImage}
+            alt=""
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: 760,
+              maxHeight: '86dvh',
+              objectFit: 'contain',
+              borderRadius: 18,
+              display: 'block',
+              boxShadow: '0 24px 80px rgba(0,0,0,0.35)',
+            }}
+          />
+        </div>
+      )}
+    </>
   )
 }
 
