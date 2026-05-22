@@ -1,6 +1,7 @@
 // @ts-nocheck
 'use client'
 // school-home-icon-life-view-v6
+// school-logo-home-settings-flow-v7
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -768,15 +769,52 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               height: 38,
               borderRadius: 999,
               border: `1px solid ${tab === 'home' ? T.ink : T.border}`,
-              background: tab === 'home' ? T.ink : T.white,
-              color: tab === 'home' ? T.white : T.ink,
+              background: T.white,
+              color: T.ink,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
+              padding: 0,
+              position: 'relative',
+              overflow: 'visible',
             }}>
-              <Home size={16} strokeWidth={1.9} />
+              <span style={{
+                width: 30,
+                height: 30,
+                borderRadius: 999,
+                background: school.logo_url ? T.white : T.soft,
+                border: `1px solid ${T.border}`,
+                overflow: 'hidden',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: T.ink2,
+                fontSize: 10.5,
+                fontWeight: 600,
+              }}>
+                {school.logo_url ? (
+                  <img
+                    src={school.logo_url}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 3 }}
+                  />
+                ) : (
+                  initialsFrom(school.name)
+                )}
+              </span>
+
+              <span style={{
+                position: 'absolute',
+                right: 3,
+                bottom: 3,
+                width: 7,
+                height: 7,
+                borderRadius: 999,
+                background: tab === 'home' ? T.ink : '#D1D1D6',
+                border: `1.5px solid ${T.white}`,
+              }} />
             </button>
 
             <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
@@ -798,13 +836,13 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               </p>
             </div>
 
-            <button type="button" onClick={() => setTab('settings')} style={{
+            <button type="button" onClick={() => { setTab('profile'); setEditing(false) }} aria-label="Customize school" style={{
               width: 38,
               height: 38,
               borderRadius: 999,
-              border: `1px solid ${tab === 'settings' ? T.ink : T.border}`,
-              background: tab === 'settings' ? T.ink : T.white,
-              color: tab === 'settings' ? T.white : T.ink2,
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
