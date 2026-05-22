@@ -6,6 +6,7 @@
 // school-home-simple-empty-state-v9
 // school-logo-static-blue-setup-dot-v10
 // school-home-empty-card-match-teachers-v11
+// school-home-empty-card-theme-standard-v12
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -970,23 +971,22 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   </p>
                 </SectionCard>
               ) : posts.length === 0 ? (
-                <SectionCard style={{
-                  marginLeft: 0,
-                  marginRight: 0,
+                <div style={{
+                  padding: '48px 20px',
                   textAlign: 'center',
-                  padding: '30px 20px',
+                  border: `1px dashed ${T.border}`,
+                  borderRadius: 16,
                   background: T.white,
-                  boxShadow: '0 10px 28px rgba(0,0,0,0.026)',
                 }}>
                   <div style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 16,
-                    background: T.soft,
+                    width: 48,
+                    height: 48,
+                    borderRadius: 14,
+                    background: '#F0F0F4',
+                    margin: '0 auto 12px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0 auto 12px',
                     color: T.ink3,
                     fontSize: 13,
                     fontWeight: 600,
@@ -998,29 +998,24 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                     No activity yet
                   </p>
 
-                  <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+                  <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 16px', lineHeight: 1.5 }}>
                     Class posts and school updates will appear here.
                   </p>
 
                   <button type="button" onClick={() => { setTab('classes'); setEditing(false) }} style={{
-                    marginTop: 14,
-                    height: 34,
+                    padding: '8px 14px',
                     borderRadius: 999,
-                    border: `1px solid ${T.border}`,
-                    background: T.white,
-                    color: T.ink2,
-                    fontSize: 12.8,
-                    fontWeight: 650,
+                    background: T.ink,
+                    color: T.white,
+                    border: 'none',
+                    fontSize: 13,
+                    fontWeight: 600,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0 13px',
                   }}>
                     Add teachers
                   </button>
-                </SectionCard>
+                </div>
               ) : (
                 posts.map(post => <ActivityCard key={post.id} post={post} />)
               )}
