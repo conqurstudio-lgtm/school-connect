@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Building2,
   Camera,
-  Check,
   ChevronDown,
   GraduationCap,
   LogOut,
@@ -18,7 +17,6 @@ import {
   Settings,
   ShieldCheck,
   Sparkles,
-  Users,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -390,6 +388,141 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     window.location.href = '/auth/login'
   }
 
+  const renderSchoolCard = () => (
+    <SectionCard>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div style={{
+            width: 68,
+            height: 68,
+            borderRadius: 22,
+            background: school.logo_url ? T.white : T.soft,
+            border: `1px solid ${T.border}`,
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            {school.logo_url ? (
+              <img
+                src={school.logo_url}
+                alt={school.name}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 7 }}
+              />
+            ) : (
+              <span style={{ fontSize: 23, fontWeight: 950, color: T.ink3 }}>
+                {initialsFrom(school.name)}
+              </span>
+            )}
+          </div>
+
+          {isAdmin && (
+            <>
+              <button type="button" onClick={() => logoRef.current?.click()} style={{
+                position: 'absolute',
+                right: -4,
+                bottom: -4,
+                width: 30,
+                height: 30,
+                borderRadius: 999,
+                border: `2px solid ${T.white}`,
+                background: T.ink,
+                color: T.white,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: uploading ? 'wait' : 'pointer',
+              }}>
+                {uploading ? (
+                  <span style={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: '50%',
+                    border: '2px solid rgba(255,255,255,0.35)',
+                    borderTopColor: T.white,
+                    animation: 'spin 0.7s linear infinite',
+                  }} />
+                ) : (
+                  <Camera size={13} strokeWidth={2} />
+                )}
+              </button>
+              <input
+                ref={logoRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleLogoChange}
+              />
+            </>
+          )}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 18,
+            fontWeight: 950,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.04em',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {school.name}
+          </p>
+
+          <p style={{
+            fontSize: 13.2,
+            color: T.ink3,
+            lineHeight: 1.38,
+            margin: '3px 0 8px',
+          }}>
+            {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {(school.province || school.address) && (
+              <span style={{
+                minHeight: 28,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '0 9px',
+                borderRadius: 999,
+                border: `1px solid ${T.border}`,
+                background: T.white,
+                color: T.ink2,
+                fontSize: 12.4,
+                fontWeight: 750,
+              }}>
+                <MapPin size={12} strokeWidth={1.8} />
+                {school.province || school.address}
+              </span>
+            )}
+            {school.phone && (
+              <span style={{
+                minHeight: 28,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '0 9px',
+                borderRadius: 999,
+                border: `1px solid ${T.border}`,
+                background: T.white,
+                color: T.ink2,
+                fontSize: 12.4,
+                fontWeight: 750,
+              }}>
+                <Phone size={12} strokeWidth={1.8} />
+                {school.phone}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </SectionCard>
+  )
+
   return (
     <div style={{
       minHeight: '100dvh',
@@ -517,286 +650,111 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           WebkitOverflowScrolling: 'touch',
           padding: '10px 0 calc(18px + env(safe-area-inset-bottom, 0px))',
         }}>
-          <SectionCard>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ position: 'relative', flexShrink: 0 }}>
-                <div style={{
-                  width: 68,
-                  height: 68,
-                  borderRadius: 22,
-                  background: school.logo_url ? T.white : T.soft,
-                  border: `1px solid ${T.border}`,
-                  overflow: 'hidden',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  {school.logo_url ? (
-                    <img
-                      src={school.logo_url}
-                      alt={school.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 7 }}
+          {tab === 'profile' && (
+            <>
+              {renderSchoolCard()}
+
+              <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <AccordionCard
+                  defaultOpen
+                  icon={<Building2 size={17} strokeWidth={1.8} />}
+                  title="School profile"
+                  subtitle="Edit the identity people see."
+                >
+                  {editing ? (
+                    <EditSchoolDetails
+                      school={school}
+                      onCancel={() => setEditing(false)}
+                      onSaved={(updates: any) => {
+                        setSchool((s: any) => ({ ...s, ...updates }))
+                        setEditing(false)
+                        window.dispatchEvent(new Event('school-updated'))
+                      }}
                     />
                   ) : (
-                    <span style={{ fontSize: 23, fontWeight: 950, color: T.ink3 }}>
-                      {initialsFrom(school.name)}
-                    </span>
-                  )}
-                </div>
-
-                {isAdmin && (
-                  <>
-                    <button type="button" onClick={() => logoRef.current?.click()} style={{
-                      position: 'absolute',
-                      right: -4,
-                      bottom: -4,
-                      width: 30,
-                      height: 30,
-                      borderRadius: 999,
-                      border: `2px solid ${T.white}`,
-                      background: T.ink,
-                      color: T.white,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: uploading ? 'wait' : 'pointer',
-                    }}>
-                      {uploading ? (
-                        <span style={{
-                          width: 12,
-                          height: 12,
-                          borderRadius: '50%',
-                          border: '2px solid rgba(255,255,255,0.35)',
-                          borderTopColor: T.white,
-                          animation: 'spin 0.7s linear infinite',
-                        }} />
-                      ) : (
-                        <Camera size={13} strokeWidth={2} />
-                      )}
-                    </button>
-                    <input
-                      ref={logoRef}
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={handleLogoChange}
-                    />
-                  </>
-                )}
-              </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{
-                  fontSize: 18,
-                  fontWeight: 950,
-                  color: T.ink,
-                  margin: 0,
-                  letterSpacing: '-0.04em',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {school.name}
-                </p>
-
-                <p style={{
-                  fontSize: 13.2,
-                  color: T.ink3,
-                  lineHeight: 1.38,
-                  margin: '3px 0 8px',
-                }}>
-                  {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
-                </p>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  {(school.province || school.address) && (
-                    <span style={{
-                      minHeight: 28,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '0 9px',
-                      borderRadius: 999,
-                      border: `1px solid ${T.border}`,
-                      background: T.white,
-                      color: T.ink2,
-                      fontSize: 12.4,
-                      fontWeight: 750,
-                    }}>
-                      <MapPin size={12} strokeWidth={1.8} />
-                      {school.province || school.address}
-                    </span>
-                  )}
-                  {school.phone && (
-                    <span style={{
-                      minHeight: 28,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '0 9px',
-                      borderRadius: 999,
-                      border: `1px solid ${T.border}`,
-                      background: T.white,
-                      color: T.ink2,
-                      fontSize: 12.4,
-                      fontWeight: 750,
-                    }}>
-                      <Phone size={12} strokeWidth={1.8} />
-                      {school.phone}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-
-          {tab === 'profile' && (
-            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <AccordionCard
-                defaultOpen
-                icon={<Building2 size={17} strokeWidth={1.8} />}
-                title="School profile"
-                subtitle="Edit the public identity parents and teachers see."
-              >
-                {editing ? (
-                  <EditSchoolDetails
-                    school={school}
-                    onCancel={() => setEditing(false)}
-                    onSaved={(updates: any) => {
-                      setSchool((s: any) => ({ ...s, ...updates }))
-                      setEditing(false)
-                      window.dispatchEvent(new Event('school-updated'))
-                    }}
-                  />
-                ) : (
-                  <div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {[
-                        ['School name', school.name],
-                        ['Tagline', school.tagline],
-                        ['Location', school.province || school.address],
-                        ['Phone', school.phone],
-                        ['Email', school.email],
-                        ['Website', school.website],
-                      ].filter(([, value]) => Boolean(value)).map(([label, value]) => (
-                        <div key={label} style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          gap: 12,
-                          padding: '9px 10px',
-                          borderRadius: 14,
-                          background: T.white,
-                          border: `1px solid ${T.border}`,
-                        }}>
-                          <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 750 }}>{label}</span>
-                          <span style={{
-                            fontSize: 12.8,
-                            color: T.ink2,
-                            fontWeight: 750,
-                            textAlign: 'right',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
+                    <div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {[
+                          ['School name', school.name],
+                          ['Tagline', school.tagline],
+                          ['Location', school.province || school.address],
+                          ['Phone', school.phone],
+                          ['Email', school.email],
+                          ['Website', school.website],
+                        ].filter(([, value]) => Boolean(value)).map(([label, value]) => (
+                          <div key={label} style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: 12,
+                            padding: '9px 10px',
+                            borderRadius: 14,
+                            background: T.white,
+                            border: `1px solid ${T.border}`,
                           }}>
-                            {value}
-                          </span>
-                        </div>
-                      ))}
+                            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 750 }}>{label}</span>
+                            <span style={{
+                              fontSize: 12.8,
+                              color: T.ink2,
+                              fontWeight: 750,
+                              textAlign: 'right',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}>
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {isAdmin && (
+                        <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 11 }}>
+                          <Pencil size={14} strokeWidth={2} />
+                          Edit profile
+                        </button>
+                      )}
                     </div>
+                  )}
+                </AccordionCard>
 
-                    {isAdmin && (
-                      <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 11 }}>
-                        <Pencil size={14} strokeWidth={2} />
-                        Edit school profile
-                      </button>
-                    )}
-                  </div>
-                )}
-              </AccordionCard>
-
-              <AccordionCard
-                icon={<ShieldCheck size={17} strokeWidth={1.8} />}
-                title="What this page controls"
-                subtitle="Keep school setup focused and clean."
-              >
-                <p style={{
-                  fontSize: 13,
-                  color: T.ink3,
-                  lineHeight: 1.5,
-                  margin: 0,
-                }}>
-                  The school account keeps the official profile and creates the school structure.
-                  Teachers handle class communication from their own class spaces.
-                </p>
-              </AccordionCard>
-            </div>
+                <AccordionCard
+                  icon={<ShieldCheck size={17} strokeWidth={1.8} />}
+                  title="School role"
+                  subtitle="The school creates the structure."
+                >
+                  <p style={{
+                    fontSize: 13,
+                    color: T.ink3,
+                    lineHeight: 1.5,
+                    margin: 0,
+                  }}>
+                    Add classes and teachers. Teachers then manage parent communication inside their class spaces.
+                  </p>
+                </AccordionCard>
+              </div>
+            </>
           )}
 
           {tab === 'classes' && isAdmin && (
             <div style={{ padding: '0 14px' }}>
-              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
-                <SectionTitle
-                  eyebrow="Build your school structure"
-                  title="Add teachers and classes"
-                  subtitle="Keep this simple: create the class, assign the teacher, and let the teacher manage their class space."
-                />
-
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 8,
-                  marginTop: 12,
+              <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2, boxShadow: 'none' }}>
+                <GraduationCap size={17} strokeWidth={1.8} color={T.ink2} />
+                <p style={{
+                  fontSize: 13.5,
+                  fontWeight: 900,
+                  color: T.ink,
+                  margin: '8px 0 3px',
                 }}>
-                  <div style={{
-                    padding: 11,
-                    borderRadius: 18,
-                    background: T.soft2,
-                    border: `1px solid ${T.border}`,
-                  }}>
-                    <GraduationCap size={17} strokeWidth={1.8} color={T.ink2} />
-                    <p style={{
-                      fontSize: 13,
-                      fontWeight: 900,
-                      color: T.ink,
-                      margin: '8px 0 2px',
-                    }}>
-                      Classes
-                    </p>
-                    <p style={{
-                      fontSize: 12.2,
-                      color: T.ink3,
-                      lineHeight: 1.35,
-                      margin: 0,
-                    }}>
-                      Grade/class structure.
-                    </p>
-                  </div>
-
-                  <div style={{
-                    padding: 11,
-                    borderRadius: 18,
-                    background: T.soft2,
-                    border: `1px solid ${T.border}`,
-                  }}>
-                    <Users size={17} strokeWidth={1.8} color={T.ink2} />
-                    <p style={{
-                      fontSize: 13,
-                      fontWeight: 900,
-                      color: T.ink,
-                      margin: '8px 0 2px',
-                    }}>
-                      Teachers
-                    </p>
-                    <p style={{
-                      fontSize: 12.2,
-                      color: T.ink3,
-                      lineHeight: 1.35,
-                      margin: 0,
-                    }}>
-                      Assign class owners.
-                    </p>
-                  </div>
-                </div>
+                  Classes
+                </p>
+                <p style={{
+                  fontSize: 12.8,
+                  color: T.ink3,
+                  lineHeight: 1.45,
+                  margin: 0,
+                }}>
+                  Add a class and assign a teacher. Teachers handle parents from their own class space.
+                </p>
               </SectionCard>
 
               <TeachersTab />
@@ -808,8 +766,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
                 <SectionTitle
                   eyebrow="Settings"
-                  title="Account actions"
-                  subtitle="Keep this area light. More settings can come later only when they add real value."
+                  title="Account"
+                  subtitle="Simple account actions."
                 />
 
                 <button type="button" onClick={signOut} style={{
@@ -841,7 +799,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   margin: 0,
                 }}>
                   The school creates the structure. Teachers run the class spaces.
-                  Parents experience the official class memory through their teacher.
                 </p>
               </SectionCard>
             </div>
