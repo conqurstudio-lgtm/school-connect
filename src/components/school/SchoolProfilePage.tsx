@@ -16,6 +16,7 @@
 // school-life-image-edge-scroll-v4
 // school-life-image-lightbox-v5
 // school-life-dark-image-viewer-v6
+// school-life-admin-engagement-v1
 // school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
@@ -662,6 +663,10 @@ function ActivityCard({ post }: any) {
 
   const body = post.body || post.title || post.caption || ''
   const mediaBleedLeft = 62
+  const reactionCount = Number(post.reaction_count || 0)
+  const commentCount = Number(post.comment_count || 0)
+  const flagCount = Number(post.report_count || post.flag_count || 0)
+  const hasEngagement = reactionCount > 0 || commentCount > 0 || flagCount > 0
 
   return (
     <>
@@ -836,6 +841,72 @@ function ActivityCard({ post }: any) {
               lineHeight: 1.45,
             }}>
               {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+            </div>
+          )}
+
+          {hasEngagement && (
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 6,
+              marginTop: 10,
+              paddingTop: 9,
+              borderTop: `1px solid ${T.border}`,
+            }}>
+              {reactionCount > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  height: 28,
+                  padding: '0 10px',
+                  borderRadius: 999,
+                  background: '#F7F7F9',
+                  border: `1px solid ${T.border}`,
+                  color: T.ink3,
+                  fontSize: 12.2,
+                  fontWeight: 600,
+                }}>
+                  ♡ {reactionCount} {reactionCount === 1 ? 'reaction' : 'reactions'}
+                </span>
+              )}
+
+              {commentCount > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  height: 28,
+                  padding: '0 10px',
+                  borderRadius: 999,
+                  background: '#F7F7F9',
+                  border: `1px solid ${T.border}`,
+                  color: T.ink3,
+                  fontSize: 12.2,
+                  fontWeight: 600,
+                }}>
+                  💬 {commentCount} {commentCount === 1 ? 'question' : 'questions'}
+                </span>
+              )}
+
+              {flagCount > 0 && (
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  height: 28,
+                  padding: '0 10px',
+                  borderRadius: 999,
+                  background: '#FFF1F1',
+                  border: '1px solid rgba(220,38,38,0.16)',
+                  color: '#B42318',
+                  fontSize: 12.2,
+                  fontWeight: 600,
+                }}>
+                  ⚑ {flagCount} {flagCount === 1 ? 'flag' : 'flags'}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -1025,9 +1096,36 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           teacherMap = Object.fromEntries((teacherRows || []).map((teacher: any) => [teacher.id, teacher]))
         }
 
+        const postIds = rawPosts.map((post: any) => post.id).filter(Boolean)
+        let reactionMap: any = {}
+        let commentMap: any = {}
+
+        if (postIds.length > 0) {
+          const [reactionRows, commentRows] = await Promise.all([
+            supabase
+              .from('reactions')
+              .select('post_id,type')
+              .in('post_id', postIds),
+            supabase
+              .from('comments')
+              .select('post_id,created_at')
+              .in('post_id', postIds),
+          ])
+
+          for (const reaction of (reactionRows.data || [])) {
+            reactionMap[reaction.post_id] = (reactionMap[reaction.post_id] || 0) + 1
+          }
+
+          for (const comment of (commentRows.data || [])) {
+            commentMap[comment.post_id] = (commentMap[comment.post_id] || 0) + 1
+          }
+        }
+
         setPosts(rawPosts.map((post: any) => ({
           ...post,
           teacher: post.teacher_id ? teacherMap[post.teacher_id] || null : null,
+          reaction_count: reactionMap[post.id] || post.reaction_count || 0,
+          comment_count: commentMap[post.id] || post.comment_count || 0,
         })))
       }
 
