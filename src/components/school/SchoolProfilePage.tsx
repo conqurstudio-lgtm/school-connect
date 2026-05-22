@@ -3,6 +3,7 @@
 // school-home-icon-life-view-v6
 // school-logo-home-settings-flow-v7
 // school-logo-home-onboarding-cues-v8
+// school-home-simple-empty-state-v9
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -18,6 +19,7 @@ import {
   MapPin,
   Pencil,
   Phone,
+  Plus,
   Save,
   Settings,
   ShieldCheck,
@@ -391,78 +393,6 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
 }
 
 
-
-function HomeStartGuide({ onOpenProfile, onOpenClasses, profileNeedsAttention }: any) {
-  return (
-    <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2, boxShadow: 'none' }}>
-      <p style={{
-        fontSize: 13.5,
-        fontWeight: 650,
-        color: T.ink,
-        margin: '0 0 8px',
-      }}>
-        Start here
-      </p>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 8,
-      }}>
-        <button type="button" onClick={onOpenProfile} style={{
-          border: `1px solid ${profileNeedsAttention ? 'rgba(239,68,68,0.22)' : T.border}`,
-          background: T.white,
-          borderRadius: 16,
-          padding: '10px 8px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-          position: 'relative',
-        }}>
-          {profileNeedsAttention && (
-            <span style={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              width: 7,
-              height: 7,
-              borderRadius: 999,
-              background: '#EF4444',
-            }} />
-          )}
-          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>01</p>
-          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Profile</p>
-          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Confirm basics.</p>
-        </button>
-
-        <button type="button" onClick={onOpenClasses} style={{
-          border: `1px solid ${T.border}`,
-          background: T.white,
-          borderRadius: 16,
-          padding: '10px 8px',
-          textAlign: 'left',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}>
-          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>02</p>
-          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Classes</p>
-          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Add teachers.</p>
-        </button>
-
-        <div style={{
-          border: `1px solid ${T.border}`,
-          background: T.white,
-          borderRadius: 16,
-          padding: '10px 8px',
-        }}>
-          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>03</p>
-          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Life</p>
-          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Watch activity.</p>
-        </div>
-      </div>
-    </SectionCard>
-  )
-}
 
 function ActivityCard({ post }: any) {
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
@@ -1005,12 +935,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
           {tab === 'home' && (
             <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <HomeStartGuide
-                profileNeedsAttention={profileNeedsAttention}
-                onOpenProfile={() => { setTab('profile'); setEditing(false) }}
-                onOpenClasses={() => { setTab('classes'); setEditing(false) }}
-              />
-
               {postsLoading ? (
                 <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center' }}>
                   <div style={{
@@ -1049,6 +973,27 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
                     Class posts and school updates will appear here.
                   </p>
+
+                  <button type="button" onClick={() => { setTab('classes'); setEditing(false) }} style={{
+                    marginTop: 14,
+                    height: 38,
+                    borderRadius: 999,
+                    border: 'none',
+                    background: T.ink,
+                    color: T.white,
+                    fontSize: 13,
+                    fontWeight: 650,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 7,
+                    padding: '0 14px',
+                  }}>
+                    <Plus size={14} strokeWidth={2} />
+                    Add teachers
+                  </button>
                 </SectionCard>
               ) : (
                 posts.map(post => <ActivityCard key={post.id} post={post} />)
