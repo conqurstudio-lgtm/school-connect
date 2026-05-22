@@ -2,6 +2,7 @@
 'use client'
 // school-home-icon-life-view-v6
 // school-logo-home-settings-flow-v7
+// school-logo-home-onboarding-cues-v8
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -390,6 +391,79 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
 }
 
 
+
+function HomeStartGuide({ onOpenProfile, onOpenClasses, profileNeedsAttention }: any) {
+  return (
+    <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2, boxShadow: 'none' }}>
+      <p style={{
+        fontSize: 13.5,
+        fontWeight: 650,
+        color: T.ink,
+        margin: '0 0 8px',
+      }}>
+        Start here
+      </p>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+        gap: 8,
+      }}>
+        <button type="button" onClick={onOpenProfile} style={{
+          border: `1px solid ${profileNeedsAttention ? 'rgba(239,68,68,0.22)' : T.border}`,
+          background: T.white,
+          borderRadius: 16,
+          padding: '10px 8px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          position: 'relative',
+        }}>
+          {profileNeedsAttention && (
+            <span style={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              width: 7,
+              height: 7,
+              borderRadius: 999,
+              background: '#EF4444',
+            }} />
+          )}
+          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>01</p>
+          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Profile</p>
+          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Confirm basics.</p>
+        </button>
+
+        <button type="button" onClick={onOpenClasses} style={{
+          border: `1px solid ${T.border}`,
+          background: T.white,
+          borderRadius: 16,
+          padding: '10px 8px',
+          textAlign: 'left',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}>
+          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>02</p>
+          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Classes</p>
+          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Add teachers.</p>
+        </button>
+
+        <div style={{
+          border: `1px solid ${T.border}`,
+          background: T.white,
+          borderRadius: 16,
+          padding: '10px 8px',
+        }}>
+          <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 5px', fontWeight: 600 }}>03</p>
+          <p style={{ fontSize: 12.7, color: T.ink, margin: 0, fontWeight: 600 }}>Life</p>
+          <p style={{ fontSize: 11.6, color: T.ink3, margin: '3px 0 0', lineHeight: 1.32 }}>Watch activity.</p>
+        </div>
+      </div>
+    </SectionCard>
+  )
+}
+
 function ActivityCard({ post }: any) {
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const context = [post.audience_grade, post.audience_class].filter(Boolean).join(' · ')
@@ -487,6 +561,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [postsLoading, setPostsLoading] = useState(false)
   const [postsError, setPostsError] = useState('')
   const logoRef = useRef<HTMLInputElement>(null)
+
+  const profileNeedsAttention = Boolean(!school.logo_url || !school.tagline || !(school.phone || school.email))
 
   useEffect(() => {
     if (tab !== 'home') return
@@ -741,6 +817,18 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
     }}>
+        <style>{`
+          @keyframes schoolSettingsDotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.45); opacity: 0.72; }
+          }
+
+          @keyframes schoolLogoHomeGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.20); }
+            50% { box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.05); }
+          }
+        `}</style>
+
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -765,11 +853,13 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             gap: 10,
           }}>
             <button type="button" onClick={() => setTab('home')} aria-label="Home" style={{
-              width: 38,
-              height: 38,
+              width: 40,
+              height: 40,
               borderRadius: 999,
-              border: `1px solid ${tab === 'home' ? T.ink : T.border}`,
-              background: T.white,
+              border: `1px solid ${tab === 'home' ? 'rgba(37,99,235,0.42)' : T.border}`,
+              background: tab === 'home'
+                ? 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(34,197,94,0.10))'
+                : T.white,
               color: T.ink,
               display: 'inline-flex',
               alignItems: 'center',
@@ -779,10 +869,12 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               padding: 0,
               position: 'relative',
               overflow: 'visible',
+              boxShadow: tab === 'home' ? '0 8px 20px rgba(37,99,235,0.10)' : 'none',
+              animation: tab === 'home' ? 'schoolLogoHomeGlow 2.2s ease-in-out infinite' : 'none',
             }}>
               <span style={{
-                width: 30,
-                height: 30,
+                width: 31,
+                height: 31,
                 borderRadius: 999,
                 background: school.logo_url ? T.white : T.soft,
                 border: `1px solid ${T.border}`,
@@ -798,7 +890,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   <img
                     src={school.logo_url}
                     alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 3 }}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 1.5, display: 'block' }}
                   />
                 ) : (
                   initialsFrom(school.name)
@@ -812,7 +904,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 width: 7,
                 height: 7,
                 borderRadius: 999,
-                background: tab === 'home' ? T.ink : '#D1D1D6',
+                background: tab === 'home' ? '#2563EB' : '#D1D1D6',
                 border: `1.5px solid ${T.white}`,
               }} />
             </button>
@@ -848,8 +940,22 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
+              position: 'relative',
             }}>
               <Settings size={16} strokeWidth={1.9} />
+              {profileNeedsAttention && (
+                <span style={{
+                  position: 'absolute',
+                  right: 5,
+                  top: 5,
+                  width: 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: '#EF4444',
+                  border: `1.5px solid ${T.white}`,
+                  animation: 'schoolSettingsDotPulse 1.45s ease-in-out infinite',
+                }} />
+              )}
             </button>
           </div>
 
@@ -899,6 +1005,12 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
           {tab === 'home' && (
             <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <HomeStartGuide
+                profileNeedsAttention={profileNeedsAttention}
+                onOpenProfile={() => { setTab('profile'); setEditing(false) }}
+                onOpenClasses={() => { setTab('classes'); setEditing(false) }}
+              />
+
               {postsLoading ? (
                 <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center' }}>
                   <div style={{
