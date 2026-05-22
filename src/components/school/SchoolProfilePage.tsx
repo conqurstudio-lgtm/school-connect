@@ -5,6 +5,7 @@
 // school-logo-home-onboarding-cues-v8
 // school-home-simple-empty-state-v9
 // school-logo-static-blue-setup-dot-v10
+// school-home-empty-card-match-teachers-v11
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -20,7 +21,6 @@ import {
   MapPin,
   Pencil,
   Phone,
-  Plus,
   Save,
   Settings,
   ShieldCheck,
@@ -970,44 +970,54 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   </p>
                 </SectionCard>
               ) : posts.length === 0 ? (
-                <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center', padding: '38px 20px' }}>
+                <SectionCard style={{
+                  marginLeft: 0,
+                  marginRight: 0,
+                  textAlign: 'center',
+                  padding: '30px 20px',
+                  background: T.white,
+                  boxShadow: '0 10px 28px rgba(0,0,0,0.026)',
+                }}>
                   <div style={{
-                    width: 48,
-                    height: 48,
+                    width: 44,
+                    height: 44,
                     borderRadius: 16,
                     background: T.soft,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 12px',
+                    color: T.ink3,
+                    fontSize: 13,
+                    fontWeight: 600,
                   }}>
-                    <Home size={20} strokeWidth={1.7} color={T.ink3} />
+                    {initialsFrom(school.name)}
                   </div>
+
                   <p style={{ fontSize: 15, color: T.ink, fontWeight: 600, margin: '0 0 4px' }}>
                     No activity yet
                   </p>
+
                   <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
                     Class posts and school updates will appear here.
                   </p>
 
                   <button type="button" onClick={() => { setTab('classes'); setEditing(false) }} style={{
                     marginTop: 14,
-                    height: 38,
+                    height: 34,
                     borderRadius: 999,
-                    border: 'none',
-                    background: T.ink,
-                    color: T.white,
-                    fontSize: 13,
+                    border: `1px solid ${T.border}`,
+                    background: T.white,
+                    color: T.ink2,
+                    fontSize: 12.8,
                     fontWeight: 650,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: 7,
-                    padding: '0 14px',
+                    padding: '0 13px',
                   }}>
-                    <Plus size={14} strokeWidth={2} />
                     Add teachers
                   </button>
                 </SectionCard>
