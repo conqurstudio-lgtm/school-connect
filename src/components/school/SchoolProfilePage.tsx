@@ -12,6 +12,7 @@
 // school-logo-adjust-crop-v14
 // school-life-feed-unification-v1
 // school-life-admin-images-v3
+// school-life-image-edge-scroll-v4
 // school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
@@ -656,6 +657,7 @@ function ActivityCard({ post }: any) {
     : 'School update'
 
   const body = post.body || post.title || post.caption || ''
+  const mediaBleedLeft = 62
 
   return (
     <article style={{
@@ -770,15 +772,17 @@ function ActivityCard({ post }: any) {
             WebkitOverflowScrolling: 'touch',
             scrollBehavior: 'smooth',
             scrollSnapType: 'x proximity',
-            padding: '0 14px 3px 0',
+            marginLeft: -mediaBleedLeft,
             marginRight: -14,
+            padding: `0 14px 3px ${mediaBleedLeft}px`,
+            scrollPaddingLeft: mediaBleedLeft,
           }}>
             {images.map((src: string, index: number) => (
               <div
                 key={`${src}-${index}`}
                 style={{
-                  width: '82%',
-                  minWidth: '82%',
+                  width: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
+                  minWidth: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
                   height: 260,
                   borderRadius: 20,
                   overflow: 'hidden',
