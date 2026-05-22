@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-admin-landing-route-repair-v1
 // school-connect-white-app-background-v15
 // school-home-icon-life-view-v6
 // school-logo-home-settings-flow-v7
@@ -1689,8 +1690,8 @@ const signOut = async () => {
                   title="Official school profile"
                   subtitle="This is the school connected to your class space."
                 />
-                <button type="button" onClick={() => router.push('/feed')} style={{ ...primaryButton, width: '100%', marginTop: 8 }}>
-                  Go to feed
+                <button type="button" onClick={() => { setTab('home'); setEditing(false) }} style={{ ...primaryButton, width: '100%', marginTop: 8 }}>
+                  School life
                 </button>
               </SectionCard>
             </div>

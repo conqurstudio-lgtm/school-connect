@@ -1,4 +1,5 @@
 'use client'
+// school-admin-landing-route-repair-v1
 
 import { useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
@@ -35,7 +36,7 @@ const labelStyle: React.CSSProperties = {
 function LoginForm() {
   const router     = useRouter()
   const params     = useSearchParams()
-  const redirectTo = params.get('redirectTo') || '/feed'
+  const explicitRedirectTo = params.get('explicitRedirectTo')
 
   const [email,        setEmail]        = useState('')
   const [password,     setPassword]     = useState('')
@@ -50,7 +51,29 @@ function LoginForm() {
         if (error) {
           toast.error(error.message)
         } else {
-          window.location.href = redirectTo
+          if (explicitRedirectTo) {
+            window.location.href = explicitRedirectTo
+            return
+          }
+
+          const { data: userResult } = await supabase.auth.getUser()
+          const userId = userResult?.user?.id
+
+          let nextPath = '/feed'
+
+          if (userId) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', userId)
+              .maybeSingle()
+
+            if (profile?.role === 'school') {
+              nextPath = '/school'
+            }
+          }
+
+          window.location.href = nextPath
         }
       } catch (e: any) {
         if (e?.message?.includes('fetch') || e?.message?.includes('network') || e?.message?.includes('Load')) {

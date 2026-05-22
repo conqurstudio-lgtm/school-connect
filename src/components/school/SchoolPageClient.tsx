@@ -1,5 +1,6 @@
 // school-loading-guard-v1
 'use client'
+// school-admin-landing-route-repair-v1
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -237,7 +238,7 @@ export function SchoolPageClient() {
 
             <button
               type="button"
-              onClick={() => router.replace('/feed')}
+              onClick={() => router.replace('/school')}
               style={{
                 height: 40,
                 borderRadius: 999,
@@ -250,7 +251,7 @@ export function SchoolPageClient() {
                 fontFamily: 'inherit',
               }}
             >
-              Go to feed
+              Open school home
             </button>
           </div>
         </div>

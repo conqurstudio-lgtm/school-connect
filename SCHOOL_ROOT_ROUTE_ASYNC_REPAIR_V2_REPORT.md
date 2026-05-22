@@ -1,0 +1,1 @@
+# School Root Route Async Repair v2\n\n- Repaired src/app/page.tsx directly.\n- Async route logic now runs inside routeUser().\n- School users go to /school.\n- Other logged-in users go to /feed.\n- Logged-out users go to /auth/login.\n- Backup created at src/app/page.tsx.backup-root-async-20260522205530.\n
