@@ -7,6 +7,7 @@
 // school-logo-static-blue-setup-dot-v10
 // school-home-empty-card-match-teachers-v11
 // school-home-empty-card-theme-standard-v12
+// school-home-empty-card-transparent-v13
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -976,13 +977,14 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   textAlign: 'center',
                   border: `1px dashed ${T.border}`,
                   borderRadius: 16,
-                  background: T.white,
+                  background: 'transparent',
                 }}>
                   <div style={{
                     width: 48,
                     height: 48,
                     borderRadius: 14,
-                    background: '#F0F0F4',
+                    background: 'rgba(255,255,255,0.72)',
+                    border: `1px solid ${T.border}`,
                     margin: '0 auto 12px',
                     display: 'flex',
                     alignItems: 'center',
