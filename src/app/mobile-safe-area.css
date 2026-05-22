@@ -1,10 +1,12 @@
+/* parent-premium-theme-pass-v1 */
+/* school-connect-white-app-background-v15 */
 /* School Connect mobile app foundation */
 :root {
   --sc-safe-top: env(safe-area-inset-top, 0px);
   --sc-safe-right: env(safe-area-inset-right, 0px);
   --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
   --sc-safe-left: env(safe-area-inset-left, 0px);
-  --sc-mobile-bg: #FCFCFF;
+  --sc-mobile-bg: #FFFFFF;
 
   /*
     Message composer should use the iPhone safe-area instead of floating far above it.
@@ -72,12 +74,12 @@ input {
    Keep installed-bookmark/PWA bottom cut area the same colour as School Connect pages. */
 html,
 body {
-  background-color: #FCFCFF !important;
+  background-color: #FFFFFF !important;
 }
 
 @media (max-width: 640px) {
   body::after {
-    background: #FCFCFF !important;
+    background: #FFFFFF !important;
   }
 }
 
@@ -85,13 +87,13 @@ body {
 /* message-composer-safe-area-bg-v1 */
 html,
 body {
-  background-color: #FCFCFF !important;
+  background-color: #FFFFFF !important;
 }
 
 .premium-message-composer-dock,
 .parent-message-composer-dock,
 .teacher-message-composer-dock {
-  background-color: #FCFCFF !important;
+  background-color: #FFFFFF !important;
 }
 
 /* ui-alignment-shapes-pass-v1
@@ -99,11 +101,11 @@ body {
    This does not change APIs or logic. */
 html,
 body {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
 }
 
 .sc-message-composer-dock {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   z-index: 90 !important;
@@ -187,7 +189,7 @@ body {
   box-shadow: none !important;
   min-height: 38px !important;
   border-radius: 999px !important;
-  font-weight: 850 !important;
+  font-weight: 650 !important;
 }
 
 .sc-soft-report-button svg {
@@ -218,7 +220,7 @@ body {
 
 .sc-parent-ui-root .sc-section-title,
 .sc-teacher-ui-root .sc-section-title {
-  font-weight: 900 !important;
+  font-weight: 650 !important;
   letter-spacing: -0.025em !important;
 }
 
@@ -231,7 +233,7 @@ body {
 }
 
 .sc-message-composer-dock {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   z-index: 95 !important;
@@ -272,7 +274,7 @@ body {
 
 /* teacher-thread-match-parent-ui-v1 */
 .teacher-message-composer-dock.sc-message-composer-dock {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   z-index: 95 !important;
@@ -306,7 +308,7 @@ body {
 /* teacher-thread-copy-parent-template-v2
    Teacher thread now uses the same approved message banner and safe-area composer pattern as Parent. */
 .teacher-thread-parent-template-header {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
 }
 
 .teacher-thread-person-header {
@@ -314,7 +316,7 @@ body {
 }
 
 .teacher-message-composer-dock.sc-message-composer-dock {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   z-index: 95 !important;
@@ -348,7 +350,7 @@ body {
 /* message-scroll-stabilize-teacher-composer-v1
    Keep approved composer/banner styling while stabilizing message thread scrolling. */
 .teacher-thread-parent-template-header {
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
 }
 
 .teacher-message-composer-dock.sc-message-composer-dock {
@@ -357,7 +359,7 @@ body {
   position: sticky !important;
   bottom: 0 !important;
   z-index: 95 !important;
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
 }
@@ -395,7 +397,7 @@ body {
   position: sticky !important;
   bottom: 0 !important;
   z-index: 95 !important;
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
 }
@@ -437,7 +439,7 @@ body {
   position: relative !important;
   bottom: auto !important;
   z-index: 120 !important;
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
@@ -495,7 +497,7 @@ body {
   width: 100% !important;
   max-width: 520px !important;
   z-index: 999 !important;
-  background: #FCFCFF !important;
+  background: #FFFFFF !important;
   border-top: 1px solid rgba(0,0,0,0.07) !important;
   padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
