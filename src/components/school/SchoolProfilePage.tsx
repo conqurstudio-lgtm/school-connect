@@ -14,6 +14,7 @@
 // school-life-admin-images-v3
 // school-life-image-edge-scroll-v4
 // school-life-image-lightbox-v5
+// school-life-dark-image-viewer-v6
 // school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
@@ -661,10 +662,6 @@ function ActivityCard({ post }: any) {
   const body = post.body || post.title || post.caption || ''
   const mediaBleedLeft = 62
 
-  const openViewer = (src: string) => {
-    setOpenImage(src)
-  }
-
   return (
     <>
       <article style={{
@@ -752,7 +749,7 @@ function ActivityCard({ post }: any) {
           )}
 
           {images.length === 1 && (
-            <button type="button" onClick={() => openViewer(images[0])} style={{
+            <button type="button" onClick={() => setOpenImage(images[0])} style={{
               marginTop: 10,
               padding: 0,
               border: 'none',
@@ -797,7 +794,7 @@ function ActivityCard({ post }: any) {
                 <button
                   key={`${src}-${index}`}
                   type="button"
-                  onClick={() => openViewer(src)}
+                  onClick={() => setOpenImage(src)}
                   style={{
                     width: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
                     minWidth: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
@@ -852,55 +849,117 @@ function ActivityCard({ post }: any) {
             position: 'fixed',
             inset: 0,
             zIndex: 2200,
-            background: 'rgba(0,0,0,0.82)',
+            background: '#050505',
+            color: '#FFFFFF',
+            display: 'flex',
+            flexDirection: 'column',
+            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+          }}
+        >
+          <div style={{
+            flexShrink: 0,
+            height: 'calc(54px + env(safe-area-inset-top, 0px))',
+            padding: 'calc(10px + env(safe-area-inset-top, 0px)) 14px 8px',
+            background: 'rgba(5,5,5,0.96)',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 600,
+                margin: 0,
+                color: '#FFFFFF',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {authorName}
+              </p>
+              <p style={{
+                fontSize: 11.8,
+                color: 'rgba(255,255,255,0.56)',
+                margin: '2px 0 0',
+              }}>
+                {typeLabel}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              aria-label="Close image"
+              onClick={(event) => {
+                event.stopPropagation()
+                setOpenImage(null)
+              }}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 999,
+                border: '1px solid rgba(255,255,255,0.16)',
+                background: 'rgba(255,255,255,0.10)',
+                color: '#FFFFFF',
+                fontSize: 22,
+                lineHeight: 1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              ×
+            </button>
+          </div>
+
+          <div
+            onClick={() => setOpenImage(null)}
+            style={{
+              flex: 1,
+              minHeight: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              overflow: 'hidden',
+              background: '#050505',
+            }}
+          >
+            <img
+              src={openImage}
+              alt=""
+              onClick={(event) => event.stopPropagation()}
+              style={{
+                width: '100%',
+                height: '100%',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+                display: 'block',
+              }}
+            />
+          </div>
+
+          <div style={{
+            flexShrink: 0,
+            minHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))',
+            padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
+            background: 'rgba(5,5,5,0.96)',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px))',
-          }}
-        >
-          <button
-            type="button"
-            aria-label="Close image"
-            onClick={(event) => {
-              event.stopPropagation()
-              setOpenImage(null)
-            }}
-            style={{
-              position: 'absolute',
-              top: 'calc(12px + env(safe-area-inset-top, 0px))',
-              right: 14,
-              width: 36,
-              height: 36,
+          }}>
+            <div style={{
+              width: 42,
+              height: 4,
               borderRadius: 999,
-              border: '1px solid rgba(255,255,255,0.22)',
-              background: 'rgba(255,255,255,0.12)',
-              color: '#FFFFFF',
-              fontSize: 22,
-              lineHeight: 1,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-            }}
-          >
-            ×
-          </button>
-
-          <img
-            src={openImage}
-            alt=""
-            onClick={(event) => event.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: 760,
-              maxHeight: '86dvh',
-              objectFit: 'contain',
-              borderRadius: 18,
-              display: 'block',
-              boxShadow: '0 24px 80px rgba(0,0,0,0.35)',
-            }}
-          />
+              background: 'rgba(255,255,255,0.22)',
+            }} />
+          </div>
         </div>
       )}
     </>
