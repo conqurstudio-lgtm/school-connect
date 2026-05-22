@@ -4,6 +4,7 @@
 // school-logo-home-settings-flow-v7
 // school-logo-home-onboarding-cues-v8
 // school-home-simple-empty-state-v9
+// school-logo-static-blue-setup-dot-v10
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -490,9 +491,12 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [posts, setPosts] = useState<any[]>([])
   const [postsLoading, setPostsLoading] = useState(false)
   const [postsError, setPostsError] = useState('')
+  const [teacherCount, setTeacherCount] = useState(0)
+  const [teacherCountLoading, setTeacherCountLoading] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
 
-  const profileNeedsAttention = Boolean(!school.logo_url || !school.tagline || !(school.phone || school.email))
+  const setupCueActive = !postsLoading && !teacherCountLoading && posts.length === 0 && teacherCount === 0
+
 
   useEffect(() => {
     if (tab !== 'home') return
@@ -522,6 +526,25 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
       setPostsLoading(false)
     }
+
+    const loadTeacherCount = async () => {
+      setTeacherCountLoading(true)
+
+      const { count, error } = await supabase
+        .from('teachers')
+        .select('id', { count: 'exact', head: true })
+        .eq('school_id', school.id)
+
+      if (!alive) return
+
+      if (!error) {
+        setTeacherCount(count || 0)
+      }
+
+      setTeacherCountLoading(false)
+    }
+
+    loadTeacherCount()
 
     loadPosts()
 
@@ -752,11 +775,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.45); opacity: 0.72; }
           }
-
-          @keyframes schoolLogoHomeGlow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.20); }
-            50% { box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.05); }
-          }
         `}</style>
 
       <div style={{
@@ -800,7 +818,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               position: 'relative',
               overflow: 'visible',
               boxShadow: tab === 'home' ? '0 8px 20px rgba(37,99,235,0.10)' : 'none',
-              animation: tab === 'home' ? 'schoolLogoHomeGlow 2.2s ease-in-out infinite' : 'none',
             }}>
               <span style={{
                 width: 31,
@@ -873,7 +890,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               position: 'relative',
             }}>
               <Settings size={16} strokeWidth={1.9} />
-              {profileNeedsAttention && (
+              {setupCueActive && (
                 <span style={{
                   position: 'absolute',
                   right: 5,
@@ -881,9 +898,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   width: 8,
                   height: 8,
                   borderRadius: 999,
-                  background: '#EF4444',
+                  background: '#2563EB',
                   border: `1.5px solid ${T.white}`,
-                  animation: 'schoolSettingsDotPulse 1.45s ease-in-out infinite',
                 }} />
               )}
             </button>
