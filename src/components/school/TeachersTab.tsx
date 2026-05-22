@@ -1,8 +1,9 @@
 // @ts-nocheck
 'use client'
+// school-teachers-tab-remove-duplicate-header-v1
 
 import { useEffect, useState } from 'react'
-import { Copy, Check, MoreVertical, RotateCw, Slash, Trash2, GraduationCap, Plus, X } from 'lucide-react'
+import { Copy, Check, MoreVertical, RotateCw, Slash, Trash2, GraduationCap, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const T = {
@@ -119,34 +120,7 @@ export function TeachersTab() {
   }
 
   return (
-    <div style={{ padding: '24px 20px 60px' }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 20,
-      }}>
-        <div>
-          <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
-                      margin: '0 0 4px' }}>
-            Teachers
-          </p>
-          <h2 style={{ fontSize: 22, fontWeight: 700, color: T.ink,
-                       letterSpacing: '-0.025em', margin: 0 }}>
-            Your team
-          </h2>
-        </div>
-        <button onClick={() => setShowAdd(true)} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '8px 14px', borderRadius: 999,
-          background: T.ink, color: T.white, border: 'none',
-          fontSize: 13, fontWeight: 600, cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}>
-          <Plus size={14} strokeWidth={2.4} />
-          Add teacher
-        </button>
-      </div>
-
+    <div style={{ padding: '0 0 60px' }}>
       {loading ? (
         <div style={{ padding: '40px 0', textAlign: 'center' }}>
           <div style={{ width: 18, height: 18, borderRadius: '50%',
