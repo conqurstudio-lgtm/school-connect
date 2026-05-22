@@ -1,5 +1,7 @@
 // @ts-nocheck
 'use client'
+// parent-teacher-full-dark-image-viewer-v1
+// school-connect-white-app-background-v15
 // teacher-composer-fixed-visible-dock-v4
 // teacher-composer-visible-dock-v3
 // message-threads-free-scroll-teacher-composer-v2
@@ -64,7 +66,7 @@ const T = {
   ink2:   '#4A4A4A',
   ink3:   '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
-  bg:     '#FCFCFF',
+  bg:     '#FFFFFF',
   white:  '#FFFFFF',
   red:    '#EF4444',
   blue:   '#78A6FE',
@@ -650,6 +652,8 @@ function ClassPosts({ teacher }: any) {
 }
 
 function TeacherClassPostCard({ post, onDelete }: any) {
+  const [openImage, setOpenImage] = useState<string | null>(null)
+
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const typeLabel =
     post.type === 'event' ? 'Event' :
@@ -658,101 +662,183 @@ function TeacherClassPostCard({ post, onDelete }: any) {
     'Update'
 
   return (
-    <article style={{
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      borderRadius: 16,
-      overflow: 'hidden',
-    }}>
-      <div style={{ padding: 14 }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 8,
-          marginBottom: post.body || post.event_date || images.length ? 8 : 0,
-        }}>
-          <div>
-            <span style={{
-              display: 'inline-flex',
-              padding: '3px 8px',
-              borderRadius: 999,
-              background: '#F0F4FF',
-              color: T.blue,
-              fontSize: 13.8,
-              fontWeight: 800,
+    <>
+      <article style={{
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 16,
+        overflow: 'hidden',
+      }}>
+        <div style={{ padding: 14 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            marginBottom: post.body || post.event_date || images.length ? 8 : 0,
+          }}>
+            <div>
+              <span style={{
+                display: 'inline-flex',
+                padding: '3px 8px',
+                borderRadius: 999,
+                background: '#F0F4FF',
+                color: T.blue,
+                fontSize: 13.8,
+                fontWeight: 800,
+              }}>
+                {typeLabel}
+              </span>
+              <span style={{ marginLeft: 8, fontSize: 13.8, color: T.ink3 }}>
+                {relTime(post.created_at)}
+              </span>
+            </div>
+
+            <button onClick={onDelete} style={{
+              width: 30,
+              height: 30,
+              borderRadius: '50%',
+              border: `1px solid ${T.border}`,
+              background: '#FFFFFF',
+              color: T.red,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-              {typeLabel}
-            </span>
-            <span style={{ marginLeft: 8, fontSize: 13.8, color: T.ink3 }}>
-              {relTime(post.created_at)}
-            </span>
+              <Trash2 size={13} strokeWidth={1.9} />
+            </button>
           </div>
 
-          <button onClick={onDelete} style={{
-            width: 30,
-            height: 30,
-            borderRadius: '50%',
-            border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
-            color: T.red,
-            cursor: 'pointer',
+          {post.body && (
+            <p style={{
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: T.ink,
+              margin: 0,
+              whiteSpace: 'pre-wrap',
+            }}>
+              {post.body}
+            </p>
+          )}
+
+          {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
+            <div style={{
+              marginTop: 9,
+              padding: '9px 10px',
+              borderRadius: '50%',
+              background: '#F4F6FB',
+              fontSize: 13.8,
+              color: T.ink2,
+              lineHeight: 1.5,
+            }}>
+              {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
+              {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
+              {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
+            </div>
+          )}
+        </div>
+
+        {images.length > 0 && (
+          <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
+            {images.slice(0, 4).map((url: string, i: number) => (
+              <button
+                key={`${url}-${i}`}
+                type="button"
+                onClick={() => setOpenImage(url)}
+                aria-label="Open image"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: 0,
+                  margin: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'zoom-in',
+                  fontFamily: 'inherit',
+                  lineHeight: 0,
+                }}
+              >
+                <img
+                  src={url}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    maxHeight: 260,
+                    objectFit: 'cover',
+                    display: 'block',
+                    borderRadius: 13,
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {openImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpenImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            width: '100vw',
+            height: '100dvh',
+            minHeight: '100svh',
+            background: '#050505',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>
-            <Trash2 size={13} strokeWidth={1.9} />
+            padding: 'env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px)',
+            boxSizing: 'border-box',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Close image"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenImage(null)
+            }}
+            style={{
+              position: 'fixed',
+              top: 'calc(12px + env(safe-area-inset-top, 0px))',
+              right: 12,
+              zIndex: 10000,
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.18)',
+              background: 'rgba(0,0,0,0.45)',
+              color: '#FFFFFF',
+              fontSize: 22,
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            ×
           </button>
-        </div>
 
-        {post.body && (
-          <p style={{
-            fontSize: 14,
-            lineHeight: 1.55,
-            color: T.ink,
-            margin: 0,
-            whiteSpace: 'pre-wrap',
-          }}>
-            {post.body}
-          </p>
-        )}
-
-        {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
-          <div style={{
-            marginTop: 9,
-            padding: '9px 10px',
-            borderRadius: '50%',
-            background: '#F4F6FB',
-            fontSize: 13.8,
-            color: T.ink2,
-            lineHeight: 1.5,
-          }}>
-            {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
-            {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
-            {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
-          </div>
-        )}
-      </div>
-
-      {images.length > 0 && (
-        <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
-          {images.slice(0, 4).map((url: string, i: number) => (
-            <img
-              key={`${url}-${i}`}
-              src={url}
-              alt=""
-              style={{
-                width: '100%',
-                maxHeight: 260,
-                objectFit: 'cover',
-                display: 'block',
-                borderRadius: 13,
-              }}
-            />
-          ))}
+          <img
+            src={openImage}
+            alt=""
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
         </div>
       )}
-    </article>
+    </>
   )
 }
 
@@ -870,7 +956,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             height: 34,
             borderRadius: '50%',
             border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
             color: T.ink3,
             cursor: 'pointer',
           }}>
@@ -926,7 +1012,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
             padding: '12px 13px',
             borderRadius: 14,
             border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
             color: T.ink,
             fontSize: 16,
             outline: 'none',
@@ -975,7 +1061,7 @@ function ClassPostComposer({ teacher, onClose, onCreated }: any) {
           padding: '11px 13px',
           borderRadius: 14,
           border: `1px dashed ${T.border}`,
-          background: '#FAFAFC',
+          background: '#FFFFFF',
           color: T.ink2,
           cursor: 'pointer',
           fontSize: 11.3,
@@ -1056,7 +1142,7 @@ const classPostInputStyle: any = {
   padding: '11px 12px',
   borderRadius: 14,
   border: `1px solid ${T.border}`,
-  background: '#FAFAFC',
+  background: '#FFFFFF',
   color: T.ink,
   fontSize: 16,
   outline: 'none',
@@ -1442,7 +1528,7 @@ function UniversalClassComposer({ teacher, onClose, onCreated }: any) {
           style={{
             ...classSpaceTextareaStyle,
             minHeight: 92,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
           }}
         />
 
@@ -1622,7 +1708,7 @@ const composerActionStyle: any = {
   padding: '10px 12px',
   borderRadius: 14,
   border: `1px solid ${T.border}`,
-  background: '#FAFAFC',
+  background: '#FFFFFF',
   color: T.ink2,
   cursor: 'pointer',
   fontSize: 13.8,
@@ -1636,7 +1722,7 @@ const simpleInputStyle: any = {
   padding: '11px 12px',
   borderRadius: 14,
   border: `1px solid ${T.border}`,
-  background: '#FAFAFC',
+  background: '#FFFFFF',
   color: T.ink,
   fontSize: 16,
   outline: 'none',
@@ -1773,7 +1859,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             height: 34,
             borderRadius: '50%',
             border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
             color: T.ink3,
             cursor: 'pointer',
             fontSize: 18,
@@ -1804,7 +1890,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             padding: '11px 12px',
             borderRadius: 13,
             border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
             color: T.ink,
             fontSize: 16,
             outline: 'none',
@@ -1884,7 +1970,7 @@ function QuickReportSheet({ child, onClose, onSaved }: any) {
             padding: '12px 13px',
             borderRadius: 14,
             border: `1px solid ${T.border}`,
-            background: '#FAFAFC',
+            background: '#FFFFFF',
             color: T.ink,
             fontSize: 16,
             outline: 'none',
@@ -2007,7 +2093,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
           minWidth: 0,
           height: 38,
           borderRadius: 999,
-          background: '#FAFAFC',
+          background: '#FFFFFF',
           border: `1px solid ${T.border}`,
           color: T.ink3,
           fontSize: 13.8,
