@@ -1,12 +1,13 @@
 // @ts-nocheck
 'use client'
+// school-home-icon-life-view-v6
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
-  ArrowLeft,
+  Home,
   Building2,
   Camera,
   ChevronDown,
@@ -31,6 +32,8 @@ interface SchoolProfilePageProps {
   isAdmin:  boolean
   userId:   string
 }
+
+type SchoolView = 'home' | 'profile' | 'classes' | 'settings'
 
 const supabase = createClient()
 
@@ -99,6 +102,21 @@ function initialsFrom(name?: string | null) {
     .join('')
     .slice(0, 2)
     .toUpperCase()
+}
+
+
+function formatShortDate(iso?: string | null) {
+  if (!iso) return ''
+  try {
+    return new Date(iso).toLocaleDateString('en-ZA', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return ''
+  }
 }
 
 function SectionCard({ children, style = {} }: any) {
@@ -370,13 +388,140 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   )
 }
 
+
+function ActivityCard({ post }: any) {
+  const images = Array.isArray(post.image_urls) ? post.image_urls : []
+  const context = [post.audience_grade, post.audience_class].filter(Boolean).join(' · ')
+  const body = post.body || post.title || post.caption || ''
+
+  return (
+    <article style={{
+      padding: 14,
+      borderRadius: 22,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      boxShadow: '0 10px 28px rgba(0,0,0,0.026)',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: 13.2, fontWeight: 600, color: T.ink, margin: 0, letterSpacing: '-0.01em' }}>
+            {post.posted_by_kind === 'teacher' ? 'Class update' : 'School update'}
+          </p>
+          <p style={{
+            fontSize: 12.2,
+            color: T.ink3,
+            margin: '2px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {context || post.type || 'Activity'}
+          </p>
+        </div>
+
+        <span style={{ fontSize: 11.5, color: T.ink3, flexShrink: 0, paddingTop: 1 }}>
+          {formatShortDate(post.created_at)}
+        </span>
+      </div>
+
+      {body && (
+        <p style={{
+          fontSize: 13.4,
+          color: T.ink2,
+          lineHeight: 1.48,
+          margin: '11px 0 0',
+          whiteSpace: 'pre-wrap',
+        }}>
+          {body}
+        </p>
+      )}
+
+      {images.length > 0 && (
+        <div style={{
+          marginTop: 11,
+          display: 'grid',
+          gridTemplateColumns: images.length === 1 ? '1fr' : '1fr 1fr',
+          gap: 6,
+        }}>
+          {images.slice(0, 4).map((src: string, index: number) => (
+            <img
+              key={`${src}-${index}`}
+              src={src}
+              alt=""
+              style={{
+                width: '100%',
+                height: images.length === 1 ? 180 : 110,
+                objectFit: 'cover',
+                borderRadius: 16,
+                border: `1px solid ${T.border}`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {(post.event_date || post.event_time || post.event_location) && (
+        <div style={{
+          marginTop: 11,
+          padding: '10px 0 0',
+          borderTop: `1px solid ${T.border}`,
+          fontSize: 12.5,
+          color: T.ink3,
+          lineHeight: 1.45,
+        }}>
+          {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+        </div>
+      )}
+    </article>
+  )
+}
+
 export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId }: SchoolProfilePageProps) {
   const router = useRouter()
   const [school, setSchool] = useState(initialSchool)
-  const [tab, setTab] = useState<'profile' | 'classes' | 'settings'>('profile')
+  const [tab, setTab] = useState<SchoolView>('home')
   const [editing, setEditing] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [posts, setPosts] = useState<any[]>([])
+  const [postsLoading, setPostsLoading] = useState(false)
+  const [postsError, setPostsError] = useState('')
   const logoRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (tab !== 'home') return
+
+    let alive = true
+
+    const loadPosts = async () => {
+      setPostsLoading(true)
+      setPostsError('')
+
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('school_id', school.id)
+        .eq('status', 'published')
+        .order('created_at', { ascending: false })
+        .limit(30)
+
+      if (!alive) return
+
+      if (error) {
+        setPostsError(error.message || 'Could not load activity')
+        setPosts([])
+      } else {
+        setPosts(data || [])
+      }
+
+      setPostsLoading(false)
+    }
+
+    loadPosts()
+
+    return () => {
+      alive = false
+    }
+  }, [tab, school.id])
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -618,20 +763,20 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             justifyContent: 'space-between',
             gap: 10,
           }}>
-            <button type="button" onClick={() => router.back()} style={{
+            <button type="button" onClick={() => setTab('home')} aria-label="Home" style={{
               width: 38,
               height: 38,
               borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink,
+              border: `1px solid ${tab === 'home' ? T.ink : T.border}`,
+              background: tab === 'home' ? T.ink : T.white,
+              color: tab === 'home' ? T.white : T.ink,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
             }}>
-              <ArrowLeft size={17} strokeWidth={2} />
+              <Home size={16} strokeWidth={1.9} />
             </button>
 
             <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
@@ -642,14 +787,14 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 margin: 0,
                 letterSpacing: '-0.015em',
               }}>
-                School
+                {school.name || 'School'}
               </p>
               <p style={{
                 fontSize: 11.5,
                 color: T.ink3,
                 margin: '1px 0 0',
               }}>
-                Profile, classes and teachers
+                {tab === 'home' ? 'Latest activity' : 'Profile, classes and teachers'}
               </p>
             </div>
 
@@ -657,9 +802,9 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               width: 38,
               height: 38,
               borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink2,
+              border: `1px solid ${tab === 'settings' ? T.ink : T.border}`,
+              background: tab === 'settings' ? T.ink : T.white,
+              color: tab === 'settings' ? T.white : T.ink2,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -685,7 +830,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 <button
                   key={key}
                   type="button"
-                  onClick={() => { setTab(key as any); setEditing(false) }}
+                  onClick={() => { setTab(key as SchoolView); setEditing(false) }}
                   style={{
                     height: 34,
                     borderRadius: 999,
@@ -713,6 +858,54 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           WebkitOverflowScrolling: 'touch',
           padding: '10px 0 calc(18px + env(safe-area-inset-bottom, 0px))',
         }}>
+
+          {tab === 'home' && (
+            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {postsLoading ? (
+                <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center' }}>
+                  <div style={{
+                    width: 18,
+                    height: 18,
+                    borderRadius: '50%',
+                    border: `2px solid ${T.border}`,
+                    borderTopColor: T.ink,
+                    animation: 'spin 0.7s linear infinite',
+                    margin: '0 auto',
+                  }} />
+                </SectionCard>
+              ) : postsError ? (
+                <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
+                  <p style={{ fontSize: 13, color: T.ink2, margin: 0 }}>
+                    Could not load latest activity.
+                  </p>
+                </SectionCard>
+              ) : posts.length === 0 ? (
+                <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center', padding: '38px 20px' }}>
+                  <div style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 16,
+                    background: T.soft,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 12px',
+                  }}>
+                    <Home size={20} strokeWidth={1.7} color={T.ink3} />
+                  </div>
+                  <p style={{ fontSize: 15, color: T.ink, fontWeight: 600, margin: '0 0 4px' }}>
+                    No activity yet
+                  </p>
+                  <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+                    Class posts and school updates will appear here.
+                  </p>
+                </SectionCard>
+              ) : (
+                posts.map(post => <ActivityCard key={post.id} post={post} />)
+              )}
+            </div>
+          )}
+
           {tab === 'profile' && (
             <>
               {renderSchoolProfileCard()}
