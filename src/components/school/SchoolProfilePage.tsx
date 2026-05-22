@@ -8,6 +8,7 @@
 // school-home-empty-card-match-teachers-v11
 // school-home-empty-card-theme-standard-v12
 // school-home-empty-card-transparent-v13
+// school-logo-adjust-crop-v14
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -397,6 +398,234 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
 
 
 
+
+function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
+  const [zoom, setZoom] = useState(1.18)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const dragRef = useRef<any>(null)
+
+  const cropSize = 230
+  const outputSize = 512
+
+  useEffect(() => {
+    return () => {
+      dragRef.current = null
+    }
+  }, [])
+
+  const startDrag = (event: any) => {
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      initialX: offset.x,
+      initialY: offset.y,
+    }
+  }
+
+  const moveDrag = (event: any) => {
+    if (!dragRef.current) return
+    const nextX = dragRef.current.initialX + (event.clientX - dragRef.current.startX)
+    const nextY = dragRef.current.initialY + (event.clientY - dragRef.current.startY)
+    const max = 64
+    setOffset({
+      x: Math.max(-max, Math.min(max, nextX)),
+      y: Math.max(-max, Math.min(max, nextY)),
+    })
+  }
+
+  const stopDrag = () => {
+    dragRef.current = null
+  }
+
+  const createCroppedBlob = async () => {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = reject
+      img.src = draft.previewUrl
+    })
+
+    const canvas = document.createElement('canvas')
+    canvas.width = outputSize
+    canvas.height = outputSize
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not prepare logo image')
+
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, outputSize, outputSize)
+
+    const baseScale = Math.max(outputSize / image.naturalWidth, outputSize / image.naturalHeight)
+    const scale = baseScale * zoom
+    const drawWidth = image.naturalWidth * scale
+    const drawHeight = image.naturalHeight * scale
+    const outputOffsetX = offset.x * (outputSize / cropSize)
+    const outputOffsetY = offset.y * (outputSize / cropSize)
+
+    const dx = (outputSize - drawWidth) / 2 + outputOffsetX
+    const dy = (outputSize - drawHeight) / 2 + outputOffsetY
+
+    ctx.drawImage(image, dx, dy, drawWidth, drawHeight)
+
+    return await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) reject(new Error('Could not crop logo'))
+        else resolve(blob)
+      }, 'image/png', 0.94)
+    })
+  }
+
+  const apply = async () => {
+    const blob = await createCroppedBlob()
+    await onApply(blob)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 2000,
+      background: 'rgba(0,0,0,0.28)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      padding: '18px 12px calc(18px + env(safe-area-inset-bottom, 0px))',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: 420,
+        background: T.white,
+        borderRadius: 24,
+        border: `1px solid ${T.border}`,
+        boxShadow: '0 24px 70px rgba(0,0,0,0.18)',
+        padding: 16,
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 14 }}>
+          <p style={{ fontSize: 16, fontWeight: 650, color: T.ink, margin: 0 }}>
+            Adjust school logo
+          </p>
+          <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
+            Zoom and drag until it fits the circle.
+          </p>
+        </div>
+
+        <div style={{
+          width: cropSize,
+          height: cropSize,
+          borderRadius: 999,
+          overflow: 'hidden',
+          margin: '0 auto',
+          background: T.soft,
+          border: `1px dashed ${T.border}`,
+          position: 'relative',
+          touchAction: 'none',
+          cursor: 'grab',
+        }}
+          onPointerDown={startDrag}
+          onPointerMove={moveDrag}
+          onPointerUp={stopDrag}
+          onPointerCancel={stopDrag}
+        >
+          <img
+            src={draft.previewUrl}
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+              transformOrigin: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
+        <div style={{ marginTop: 16 }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 8,
+          }}>
+            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
+            <button type="button" onClick={() => {
+              setZoom(1.18)
+              setOffset({ x: 0, y: 0 })
+            }} style={{
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              borderRadius: 999,
+              padding: '5px 9px',
+              fontSize: 12,
+              fontWeight: 600,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}>
+              Reset
+            </button>
+          </div>
+
+          <input
+            type="range"
+            min="1"
+            max="2.8"
+            step="0.01"
+            value={zoom}
+            onChange={(event) => setZoom(Number(event.target.value))}
+            style={{ width: '100%' }}
+          />
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 9,
+          marginTop: 16,
+        }}>
+          <button type="button" onClick={onCancel} disabled={uploading} style={{
+            height: 40,
+            borderRadius: 999,
+            border: `1px solid ${T.border}`,
+            background: T.white,
+            color: T.ink2,
+            fontSize: 13,
+            fontWeight: 650,
+            cursor: uploading ? 'wait' : 'pointer',
+            fontFamily: 'inherit',
+          }}>
+            Cancel
+          </button>
+
+          <button type="button" onClick={apply} disabled={uploading} style={{
+            height: 40,
+            borderRadius: 999,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
+            fontSize: 13,
+            fontWeight: 650,
+            cursor: uploading ? 'wait' : 'pointer',
+            fontFamily: 'inherit',
+            opacity: uploading ? 0.72 : 1,
+          }}>
+            {uploading ? 'Saving...' : 'Apply logo'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 function ActivityCard({ post }: any) {
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const context = [post.audience_grade, post.audience_class].filter(Boolean).join(' · ')
@@ -496,6 +725,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [teacherCount, setTeacherCount] = useState(0)
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
+  const [logoDraft, setLogoDraft] = useState<any>(null)
 
   const setupCueActive = !postsLoading && !teacherCountLoading && posts.length === 0 && teacherCount === 0
 
@@ -555,24 +785,17 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     }
   }, [tab, school.id])
 
-  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Logo must be under 2 MB')
-      return
-    }
-
+  const uploadAdjustedLogo = async (blob: Blob) => {
     setUploading(true)
     const toastId = toast.loading('Updating logo...')
 
     try {
-      const ext = file.name.split('.').pop()
-      const path = `schools/${school.owner_id || userId}/logo.${ext}`
+      const path = `schools/${school.owner_id || userId}/logo.png`
+      const file = new File([blob], 'logo.png', { type: 'image/png' })
 
       const { error: uploadError } = await supabase.storage
         .from('school-assets')
-        .upload(path, file, { upsert: true })
+        .upload(path, file, { upsert: true, contentType: 'image/png' })
 
       if (uploadError) {
         toast.error('Logo upload failed', { id: toastId })
@@ -589,12 +812,38 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
       setSchool((s: any) => ({ ...s, logo_url: finalUrl }))
       window.dispatchEvent(new CustomEvent('school-updated', { detail: { logo_url: finalUrl } }))
       toast.success('Logo updated', { id: toastId })
+
+      if (logoDraft?.previewUrl) {
+        URL.revokeObjectURL(logoDraft.previewUrl)
+      }
+      setLogoDraft(null)
     } finally {
       setUploading(false)
     }
   }
 
-  const signOut = async () => {
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Logo must be under 5 MB')
+      return
+    }
+
+    const previewUrl = URL.createObjectURL(file)
+    setLogoDraft({ file, previewUrl })
+  }
+
+  const cancelLogoAdjust = () => {
+    if (logoDraft?.previewUrl) {
+      URL.revokeObjectURL(logoDraft.previewUrl)
+    }
+    setLogoDraft(null)
+  }
+
+const signOut = async () => {
     if (!confirm('Sign out of School Connect?')) return
     await supabase.auth.signOut()
     window.location.href = '/auth/login'
@@ -624,7 +873,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               <img
                 src={school.logo_url}
                 alt={school.name}
-                style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', padding: 0 }}
               />
             ) : (
               <span style={{ fontSize: 24, fontWeight: 600, color: T.ink3 }}>
@@ -779,6 +1028,15 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           }
         `}</style>
 
+      {logoDraft && (
+        <LogoAdjustModal
+          draft={logoDraft}
+          uploading={uploading}
+          onCancel={cancelLogoAdjust}
+          onApply={uploadAdjustedLogo}
+        />
+      )}
+
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -839,7 +1097,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   <img
                     src={school.logo_url}
                     alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 1.5, display: 'block' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', padding: 0, display: 'block' }}
                   />
                 ) : (
                   initialsFrom(school.name)
