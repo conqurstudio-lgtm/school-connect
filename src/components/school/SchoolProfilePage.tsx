@@ -11,6 +11,7 @@
 // school-home-empty-card-transparent-v13
 // school-logo-adjust-crop-v14
 // school-life-feed-unification-v1
+// school-life-admin-images-v3
 // school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
@@ -633,6 +634,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 function ActivityCard({ post }: any) {
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const teacher = post.teacher || null
+
   const authorName =
     post.posted_by_kind === 'teacher'
       ? (teacher?.name || 'Teacher')
@@ -660,7 +662,7 @@ function ActivityCard({ post }: any) {
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,
-      padding: '2px 0 16px',
+      padding: '2px 0 18px',
       borderBottom: `1px solid ${T.border}`,
     }}>
       <div style={{
@@ -740,27 +742,63 @@ function ActivityCard({ post }: any) {
           </p>
         )}
 
-        {images.length > 0 && (
+        {images.length === 1 && (
+          <div style={{ marginTop: 10 }}>
+            <img
+              src={images[0]}
+              alt=""
+              style={{
+                width: '100%',
+                height: 260,
+                objectFit: 'cover',
+                borderRadius: 20,
+                border: `1px solid ${T.border}`,
+                display: 'block',
+                background: T.soft,
+              }}
+            />
+          </div>
+        )}
+
+        {images.length > 1 && (
           <div style={{
             marginTop: 10,
-            display: 'grid',
-            gridTemplateColumns: images.length === 1 ? '1fr' : '1fr 1fr',
-            gap: 6,
+            display: 'flex',
+            gap: 8,
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            scrollBehavior: 'smooth',
+            scrollSnapType: 'x proximity',
+            padding: '0 14px 3px 0',
+            marginRight: -14,
           }}>
-            {images.slice(0, 4).map((src: string, index: number) => (
-              <img
+            {images.map((src: string, index: number) => (
+              <div
                 key={`${src}-${index}`}
-                src={src}
-                alt=""
                 style={{
-                  width: '100%',
-                  height: images.length === 1 ? 210 : 124,
-                  objectFit: 'cover',
-                  borderRadius: 18,
+                  width: '82%',
+                  minWidth: '82%',
+                  height: 260,
+                  borderRadius: 20,
+                  overflow: 'hidden',
+                  background: T.soft,
                   border: `1px solid ${T.border}`,
-                  display: 'block',
+                  scrollSnapAlign: 'start',
+                  flexShrink: 0,
                 }}
-              />
+              >
+                <img
+                  src={src}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </div>
             ))}
           </div>
         )}
