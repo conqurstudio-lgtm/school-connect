@@ -2,20 +2,21 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   ArrowLeft,
+  Building2,
   Camera,
   Check,
-  Copy,
-  ExternalLink,
+  ChevronDown,
   GraduationCap,
-  Link2,
   LogOut,
   MapPin,
   Pencil,
+  Phone,
   Save,
   Settings,
+  ShieldCheck,
   Sparkles,
   Users,
   X,
@@ -43,7 +44,6 @@ const T = {
   soft:   '#F4F4F6',
   soft2:  '#F8F8FB',
   white:  '#FFFFFF',
-  green:  '#16A34A',
 }
 
 const inputStyle: React.CSSProperties = {
@@ -102,6 +102,22 @@ function initialsFrom(name?: string | null) {
     .toUpperCase()
 }
 
+function SectionCard({ children, style = {} }: any) {
+  return (
+    <section style={{
+      margin: '0 14px 10px',
+      padding: 14,
+      borderRadius: 22,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
+      ...style,
+    }}>
+      {children}
+    </section>
+  )
+}
+
 function SectionTitle({ eyebrow, title, subtitle }: any) {
   return (
     <div style={{ marginBottom: 10 }}>
@@ -128,7 +144,7 @@ function SectionTitle({ eyebrow, title, subtitle }: any) {
       </h2>
       {subtitle && (
         <p style={{
-          fontSize: 13.4,
+          fontSize: 13.2,
           color: T.ink3,
           lineHeight: 1.45,
           margin: '4px 0 0',
@@ -140,102 +156,91 @@ function SectionTitle({ eyebrow, title, subtitle }: any) {
   )
 }
 
-function CommandCard({ icon, title, subtitle, action, onClick, muted = false }: any) {
+function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }: any) {
+  const [open, setOpen] = useState(defaultOpen)
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        width: '100%',
-        border: `1px solid ${T.border}`,
-        background: muted ? T.soft2 : T.white,
-        borderRadius: 20,
-        padding: 13,
-        textAlign: 'left',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        cursor: onClick ? 'pointer' : 'default',
-        fontFamily: 'inherit',
-        boxShadow: muted ? 'none' : '0 10px 28px rgba(0,0,0,0.035)',
-      }}
-    >
-      <div style={{
-        width: 40,
-        height: 40,
-        borderRadius: 15,
-        background: T.soft,
-        color: T.ink2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        {icon}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          fontSize: 14,
-          fontWeight: 900,
-          color: T.ink,
-          margin: 0,
-          letterSpacing: '-0.015em',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}>
-          {title}
-        </p>
-        <p style={{
-          fontSize: 12.6,
-          color: T.ink3,
-          lineHeight: 1.38,
-          margin: '2px 0 0',
-        }}>
-          {subtitle}
-        </p>
-      </div>
-
-      {action && (
-        <span style={{
-          fontSize: 12.2,
-          fontWeight: 850,
-          color: T.ink2,
+    <div style={{
+      borderRadius: 20,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      overflow: 'hidden',
+      boxShadow: '0 8px 22px rgba(0,0,0,0.03)',
+    }}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        style={{
+          width: '100%',
+          background: T.white,
+          border: 'none',
+          padding: 13,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 11,
+          cursor: 'pointer',
+          textAlign: 'left',
+          fontFamily: 'inherit',
+        }}
+      >
+        <div style={{
+          width: 38,
+          height: 38,
+          borderRadius: 14,
           background: T.soft,
-          borderRadius: 999,
-          padding: '6px 9px',
+          color: T.ink2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}>
-          {action}
-        </span>
-      )}
-    </button>
-  )
-}
+          {icon}
+        </div>
 
-function InfoPill({ icon, children }: any) {
-  if (!children) return null
-  return (
-    <span style={{
-      minHeight: 28,
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 6,
-      padding: '0 9px',
-      borderRadius: 999,
-      border: `1px solid ${T.border}`,
-      background: T.white,
-      color: T.ink2,
-      fontSize: 12.4,
-      fontWeight: 750,
-      maxWidth: '100%',
-    }}>
-      {icon}
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {children}
-      </span>
-    </span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 14,
+            fontWeight: 900,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.015em',
+          }}>
+            {title}
+          </p>
+          {subtitle && (
+            <p style={{
+              fontSize: 12.4,
+              color: T.ink3,
+              margin: '2px 0 0',
+              lineHeight: 1.35,
+            }}>
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        <ChevronDown
+          size={16}
+          strokeWidth={2}
+          style={{
+            color: T.ink3,
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.16s ease',
+            flexShrink: 0,
+          }}
+        />
+      </button>
+
+      {open && (
+        <div style={{
+          borderTop: `1px solid ${T.border}`,
+          padding: 13,
+          background: T.soft2,
+        }}>
+          {children}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -279,57 +284,42 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   }
 
   return (
-    <section style={{
-      margin: '0 14px 12px',
-      padding: 14,
-      borderRadius: 22,
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
-    }}>
-      <SectionTitle
-        eyebrow="School details"
-        title="Keep it simple"
-        subtitle="Only add what helps parents trust the official school space."
-      />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+      <div>
+        <label style={labelStyle}>School name</label>
+        <input value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
+      </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+      <div>
+        <label style={labelStyle}>Short tagline</label>
+        <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Together we grow" style={inputStyle} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div>
-          <label style={labelStyle}>School name</label>
-          <input value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
+          <label style={labelStyle}>Phone</label>
+          <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="011 000 0000" style={inputStyle} />
         </div>
-
         <div>
-          <label style={labelStyle}>Short tagline</label>
-          <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Together we grow" style={inputStyle} />
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <div>
-            <label style={labelStyle}>Phone</label>
-            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="011 000 0000" style={inputStyle} />
-          </div>
-          <div>
-            <label style={labelStyle}>Email</label>
-            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="info@school.co.za" style={inputStyle} />
-          </div>
-        </div>
-
-        <div>
-          <label style={labelStyle}>Location / province</label>
-          <input value={province || address} onChange={e => {
-            setProvince(e.target.value)
-            if (!address) setAddress(e.target.value)
-          }} placeholder="Johannesburg, Gauteng" style={inputStyle} />
-        </div>
-
-        <div>
-          <label style={labelStyle}>Website</label>
-          <input value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://..." style={inputStyle} />
+          <label style={labelStyle}>Email</label>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="info@school.co.za" style={inputStyle} />
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 13 }}>
+      <div>
+        <label style={labelStyle}>Location</label>
+        <input value={province || address} onChange={e => {
+          setProvince(e.target.value)
+          if (!address) setAddress(e.target.value)
+        }} placeholder="Johannesburg, Gauteng" style={inputStyle} />
+      </div>
+
+      <div>
+        <label style={labelStyle}>Website</label>
+        <input value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://..." style={inputStyle} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 2 }}>
         <button type="button" onClick={onCancel} style={quietButton}>
           <X size={14} strokeWidth={2.1} />
           Cancel
@@ -343,43 +333,17 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
           {saving ? 'Saving…' : 'Save'}
         </button>
       </div>
-    </section>
+    </div>
   )
 }
 
 export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId }: SchoolProfilePageProps) {
   const router = useRouter()
   const [school, setSchool] = useState(initialSchool)
-  const [tab, setTab] = useState<'overview' | 'teachers' | 'join' | 'settings'>('overview')
+  const [tab, setTab] = useState<'profile' | 'classes' | 'settings'>('profile')
   const [editing, setEditing] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [copied, setCopied] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
-
-  const inviteUrl = useMemo(() => {
-    if (typeof window === 'undefined') return `/parent-join/${school.slug}`
-    return `${window.location.origin}/parent-join/${school.slug}`
-  }, [school.slug])
-
-  const setupItems = [
-    {
-      key: 'identity',
-      label: 'School profile',
-      done: Boolean(school.name && (school.logo_url || school.tagline || school.phone || school.email)),
-    },
-    {
-      key: 'teachers',
-      label: 'Teachers',
-      done: true,
-    },
-    {
-      key: 'join',
-      label: 'Parent join link',
-      done: Boolean(school.slug),
-    },
-  ]
-
-  const completed = setupItems.filter(item => item.done).length
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -418,21 +382,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     } finally {
       setUploading(false)
     }
-  }
-
-  const copyInvite = async () => {
-    try {
-      await navigator.clipboard.writeText(inviteUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 1800)
-      toast.success('Parent join link copied')
-    } catch {
-      toast.error('Could not copy link')
-    }
-  }
-
-  const openInvite = () => {
-    window.open(inviteUrl, '_blank', 'noopener,noreferrer')
   }
 
   const signOut = async () => {
@@ -496,18 +445,15 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                 color: T.ink,
                 margin: 0,
                 letterSpacing: '-0.025em',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
               }}>
-                School setup
+                School
               </p>
               <p style={{
                 fontSize: 11.5,
                 color: T.ink3,
                 margin: '1px 0 0',
               }}>
-                Official home for school communication
+                Profile, classes and teachers
               </p>
             </div>
 
@@ -531,14 +477,13 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           {isAdmin && (
             <nav style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
+              gridTemplateColumns: 'repeat(3, 1fr)',
               gap: 6,
               marginTop: 10,
             }}>
               {[
-                ['overview', 'Overview'],
-                ['teachers', 'Teachers'],
-                ['join', 'Parent Join'],
+                ['profile', 'Profile'],
+                ['classes', 'Classes'],
                 ['settings', 'Settings'],
               ].map(([key, label]) => (
                 <button
@@ -551,7 +496,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                     border: `1px solid ${tab === key ? T.ink : T.border}`,
                     background: tab === key ? T.ink : T.white,
                     color: tab === key ? T.white : T.ink2,
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: 850,
                     fontFamily: 'inherit',
                     cursor: 'pointer',
@@ -572,19 +517,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           WebkitOverflowScrolling: 'touch',
           padding: '10px 0 calc(18px + env(safe-area-inset-bottom, 0px))',
         }}>
-          <section style={{
-            margin: '0 14px 10px',
-            padding: 14,
-            borderRadius: 24,
-            background: T.white,
-            border: `1px solid ${T.border}`,
-            boxShadow: '0 12px 32px rgba(0,0,0,0.045)',
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-            }}>
+          <SectionCard>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <div style={{
                   width: 68,
@@ -671,307 +605,260 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                   lineHeight: 1.38,
                   margin: '3px 0 8px',
                 }}>
-                  {school.tagline || 'Your official school memory for updates, documents, class life and parent communication.'}
+                  {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
                 </p>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                  <InfoPill icon={<MapPin size={12} strokeWidth={1.8} />}>
-                    {school.province || school.address || 'Location not added'}
-                  </InfoPill>
+                  {(school.province || school.address) && (
+                    <span style={{
+                      minHeight: 28,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '0 9px',
+                      borderRadius: 999,
+                      border: `1px solid ${T.border}`,
+                      background: T.white,
+                      color: T.ink2,
+                      fontSize: 12.4,
+                      fontWeight: 750,
+                    }}>
+                      <MapPin size={12} strokeWidth={1.8} />
+                      {school.province || school.address}
+                    </span>
+                  )}
+                  {school.phone && (
+                    <span style={{
+                      minHeight: 28,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '0 9px',
+                      borderRadius: 999,
+                      border: `1px solid ${T.border}`,
+                      background: T.white,
+                      color: T.ink2,
+                      fontSize: 12.4,
+                      fontWeight: 750,
+                    }}>
+                      <Phone size={12} strokeWidth={1.8} />
+                      {school.phone}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
+          </SectionCard>
 
-            {isAdmin && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 8,
-                marginTop: 13,
-              }}>
-                <button type="button" onClick={() => setEditing(true)} style={quietButton}>
-                  <Pencil size={14} strokeWidth={2} />
-                  Edit profile
-                </button>
-                <button type="button" onClick={copyInvite} style={quietButton}>
-                  {copied ? <Check size={14} strokeWidth={2.1} /> : <Copy size={14} strokeWidth={2} />}
-                  {copied ? 'Copied' : 'Copy link'}
-                </button>
-              </div>
-            )}
-          </section>
+          {tab === 'profile' && (
+            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <AccordionCard
+                defaultOpen
+                icon={<Building2 size={17} strokeWidth={1.8} />}
+                title="School profile"
+                subtitle="Edit the public identity parents and teachers see."
+              >
+                {editing ? (
+                  <EditSchoolDetails
+                    school={school}
+                    onCancel={() => setEditing(false)}
+                    onSaved={(updates: any) => {
+                      setSchool((s: any) => ({ ...s, ...updates }))
+                      setEditing(false)
+                      window.dispatchEvent(new Event('school-updated'))
+                    }}
+                  />
+                ) : (
+                  <div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {[
+                        ['School name', school.name],
+                        ['Tagline', school.tagline],
+                        ['Location', school.province || school.address],
+                        ['Phone', school.phone],
+                        ['Email', school.email],
+                        ['Website', school.website],
+                      ].filter(([, value]) => Boolean(value)).map(([label, value]) => (
+                        <div key={label} style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          gap: 12,
+                          padding: '9px 10px',
+                          borderRadius: 14,
+                          background: T.white,
+                          border: `1px solid ${T.border}`,
+                        }}>
+                          <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 750 }}>{label}</span>
+                          <span style={{
+                            fontSize: 12.8,
+                            color: T.ink2,
+                            fontWeight: 750,
+                            textAlign: 'right',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
 
-          {editing && (
-            <EditSchoolDetails
-              school={school}
-              onCancel={() => setEditing(false)}
-              onSaved={(updates: any) => {
-                setSchool((s: any) => ({ ...s, ...updates }))
-                setEditing(false)
-                window.dispatchEvent(new Event('school-updated'))
-              }}
-            />
+                    {isAdmin && (
+                      <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 11 }}>
+                        <Pencil size={14} strokeWidth={2} />
+                        Edit school profile
+                      </button>
+                    )}
+                  </div>
+                )}
+              </AccordionCard>
+
+              <AccordionCard
+                icon={<ShieldCheck size={17} strokeWidth={1.8} />}
+                title="What this page controls"
+                subtitle="Keep school setup focused and clean."
+              >
+                <p style={{
+                  fontSize: 13,
+                  color: T.ink3,
+                  lineHeight: 1.5,
+                  margin: 0,
+                }}>
+                  The school account keeps the official profile and creates the school structure.
+                  Teachers handle class communication from their own class spaces.
+                </p>
+              </AccordionCard>
+            </div>
           )}
 
-          {tab === 'overview' && (
-            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.white,
-                border: `1px solid ${T.border}`,
-                boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
-              }}>
+          {tab === 'classes' && isAdmin && (
+            <div style={{ padding: '0 14px' }}>
+              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
                 <SectionTitle
-                  eyebrow="Launch checklist"
-                  title="Set up the school in minutes"
-                  subtitle="Keep the school simple: identity, teachers, parent link, then class life."
+                  eyebrow="Build your school structure"
+                  title="Add teachers and classes"
+                  subtitle="Keep this simple: create the class, assign the teacher, and let the teacher manage their class space."
                 />
 
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateColumns: '1fr 1fr',
                   gap: 8,
                   marginTop: 12,
                 }}>
-                  {setupItems.map(item => (
-                    <div key={item.key} style={{
-                      padding: '10px 8px',
-                      borderRadius: 16,
-                      background: item.done ? '#F0FDF4' : T.soft2,
-                      border: `1px solid ${item.done ? 'rgba(22,163,74,0.18)' : T.border}`,
-                      textAlign: 'center',
+                  <div style={{
+                    padding: 11,
+                    borderRadius: 18,
+                    background: T.soft2,
+                    border: `1px solid ${T.border}`,
+                  }}>
+                    <GraduationCap size={17} strokeWidth={1.8} color={T.ink2} />
+                    <p style={{
+                      fontSize: 13,
+                      fontWeight: 900,
+                      color: T.ink,
+                      margin: '8px 0 2px',
                     }}>
-                      <div style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 999,
-                        margin: '0 auto 7px',
-                        background: item.done ? T.green : '#E5E5EA',
-                        color: T.white,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                        <Check size={13} strokeWidth={2.5} />
-                      </div>
-                      <p style={{
-                        fontSize: 11.5,
-                        color: item.done ? '#166534' : T.ink3,
-                        fontWeight: 850,
-                        lineHeight: 1.2,
-                        margin: 0,
-                      }}>
-                        {item.label}
-                      </p>
-                    </div>
-                  ))}
+                      Classes
+                    </p>
+                    <p style={{
+                      fontSize: 12.2,
+                      color: T.ink3,
+                      lineHeight: 1.35,
+                      margin: 0,
+                    }}>
+                      Grade/class structure.
+                    </p>
+                  </div>
+
+                  <div style={{
+                    padding: 11,
+                    borderRadius: 18,
+                    background: T.soft2,
+                    border: `1px solid ${T.border}`,
+                  }}>
+                    <Users size={17} strokeWidth={1.8} color={T.ink2} />
+                    <p style={{
+                      fontSize: 13,
+                      fontWeight: 900,
+                      color: T.ink,
+                      margin: '8px 0 2px',
+                    }}>
+                      Teachers
+                    </p>
+                    <p style={{
+                      fontSize: 12.2,
+                      color: T.ink3,
+                      lineHeight: 1.35,
+                      margin: 0,
+                    }}>
+                      Assign class owners.
+                    </p>
+                  </div>
                 </div>
-
-                <p style={{
-                  fontSize: 12.4,
-                  color: T.ink3,
-                  textAlign: 'center',
-                  margin: '10px 0 0',
-                }}>
-                  {completed} of {setupItems.length} basics ready
-                </p>
-              </section>
-
-              <CommandCard
-                icon={<GraduationCap size={18} strokeWidth={1.8} />}
-                title="Teachers and classes"
-                subtitle="Add teachers, then connect them to grades/classes."
-                action="Open"
-                onClick={() => setTab('teachers')}
-              />
-
-              <CommandCard
-                icon={<Users size={18} strokeWidth={1.8} />}
-                title="Parent onboarding"
-                subtitle="Share one official school link with parents."
-                action="Copy"
-                onClick={copyInvite}
-              />
-
-              <CommandCard
-                icon={<Sparkles size={18} strokeWidth={1.8} />}
-                title="School memory"
-                subtitle="Class Life becomes the official home for updates, moments, documents and reports."
-                action="Preview"
-                onClick={() => router.push('/feed')}
-                muted
-              />
-            </div>
-          )}
-
-          {tab === 'teachers' && isAdmin && (
-            <div style={{ padding: '0 14px' }}>
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.white,
-                border: `1px solid ${T.border}`,
-                boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
-                marginBottom: 10,
-              }}>
-                <SectionTitle
-                  eyebrow="Teachers"
-                  title="Build your school structure"
-                  subtitle="Teachers are the bridge between the school memory and each class."
-                />
-              </section>
+              </SectionCard>
 
               <TeachersTab />
             </div>
           )}
 
-          {tab === 'join' && isAdmin && (
-            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.white,
-                border: `1px solid ${T.border}`,
-                boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
-              }}>
-                <SectionTitle
-                  eyebrow="Parent Join"
-                  title="One official link"
-                  subtitle="Parents use this link to request access and connect children to the right class."
-                />
-
-                <div style={{
-                  padding: 12,
-                  borderRadius: 18,
-                  background: T.soft2,
-                  border: `1px solid ${T.border}`,
-                  marginTop: 10,
-                }}>
-                  <p style={{
-                    fontSize: 11,
-                    fontWeight: 900,
-                    color: T.ink3,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    margin: '0 0 6px',
-                  }}>
-                    Parent join link
-                  </p>
-                  <p style={{
-                    fontSize: 12.4,
-                    color: T.ink2,
-                    margin: 0,
-                    fontFamily: 'monospace',
-                    wordBreak: 'break-all',
-                    lineHeight: 1.45,
-                  }}>
-                    {inviteUrl}
-                  </p>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 12 }}>
-                  <button type="button" onClick={copyInvite} style={primaryButton}>
-                    {copied ? <Check size={14} strokeWidth={2.1} /> : <Copy size={14} strokeWidth={2} />}
-                    {copied ? 'Copied' : 'Copy link'}
-                  </button>
-                  <button type="button" onClick={openInvite} style={quietButton}>
-                    <ExternalLink size={14} strokeWidth={2} />
-                    Preview
-                  </button>
-                </div>
-              </section>
-
-              <CommandCard
-                icon={<Link2 size={18} strokeWidth={1.8} />}
-                title="Share on WhatsApp"
-                subtitle="Copy this link and send it to class groups or parents directly."
-                action="Copy"
-                onClick={copyInvite}
-              />
-
-              <CommandCard
-                icon={<Users size={18} strokeWidth={1.8} />}
-                title="Review join requests"
-                subtitle="Teachers approve parent-child links from their class space."
-                action="Teacher"
-                muted
-              />
-            </div>
-          )}
-
           {tab === 'settings' && isAdmin && (
             <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.white,
-                border: `1px solid ${T.border}`,
-                boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
-              }}>
+              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
                 <SectionTitle
                   eyebrow="Settings"
-                  title="Keep this light"
-                  subtitle="Only the actions needed to manage the school account."
+                  title="Account actions"
+                  subtitle="Keep this area light. More settings can come later only when they add real value."
                 />
 
                 <button type="button" onClick={signOut} style={{
                   ...quietButton,
                   width: '100%',
                   justifyContent: 'flex-start',
-                  marginTop: 8,
                   height: 44,
                   borderRadius: 16,
                 }}>
                   <LogOut size={15} strokeWidth={1.9} />
                   Sign out
                 </button>
-              </section>
+              </SectionCard>
 
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.soft2,
-                border: `1px solid ${T.border}`,
-              }}>
+              <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2 }}>
+                <Sparkles size={17} strokeWidth={1.8} color={T.ink2} />
                 <p style={{
                   fontSize: 13,
                   fontWeight: 900,
                   color: T.ink,
-                  margin: 0,
+                  margin: '8px 0 2px',
                 }}>
-                  School Connect principle
+                  Product principle
                 </p>
                 <p style={{
                   fontSize: 13,
                   color: T.ink3,
                   lineHeight: 1.45,
-                  margin: '4px 0 0',
+                  margin: 0,
                 }}>
-                  WhatsApp can notify parents, but School Connect remains the official home for updates, documents, reports and class life.
+                  The school creates the structure. Teachers run the class spaces.
+                  Parents experience the official class memory through their teacher.
                 </p>
-              </section>
+              </SectionCard>
             </div>
           )}
 
           {!isAdmin && (
             <div style={{ padding: '0 14px' }}>
-              <section style={{
-                padding: 14,
-                borderRadius: 22,
-                background: T.white,
-                border: `1px solid ${T.border}`,
-                boxShadow: '0 10px 28px rgba(0,0,0,0.035)',
-              }}>
+              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
                 <SectionTitle
                   eyebrow="School"
                   title="Official school profile"
-                  subtitle="This is the school connected to your child’s class space."
+                  subtitle="This is the school connected to your class space."
                 />
                 <button type="button" onClick={() => router.push('/feed')} style={{ ...primaryButton, width: '100%', marginTop: 8 }}>
-                  Go to school feed
+                  Go to feed
                 </button>
-              </section>
+              </SectionCard>
             </div>
           )}
 

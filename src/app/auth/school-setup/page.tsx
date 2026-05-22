@@ -417,23 +417,8 @@ export default function SchoolSetupPage() {
               {schoolNameFinal} is live!
             </h2>
             <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 24px', lineHeight: 1.5 }}>
-              Share this link with parents to invite them to your school feed.
+              Next, build your school structure by adding classes and teachers.
             </p>
-
-            {/* Invite link */}
-            <div style={{
-              background: T.bg, border: `1px solid ${T.border}`,
-              borderRadius: 12, padding: '12px 14px', marginBottom: 24, textAlign: 'left',
-            }}>
-              <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
-                           textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 5px' }}>
-                Parent invite link
-              </p>
-              <p style={{ fontSize: 13, color: T.ink2, margin: 0,
-                           wordBreak: 'break-all', fontFamily: 'monospace' }}>
-                {origin}/parent-join/{schoolSlug}
-              </p>
-            </div>
 
             <button onClick={async () => {
                 // Force session refresh so middleware cookie is set
@@ -448,7 +433,7 @@ export default function SchoolSetupPage() {
               borderRadius: 12, fontSize: 15, fontWeight: 600,
               cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '-0.01em',
             }}>
-              Go to my feed <ArrowRight style={{ width: 16, height: 16 }} />
+              Build school structure <ArrowRight style={{ width: 16, height: 16 }} />
             </button>
           </div>
         )}
