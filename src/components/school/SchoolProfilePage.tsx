@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-connect-white-app-background-v15
 // school-home-icon-life-view-v6
 // school-logo-home-settings-flow-v7
 // school-logo-home-onboarding-cues-v8
@@ -9,6 +10,8 @@
 // school-home-empty-card-theme-standard-v12
 // school-home-empty-card-transparent-v13
 // school-logo-adjust-crop-v14
+// school-life-feed-unification-v1
+// school-life-feed-build-repair-v2
 // school-profile-clean-light-card-v4
 // school-profile-spacing-icon-cleanup-v5
 
@@ -22,6 +25,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  MoreHorizontal,
   Pencil,
   Phone,
   Save,
@@ -50,7 +54,7 @@ const T = {
   ink2:   '#4A4A4A',
   ink3:   '#8E8E93',
   border: 'rgba(0,0,0,0.07)',
-  bg:     '#FCFCFF',
+  bg:     '#FFFFFF',
   soft:   '#F4F4F6',
   soft2:  '#F8F8FB',
   white:  '#FFFFFF',
@@ -628,87 +632,152 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
 function ActivityCard({ post }: any) {
   const images = Array.isArray(post.image_urls) ? post.image_urls : []
-  const context = [post.audience_grade, post.audience_class].filter(Boolean).join(' · ')
+  const teacher = post.teacher || null
+  const authorName =
+    post.posted_by_kind === 'teacher'
+      ? (teacher?.name || 'Teacher')
+      : 'School'
+
+  const authorInitials = initialsFrom(authorName)
+  const avatarUrl = post.posted_by_kind === 'teacher' ? teacher?.photo_url : null
+
+  const context = [
+    post.audience_grade || teacher?.grade,
+    post.audience_class || teacher?.class_name,
+  ].filter(Boolean).join(' · ')
+
+  const typeLabel =
+    post.type === 'event' ? 'Event'
+    : post.type === 'moment' ? 'Moment'
+    : post.type === 'document' ? 'Document'
+    : post.posted_by_kind === 'teacher' ? 'Class update'
+    : 'School update'
+
   const body = post.body || post.title || post.caption || ''
 
   return (
     <article style={{
-      padding: 14,
-      borderRadius: 22,
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      boxShadow: '0 10px 28px rgba(0,0,0,0.026)',
+      display: 'grid',
+      gridTemplateColumns: '38px 1fr',
+      gap: 10,
+      padding: '2px 0 16px',
+      borderBottom: `1px solid ${T.border}`,
     }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: 13.2, fontWeight: 600, color: T.ink, margin: 0, letterSpacing: '-0.01em' }}>
-            {post.posted_by_kind === 'teacher' ? 'Class update' : 'School update'}
-          </p>
-          <p style={{
-            fontSize: 12.2,
-            color: T.ink3,
-            margin: '2px 0 0',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            {context || post.type || 'Activity'}
-          </p>
-        </div>
-
-        <span style={{ fontSize: 11.5, color: T.ink3, flexShrink: 0, paddingTop: 1 }}>
-          {formatShortDate(post.created_at)}
-        </span>
+      <div style={{
+        width: 38,
+        height: 38,
+        borderRadius: 14,
+        background: avatarUrl ? `url(${avatarUrl}) center/cover` : T.soft,
+        border: `1px solid ${T.border}`,
+        color: T.ink2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 12,
+        fontWeight: 600,
+        overflow: 'hidden',
+      }}>
+        {!avatarUrl && authorInitials}
       </div>
 
-      {body && (
-        <p style={{
-          fontSize: 13.4,
-          color: T.ink2,
-          lineHeight: 1.48,
-          margin: '11px 0 0',
-          whiteSpace: 'pre-wrap',
-        }}>
-          {body}
-        </p>
-      )}
-
-      {images.length > 0 && (
+      <div style={{ minWidth: 0 }}>
         <div style={{
-          marginTop: 11,
-          display: 'grid',
-          gridTemplateColumns: images.length === 1 ? '1fr' : '1fr 1fr',
-          gap: 6,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 10,
         }}>
-          {images.slice(0, 4).map((src: string, index: number) => (
-            <img
-              key={`${src}-${index}`}
-              src={src}
-              alt=""
-              style={{
-                width: '100%',
-                height: images.length === 1 ? 180 : 110,
-                objectFit: 'cover',
-                borderRadius: 16,
-                border: `1px solid ${T.border}`,
-              }}
-            />
-          ))}
-        </div>
-      )}
+          <div style={{ minWidth: 0 }}>
+            <p style={{
+              fontSize: 13.5,
+              fontWeight: 600,
+              color: T.ink,
+              margin: 0,
+              letterSpacing: '-0.01em',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {authorName}
+            </p>
 
-      {(post.event_date || post.event_time || post.event_location) && (
-        <div style={{
-          marginTop: 11,
-          padding: '10px 0 0',
-          borderTop: `1px solid ${T.border}`,
-          fontSize: 12.5,
-          color: T.ink3,
-          lineHeight: 1.45,
-        }}>
-          {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+            <p style={{
+              fontSize: 12.2,
+              color: T.ink3,
+              margin: '2px 0 0',
+              lineHeight: 1.35,
+            }}>
+              {[typeLabel, context, formatShortDate(post.created_at)].filter(Boolean).join(' · ')}
+            </p>
+          </div>
+
+          <button type="button" aria-label="Post options" style={{
+            width: 28,
+            height: 28,
+            borderRadius: 999,
+            border: `1px solid ${T.border}`,
+            background: T.white,
+            color: T.ink3,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+          }}>
+            <MoreHorizontal size={15} strokeWidth={1.8} />
+          </button>
         </div>
-      )}
+
+        {body && (
+          <p style={{
+            fontSize: 13.6,
+            color: T.ink2,
+            lineHeight: 1.5,
+            margin: '8px 0 0',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {body}
+          </p>
+        )}
+
+        {images.length > 0 && (
+          <div style={{
+            marginTop: 10,
+            display: 'grid',
+            gridTemplateColumns: images.length === 1 ? '1fr' : '1fr 1fr',
+            gap: 6,
+          }}>
+            {images.slice(0, 4).map((src: string, index: number) => (
+              <img
+                key={`${src}-${index}`}
+                src={src}
+                alt=""
+                style={{
+                  width: '100%',
+                  height: images.length === 1 ? 210 : 124,
+                  objectFit: 'cover',
+                  borderRadius: 18,
+                  border: `1px solid ${T.border}`,
+                  display: 'block',
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {(post.event_date || post.event_time || post.event_location) && (
+          <div style={{
+            marginTop: 10,
+            padding: '9px 0 0',
+            borderTop: `1px solid ${T.border}`,
+            fontSize: 12.5,
+            color: T.ink3,
+            lineHeight: 1.45,
+          }}>
+            {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+          </div>
+        )}
+      </div>
     </article>
   )
 }
@@ -753,7 +822,28 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         setPostsError(error.message || 'Could not load activity')
         setPosts([])
       } else {
-        setPosts(data || [])
+        const rawPosts = data || []
+        const teacherIds = Array.from(new Set(
+          rawPosts
+            .map((post: any) => post.teacher_id)
+            .filter(Boolean)
+        ))
+
+        let teacherMap: any = {}
+
+        if (teacherIds.length > 0) {
+          const { data: teacherRows } = await supabase
+            .from('teachers')
+            .select('id,name,photo_url,grade,class_name')
+            .in('id', teacherIds)
+
+          teacherMap = Object.fromEntries((teacherRows || []).map((teacher: any) => [teacher.id, teacher]))
+        }
+
+        setPosts(rawPosts.map((post: any) => ({
+          ...post,
+          teacher: post.teacher_id ? teacherMap[post.teacher_id] || null : null,
+        })))
       }
 
       setPostsLoading(false)
