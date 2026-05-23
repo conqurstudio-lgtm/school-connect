@@ -1,5 +1,6 @@
 'use client'
-// unified-class-life-post-card-v1
+// mirror-teacher-class-life-layout-v1
+// One class-life post layout. Teacher sees it. Parent sees the same layout.
 
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
@@ -12,7 +13,6 @@ const T = {
   ink: '#262626',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.06)',
   white: '#FFFFFF',
   soft: '#F8F8F9',
   primary: '#2B2B2F',
@@ -44,9 +44,6 @@ function reactionTotalFrom(counts: any) {
 
 export function UnifiedClassLifePostCard({
   post,
-  mode = 'parent',
-  authorName,
-  authorPhotoUrl,
   canDelete = false,
   onDelete,
   canReact = false,
@@ -75,13 +72,7 @@ export function UnifiedClassLifePostCard({
     : post.type === 'document' ? 'Document'
     : 'Update'
 
-  const displayName = authorName || post.teacher_name || post.author_name || (mode === 'teacher' ? 'Class Life' : 'Teacher')
   const totalReactions = reactionTotalFrom(reactionCounts)
-
-  const applyReactionState = (nextReaction: string | null, nextCounts: any) => {
-    setMyReaction(nextReaction)
-    setReactionCounts(nextCounts)
-  }
 
   const buildCounts = (nextReaction: string | null, previousReaction: string | null, baseCounts = reactionCounts) => {
     const nextCounts = { ...baseCounts }
@@ -95,6 +86,11 @@ export function UnifiedClassLifePostCard({
     }
 
     return nextCounts
+  }
+
+  const applyReactionState = (nextReaction: string | null, nextCounts: any) => {
+    setMyReaction(nextReaction)
+    setReactionCounts(nextCounts)
   }
 
   const handleReaction = async (type: 'love' | 'like' | 'celebrate') => {
@@ -172,11 +168,11 @@ export function UnifiedClassLifePostCard({
         disabled={reacting}
         aria-pressed={active}
         style={{
-          height: 32,
-          padding: '0 10px',
+          height: 31,
+          padding: '0 9px',
           borderRadius: 999,
-          border: active ? `1px solid ${T.primary}` : `1px solid ${T.border}`,
-          background: active ? T.primary : 'transparent',
+          border: 'none',
+          background: active ? T.primary : T.soft,
           color: active ? T.white : T.ink2,
           display: 'inline-flex',
           alignItems: 'center',
@@ -191,7 +187,7 @@ export function UnifiedClassLifePostCard({
         <span aria-hidden="true">{icon}</span>
         <span>{label}</span>
         {count > 0 && (
-          <span style={{ opacity: active ? 0.9 : 0.72 }}>
+          <span style={{ opacity: active ? 0.92 : 0.72 }}>
             {count}
           </span>
         )}
@@ -202,70 +198,48 @@ export function UnifiedClassLifePostCard({
   return (
     <>
       <article style={{
-        background: T.white,
-        border: `1px solid ${T.border}`,
-        borderRadius: 18,
-        overflow: 'hidden',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 0,
+        overflow: 'visible',
         boxShadow: 'none',
       }}>
-        <div style={{ padding: 14 }}>
+        <div style={{ padding: '0 0 10px' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 10,
+            gap: 8,
             marginBottom: post.body || post.event_date || images.length ? 8 : 0,
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 9,
+              gap: 8,
               minWidth: 0,
             }}>
-              {mode === 'parent' && (
-                <div style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 12,
-                  background: authorPhotoUrl ? `url(${authorPhotoUrl}) center/cover` : T.soft,
-                  border: `1px solid ${T.border}`,
-                  color: T.ink2,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  fontWeight: 620,
-                  overflow: 'hidden',
-                  flexShrink: 0,
-                }}>
-                  {!authorPhotoUrl && String(displayName || 'T').charAt(0)}
-                </div>
-              )}
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                height: 24,
+                padding: '0 9px',
+                borderRadius: 999,
+                background: T.soft,
+                color: T.ink2,
+                fontSize: 12.8,
+                fontWeight: 620,
+                whiteSpace: 'nowrap',
+              }}>
+                {typeLabel}
+              </span>
 
-              <div style={{ minWidth: 0 }}>
-                <p style={{
-                  margin: 0,
-                  color: T.ink,
-                  fontSize: 13.6,
-                  fontWeight: 620,
-                  letterSpacing: '-0.01em',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
-                  {mode === 'parent' ? displayName : typeLabel}
-                </p>
-                <p style={{
-                  margin: '2px 0 0',
-                  color: T.ink3,
-                  fontSize: 12.4,
-                  lineHeight: 1.3,
-                }}>
-                  {mode === 'parent'
-                    ? `${typeLabel}${relTime(post.created_at || post.published_at) ? ` · ${relTime(post.created_at || post.published_at)}` : ''}`
-                    : relTime(post.created_at || post.published_at)}
-                </p>
-              </div>
+              <span style={{
+                fontSize: 12.8,
+                color: T.ink3,
+                whiteSpace: 'nowrap',
+              }}>
+                {relTime(post.created_at || post.published_at)}
+              </span>
             </div>
 
             {canDelete && (
@@ -277,8 +251,8 @@ export function UnifiedClassLifePostCard({
                   width: 30,
                   height: 30,
                   borderRadius: 999,
-                  border: `1px solid ${T.border}`,
-                  background: 'transparent',
+                  border: 'none',
+                  background: T.soft,
                   color: T.red,
                   cursor: 'pointer',
                   display: 'inline-flex',
@@ -306,20 +280,27 @@ export function UnifiedClassLifePostCard({
 
           {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
             <div style={{
-              marginTop: 10,
-              padding: '9px 0 0',
-              borderTop: `1px solid ${T.border}`,
-              fontSize: 12.8,
+              marginTop: 9,
+              padding: '10px 12px',
+              borderRadius: 14,
+              background: T.soft,
+              fontSize: 13,
               color: T.ink2,
               lineHeight: 1.5,
             }}>
-              {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
+              {post.event_date && <div>Date: {post.event_date}</div>}
+              {post.event_time && <div>Time: {post.event_time}</div>}
+              {post.event_location && <div>Place: {post.event_location}</div>}
             </div>
           )}
         </div>
 
         {images.length > 0 && (
-          <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
+          <div style={{
+            display: 'grid',
+            gap: 6,
+            padding: '0 0 10px',
+          }}>
             {images.slice(0, 4).map((url: string, i: number) => (
               <button
                 key={`${url}-${i}`}
@@ -347,7 +328,7 @@ export function UnifiedClassLifePostCard({
                     maxHeight: 260,
                     objectFit: 'cover',
                     display: 'block',
-                    borderRadius: 14,
+                    borderRadius: 13,
                     background: T.soft,
                   }}
                 />
@@ -362,7 +343,7 @@ export function UnifiedClassLifePostCard({
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 8,
-            padding: '0 14px 14px',
+            padding: '0 0 2px',
             flexWrap: 'wrap',
           }}>
             {canReact ? (
@@ -376,7 +357,7 @@ export function UnifiedClassLifePostCard({
                 {reactionButton('like', 'Like', '👍')}
                 {reactionButton('celebrate', 'Celebrate', '⭐')}
               </div>
-            ) : (
+            ) : totalReactions > 0 ? (
               <span style={{
                 color: T.ink3,
                 fontSize: 12.4,
@@ -384,7 +365,7 @@ export function UnifiedClassLifePostCard({
               }}>
                 {totalReactions} {totalReactions === 1 ? 'reaction' : 'reactions'}
               </span>
-            )}
+            ) : null}
 
             {canReact && totalReactions > 0 && (
               <span style={{
