@@ -1,6 +1,6 @@
 'use client'
-// auth-minimal-mobile-forms-v1
-// School signup is public. Parent signup is invitation-only.
+// auth-clear-entry-placeholders-v2
+// Public signup creates a school account. Parent signup remains invitation-only.
 
 import { Suspense, useMemo, useState, useTransition, type CSSProperties } from 'react'
 import Link from 'next/link'
@@ -21,7 +21,6 @@ const T = {
   border: 'rgba(0,0,0,0.08)',
   softBorder: 'rgba(0,0,0,0.06)',
   white: '#FFFFFF',
-  soft: '#F7F7F9',
 }
 
 const inputStyle: CSSProperties = {
@@ -115,8 +114,7 @@ function SignupFlow() {
   const currentIndex = Math.max(0, steps.indexOf(step))
 
   const title = useMemo(() => {
-    if (accountType === 'parent') return 'Create parent account'
-    return 'Create school account'
+    return accountType === 'parent' ? 'Create parent account' : 'Create school account'
   }, [accountType])
 
   const next = () => {
@@ -231,6 +229,7 @@ function SignupFlow() {
                 value={fullName}
                 onChange={event => setFullName(event.target.value)}
                 autoComplete="name"
+                placeholder={accountType === 'parent' ? 'Parent name' : 'School owner name'}
                 style={inputStyle}
                 autoFocus
               />
@@ -251,6 +250,7 @@ function SignupFlow() {
                 onChange={event => setEmail(event.target.value)}
                 type="email"
                 autoComplete="email"
+                placeholder={accountType === 'parent' ? 'parent@example.com' : 'school@example.com'}
                 style={inputStyle}
               />
             </div>
@@ -263,6 +263,7 @@ function SignupFlow() {
                   onChange={event => setPassword(event.target.value)}
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="new-password"
+                  placeholder="At least 8 characters"
                   style={{ ...inputStyle, paddingRight: 46 }}
                 />
                 <button

@@ -1,5 +1,5 @@
 'use client'
-// auth-minimal-mobile-forms-v1
+// auth-clear-entry-placeholders-v2
 
 import { useState, useTransition, Suspense, type CSSProperties } from 'react'
 import Link from 'next/link'
@@ -17,7 +17,6 @@ const T = {
   border: 'rgba(0,0,0,0.08)',
   softBorder: 'rgba(0,0,0,0.06)',
   white: '#FFFFFF',
-  soft: '#F7F7F9',
 }
 
 const inputStyle: CSSProperties = {
@@ -107,6 +106,7 @@ function LoginForm() {
           value={email}
           onChange={event => setEmail(event.target.value)}
           autoComplete="email"
+          placeholder="name@example.com"
           style={inputStyle}
           autoFocus
         />
@@ -121,6 +121,7 @@ function LoginForm() {
             value={password}
             onChange={event => setPassword(event.target.value)}
             autoComplete="current-password"
+            placeholder="Enter password"
             style={{ ...inputStyle, paddingRight: 46 }}
           />
           <button
@@ -200,6 +201,14 @@ export default function LoginPage() {
           }}>
             School Connect
           </p>
+          <p style={{
+            margin: '6px 0 0',
+            color: T.ink3,
+            fontSize: 13,
+            lineHeight: 1.38,
+          }}>
+            Sign in to your school, teacher or parent space.
+          </p>
         </div>
 
         <div style={{
@@ -217,7 +226,7 @@ export default function LoginPage() {
         <div style={{ textAlign: 'center', marginTop: 18 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13 }}>
             <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
-              Create account
+              Create school account
             </Link>
           </p>
         </div>
