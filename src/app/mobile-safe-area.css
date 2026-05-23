@@ -1,3 +1,4 @@
+/* white-premium-app-theme-v1 */
 /* parent-premium-theme-pass-v1 */
 /* school-connect-white-app-background-v15 */
 /* School Connect mobile app foundation */
@@ -7,6 +8,12 @@
   --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
   --sc-safe-left: env(safe-area-inset-left, 0px);
   --sc-mobile-bg: #FFFFFF;
+  --sc-ink: #262626;
+  --sc-ink-2: #5F6268;
+  --sc-ink-3: #9A9CA3;
+  --sc-border: rgba(0,0,0,0.06);
+  --sc-soft: #F8F8F9;
+  --sc-primary: #2B2B2F;
 
   /*
     Message composer should use the iPhone safe-area instead of floating far above it.
@@ -172,7 +179,7 @@ body {
    Focused UI polish layer for alignment, soft actions, badges and quiet report buttons. */
 .sc-parent-ui-root,
 .sc-teacher-ui-root {
-  color: #1A1A1A;
+  color: #262626;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -184,7 +191,7 @@ body {
 
 .sc-soft-report-button {
   background: #F4F4F6 !important;
-  color: #4A4A4A !important;
+  color: #5F6268 !important;
   border: 1px solid rgba(0,0,0,0.07) !important;
   box-shadow: none !important;
   min-height: 38px !important;
@@ -193,7 +200,7 @@ body {
 }
 
 .sc-soft-report-button svg {
-  color: #4A4A4A !important;
+  color: #5F6268 !important;
 }
 
 .sc-notification-badge,
@@ -214,7 +221,7 @@ body {
 
 .sc-parent-ui-root .sc-muted-copy,
 .sc-teacher-ui-root .sc-muted-copy {
-  color: #9A9A9A !important;
+  color: #9A9CA3 !important;
   font-weight: 650 !important;
 }
 

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// white-premium-app-theme-v1
 // school-admin-landing-route-repair-v1
 // school-connect-white-app-background-v15
 // school-home-icon-life-view-v6
@@ -56,9 +57,9 @@ type SchoolView = 'home' | 'profile' | 'classes' | 'settings'
 const supabase = createClient()
 
 const T = {
-  ink:    '#1A1A1A',
-  ink2:   '#4A4A4A',
-  ink3:   '#8E8E93',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
   bg:     '#FFFFFF',
   soft:   '#F4F4F6',
@@ -921,7 +922,7 @@ function ActivityCard({ post }: any) {
             position: 'fixed',
             inset: 0,
             zIndex: 2200,
-            background: '#050505',
+            background: '#101114',
             color: '#FFFFFF',
             display: 'flex',
             flexDirection: 'column',
@@ -997,7 +998,7 @@ function ActivityCard({ post }: any) {
               justifyContent: 'center',
               padding: 0,
               overflow: 'hidden',
-              background: '#050505',
+              background: '#101114',
             }}
           >
             <img
@@ -1504,7 +1505,7 @@ const signOut = async () => {
                 color: T.ink3,
                 margin: '1px 0 0',
               }}>
-                {tab === 'home' ? 'Latest activity' : 'Profile, classes and teachers'}
+                {tab === 'home' ? 'School Life' : 'Profile and classes'}
               </p>
             </div>
 
@@ -1614,7 +1615,7 @@ const signOut = async () => {
                     width: 48,
                     height: 48,
                     borderRadius: 14,
-                    background: 'rgba(255,255,255,0.72)',
+                    background: '#F8F8F9',
                     border: `1px solid ${T.border}`,
                     margin: '0 auto 12px',
                     display: 'flex',
@@ -1632,7 +1633,7 @@ const signOut = async () => {
                   </p>
 
                   <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 16px', lineHeight: 1.5 }}>
-                    Class posts and school updates will appear here.
+                    School Life will appear here.
                   </p>
 
                   <button type="button" onClick={() => { setTab('classes'); setEditing(false) }} style={{
@@ -1706,7 +1707,7 @@ const signOut = async () => {
                     lineHeight: 1.5,
                     margin: 0,
                   }}>
-                    Add classes and teachers. Teachers then manage parent communication inside their class spaces.
+                    Add teachers and classes.
                   </p>
                 </AccordionCard>
               </div>
@@ -1730,7 +1731,7 @@ const signOut = async () => {
                   lineHeight: 1.45,
                   margin: 0,
                 }}>
-                  Add a class and assign a teacher. Teachers handle parents from their own class space.
+                  Add teachers and classes.
                 </p>
               </SectionCard>
 

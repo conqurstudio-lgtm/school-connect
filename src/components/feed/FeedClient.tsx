@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// white-premium-app-theme-v1
 // parent-school-life-home-v1
 // /feed is now the Parent School Life home.
 // It is not a school/admin feed and not a teacher home.
@@ -15,8 +16,8 @@ import { PostCard } from '@/components/feed/PostCard'
 import { NotificationPanel } from '@/components/layout/NotificationPanel'
 
 const T = {
-  ink: '#171717',
-  ink2: '#4B4B4F',
+  ink: '#262626',
+  ink2: '#5F6268',
   ink3: '#8D8D94',
   border: 'rgba(0,0,0,0.08)',
   softBorder: 'rgba(0,0,0,0.06)',

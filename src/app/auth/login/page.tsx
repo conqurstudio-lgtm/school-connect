@@ -1,4 +1,5 @@
 'use client'
+// white-premium-app-theme-v1
 // auth-clear-entry-placeholders-v2
 
 import { useState, useTransition, Suspense, type CSSProperties } from 'react'
@@ -11,8 +12,8 @@ import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 const supabase = createClient()
 
 const T = {
-  ink: '#171717',
-  ink2: '#4B4B4F',
+  ink: '#262626',
+  ink2: '#5F6268',
   ink3: '#8D8D94',
   border: 'rgba(0,0,0,0.08)',
   softBorder: 'rgba(0,0,0,0.06)',
@@ -207,7 +208,7 @@ export default function LoginPage() {
             fontSize: 13,
             lineHeight: 1.38,
           }}>
-            Sign in to your school, teacher or parent space.
+            Sign in to your space.
           </p>
         </div>
 

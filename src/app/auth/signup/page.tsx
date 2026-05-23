@@ -1,4 +1,5 @@
 'use client'
+// white-premium-app-theme-v1
 // auth-clear-entry-placeholders-v2
 // Public signup creates a school account. Parent signup remains invitation-only.
 
@@ -15,8 +16,8 @@ type StepKey = 'name' | 'security' | 'review'
 const supabase = createClient()
 
 const T = {
-  ink: '#171717',
-  ink2: '#4B4B4F',
+  ink: '#262626',
+  ink2: '#5F6268',
   ink3: '#8D8D94',
   border: 'rgba(0,0,0,0.08)',
   softBorder: 'rgba(0,0,0,0.06)',
@@ -342,7 +343,7 @@ function SignupFlow() {
                 opacity: isPending ? 0.72 : 1,
               }}
             >
-              {isPending ? 'Creating…' : <><Check size={16} /> Create account</>}
+              {isPending ? 'Creating…' : <><Check size={16} /> Create school account</>}
             </button>
 
             <button type="button" onClick={back} style={secondaryButton}>

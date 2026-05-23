@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// white-premium-app-theme-v1
 // school-teachers-tab-remove-duplicate-header-v1
 
 import { useEffect, useState } from 'react'
@@ -7,12 +8,12 @@ import { Copy, Check, MoreVertical, RotateCw, Slash, Trash2, GraduationCap, X } 
 import toast from 'react-hot-toast'
 
 const T = {
-  ink:    '#1A1A1A',
-  ink2:   '#4A4A4A',
-  ink3:   '#9A9A9A',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
   ink4:   '#D8D8D8',
   border: 'rgba(0,0,0,0.07)',
-  bg:     '#FCFCFF',
+  bg:     '#FFFFFF',
   white:  '#FFFFFF',
   red:    '#EF4444',
   green:  '#22C55E',
@@ -144,7 +145,7 @@ export function TeachersTab() {
             No teachers yet
           </p>
           <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 16px', lineHeight: 1.5 }}>
-            Add your first teacher to get started.
+            Add your first teacher.
           </p>
           <button onClick={() => setShowAdd(true)} style={{
             padding: '8px 14px', borderRadius: 999,
@@ -156,7 +157,33 @@ export function TeachersTab() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <>
+          {/* Always-visible add teacher action */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: 10,
+          }}>
+            <button
+              onClick={() => setShowAdd(true)}
+              style={{
+                minHeight: 38,
+                padding: '0 13px',
+                borderRadius: 999,
+                background: T.ink,
+                color: T.white,
+                border: 'none',
+                fontSize: 13,
+                fontWeight: 620,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Add teacher
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {teachers.map(t => (
             <TeacherRow
               key={t.id}
@@ -171,7 +198,8 @@ export function TeachersTab() {
               onDelete={() => deleteTeacher(t.id)}
             />
           ))}
-        </div>
+          </div>
+        </>
       )}
 
       {showAdd && (
