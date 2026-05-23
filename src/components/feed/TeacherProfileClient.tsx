@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// parent-class-life-reactions-v1
 // parent-teacher-full-dark-image-viewer-v1
 // parent-premium-theme-pass-v1
 // parent-premium-theme-build-repair-v2
@@ -1078,6 +1079,16 @@ function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: 
 function ClassLifePostCard({ post, teacher }: any) {
   const [openImage, setOpenImage] = useState<string | null>(null)
 
+  const initialReactionCounts = post.reaction_counts || {}
+  const [myReaction, setMyReaction] = useState<string | null>(post.my_reaction || null)
+  const [reactionCounts, setReactionCounts] = useState<any>({
+    love: Number(initialReactionCounts.love || 0),
+    like: Number(initialReactionCounts.like || 0),
+    celebrate: Number(initialReactionCounts.celebrate || 0),
+  })
+  const [reactionTotal, setReactionTotal] = useState<number>(Number(post.reaction_count || 0))
+  const [reacting, setReacting] = useState(false)
+
   const images = Array.isArray(post.image_urls)
     ? post.image_urls
     : post.image_url
@@ -1089,6 +1100,140 @@ function ClassLifePostCard({ post, teacher }: any) {
     post.type === 'moment' ? 'Moment' :
     post.type === 'document' ? 'Document' :
     'Update'
+
+  const calculateTotal = (counts: any) =>
+    Number(counts.love || 0) + Number(counts.like || 0) + Number(counts.celebrate || 0)
+
+  const buildCounts = (nextReaction: string | null, previousReaction: string | null, baseCounts = reactionCounts) => {
+    const nextCounts = { ...baseCounts }
+
+    if (previousReaction && nextCounts[previousReaction] > 0) {
+      nextCounts[previousReaction] = nextCounts[previousReaction] - 1
+    }
+
+    if (nextReaction) {
+      nextCounts[nextReaction] = Number(nextCounts[nextReaction] || 0) + 1
+    }
+
+    return nextCounts
+  }
+
+  const applyReactionState = (nextReaction: string | null, nextCounts: any) => {
+    setMyReaction(nextReaction)
+    setReactionCounts(nextCounts)
+    setReactionTotal(calculateTotal(nextCounts))
+  }
+
+  const handleReaction = async (type: 'love' | 'like' | 'celebrate') => {
+    if (reacting) return
+
+    const previousReaction = myReaction
+    const previousCounts = { ...reactionCounts }
+    const nextReaction = previousReaction === type ? null : type
+    const nextCounts = buildCounts(nextReaction, previousReaction, previousCounts)
+
+    setReacting(true)
+    applyReactionState(nextReaction, nextCounts)
+
+    try {
+      const { data: authData } = await supabase.auth.getUser()
+      const user = authData?.user
+
+      if (!user?.id) {
+        throw new Error('Please log in again.')
+      }
+
+      const { data: existing, error: existingError } = await supabase
+        .from('reactions')
+        .select('id,type')
+        .eq('post_id', post.id)
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (existingError) throw existingError
+
+      if (!nextReaction) {
+        if (existing?.id) {
+          const { error } = await supabase
+            .from('reactions')
+            .delete()
+            .eq('id', existing.id)
+
+          if (error) throw error
+        }
+      } else if (existing?.id) {
+        const { error } = await supabase
+          .from('reactions')
+          .update({ type: nextReaction })
+          .eq('id', existing.id)
+
+        if (error) throw error
+      } else {
+        const { error } = await supabase
+          .from('reactions')
+          .insert({
+            post_id: post.id,
+            user_id: user.id,
+            school_id: post.school_id || teacher.school_id,
+            type: nextReaction,
+          })
+
+        if (error) throw error
+      }
+    } catch (error: any) {
+      applyReactionState(previousReaction, previousCounts)
+      toast.error(error?.message || 'Could not save reaction.')
+    } finally {
+      setReacting(false)
+    }
+  }
+
+  const reactionButton = (
+    type: 'love' | 'like' | 'celebrate',
+    label: string,
+    symbol: string
+  ) => {
+    const active = myReaction === type
+    const count = Number(reactionCounts[type] || 0)
+
+    return (
+      <button
+        type="button"
+        onClick={() => handleReaction(type)}
+        disabled={reacting}
+        aria-pressed={active}
+        style={{
+          height: 34,
+          minWidth: 0,
+          padding: '0 11px',
+          borderRadius: 999,
+          border: active ? `1px solid ${T.ink}` : `1px solid ${T.border}`,
+          background: active ? T.ink : T.white,
+          color: active ? T.white : T.ink3,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 5,
+          fontSize: 12.4,
+          fontWeight: 600,
+          cursor: reacting ? 'wait' : 'pointer',
+          opacity: reacting && !active ? 0.72 : 1,
+          fontFamily: 'inherit',
+        }}
+      >
+        <span aria-hidden="true">{symbol}</span>
+        <span>{label}</span>
+        {count > 0 && (
+          <span style={{
+            fontVariantNumeric: 'tabular-nums',
+            opacity: active ? 0.92 : 0.75,
+          }}>
+            {count}
+          </span>
+        )}
+      </button>
+    )
+  }
 
   return (
     <>
@@ -1196,6 +1341,38 @@ function ClassLifePostCard({ post, teacher }: any) {
             ))}
           </div>
         )}
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 8,
+          padding: '10px 12px 12px',
+          borderTop: images.length > 0 ? `1px solid ${T.border}` : 'none',
+          flexWrap: 'wrap',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            flexWrap: 'wrap',
+          }}>
+            {reactionButton('love', 'Love', '♡')}
+            {reactionButton('like', 'Like', '👍')}
+            {reactionButton('celebrate', 'Celebrate', '⭐')}
+          </div>
+
+          {reactionTotal > 0 && (
+            <span style={{
+              fontSize: 12.4,
+              color: T.ink3,
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}>
+              {reactionTotal} {reactionTotal === 1 ? 'reaction' : 'reactions'}
+            </span>
+          )}
+        </div>
       </article>
 
       {openImage && (
