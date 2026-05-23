@@ -1,8 +1,9 @@
 // /api/feed
-// parent-feed-teacher-posts-v1
-// Feed reader using service role.
-// Supports school users, parent_token sessions, teacher_token sessions,
-// and parent class-aware teacher posts.
+// parent-feed-linked-child-simple-v2
+// Simple safe feed reader:
+// - School/Admin/Teacher: same-school published posts.
+// - Parent: same-school school posts + teacher posts for linked child class.
+// - Parent child resolution uses child_guardians first, then child_name fallback.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -36,8 +37,12 @@ function clean(value: any) {
   return String(value || '').trim().toLowerCase()
 }
 
-function same(valueA: any, valueB: any) {
-  return clean(valueA) !== '' && clean(valueA) === clean(valueB)
+function same(a: any, b: any) {
+  return clean(a) !== '' && clean(a) === clean(b)
+}
+
+function postTime(post: any) {
+  return new Date(post.created_at || post.published_at || 0).getTime()
 }
 
 function postMatchesFilter(post: any, filter: string) {
@@ -54,10 +59,6 @@ function postMatchesFilter(post: any, filter: string) {
   return map[filter] ? post.type === map[filter] : true
 }
 
-function postTime(post: any) {
-  return new Date(post.created_at || post.published_at || 0).getTime()
-}
-
 async function getCaller(req: NextRequest) {
   const sb = adminClient()
   const supabase = userClient()
@@ -68,13 +69,13 @@ async function getCaller(req: NextRequest) {
     const { data: profile } = await sb.from('profiles')
       .select('id, school_id, role')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     if (profile?.role === 'school') {
       const { data: school } = await sb.from('schools')
         .select('id')
         .eq('owner_id', user.id)
-        .single()
+        .maybeSingle()
 
       if (school?.id) return { id: profile.id, school_id: school.id, role: 'school' }
     }
@@ -102,7 +103,7 @@ async function getCaller(req: NextRequest) {
       .select('id, school_id')
       .eq('access_token', teacherToken)
       .eq('status', 'active')
-      .single()
+      .maybeSingle()
 
     if (teacher?.school_id) return { id: teacher.id, school_id: teacher.school_id, role: 'teacher' }
   }
@@ -110,68 +111,95 @@ async function getCaller(req: NextRequest) {
   return null
 }
 
-async function resolveParentChild(sb: any, caller: any) {
-  if (caller?.role !== 'parent') return null
+async function resolveParentChildren(sb: any, caller: any) {
+  if (caller?.role !== 'parent') {
+    return { children: [], source: 'not_parent', profile: null }
+  }
 
   const { data: profile } = await sb.from('profiles')
     .select('id, school_id, child_name, child_grade')
     .eq('id', caller.id)
     .maybeSingle()
 
+  // First choice: proper approved parent-child link.
+  const { data: links } = await sb.from('child_guardians')
+    .select('child_id')
+    .eq('guardian_id', caller.id)
+
+  const childIds = (links || [])
+    .map((link: any) => link.child_id)
+    .filter(Boolean)
+
+  if (childIds.length > 0) {
+    const { data: linkedChildren } = await sb.from('children')
+      .select('id, school_id, name, grade, class_name, status, created_by_teacher_id, created_at')
+      .eq('school_id', caller.school_id)
+      .in('id', childIds)
+
+    if ((linkedChildren || []).length > 0) {
+      return { children: linkedChildren || [], source: 'child_guardians', profile }
+    }
+  }
+
+  // Fallback for older/test parent profiles where only child_name was saved.
   const childName = String(profile?.child_name || '').trim()
   const childGrade = String(profile?.child_grade || '').trim()
 
-  if (!childName && !childGrade) return null
+  if (!childName && !childGrade) {
+    return { children: [], source: 'none', profile }
+  }
 
-  let childrenQuery = sb.from('children')
+  let query = sb.from('children')
     .select('id, school_id, name, grade, class_name, status, created_by_teacher_id, created_at')
     .eq('school_id', caller.school_id)
 
   if (childName) {
-    childrenQuery = childrenQuery.ilike('name', childName)
+    query = query.ilike('name', childName)
   } else if (childGrade) {
-    childrenQuery = childrenQuery.ilike('grade', childGrade)
+    query = query.ilike('grade', childGrade)
   }
 
-  const { data: children } = await childrenQuery
+  const { data: fallbackChildren } = await query
     .order('created_at', { ascending: false })
     .limit(10)
 
-  const list = children || []
+  const list = fallbackChildren || []
 
   if (childName) {
     const exact = list.find((child: any) => clean(child.name) === clean(childName))
-    if (exact) return exact
+    if (exact) return { children: [exact], source: 'profile_child_name', profile }
   }
 
   if (childGrade) {
     const exactGrade = list.find((child: any) => clean(child.grade) === clean(childGrade))
-    if (exactGrade) return exactGrade
+    if (exactGrade) return { children: [exactGrade], source: 'profile_child_grade', profile }
   }
 
-  return list[0] || null
+  return { children: list.slice(0, 1), source: list.length ? 'fallback_first_child_match' : 'none', profile }
 }
 
-function parentCanSeePost(post: any, child: any) {
+function parentCanSeePost(post: any, children: any[]) {
   const postedByKind = clean(post.posted_by_kind || 'school')
   const isTeacherPost = postedByKind === 'teacher'
 
-  // School-wide/admin posts remain visible to parents in the same school.
+  // School/admin-wide posts stay visible to parents in the same school.
   if (!isTeacherPost) return true
 
-  // Teacher posts need a child/class match.
-  if (!child) return false
+  // Teacher/class posts only show when a linked child matches.
+  if (!children.length) return false
 
-  const matchesGradeAndClass =
-    same(post.audience_grade, child.grade) &&
-    same(post.audience_class, child.class_name)
+  return children.some((child: any) => {
+    const matchesGradeClass =
+      same(post.audience_grade, child.grade) &&
+      same(post.audience_class, child.class_name)
 
-  const matchesChildTeacher =
-    post.teacher_id &&
-    child.created_by_teacher_id &&
-    String(post.teacher_id) === String(child.created_by_teacher_id)
+    const matchesTeacher =
+      post.teacher_id &&
+      child.created_by_teacher_id &&
+      String(post.teacher_id) === String(child.created_by_teacher_id)
 
-  return matchesGradeAndClass || matchesChildTeacher
+    return matchesGradeClass || matchesTeacher
+  })
 }
 
 export async function GET(req: NextRequest) {
@@ -190,7 +218,7 @@ export async function GET(req: NextRequest) {
   }
 
   const sb = adminClient()
-  const parentChild = await resolveParentChild(sb, caller)
+  const resolved = await resolveParentChildren(sb, caller)
 
   let posts: any[] = []
 
@@ -206,7 +234,7 @@ export async function GET(req: NextRequest) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     posts = (data || [])
-      .filter((post: any) => parentCanSeePost(post, parentChild))
+      .filter((post: any) => parentCanSeePost(post, resolved.children))
       .filter((post: any) => postMatchesFilter(post, filter))
       .sort((a: any, b: any) => {
         const pinned = Number(!!b.is_pinned) - Number(!!a.is_pinned)
@@ -296,7 +324,9 @@ export async function GET(req: NextRequest) {
     ...(debug ? {
       debug: {
         caller,
-        resolved_child: parentChild,
+        child_source: resolved.source,
+        resolved_children: resolved.children,
+        parent_profile: resolved.profile,
         post_count: enriched.length,
       },
     } : {}),
