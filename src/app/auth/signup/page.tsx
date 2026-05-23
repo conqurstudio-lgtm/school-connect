@@ -1,5 +1,7 @@
 'use client'
-// school-connect-route-lock-v1
+// school-signup-parent-invite-only-v1
+// Generic signup is for schools only.
+// Parents can only create an account from a school/class invitation redirect.
 
 import { useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
@@ -15,48 +17,71 @@ const supabase = createClient()
 const T = {
   ink:    '#1A1A1A',
   ink2:   '#4A4A4A',
-  ink3:   '#9A9A9A',
+  ink3:   '#8E8E93',
   border: 'rgba(0,0,0,0.08)',
-  bg:     '#F7F7F7',
+  bg:     '#FFFFFF',
+  soft:   '#F7F7F9',
   white:  '#FFFFFF',
 }
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '12px 14px', fontSize: 15,
-  border: `1px solid ${T.border}`, borderRadius: 12,
-  background: T.bg, color: T.ink, outline: 'none',
-  fontFamily: 'inherit', boxSizing: 'border-box',
+  width: '100%',
+  padding: '12px 14px',
+  fontSize: 16,
+  border: `1px solid ${T.border}`,
+  borderRadius: 12,
+  background: T.soft,
+  color: T.ink,
+  outline: 'none',
+  fontFamily: 'inherit',
+  boxSizing: 'border-box',
 }
 
 const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 13, fontWeight: 500,
-  color: T.ink2, marginBottom: 6,
+  display: 'block',
+  fontSize: 13,
+  fontWeight: 500,
+  color: T.ink2,
+  marginBottom: 6,
 }
 
 function SignupForm() {
-  const params      = useSearchParams()
-  const redirectTo  = params.get('redirectTo') || null
-  const fromInvite  = redirectTo?.includes('parent-join')
+  const params = useSearchParams()
+  const redirectTo = params.get('redirectTo') || null
+  const fromInvite = !!redirectTo && redirectTo.includes('parent-join')
 
-  const [accountType,   setAccountType]   = useState<AccountType>(fromInvite ? 'parent' : 'school')
-  const [fullName,      setFullName]      = useState('')
-  const [email,         setEmail]         = useState('')
-  const [password,      setPassword]      = useState('')
-  const [showPassword,  setShowPassword]  = useState(false)
-  const [isPending,     startTransition]  = useTransition()
+  const accountType: AccountType = fromInvite ? 'parent' : 'school'
+
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!accountType) { toast.error('Choose an account type'); return }
-    if (password.length < 8) { toast.error('Password must be at least 8 characters'); return }
+
+    if (password.length < 8) {
+      toast.error('Password must be at least 8 characters')
+      return
+    }
 
     startTransition(async () => {
       const { data, error } = await supabase.auth.signUp({
-        email, password,
-        options: { data: { role: accountType, full_name: fullName } },
+        email,
+        password,
+        options: {
+          data: {
+            role: accountType,
+            full_name: fullName,
+          },
+        },
       })
 
-      if (error) { toast.error(error.message); return }
+      if (error) {
+        toast.error(error.message)
+        return
+      }
 
       if (!data.session) {
         toast.success('Check your email to confirm your account.')
@@ -64,100 +89,158 @@ function SignupForm() {
         return
       }
 
-      // Route Lock: school setup for schools, parent home for parents
       if (accountType === 'school') {
         window.location.href = '/auth/school-setup'
-      } else if (redirectTo) {
-        window.location.href = redirectTo
-      } else {
-        window.location.href = '/feed'
+        return
       }
+
+      if (redirectTo) {
+        window.location.href = redirectTo
+        return
+      }
+
+      window.location.href = '/feed'
     })
   }
 
-  const types: { type: AccountType; Icon: React.ElementType; label: string; desc: string }[] = [
-    { type: 'school',  Icon: School,   label: 'School',  desc: 'I manage a school' },
-    { type: 'parent',  Icon: Users,    label: 'Parent',  desc: 'My child attends a school' },
-  ]
-
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Account type */}
-      {!fromInvite && (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            {types.map(({ type, Icon, label, desc }) => (
-              <button key={type} type="button" onClick={() => setAccountType(type)} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-                padding: '14px 8px', borderRadius: 14, cursor: 'pointer', fontFamily: 'inherit',
-                border: `1.5px solid ${accountType === type ? T.ink : T.border}`,
-                background: accountType === type ? T.ink : T.bg,
-              }}>
-                <Icon style={{ width: 20, height: 20, color: accountType === type ? '#fff' : T.ink3 }} strokeWidth={1.4} />
-                <span style={{ fontSize: 12, fontWeight: 600, color: accountType === type ? '#fff' : T.ink }}>
-                  {label}
-                </span>
-              </button>
-            ))}
-          </div>
+      <div style={{
+        border: `1px dashed ${T.border}`,
+        borderRadius: 16,
+        background: 'transparent',
+        padding: '18px 16px',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          width: 44,
+          height: 44,
+          borderRadius: 14,
+          background: T.soft,
+          color: T.ink2,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 10,
+        }}>
+          {fromInvite ? <Users size={18} strokeWidth={1.8} /> : <School size={18} strokeWidth={1.8} />}
+        </div>
 
-          <p style={{
-            fontSize: 12,
-            lineHeight: 1.45,
-            color: T.ink3,
-            margin: '10px 2px 0',
-            textAlign: 'center',
-          }}>
-            Teachers do not create public accounts. The school admin shares a private teacher link.
-          </p>
-        </>
-      )}
+        <p style={{
+          fontSize: 15,
+          fontWeight: 600,
+          color: T.ink,
+          margin: '0 0 4px',
+        }}>
+          {fromInvite ? 'Parent invitation' : 'School account'}
+        </p>
+
+        <p style={{
+          fontSize: 13,
+          lineHeight: 1.45,
+          color: T.ink3,
+          margin: 0,
+        }}>
+          {fromInvite
+            ? 'Create your parent account from this school invitation.'
+            : 'Schools create accounts here. Parents must join using the private link shared by the school or teacher.'}
+        </p>
+      </div>
 
       <div>
         <label style={labelStyle}>Full name</label>
-        <input value={fullName} onChange={e => setFullName(e.target.value)}
-          placeholder="Your name" autoComplete="name" required style={inputStyle} />
+        <input
+          value={fullName}
+          onChange={e => setFullName(e.target.value)}
+          placeholder="Your name"
+          autoComplete="name"
+          required
+          style={inputStyle}
+        />
       </div>
 
       <div>
         <label style={labelStyle}>Email</label>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-          placeholder="you@example.com" autoComplete="email" required style={inputStyle} />
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          autoComplete="email"
+          required
+          style={inputStyle}
+        />
       </div>
 
       <div>
         <label style={labelStyle}>Password</label>
         <div style={{ position: 'relative' }}>
-          <input type={showPassword ? 'text' : 'password'} value={password}
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="Min. 8 characters" autoComplete="new-password" required
-            style={{ ...inputStyle, paddingRight: 44 }} />
-          <button type="button" onClick={() => setShowPassword(v => !v)} style={{
-            position: 'absolute', right: 12, bottom: 12,
-            background: 'none', border: 'none', cursor: 'pointer', color: T.ink3,
-            display: 'flex', alignItems: 'center',
-          }}>
+            placeholder="Min. 8 characters"
+            autoComplete="new-password"
+            required
+            style={{ ...inputStyle, paddingRight: 44 }}
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(v => !v)}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            style={{
+              position: 'absolute',
+              right: 12,
+              bottom: 12,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: T.ink3,
+              display: 'flex',
+              alignItems: 'center',
+              padding: 0,
+            }}
+          >
             {showPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
           </button>
         </div>
       </div>
 
       <button type="submit" disabled={isPending} style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-        width: '100%', padding: '13px 0', marginTop: 4,
-        background: isPending ? '#CCC' : T.ink, color: T.white,
-        border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 600,
-        cursor: isPending ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        width: '100%',
+        padding: '13px 0',
+        marginTop: 4,
+        background: isPending ? '#CCCCCC' : T.ink,
+        color: T.white,
+        border: 'none',
+        borderRadius: 12,
+        fontSize: 15,
+        fontWeight: 600,
+        cursor: isPending ? 'not-allowed' : 'pointer',
+        fontFamily: 'inherit',
       }}>
         {isPending ? (
           <>
-            <div style={{ width: 16, height: 16, borderRadius: '50%',
-                          border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff',
-                          animation: 'spin 0.7s linear infinite' }} />
+            <div style={{
+              width: 16,
+              height: 16,
+              borderRadius: '50%',
+              border: '2px solid rgba(255,255,255,0.3)',
+              borderTopColor: '#FFFFFF',
+              animation: 'spin 0.7s linear infinite',
+            }} />
             Creating account…
           </>
         ) : (
-          <>Create account <ArrowRight style={{ width: 16, height: 16 }} /></>
+          <>
+            {fromInvite ? 'Create parent account' : 'Create school account'}
+            <ArrowRight style={{ width: 16, height: 16 }} />
+          </>
         )}
       </button>
     </form>
@@ -167,24 +250,46 @@ function SignupForm() {
 export default function SignupPage() {
   return (
     <div style={{
-      flex: 1, display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '32px 20px', minHeight: '100dvh',
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '32px 20px',
+      minHeight: '100dvh',
+      background: '#FFFFFF',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: 32 }}>
-        <p style={{ fontSize: 13, fontWeight: 500, color: T.ink3,
-                    letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <p style={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: T.ink3,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          margin: '0 0 8px',
+        }}>
           School Connect
         </p>
-        <h1 style={{ fontSize: 26, fontWeight: 600, color: T.ink,
-                     letterSpacing: '-0.03em', margin: 0 }}>
+
+        <h1 style={{
+          fontSize: 26,
+          fontWeight: 600,
+          color: T.ink,
+          letterSpacing: '-0.03em',
+          margin: 0,
+        }}>
           Create your account
         </h1>
       </div>
 
       <div style={{
-        width: '100%', maxWidth: 400, background: T.white,
-        borderRadius: 20, border: `1px solid ${T.border}`, padding: '28px 24px',
+        width: '100%',
+        maxWidth: 400,
+        background: T.white,
+        borderRadius: 20,
+        border: `1px solid ${T.border}`,
+        padding: '28px 24px',
+        boxSizing: 'border-box',
       }}>
         <Suspense fallback={null}>
           <SignupForm />
@@ -199,6 +304,7 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
+
       <p style={{ marginTop: 40, fontSize: 11, color: '#CCCCCC', letterSpacing: '0.04em', fontWeight: 500 }}>
         Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
       </p>
