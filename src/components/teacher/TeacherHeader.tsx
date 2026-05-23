@@ -1,12 +1,13 @@
 // @ts-nocheck
 'use client'
+// teacher-white-alignment-category-v2
 
 import { LogOut } from 'lucide-react'
 
 const T = {
-  ink:    '#1A1A1A',
-  ink2:   '#4A4A4A',
-  ink3:   '#9A9A9A',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
   white:  '#FFFFFF',
 }

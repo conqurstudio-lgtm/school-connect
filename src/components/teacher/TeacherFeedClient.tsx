@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-white-alignment-category-v2
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -11,11 +12,11 @@ import { TeacherComposer } from './TeacherComposer'
 import { PhotoCropper } from './PhotoCropper'
 
 const T = {
-  ink:    '#1A1A1A',
-  ink2:   '#4A4A4A',
-  ink3:   '#9A9A9A',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg:     '#FCFCFF',
+  bg:     '#FFFFFF',
   white:  '#FFFFFF',
   blue:   '#78A6FE',
 }
@@ -191,9 +192,9 @@ export function TeacherFeedClient({ token }: Props) {
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                   height: 42, padding: '0 14px',
                   background: 'none', border: 'none',
-                  borderBottom: isActive ? '2px solid #1A1A1A' : '2px solid transparent',
+                  borderBottom: isActive ? '2px solid #262626' : '2px solid transparent',
                   marginBottom: -1,
-                  color: isActive ? '#1A1A1A' : '#9A9A9A',
+                  color: isActive ? '#262626' : '#9A9CA3',
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   whiteSpace: 'nowrap', flexShrink: 0,
                   cursor: 'pointer', fontFamily: 'inherit',
@@ -410,14 +411,14 @@ function FeedPostCard({ post, teacher, school, index }: any) {
 
         <div style={{ flex: 1, minWidth: 0, paddingTop: 2 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'nowrap' }}>
-            <span style={{ fontSize: 14, fontWeight: 500, color: '#1A1A1A',
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#262626',
                            overflow: 'hidden', textOverflow: 'ellipsis',
                            whiteSpace: 'nowrap', flex: 1 }}>{name}</span>
             <span style={{ fontSize: 12, color: '#B0B0B0', flexShrink: 0,
                            whiteSpace: 'nowrap' }}>{relTime(post.created_at)}</span>
           </div>
           {isClassPost && (
-            <p style={{ fontSize: 11, fontWeight: 500, color: '#9A9A9A',
+            <p style={{ fontSize: 11, fontWeight: 500, color: '#9A9CA3',
                         letterSpacing: '0.02em', margin: '1px 0 0' }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
@@ -437,7 +438,7 @@ function FeedPostCard({ post, teacher, school, index }: any) {
               )}
               {isTrunc && expanded && (
                 <> <button onClick={() => setExpanded(false)} style={{
-                  color: '#9A9A9A', background: 'none', border: 'none',
+                  color: '#9A9CA3', background: 'none', border: 'none',
                   cursor: 'pointer', padding: 0, fontSize: 14, fontFamily: 'inherit',
                   fontWeight: 500,
                 }}>show less</button></>

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// teacher-white-alignment-category-v2
 // white-premium-app-theme-v1
 // school-connect-route-lock-v1
 // parent-teacher-full-dark-image-viewer-v1
@@ -67,11 +68,12 @@ const T = {
   ink:    '#262626',
   ink2:   '#5F6268',
   ink3:   '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.06)',
   bg:     '#FFFFFF',
   white:  '#FFFFFF',
-  red:    '#EF4444',
-  blue:   '#78A6FE',
+  soft:   '#F8F8F9',
+  red:    '#B42318',
+  blue:   '#5F6268',
 }
 
 
@@ -258,8 +260,8 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
         zIndex: 40,
         flexShrink: 0,
         background: 'rgba(255,255,255,0.98)',
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
+        backdropFilter: 'blur(18px)',
+        WebkitBackdropFilter: 'blur(18px)',
         borderBottom: 'none',
       }}>
         <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
@@ -272,7 +274,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           overflow: 'visible',
           background: teacher.photo_url
             ? `url(${teacher.photo_url}) center/cover`
-            : '#F0F0F4',
+            : '#F8F8F9',
           color: T.ink2,
           display: 'flex',
           alignItems: 'center',
@@ -290,7 +292,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             width: 18,
             height: 18,
             borderRadius: '50%',
-            background: T.ink,
+            background: '#2B2B2F',
             color: T.white,
             display: 'flex',
             alignItems: 'center',
@@ -310,7 +312,14 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
             e.target.value = ''
           }} />
 
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          flex: 1,
+          minWidth: 0,
+          minHeight: 48,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}>
           <h1 style={{
             fontSize: 15,
             lineHeight: 1.2,
@@ -326,10 +335,10 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
           </h1>
           <p style={{
             fontSize: 12.5,
-            fontWeight: 500,
+            fontWeight: 520,
             color: T.ink3,
-            letterSpacing: '0.02em',
-            margin: '-2px 0 0',
+            letterSpacing: '0em',
+            margin: '3px 0 0',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -349,7 +358,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
               minWidth: 54,
               borderRadius: 999,
               border: `1px solid ${T.border}`,
-              background: T.white,
+              background: 'transparent',
               color: T.ink2,
               padding: '0 10px',
               fontSize: 12.5,
@@ -363,7 +372,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 <button
             onClick={() => setShowClassComposer(true)}
             aria-label="Create"
-            style={{ ...iconBtn, background: T.ink, color: T.white, border: 'none' }}
+            style={{ ...iconBtn, background: '#2B2B2F', color: T.white, border: 'none' }}
           >
             <Plus size={15} strokeWidth={2.1} />
           </button>
@@ -494,7 +503,7 @@ function TeacherClassSpaceTabs({ active, onChange, childrenCount = 0, unreadCoun
       active={active}
       onChange={onChange}
       columns={3}
-      stickyTop={52}
+      stickyTop={66}
     />
   )
 }
@@ -586,7 +595,7 @@ function ClassPosts({ teacher }: any) {
         padding: '13px 14px',
         borderRadius: 999,
         border: 'none',
-        background: T.ink,
+        background: '#2B2B2F',
         color: T.white,
         display: 'inline-flex',
         alignItems: 'center',
@@ -607,7 +616,7 @@ function ClassPosts({ teacher }: any) {
           <div style={{
             width: 16, height: 16, borderRadius: '50%',
             border: `2px solid ${T.border}`,
-            borderTopColor: T.ink,
+            borderTopColor: '#2B2B2F',
             animation: 'spin 0.7s linear infinite',
           }} />
         </div>
@@ -1245,7 +1254,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
     return (
       <section style={{ padding: '18px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
-          <div style={{ width: 16, height: 16, borderRadius: '50%', border: `2px solid ${T.border}`, borderTopColor: T.ink, animation: 'spin 0.7s linear infinite' }} />
+          <div style={{ width: 16, height: 16, borderRadius: '50%', border: `2px solid ${T.border}`, borderTopColor: '#2B2B2F', animation: 'spin 0.7s linear infinite' }} />
         </div>
       </section>
     )
@@ -2116,7 +2125,7 @@ function ClassInviteCard({ teacher, school, kids }: any) {
             height: 38,
             borderRadius: 999,
             border: 'none',
-            background: T.ink,
+            background: '#2B2B2F',
             color: T.white,
             padding: '0 13px',
             fontSize: 13.2,
@@ -2444,7 +2453,7 @@ function ClassRoster({ kids, onChanged }: any) {
         <button onClick={() => setShowAdd(true)} style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           padding: '7px 12px', borderRadius: 999,
-          background: T.ink, color: T.white, border: 'none',
+          background: '#2B2B2F', color: T.white, border: 'none',
           fontSize: 13.8, fontWeight: 600, cursor: 'pointer',
           fontFamily: 'inherit',
         }}>
@@ -2561,7 +2570,7 @@ function UpdatesInbox({ teacher }: any) {
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '30px 0' }}>
           <div style={{ width: 16, height: 16, borderRadius: '50%',
-                        border: `2px solid ${T.border}`, borderTopColor: T.ink,
+                        border: `2px solid ${T.border}`, borderTopColor: '#2B2B2F',
                         animation: 'spin 0.7s linear infinite' }} />
         </div>
       ) : parents.length === 0 ? (
@@ -3209,7 +3218,7 @@ function BroadcastCompose({ teacher }: any) {
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
           <div style={{ width: 16, height: 16, borderRadius: '50%',
-                        border: `2px solid ${T.border}`, borderTopColor: T.ink,
+                        border: `2px solid ${T.border}`, borderTopColor: '#2B2B2F',
                         animation: 'spin 0.7s linear infinite' }} />
         </div>
       ) : parents.length === 0 ? (
@@ -3294,7 +3303,7 @@ function InlineRename({ value, onCancel, onSave }: any) {
           fontFamily: 'inherit', outline: 'none' }} />
       <button onClick={() => onSave(v.trim())} style={{
         width: 38, height: 38, borderRadius: 999,
-        background: T.ink, color: T.white, border: 'none', cursor: 'pointer',
+        background: '#2B2B2F', color: T.white, border: 'none', cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}><Check size={12} strokeWidth={2.4} /></button>
       <button onClick={onCancel} style={{

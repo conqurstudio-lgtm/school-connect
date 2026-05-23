@@ -1,4 +1,5 @@
 'use client'
+// teacher-white-alignment-category-v2
 
 import React from 'react'
 import { CLASS_SPACE_UI, type ClassSpaceTabItem } from './classSpaceUi'
@@ -52,8 +53,8 @@ export function ClassSpaceTopProfile({
     <header style={{
       flexShrink: 0,
       padding: CLASS_SPACE_UI.topProfile.padding,
-      background: 'rgba(252,252,255,0.98)',
-      backdropFilter: 'blur(14px)',
+      background: 'rgba(255,255,255,0.98)',
+      backdropFilter: 'blur(18px)',
       WebkitBackdropFilter: 'blur(14px)',
       position: 'sticky',
       top: 0,
@@ -85,7 +86,7 @@ export function ClassSpaceTopProfile({
           justifyContent: 'center',
           color: CLASS_SPACE_UI.color.ink2,
           fontSize: 13.5,
-          fontWeight: 900,
+          fontWeight: 650,
           flexShrink: 0,
           overflow: 'hidden',
         }}>
@@ -95,7 +96,7 @@ export function ClassSpaceTopProfile({
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
             fontSize: CLASS_SPACE_UI.topProfile.titleSize,
-            fontWeight: 900,
+            fontWeight: 650,
             color: CLASS_SPACE_UI.color.ink,
             letterSpacing: '-0.025em',
             margin: 0,
@@ -158,7 +159,7 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
       top: stickyTop,
       zIndex: 35,
       padding: CLASS_SPACE_UI.tabs.outerPadding,
-      background: 'rgba(252,252,255,0.96)',
+      background: 'rgba(255,255,255,0.98)',
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
     }}>
@@ -183,7 +184,7 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
                 height: CLASS_SPACE_UI.tabs.height,
                 minWidth: 0,
                 borderRadius: CLASS_SPACE_UI.tabs.radius,
-                border: 'none',
+                border: '1px solid rgba(0,0,0,0.06)',
                 background: selected ? CLASS_SPACE_UI.color.white : 'transparent',
                 color: selected ? CLASS_SPACE_UI.color.ink : CLASS_SPACE_UI.color.ink3,
                 fontSize: CLASS_SPACE_UI.tabs.fontSize,
@@ -219,7 +220,7 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: 10.5,
-                  fontWeight: 900,
+                  fontWeight: 650,
                   lineHeight: 1,
                   fontVariantNumeric: 'tabular-nums',
                   textAlign: 'center',
@@ -380,7 +381,7 @@ export function ClassSpaceDividerRow({
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        background: unread ? '#F7F8FC' : 'transparent',
+        background: unread ? '#FFFFFF' : 'transparent',
         border: 'none',
         borderBottom: `1px solid ${CLASS_SPACE_UI.color.border}`,
         cursor: onClick ? 'pointer' : 'default',
