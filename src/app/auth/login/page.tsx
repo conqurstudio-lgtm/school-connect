@@ -1,4 +1,5 @@
 'use client'
+// school-connect-route-lock-v1
 // school-admin-landing-route-repair-v1
 
 import { useState, useTransition, Suspense } from 'react'
@@ -70,6 +71,10 @@ function LoginForm() {
 
             if (profile?.role === 'school') {
               nextPath = '/school'
+            } else if (profile?.role === 'teacher') {
+              nextPath = '/teacher'
+            } else {
+              nextPath = '/feed'
             }
           }
 

@@ -1,5 +1,6 @@
 // school-loading-guard-v1
 'use client'
+// school-connect-route-lock-v1
 // school-admin-landing-route-repair-v1
 
 import { useEffect, useState } from 'react'
@@ -95,7 +96,13 @@ export function SchoolPageClient() {
         }
 
         if (!school) {
-          router.replace(profile.role === 'school' ? '/auth/school-setup' : '/feed')
+          if (profile.role === 'school') {
+            router.replace('/auth/school-setup')
+          } else if (profile.role === 'teacher') {
+            router.replace('/teacher')
+          } else {
+            router.replace('/feed')
+          }
           return
         }
 

@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-connect-route-lock-v1
 // parent-teacher-full-dark-image-viewer-v1
 // school-connect-white-app-background-v15
 // teacher-composer-fixed-visible-dock-v4
@@ -147,7 +148,7 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
 
   const [teacherClassSpaceTab, setTeacherClassSpaceTab] = useState<'life' | 'messages' | 'children'>('life')
 
-  const goToFeed = () => router.push('/feed')
+  const goToFeed = () => router.push('/teacher')
 
   if (loading) {
     return <TeacherPageSkeleton />

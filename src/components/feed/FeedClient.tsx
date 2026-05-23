@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-connect-route-lock-v1
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -21,22 +22,30 @@ import { TeacherPanel }             from '@/components/teachers/TeacherPanel'
 import type { Post }                from '@/lib/types'
 
 function useTeacherCookie() {
-  const [hasTeacher, setHasTeacher] = useState(false)
+  const [state, setState] = useState({ hasTeacher: false, loading: true })
 
   useEffect(() => {
     let alive = true
+
     fetch('/api/teacher-session')
       .then(async r => {
-        if (!alive || !r.ok) return
+        if (!alive) return
+        if (!r.ok) {
+          setState({ hasTeacher: false, loading: false })
+          return
+        }
+
         const j = await r.json()
-        if (j.teacher?.id) setHasTeacher(true)
+        setState({ hasTeacher: !!j.teacher?.id, loading: false })
       })
-      .catch(() => {})
+      .catch(() => {
+        if (alive) setState({ hasTeacher: false, loading: false })
+      })
 
     return () => { alive = false }
   }, [])
 
-  return hasTeacher
+  return state
 }
 
 export function FeedClient() {
@@ -46,7 +55,7 @@ export function FeedClient() {
 
   const { authUser, loading: authLoading, signOut, isSchool, school } = useAuth()
   const { notifications, unreadCount, markAllRead, markRead } = useNotifications(authUser?.id)
-  const isTeacher = useTeacherCookie()
+  const { hasTeacher: isTeacher, loading: teacherCookieLoading } = useTeacherCookie()
   const {
     posts,
     loading: feedLoading,
@@ -107,8 +116,22 @@ export function FeedClient() {
   }, [])
 
   useEffect(() => {
-    if (!authLoading && !authUser) window.location.href = '/auth/login'
-  }, [authLoading, authUser])
+    if (teacherCookieLoading || authLoading) return
+
+    if (isTeacher) {
+      router.replace('/teacher')
+      return
+    }
+
+    if (!authUser) {
+      window.location.href = '/auth/login'
+      return
+    }
+
+    if (isSchool) {
+      router.replace('/school')
+    }
+  }, [authLoading, authUser, isSchool, isTeacher, router, teacherCookieLoading])
 
   // Fetch pending teacher count for badge.
   useEffect(() => {
@@ -128,7 +151,7 @@ export function FeedClient() {
     return () => { alive = false }
   }, [school?.id, isSchool, showTeachers])
 
-  if (authLoading) return (
+  if (authLoading || teacherCookieLoading) return (
     <div className="app-root app-center">
       <div style={{
         width: 24,
@@ -141,7 +164,7 @@ export function FeedClient() {
     </div>
   )
 
-  if (!authUser) return null
+  if (!authUser || isSchool || isTeacher) return null
 
   if (!school) return (
     <div className="app-root app-center" style={{ padding: 40, textAlign: 'center' }}>

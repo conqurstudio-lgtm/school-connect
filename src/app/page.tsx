@@ -1,41 +1,12 @@
 'use client'
-// school-admin-landing-route-repair-v1
-// school-root-route-async-repair-v2
+// school-connect-route-lock-v1
+// root-safe-login-redirect-v4
 
 import { useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 export default function HomePage() {
   useEffect(() => {
-    let alive = true
-
-    const routeUser = async () => {
-      const { data: sessionResult } = await supabase.auth.getSession()
-      const session = sessionResult?.session
-
-      if (!alive) return
-
-      if (!session?.user) {
-        window.location.href = '/auth/login'
-        return
-      }
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .maybeSingle()
-
-      if (!alive) return
-
-      window.location.href = profile?.role === 'school' ? '/school' : '/feed'
-    }
-
-    routeUser()
-
-    return () => {
-      alive = false
-    }
+    window.location.replace('/auth/login')
   }, [])
 
   return (

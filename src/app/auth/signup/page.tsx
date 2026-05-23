@@ -1,4 +1,5 @@
 'use client'
+// school-connect-route-lock-v1
 
 import { useState, useTransition, Suspense } from 'react'
 import Link from 'next/link'
@@ -63,7 +64,7 @@ function SignupForm() {
         return
       }
 
-      // Session exists — go directly to the right place
+      // Route Lock: school setup for schools, parent home for parents
       if (accountType === 'school') {
         window.location.href = '/auth/school-setup'
       } else if (redirectTo) {
