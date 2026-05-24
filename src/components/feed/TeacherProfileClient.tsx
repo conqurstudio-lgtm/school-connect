@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// shared-teacher-class-life-feed-v1
 // parent-class-life-reactions-v1
 // parent-teacher-full-dark-image-viewer-v1
 // parent-premium-theme-pass-v1
@@ -25,6 +26,7 @@ import { BackIcon } from '@/components/ui/BackIcon'
 import toast from 'react-hot-toast'
 import { ClassSpaceTabs as SharedClassSpaceTabs } from '@/components/class-space/ClassSpacePrimitives'
 import { UnifiedClassLifePostCard } from '@/components/class-life/UnifiedClassLifePostCard'
+import { PostCard } from '@/components/feed/PostCard'
 
 
 function sortMessagesOldestFirst(list: any[]) {
@@ -34,14 +36,14 @@ function sortMessagesOldestFirst(list: any[]) {
 }
 
 const T = {
-  ink:    '#1A1A1A',
-  ink2:   '#4A4A4A',
-  ink3:   '#8E8E93',
-  border: 'rgba(0,0,0,0.07)',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
+  border: 'rgba(0,0,0,0.06)',
   bg:     '#FFFFFF',
   white:  '#FFFFFF',
-  blue:   '#78A6FE',
-  red:    '#EF4444',
+  blue:   '#5F6268',
+  red:    '#B42318',
 }
 
 
@@ -66,6 +68,7 @@ export function TeacherProfileClient({ teacherId, publicMode = false }: Props) {
   const [classSpaceTab, setClassSpaceTab] = useState<'life' | 'messages' | 'reports'>('life')
   const [classLifePosts, setClassLifePosts] = useState<any[]>([])
   const [classLifeLoading, setClassLifeLoading] = useState(false)
+  const [viewerId, setViewerId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [threadLoading, setThreadLoading] = useState(false)
 const [showJoin, setShowJoin] = useState(false)
@@ -239,6 +242,18 @@ const [showJoin, setShowJoin] = useState(false)
     loadClassLife(teacher.id)
   }, [hydrated, canMessage, classSpaceTab, teacher?.id])
 
+  const updateClassPostReaction = (postId: string, type: any, prevType: any) => {
+    setClassLifePosts(prev => prev.map((post: any) => {
+      if (post.id !== postId) return post
+      const counts = { ...(post.reaction_counts || {}) }
+      if (prevType && counts[prevType] > 0) counts[prevType] -= 1
+      if (prevType && counts[prevType] === 0) delete counts[prevType]
+      if (type) counts[type] = (counts[type] || 0) + 1
+      const total = Object.values(counts).reduce((a: number, b: any) => a + b, 0)
+      return { ...post, my_reaction: type, reaction_counts: counts, reaction_count: total }
+    }))
+  }
+
   const markThreadSeen = async (id = teacherId) => {
     try {
       await fetch('/api/thread-status', {
@@ -276,6 +291,7 @@ try {
       setTeacher(json.teacher)
       setJoinStatus(json.join_status || (json.is_my_teacher ? 'approved' : 'none'))
       setCanMessage(!!json.is_my_teacher)
+      setViewerId(json.viewer_id || json.viewer?.id || null)
       setReports(json.reports ?? [])
 
       // Stop the full-page spinner as soon as the teacher/profile data is ready.
@@ -648,9 +664,8 @@ const handlePickAttachment = async (file?: File | null) => {
               teacher={teacher}
               posts={classLifePosts}
               loading={classLifeLoading}
-              reports={reports}
-              onOpenMessages={() => setClassSpaceTab('messages')}
-              onOpenReports={() => setClassSpaceTab('reports')}
+              viewerId={viewerId}
+              onReactionChange={updateClassPostReaction}
             />
           )}
 
@@ -988,35 +1003,79 @@ function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
   )
 }
 
-function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOpenReports }: any) {
-  return (
-    <div style={{
-      flex: 1,
-      minHeight: 0,
-      overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch',
-      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
-    }}>
-      <ClassSpaceWelcome
-        teacher={teacher}
-        reports={reports}
-        onOpenMessages={onOpenMessages}
-        onOpenReports={onOpenReports}
-      />
+function ClassLifePanel({ teacher, posts, loading, viewerId, onReactionChange }: any) {
+  const deleteLocal = () => {}
+  const pinLocal = () => {}
 
-      {loading ? (
-        <ClassLifeSkeleton />
-      ) : posts.length === 0 ? (
-        <ClassLifeEmpty teacher={teacher} onOpenMessages={onOpenMessages} />
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {posts.map((post: any) => (
-            <ClassLifePostCard key={post.id} post={post} teacher={teacher} />
-          ))}
+  if (loading) {
+    return (
+      <section style={{ padding: '18px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }}>
+          <div style={{ width: 16, height: 16, borderRadius: '50%', border: `2px solid ${T.border}`, borderTopColor: '#2B2B2F', animation: 'spin 0.7s linear infinite' }} />
         </div>
-      )}
+      </section>
+    )
+  }
 
-      <PoweredByBar />
+  if (posts.length === 0) {
+    return (
+      <section
+        className="teacher-feed-stable-empty"
+        style={{
+          padding: '8px 14px 18px',
+          minHeight: '100%',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
+      >
+        <div style={{ padding: '28px 0', textAlign: 'center' }}>
+          <Info size={18} color={T.ink3} strokeWidth={1.5} style={{ margin: '0 auto 8px' }} />
+          <p style={{ fontSize: 14, fontWeight: 700, color: T.ink, margin: '0 0 4px' }}>Nothing shared yet</p>
+          <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>Class Life will appear here.</p>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <div className="teacher-feed-stable-list">
+      <section
+        className="teacher-feed-stable-section"
+        style={{
+          padding: '0 0 18px',
+          minHeight: '100%',
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          willChange: 'transform',
+        }}
+      >
+        {posts.map((post: any, index: number) => (
+          <PostCard
+            key={post.id}
+            index={index}
+            post={post}
+            isSchool={true}
+            canManagePost={false}
+            userId={viewerId || ''}
+            schoolId={teacher.school_id}
+            schoolName={teacher.name}
+            schoolLogoUrl={teacher.photo_url || undefined}
+            authorOverride={{
+              id: teacher.id,
+              name: teacher.name,
+              photo_url: teacher.photo_url,
+              grade: teacher.grade,
+              class_name: teacher.class_name,
+            }}
+            onReactionChange={onReactionChange}
+            onEditPost={() => {}}
+            onPostDeleted={deleteLocal}
+            onPinToggled={pinLocal}
+          />
+        ))}
+      </section>
     </div>
   )
 }
@@ -1081,9 +1140,6 @@ function ClassLifePostCard({ post, teacher }: any) {
   return (
     <UnifiedClassLifePostCard
       post={post}
-      mode="parent"
-      authorName={teacher?.name || teacher?.full_name || 'Teacher'}
-      authorPhotoUrl={teacher?.photo_url || teacher?.avatar_url || null}
       schoolId={post?.school_id || teacher?.school_id}
       canReact
     />

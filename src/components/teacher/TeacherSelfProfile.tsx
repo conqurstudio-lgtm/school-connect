@@ -667,7 +667,6 @@ function TeacherClassPostCard({ post, onDelete }: any) {
   return (
     <UnifiedClassLifePostCard
       post={post}
-      mode="teacher"
       canDelete
       onDelete={onDelete}
     />

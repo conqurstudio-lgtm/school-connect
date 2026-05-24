@@ -1,6 +1,7 @@
 'use client'
-// mirror-teacher-class-life-layout-v1
-// One class-life post layout. Teacher sees it. Parent sees the same layout.
+// mirror-teacher-exact-post-layout-v3
+// The teacher profile post layout is the source of truth.
+// Parent Class Life renders the same structure, with parent reactions added below.
 
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
@@ -10,13 +11,14 @@ import { createClient } from '@/lib/supabase/client'
 const supabase = createClient()
 
 const T = {
-  ink: '#262626',
-  ink2: '#5F6268',
-  ink3: '#9A9CA3',
-  white: '#FFFFFF',
-  soft: '#F8F8F9',
-  primary: '#2B2B2F',
-  red: '#B42318',
+  ink:    '#262626',
+  ink2:   '#5F6268',
+  ink3:   '#9A9CA3',
+  border: 'rgba(0,0,0,0.06)',
+  bg:     '#FFFFFF',
+  white:  '#FFFFFF',
+  blue:   '#5F6268',
+  red:    '#B42318',
 }
 
 function relTime(input?: string) {
@@ -44,8 +46,8 @@ function reactionTotalFrom(counts: any) {
 
 export function UnifiedClassLifePostCard({
   post,
-  canDelete = false,
   onDelete,
+  canDelete = false,
   canReact = false,
   schoolId,
 }: any) {
@@ -60,17 +62,12 @@ export function UnifiedClassLifePostCard({
     celebrate: Number(initialCounts.celebrate || 0),
   })
 
-  const images = Array.isArray(post.image_urls)
-    ? post.image_urls
-    : post.image_url
-      ? [post.image_url]
-      : []
-
+  const images = Array.isArray(post.image_urls) ? post.image_urls : []
   const typeLabel =
-    post.type === 'event' ? 'Event'
-    : post.type === 'moment' ? 'Moment'
-    : post.type === 'document' ? 'Document'
-    : 'Update'
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
 
   const totalReactions = reactionTotalFrom(reactionCounts)
 
@@ -171,9 +168,9 @@ export function UnifiedClassLifePostCard({
           height: 31,
           padding: '0 9px',
           borderRadius: 999,
-          border: 'none',
-          background: active ? T.primary : T.soft,
-          color: active ? T.white : T.ink2,
+          border: active ? `1px solid #2B2B2F` : `1px solid ${T.border}`,
+          background: active ? '#2B2B2F' : '#FFFFFF',
+          color: active ? '#FFFFFF' : T.ink2,
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -198,13 +195,12 @@ export function UnifiedClassLifePostCard({
   return (
     <>
       <article style={{
-        background: 'transparent',
-        border: 'none',
-        borderRadius: 0,
-        overflow: 'visible',
-        boxShadow: 'none',
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 16,
+        overflow: 'hidden',
       }}>
-        <div style={{ padding: '0 0 10px' }}>
+        <div style={{ padding: 14 }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -212,55 +208,36 @@ export function UnifiedClassLifePostCard({
             gap: 8,
             marginBottom: post.body || post.event_date || images.length ? 8 : 0,
           }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              minWidth: 0,
-            }}>
+            <div>
               <span style={{
                 display: 'inline-flex',
-                alignItems: 'center',
-                height: 24,
-                padding: '0 9px',
+                padding: '3px 8px',
                 borderRadius: 999,
-                background: T.soft,
-                color: T.ink2,
-                fontSize: 12.8,
-                fontWeight: 620,
-                whiteSpace: 'nowrap',
+                background: '#F8F8F9',
+                color: T.blue,
+                fontSize: 13.8,
+                fontWeight: 650,
               }}>
                 {typeLabel}
               </span>
-
-              <span style={{
-                fontSize: 12.8,
-                color: T.ink3,
-                whiteSpace: 'nowrap',
-              }}>
+              <span style={{ marginLeft: 8, fontSize: 13.8, color: T.ink3 }}>
                 {relTime(post.created_at || post.published_at)}
               </span>
             </div>
 
             {canDelete && (
-              <button
-                type="button"
-                onClick={onDelete}
-                aria-label="Delete post"
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.red,
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
+              <button onClick={onDelete} style={{
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                border: `1px solid ${T.border}`,
+                background: '#FFFFFF',
+                color: T.red,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
                 <Trash2 size={13} strokeWidth={1.9} />
               </button>
             )}
@@ -281,26 +258,22 @@ export function UnifiedClassLifePostCard({
           {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
             <div style={{
               marginTop: 9,
-              padding: '10px 12px',
-              borderRadius: 14,
-              background: T.soft,
-              fontSize: 13,
+              padding: '9px 10px',
+              borderRadius: '50%',
+              background: '#F8F8F9',
+              fontSize: 13.8,
               color: T.ink2,
               lineHeight: 1.5,
             }}>
-              {post.event_date && <div>Date: {post.event_date}</div>}
-              {post.event_time && <div>Time: {post.event_time}</div>}
-              {post.event_location && <div>Place: {post.event_location}</div>}
+              {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
+              {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
+              {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
             </div>
           )}
         </div>
 
         {images.length > 0 && (
-          <div style={{
-            display: 'grid',
-            gap: 6,
-            padding: '0 0 10px',
-          }}>
+          <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
             {images.slice(0, 4).map((url: string, i: number) => (
               <button
                 key={`${url}-${i}`}
@@ -322,14 +295,12 @@ export function UnifiedClassLifePostCard({
                 <img
                   src={url}
                   alt=""
-                  loading="lazy"
                   style={{
                     width: '100%',
                     maxHeight: 260,
                     objectFit: 'cover',
                     display: 'block',
                     borderRadius: 13,
-                    background: T.soft,
                   }}
                 />
               </button>
@@ -343,7 +314,7 @@ export function UnifiedClassLifePostCard({
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 8,
-            padding: '0 0 2px',
+            padding: '0 14px 14px',
             flexWrap: 'wrap',
           }}>
             {canReact ? (

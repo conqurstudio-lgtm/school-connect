@@ -1,4 +1,5 @@
 // /api/teachers/[id]/profile
+// shared-teacher-class-life-feed-v1
 // Supports normal Supabase parents, lightweight parent_token sessions,
 // and public class invite preview mode.
 
@@ -204,6 +205,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 
   return NextResponse.json({
+    viewer_id: profile.id,
+    viewer: {
+      id: profile.id,
+      role: profile.role,
+      child_name: profile.child_name,
+    },
     teacher: {
       id: teacher.id,
       name: teacher.name,
