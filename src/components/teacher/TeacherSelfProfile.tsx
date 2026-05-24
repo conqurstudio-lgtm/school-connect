@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// empty-states-copy-motion-v1
 // school-ui-shell-carryover-v1
 // teacher-white-alignment-category-v2
 // white-premium-app-theme-v1
@@ -1084,7 +1085,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   if (posts.length === 0) {
     return (
       <section
-        className="teacher-feed-stable-empty"
+        className="teacher-feed-stable-empty sc-fade-in"
         style={{
           padding: '8px 14px 18px',
           minHeight: '100%',
@@ -1103,7 +1104,7 @@ function TeacherOwnClassFeed({ teacher, school, refreshKey }: any) {
   }
 
   return (
-    <div className="teacher-feed-stable-list">
+    <div className="teacher-feed-stable-list sc-fade-in">
       <section
         className="teacher-feed-stable-section"
         style={{
@@ -2290,7 +2291,7 @@ function ClassRoster({ kids, onChanged }: any) {
           <Users size={20} color={T.ink3} strokeWidth={1.5}
             style={{ margin: '0 auto 8px' }} />
           <p style={{ fontSize: 13.8, color: T.ink3, margin: 0, lineHeight: 1.5 }}>
-            Add children. Parents claim their child from your class link.
+            Add children before sharing the class link.
           </p>
         </div>
       ) : (
@@ -3004,7 +3005,7 @@ function BroadcastCompose({ teacher }: any) {
         <Megaphone size={14} color={T.blue} strokeWidth={1.8}
           style={{ flexShrink: 0, marginTop: 2 }} />
         <p style={{ fontSize: 13.8, color: T.ink2, margin: 0, lineHeight: 1.5 }}>
-          Send a private message to selected parents.
+          Send a message to selected parents.
           It doesn't appear on the public feed.
         </p>
       </div>
@@ -3380,7 +3381,7 @@ function PendingClassRequests({ onChanged }: any) {
             margin: 0,
             lineHeight: 1.45,
           }}>
-            Parent link requests.
+            Parent links appear here.
           </p>
         </div>
 

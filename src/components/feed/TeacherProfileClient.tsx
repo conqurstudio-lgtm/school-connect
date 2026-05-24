@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// empty-states-copy-motion-v1
 // parent-child-claim-flow-v1
 // parent-class-shell-realignment-v1
 // school-ui-shell-carryover-v1
@@ -1024,7 +1025,7 @@ function ClassLifePanel({ teacher, posts, loading, viewerId, onReactionChange }:
   if (posts.length === 0) {
     return (
       <section
-        className="teacher-feed-stable-empty"
+        className="teacher-feed-stable-empty sc-fade-in"
         style={{
           padding: '8px 14px 18px',
           minHeight: '100%',
@@ -1043,7 +1044,7 @@ function ClassLifePanel({ teacher, posts, loading, viewerId, onReactionChange }:
   }
 
   return (
-    <div className="teacher-feed-stable-list">
+    <div className="teacher-feed-stable-list sc-fade-in">
       <section
         className="teacher-feed-stable-section"
         style={{
@@ -1447,7 +1448,7 @@ function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
       </div>
 
       <p style={{
-        fontSize: 15,
+        fontSize: 16,
         color: T.ink,
         fontWeight: 600,
         margin: '0 0 4px',
@@ -1918,7 +1919,7 @@ function EmptyConversation({ teacher }: any) {
       </div>
 
       <p style={{
-        fontSize: 15,
+        fontSize: 16,
         color: T.ink,
         fontWeight: 600,
         margin: '0 0 4px',
@@ -2028,7 +2029,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
             <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
-              Enter your details and claim your child.
+              Claim your child.
             </p>
           </div>
 
@@ -2142,7 +2143,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           lineHeight: 1.45,
           margin: '10px 6px 0',
         }}>
-          School Life opens once your child is linked.
+          Claim your child to open School Life.
         </p>
       </div>
     </div>

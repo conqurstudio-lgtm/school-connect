@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// empty-states-copy-motion-v1
 // white-premium-app-theme-v1
 // parent-school-life-home-v1
 // /feed is now the Parent School Life home.
@@ -98,7 +99,7 @@ function EmptySchoolLife({ onReports }: { onReports: () => void }) {
         fontWeight: 620,
         letterSpacing: '-0.01em',
       }}>
-        No school life yet
+        Nothing shared yet
       </p>
 
       <p style={{
@@ -108,7 +109,7 @@ function EmptySchoolLife({ onReports }: { onReports: () => void }) {
         lineHeight: 1.45,
         maxWidth: 280,
       }}>
-        Updates, moments and class posts will appear here once your school starts sharing.
+        School Life will appear here.
       </p>
 
       <button
@@ -343,7 +344,7 @@ export function FeedClient() {
             No school linked
           </p>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13.2, lineHeight: 1.48 }}>
-            Ask your school or teacher for a private invite link so your child can be connected.
+            Ask your school for a class link.
           </p>
         </div>
       </main>
@@ -354,7 +355,7 @@ export function FeedClient() {
   const childName = authUser.profile?.child_name || 'your child'
 
   return (
-    <main className={`parent-school-life-root ${reenter ? 'feed-reenter' : ''}`} style={{
+    <main className={`parent-school-life-root sc-page-enter ${reenter ? 'feed-reenter' : ''}`} style={{
       minHeight: '100dvh',
       background: T.white,
       color: T.ink,

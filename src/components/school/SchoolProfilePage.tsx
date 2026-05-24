@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// empty-states-copy-motion-v1
 // white-premium-app-theme-v1
 // school-admin-landing-route-repair-v1
 // school-connect-white-app-background-v15
@@ -1629,7 +1630,7 @@ const signOut = async () => {
                   </div>
 
                   <p style={{ fontSize: 15, color: T.ink, fontWeight: 600, margin: '0 0 4px' }}>
-                    No activity yet
+                    Nothing shared yet
                   </p>
 
                   <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 16px', lineHeight: 1.5 }}>
