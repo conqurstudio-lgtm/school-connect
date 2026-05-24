@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// parent-class-shell-realignment-v1
 // school-ui-shell-carryover-v1
 // shared-teacher-class-life-feed-v1
 // parent-class-life-reactions-v1
@@ -501,7 +502,7 @@ const handlePickAttachment = async (file?: File | null) => {
         flexDirection: 'column',
       }}
     >
-      {/* School UI shell carryover: parent class profile header */}
+      {/* Parent class shell realignment: teacher-style profile header */}
       <div style={{
         position: 'sticky',
         top: 0,
@@ -518,65 +519,38 @@ const handlePickAttachment = async (file?: File | null) => {
           justifyContent: 'space-between',
           gap: 10,
         }}>
-          <button
-            onClick={() => {
-              try { sessionStorage.setItem('feed-left', '1') } catch {}
-              router.back()
-            }}
-            aria-label="Back"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink2,
-              padding: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <BackIcon size={15} />
-          </button>
+          <div style={{
+            width: 54,
+            height: 54,
+            borderRadius: 18,
+            overflow: 'hidden',
+            background: teacher.photo_url
+              ? `url(${teacher.photo_url}) center/cover`
+              : '#F8F8F9',
+            border: `1px solid ${T.border}`,
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 15,
+            fontWeight: 650,
+            flexShrink: 0,
+          }}>
+            {!teacher.photo_url && initials}
+          </div>
 
           <div style={{
             flex: 1,
             minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
             textAlign: 'center',
           }}>
-            <div style={{
-              width: 56,
-              height: 56,
-              borderRadius: 18,
-              overflow: 'hidden',
-              background: teacher.photo_url
-                ? `url(${teacher.photo_url}) center/cover`
-                : '#F8F8F9',
-              border: `1px solid ${T.border}`,
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 14,
-              fontWeight: 620,
-              marginBottom: 7,
-            }}>
-              {!teacher.photo_url && initials}
-            </div>
-
             <h1 style={{
               fontSize: 16,
+              lineHeight: 1.18,
               color: T.ink,
               fontWeight: 620,
               margin: 0,
               letterSpacing: '-0.02em',
-              maxWidth: '100%',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -584,10 +558,11 @@ const handlePickAttachment = async (file?: File | null) => {
               {teacher.name}
             </h1>
             <p style={{
-              fontSize: 12.5,
+              fontSize: 12.4,
+              fontWeight: 500,
               color: T.ink3,
               margin: '4px 0 0',
-              maxWidth: '100%',
+              letterSpacing: '0em',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -596,7 +571,39 @@ const handlePickAttachment = async (file?: File | null) => {
             </p>
           </div>
 
-          <div style={{ width: 34, flexShrink: 0 }} />
+          <div style={{
+            display: 'flex',
+            gap: 7,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            flexShrink: 0,
+            minWidth: 54,
+          }}>
+            <button
+              onClick={() => {
+                try { sessionStorage.setItem('feed-left', '1') } catch {}
+                router.back()
+              }}
+              aria-label="Back"
+              title="Back"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: `1px solid ${T.border}`,
+                background: T.white,
+                color: T.ink2,
+                padding: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              <BackIcon size={15} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -623,7 +630,7 @@ const handlePickAttachment = async (file?: File | null) => {
                 {joinStatus === 'pending'
                   ? 'Request sent'
                   : joinStatus === 'rejected'
-                    ? 'Request was not approved'
+                    ? 'Request not approved'
                     : 'Join this class'}
               </p>
               <p style={{
@@ -633,10 +640,10 @@ const handlePickAttachment = async (file?: File | null) => {
                 lineHeight: 1.5,
               }}>
                 {joinStatus === 'pending'
-                  ? 'Your request is waiting for the teacher to approve that your child is in this class.'
+                  ? 'Waiting for the teacher.'
                   : joinStatus === 'rejected'
-                    ? 'You can ask the school or send a new request if this was a mistake.'
-                    : 'Send your child’s details to the teacher. Once approved, this becomes your private teacher conversation space.'}
+                    ? 'Ask the school or send a new request.'
+                    : 'Join the class to see messages and reports.'}
               </p>
 
               {joinStatus !== 'pending' && (
@@ -1017,6 +1024,7 @@ function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
       active={active}
       onChange={onChange}
       columns={3}
+      stickyTop={70}
     />
   )
 }
