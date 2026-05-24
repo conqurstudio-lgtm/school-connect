@@ -1,4 +1,5 @@
-// /api/onboarding/link  POST { child_id }
+// /api/onboarding/link
+// parent-child-claim-flow-v1  POST { child_id }
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createServerClient } from '@supabase/ssr'
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
 
   // Make sure the child exists
   const { data: child } = await sb.from('children')
-    .select('id, school_id, name').eq('id', child_id).single()
+    .select('id, school_id, name, grade, class_name').eq('id', child_id).single()
   if (!child) return NextResponse.json({ error: 'child not found' }, { status: 404 })
 
   // Ensure the parent's profile is in this school
@@ -42,8 +43,18 @@ export async function POST(req: NextRequest) {
 
   if (!profile?.school_id || profile.school_id !== child.school_id) {
     // Set the school on the profile if missing
-    await sb.from('profiles').update({ school_id: child.school_id })
-      .eq('id', user.id)
+    await sb.from('profiles').update({
+      school_id: child.school_id,
+      role: 'parent',
+      child_name: child.name,
+      child_grade: child.grade,
+    }).eq('id', user.id)
+  } else {
+    await sb.from('profiles').update({
+      role: 'parent',
+      child_name: child.name,
+      child_grade: child.grade,
+    }).eq('id', user.id)
   }
 
   // Create the link (idempotent)

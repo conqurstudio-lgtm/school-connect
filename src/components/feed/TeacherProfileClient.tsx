@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// parent-child-claim-flow-v1
 // parent-class-shell-realignment-v1
 // school-ui-shell-carryover-v1
 // shared-teacher-class-life-feed-v1
@@ -630,7 +631,7 @@ const handlePickAttachment = async (file?: File | null) => {
                 {joinStatus === 'pending'
                   ? 'Request sent'
                   : joinStatus === 'rejected'
-                    ? 'Request not approved'
+                    ? 'Not linked'
                     : 'Join this class'}
               </p>
               <p style={{
@@ -640,10 +641,10 @@ const handlePickAttachment = async (file?: File | null) => {
                 lineHeight: 1.5,
               }}>
                 {joinStatus === 'pending'
-                  ? 'Waiting for the teacher.'
+                  ? 'Claim your child.'
                   : joinStatus === 'rejected'
                     ? 'Ask the school or send a new request.'
-                    : 'Join the class to see messages and reports.'}
+                    : 'Claim your child to open messages and reports.'}
               </p>
 
               {joinStatus !== 'pending' && (
@@ -2003,12 +2004,12 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
       })
 
       const json = await res.json()
-      if (!res.ok) throw new Error(json.error || 'Could not send request')
+      if (!res.ok) throw new Error(json.error || 'Could not claim child')
 
-      toast.success(json.already_pending ? 'Request already pending' : 'Request sent to teacher')
+      toast.success(json.already_joined ? 'Already linked' : 'Child linked')
       onSubmitted?.()
     } catch (e: any) {
-      toast.error(e.message || 'Could not send request')
+      toast.error(e.message || 'Could not claim child')
     }
     setSending(false)
   }
@@ -2050,7 +2051,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
               Join {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </h3>
             <p style={{ fontSize: 13.8, color: T.ink3, margin: '-2px 0 0' }}>
-              Add your details so the teacher can confirm your child.
+              Enter your details and claim your child.
             </p>
           </div>
 
@@ -2073,7 +2074,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           color: T.ink,
           margin: '0 0 7px',
         }}>
-          Parent details
+          Parent
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -2117,7 +2118,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           color: T.ink,
           margin: '14px 0 7px',
         }}>
-          Child details
+          Child
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -2154,7 +2155,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
             opacity: sending ? 0.7 : 1,
           }}
         >
-          {sending ? 'Sending…' : 'Send request'}
+          {sending ? 'Claiming…' : 'Claim child'}
         </button>
 
         <p style={{
@@ -2164,7 +2165,7 @@ function JoinClassModal({ teacher, onClose, onSubmitted }: any) {
           lineHeight: 1.45,
           margin: '10px 6px 0',
         }}>
-          The teacher will approve your request before messages, reports and class updates open.
+          School Life opens once your child is linked.
         </p>
       </div>
     </div>

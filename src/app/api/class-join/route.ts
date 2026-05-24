@@ -1,4 +1,5 @@
 // /api/class-join
+// parent-child-claim-flow-v1
 // Parent requests to join a teacher's class.
 // Supports normal Supabase parents, lightweight parent_token sessions,
 // and first-time public class invite visitors.
@@ -34,6 +35,10 @@ function userClient() {
 
 function clean(value: unknown) {
   return String(value || '').trim().replace(/\s+/g, ' ')
+}
+
+function normalizedName(value: unknown) {
+  return clean(value).toLowerCase()
 }
 
 function makeToken() {
@@ -279,37 +284,78 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const { data: existingPending } = await sb.from('class_join_requests')
-    .select('*')
-    .eq('teacher_id', teacher.id)
-    .eq('parent_id', profile.id)
-    .eq('status', 'pending')
-    .ilike('child_first_name', childFirstName)
-    .ilike('child_last_name', childLastName)
-    .maybeSingle()
+  const requestedChildName = `${childFirstName} ${childLastName}`.trim()
+  const requestedNormalized = normalizedName(requestedChildName)
+  const reversedRequestedNormalized = normalizedName(`${childLastName} ${childFirstName}`)
 
-  if (existingPending) {
-    return jsonWithOptionalParentCookie(
-      { request: existingPending, already_pending: true },
-      200,
-      caller.createdToken,
-    )
+  let classChildrenQuery = sb.from('children')
+    .select('id, school_id, name, grade, class_name, status, created_by_teacher_id')
+    .eq('school_id', teacher.school_id)
+    .eq('grade', teacher.grade)
+    .eq('status', 'active')
+    .limit(200)
+
+  if (teacher.class_name) {
+    classChildrenQuery = classChildrenQuery.eq('class_name', teacher.class_name)
+  } else {
+    classChildrenQuery = classChildrenQuery.is('class_name', null)
   }
 
-  const { data, error } = await sb.from('class_join_requests')
-    .insert({
+  const { data: classChildren, error: classChildrenError } = await classChildrenQuery
+
+  if (classChildrenError) {
+    return jsonWithOptionalParentCookie({ error: classChildrenError.message }, 500, caller.createdToken)
+  }
+
+  const child =
+    (classChildren ?? []).find((kid: any) => normalizedName(kid.name) === requestedNormalized) ||
+    (classChildren ?? []).find((kid: any) => normalizedName(kid.name) === reversedRequestedNormalized) ||
+    (classChildren ?? []).find((kid: any) => normalizedName(kid.name).includes(requestedNormalized))
+
+  if (!child?.id) {
+    return jsonWithOptionalParentCookie({
+      error: 'Child not found in this class',
+      not_found: true,
+      class_label: `${teacher.grade}${teacher.class_name ? ` - ${teacher.class_name}` : ''}`,
+    }, 404, caller.createdToken)
+  }
+
+  const { data: existingLink } = await sb.from('child_guardians')
+    .select('child_id, guardian_id')
+    .eq('child_id', child.id)
+    .eq('guardian_id', profile.id)
+    .maybeSingle()
+
+  if (!existingLink) {
+    const { error: linkError } = await sb.from('child_guardians')
+      .insert({
+        child_id: child.id,
+        guardian_id: profile.id,
+        relationship,
+      })
+
+    if (linkError && !String(linkError.message || '').toLowerCase().includes('duplicate')) {
+      return jsonWithOptionalParentCookie({ error: linkError.message }, 500, caller.createdToken)
+    }
+  }
+
+  const fullName = `${parentFirstName} ${parentLastName}`.trim()
+
+  await sb.from('profiles')
+    .update({
       school_id: teacher.school_id,
-      teacher_id: teacher.id,
-      parent_id: profile.id,
-      child_first_name: childFirstName,
-      child_last_name: childLastName,
-      relationship,
-      status: 'pending',
+      role: 'parent',
+      full_name: fullName,
+      child_name: child.name,
+      child_grade: child.grade,
     })
-    .select()
-    .single()
+    .eq('id', profile.id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return jsonWithOptionalParentCookie({ request: data }, 200, caller.createdToken)
+  return jsonWithOptionalParentCookie({
+    ok: true,
+    linked: true,
+    approved: true,
+    already_joined: !!existingLink,
+    child,
+  }, 200, caller.createdToken)
 }
