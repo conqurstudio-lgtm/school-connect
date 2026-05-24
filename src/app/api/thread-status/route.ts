@@ -1,4 +1,5 @@
 // /api/thread-status
+// messages-reports-feature-flow-v1
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createServerClient } from '@supabase/ssr'
@@ -106,12 +107,35 @@ export async function GET(req: NextRequest) {
 
   const [{ data: updates }, { data: threads }] = await Promise.all([updatesQuery, threadQuery])
 
+  const { data: guardianLinks } = await sb
+    .from('child_guardians')
+    .select('child_id')
+    .eq('guardian_id', user.id)
+
+  const childIds = (guardianLinks ?? []).map((link: any) => link.child_id).filter(Boolean)
+
+  let reports: any[] = []
+  if (childIds.length > 0) {
+    let reportsQuery = sb
+      .from('child_reports')
+      .select('teacher_id, child_id, created_at, published_at, week_starting, status')
+      .in('child_id', childIds)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(500)
+
+    if (teacherId) reportsQuery = reportsQuery.eq('teacher_id', teacherId)
+
+    const { data } = await reportsQuery
+    reports = data ?? []
+  }
+
   const seenByTeacher = new Map<string, number>()
   for (const thread of (threads ?? [])) {
     seenByTeacher.set(thread.teacher_id, thread.last_parent_seen_at ? new Date(thread.last_parent_seen_at).getTime() : 0)
   }
 
-  const byTeacher: Record<string, { teacher_id: string; unread_count: number; last_message_at: string | null }> = {}
+  const byTeacher: Record<string, { teacher_id: string; unread_count: number; last_message_at: string | null; last_report_at?: string | null }> = {}
 
   for (const update of (updates ?? [])) {
     const teacherKey = update.teacher_id
@@ -129,6 +153,34 @@ export async function GET(req: NextRequest) {
 
     if (created > lastSeen) {
       byTeacher[teacherKey].unread_count += 1
+    }
+  }
+
+  for (const report of reports) {
+    const teacherKey = report.teacher_id
+    const reportAt = report.published_at || report.created_at || report.week_starting || null
+    const created = reportAt ? new Date(reportAt).getTime() : 0
+    const lastSeen = seenByTeacher.get(teacherKey) || 0
+
+    if (!byTeacher[teacherKey]) {
+      byTeacher[teacherKey] = {
+        teacher_id: teacherKey,
+        unread_count: 0,
+        last_message_at: reportAt,
+        last_report_at: reportAt,
+      }
+    }
+
+    if (created > lastSeen) {
+      byTeacher[teacherKey].unread_count += 1
+    }
+
+    if (reportAt && (!byTeacher[teacherKey].last_message_at || reportAt > String(byTeacher[teacherKey].last_message_at))) {
+      byTeacher[teacherKey].last_message_at = reportAt
+    }
+
+    if (reportAt && (!byTeacher[teacherKey].last_report_at || reportAt > String(byTeacher[teacherKey].last_report_at))) {
+      byTeacher[teacherKey].last_report_at = reportAt
     }
   }
 

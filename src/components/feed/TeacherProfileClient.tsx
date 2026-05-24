@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// messages-reports-feature-flow-v1
 // empty-states-copy-motion-v1
 // parent-child-claim-flow-v1
 // parent-class-shell-realignment-v1
@@ -313,7 +314,7 @@ try {
     }
   }
 
-  const loadThread = async (id = teacherId) => {
+  const loadThread = async (id = teacherId, markSeen = false) => {
     // parent-thread-fast-open-v2:
     // Do not keep a blocking loader while positioning the thread.
     // The useLayoutEffect below scrolls the internal message container before paint.
@@ -328,13 +329,21 @@ try {
         setUpdates(list)
         setCanMessage(!!json.can_message)
 
-        try { await markThreadSeen(id) } catch {}
+        if (markSeen) {
+          try { await markThreadSeen(id) } catch {}
+        }
       }
     } catch {
     } finally {
       setThreadLoading(false)
     }
   }
+  useEffect(() => {
+    if (!hydrated || !canMessage || !teacher?.id) return
+    if (classSpaceTab !== 'messages' && classSpaceTab !== 'reports') return
+    markThreadSeen(teacher.id)
+  }, [hydrated, canMessage, classSpaceTab, teacher?.id])
+
   useEffect(() => { load() }, [teacherId, publicMode])
   // parent-thread-fast-open-v2:
   // Keep the thread feeling instant. When messages arrive, useLayoutEffect

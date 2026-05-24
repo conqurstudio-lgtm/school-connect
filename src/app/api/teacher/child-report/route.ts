@@ -1,4 +1,5 @@
 // /api/teacher/child-report
+// messages-reports-feature-flow-v1
 // Teacher creates or updates a published weekly report for a child in their class.
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -47,6 +48,36 @@ function cleanScores(input: any): Record<string, number> {
   }
 
   return out
+}
+
+async function markReportUnreadForGuardians(sb: any, payload: {
+  school_id: string
+  teacher_id: string
+  child_id: string
+}) {
+  const { data: links } = await sb
+    .from('child_guardians')
+    .select('guardian_id')
+    .eq('child_id', payload.child_id)
+
+  const guardianIds = Array.from(new Set((links ?? []).map((link: any) => link.guardian_id).filter(Boolean)))
+  if (guardianIds.length === 0) return 0
+
+  const now = new Date().toISOString()
+
+  await Promise.all(guardianIds.map((parentId: string) =>
+    sb.from('teacher_parent_threads')
+      .upsert({
+        school_id: payload.school_id,
+        teacher_id: payload.teacher_id,
+        parent_id: parentId,
+        child_id: payload.child_id,
+        unread_for_parent: 1,
+        updated_at: now,
+      }, { onConflict: 'teacher_id,parent_id' })
+  ))
+
+  return guardianIds.length
 }
 
 export async function POST(req: NextRequest) {
@@ -108,7 +139,17 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json({ report: data, updated: true })
+
+    let guardian_count = 0
+    try {
+      guardian_count = await markReportUnreadForGuardians(sb, {
+        school_id: teacher.school_id,
+        teacher_id: teacher.id,
+        child_id: child.id,
+      })
+    } catch {}
+
+    return NextResponse.json({ report: data, updated: true, guardian_count })
   }
 
   const { data, error } = await sb
@@ -128,5 +169,14 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  return NextResponse.json({ report: data, created: true })
+  let guardian_count = 0
+  try {
+    guardian_count = await markReportUnreadForGuardians(sb, {
+      school_id: teacher.school_id,
+      teacher_id: teacher.id,
+      child_id: child.id,
+    })
+  } catch {}
+
+  return NextResponse.json({ report: data, created: true, guardian_count })
 }
