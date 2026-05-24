@@ -1,23 +1,22 @@
 'use client'
-// white-premium-app-theme-v1
-// auth-clear-entry-placeholders-v2
+// auth-copy-motion-polish-v1
 
-import { useState, useTransition, Suspense, type CSSProperties } from 'react'
+import { Suspense, useState, useTransition, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import toast from 'react-hot-toast'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
 
 const supabase = createClient()
 
 const T = {
+  white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
-  ink3: '#8D8D94',
-  border: 'rgba(0,0,0,0.08)',
-  softBorder: 'rgba(0,0,0,0.06)',
-  white: '#FFFFFF',
+  ink3: '#9A9CA3',
+  border: 'rgba(0,0,0,0.06)',
+  primary: '#2B2B2F',
 }
 
 const inputStyle: CSSProperties = {
@@ -92,7 +91,7 @@ function LoginForm() {
 
         window.location.href = nextPath
       } catch {
-        toast.error('Could not sign in.')
+        toast.error('Something went wrong')
       }
     })
   }
@@ -129,13 +128,14 @@ function LoginForm() {
             type="button"
             onClick={() => setShowPassword(value => !value)}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
+            className="sc-pressable"
             style={{
               position: 'absolute',
-              right: 12,
+              right: 11,
               top: '50%',
               transform: 'translateY(-50%)',
-              width: 30,
-              height: 30,
+              width: 32,
+              height: 32,
               borderRadius: 999,
               border: 'none',
               background: 'transparent',
@@ -155,12 +155,13 @@ function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
+        className="sc-pressable"
         style={{
           minHeight: 46,
           width: '100%',
           borderRadius: 14,
           border: 'none',
-          background: isPending ? '#BDBDC2' : T.ink,
+          background: isPending ? '#BDBDC2' : T.primary,
           color: T.white,
           fontSize: 14.5,
           fontWeight: 620,
@@ -181,16 +182,19 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main style={{
-      minHeight: '100dvh',
-      background: '#FFFFFF',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      boxSizing: 'border-box',
-    }}>
+    <main
+      className="sc-page-enter"
+      style={{
+        minHeight: '100dvh',
+        background: T.white,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        boxSizing: 'border-box',
+      }}
+    >
       <div style={{ width: '100%', maxWidth: 430 }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <p style={{
@@ -212,13 +216,16 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div style={{
-          background: T.white,
-          border: `1px solid ${T.softBorder}`,
-          borderRadius: 28,
-          boxShadow: '0 20px 70px rgba(0,0,0,0.06)',
-          padding: 18,
-        }}>
+        <div
+          className="sc-slide-up"
+          style={{
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            borderRadius: 28,
+            boxShadow: '0 18px 58px rgba(0,0,0,0.05)',
+            padding: 18,
+          }}
+        >
           <Suspense fallback={null}>
             <LoginForm />
           </Suspense>
@@ -226,7 +233,7 @@ export default function LoginPage() {
 
         <div style={{ textAlign: 'center', marginTop: 18 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13 }}>
-            <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
+            <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
               Create school account
             </Link>
           </p>

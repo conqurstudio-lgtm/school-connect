@@ -1,14 +1,13 @@
 'use client'
-// white-premium-app-theme-v1
-// auth-clear-entry-placeholders-v2
-// Public signup creates a school account. Parent signup remains invitation-only.
+// auth-copy-motion-polish-v1
+// Public signup creates a school account. Parent signup appears only from an invite redirect.
 
 import { Suspense, useMemo, useState, useTransition, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import toast from 'react-hot-toast'
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
 
 type AccountType = 'school' | 'parent'
 type StepKey = 'name' | 'security' | 'review'
@@ -16,12 +15,12 @@ type StepKey = 'name' | 'security' | 'review'
 const supabase = createClient()
 
 const T = {
+  white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
-  ink3: '#8D8D94',
-  border: 'rgba(0,0,0,0.08)',
-  softBorder: 'rgba(0,0,0,0.06)',
-  white: '#FFFFFF',
+  ink3: '#9A9CA3',
+  border: 'rgba(0,0,0,0.06)',
+  primary: '#2B2B2F',
 }
 
 const inputStyle: CSSProperties = {
@@ -51,7 +50,7 @@ const primaryButton: CSSProperties = {
   width: '100%',
   borderRadius: 14,
   border: 'none',
-  background: T.ink,
+  background: T.primary,
   color: T.white,
   fontSize: 14.5,
   fontWeight: 620,
@@ -70,7 +69,7 @@ const secondaryButton: CSSProperties = {
   background: T.white,
   color: T.ink2,
   fontSize: 14,
-  fontWeight: 560,
+  fontWeight: 580,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -89,8 +88,8 @@ function StepDots({ currentIndex, total }: { currentIndex: number; total: number
             width: index === currentIndex ? 20 : 6,
             height: 6,
             borderRadius: 999,
-            background: index <= currentIndex ? T.ink : '#E6E6EA',
-            transition: 'width 180ms ease',
+            background: index <= currentIndex ? T.primary : '#E6E6EA',
+            transition: 'width 160ms cubic-bezier(.2,.8,.2,1)',
           }}
         />
       ))}
@@ -121,7 +120,7 @@ function SignupFlow() {
   const next = () => {
     if (step === 'name') {
       if (!fullName.trim()) {
-        toast.error('Enter your full name.')
+        toast.error('Enter your full name')
         return
       }
       setStep('security')
@@ -130,12 +129,12 @@ function SignupFlow() {
 
     if (step === 'security') {
       if (!email.trim()) {
-        toast.error('Enter your email.')
+        toast.error('Enter your email')
         return
       }
 
       if (password.length < 8) {
-        toast.error('Password must be at least 8 characters.')
+        toast.error('Password must be at least 8 characters')
         return
       }
 
@@ -150,7 +149,7 @@ function SignupFlow() {
 
   const handleSubmit = () => {
     if (!fullName.trim() || !email.trim() || password.length < 8) {
-      toast.error('Check your details.')
+      toast.error('Check your details')
       return
     }
 
@@ -172,7 +171,7 @@ function SignupFlow() {
       }
 
       if (!data.session) {
-        toast.success('Check your email.')
+        toast.success('Check your email')
         window.location.href = '/auth/login'
         return
       }
@@ -192,17 +191,19 @@ function SignupFlow() {
   }
 
   return (
-    <div style={{
-      width: '100%',
-      background: T.white,
-      border: `1px solid ${T.softBorder}`,
-      borderRadius: 28,
-      boxShadow: '0 20px 70px rgba(0,0,0,0.06)',
-      overflow: 'hidden',
-    }}>
+    <div
+      className="sc-slide-up"
+      style={{
+        width: '100%',
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 28,
+        boxShadow: '0 18px 58px rgba(0,0,0,0.05)',
+        overflow: 'hidden',
+      }}
+    >
       <div style={{
         padding: '18px 18px 14px',
-        borderBottom: `1px solid ${T.softBorder}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -221,9 +222,9 @@ function SignupFlow() {
         <StepDots currentIndex={currentIndex} total={steps.length} />
       </div>
 
-      <div style={{ padding: 18 }}>
+      <div style={{ padding: '0 18px 18px' }}>
         {step === 'name' && (
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div className="sc-fade-in" style={{ display: 'grid', gap: 14 }}>
             <div>
               <label style={labelStyle}>Full name</label>
               <input
@@ -236,14 +237,14 @@ function SignupFlow() {
               />
             </div>
 
-            <button type="button" onClick={next} style={primaryButton}>
+            <button type="button" onClick={next} className="sc-pressable" style={primaryButton}>
               Continue <ArrowRight size={16} />
             </button>
           </div>
         )}
 
         {step === 'security' && (
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div className="sc-fade-in" style={{ display: 'grid', gap: 14 }}>
             <div>
               <label style={labelStyle}>Email</label>
               <input
@@ -271,13 +272,14 @@ function SignupFlow() {
                   type="button"
                   onClick={() => setShowPassword(value => !value)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="sc-pressable"
                   style={{
                     position: 'absolute',
-                    right: 12,
+                    right: 11,
                     top: '50%',
                     transform: 'translateY(-50%)',
-                    width: 30,
-                    height: 30,
+                    width: 32,
+                    height: 32,
                     borderRadius: 999,
                     border: 'none',
                     background: 'transparent',
@@ -295,10 +297,10 @@ function SignupFlow() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 9 }}>
-              <button type="button" onClick={back} style={secondaryButton}>
+              <button type="button" onClick={back} className="sc-pressable" style={secondaryButton}>
                 <ArrowLeft size={15} /> Back
               </button>
-              <button type="button" onClick={next} style={primaryButton}>
+              <button type="button" onClick={next} className="sc-pressable" style={primaryButton}>
                 Continue <ArrowRight size={16} />
               </button>
             </div>
@@ -306,7 +308,7 @@ function SignupFlow() {
         )}
 
         {step === 'review' && (
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div className="sc-fade-in" style={{ display: 'grid', gap: 14 }}>
             <div style={{
               border: `1px solid ${T.border}`,
               borderRadius: 18,
@@ -322,7 +324,7 @@ function SignupFlow() {
                   gridTemplateColumns: '76px 1fr',
                   gap: 12,
                   padding: '12px 14px',
-                  borderTop: index === 0 ? 'none' : `1px solid ${T.softBorder}`,
+                  borderTop: index === 0 ? 'none' : `1px solid ${T.border}`,
                   alignItems: 'center',
                 }}>
                   <span style={{ color: T.ink3, fontSize: 12.5, fontWeight: 560 }}>{label}</span>
@@ -337,16 +339,17 @@ function SignupFlow() {
               type="button"
               onClick={handleSubmit}
               disabled={isPending}
+              className="sc-pressable"
               style={{
                 ...primaryButton,
                 cursor: isPending ? 'not-allowed' : 'pointer',
                 opacity: isPending ? 0.72 : 1,
               }}
             >
-              {isPending ? 'Creating…' : <><Check size={16} /> Create school account</>}
+              {isPending ? 'Creating…' : <><Check size={16} /> Create account</>}
             </button>
 
-            <button type="button" onClick={back} style={secondaryButton}>
+            <button type="button" onClick={back} className="sc-pressable" style={secondaryButton}>
               <ArrowLeft size={15} /> Back
             </button>
           </div>
@@ -358,16 +361,19 @@ function SignupFlow() {
 
 export default function SignupPage() {
   return (
-    <main style={{
-      minHeight: '100dvh',
-      background: '#FFFFFF',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      boxSizing: 'border-box',
-    }}>
+    <main
+      className="sc-page-enter"
+      style={{
+        minHeight: '100dvh',
+        background: T.white,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        boxSizing: 'border-box',
+      }}
+    >
       <div style={{ width: '100%', maxWidth: 430 }}>
         <div style={{ textAlign: 'center', marginBottom: 18 }}>
           <p style={{
@@ -387,7 +393,7 @@ export default function SignupPage() {
 
         <div style={{ textAlign: 'center', marginTop: 18 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13 }}>
-            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
+            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
               Sign in
             </Link>
           </p>
