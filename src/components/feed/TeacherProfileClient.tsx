@@ -503,55 +503,68 @@ const handlePickAttachment = async (file?: File | null) => {
         flexDirection: 'column',
       }}
     >
-      {/* Parent class shell realignment: teacher-style profile header */}
+      {/* Top header */}
       <div style={{
         position: 'sticky',
         top: 0,
         zIndex: 40,
         flexShrink: 0,
         background: 'rgba(255,255,255,0.98)',
-        backdropFilter: 'blur(18px)',
-        WebkitBackdropFilter: 'blur(18px)',
-        padding: 'calc(8px + env(safe-area-inset-top, 0px)) 14px 8px',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 10,
-        }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+          <button
+            onClick={() => {
+              try { sessionStorage.setItem('feed-left', '1') } catch {}
+              router.back()
+            }}
+            aria-label="Back"
+            style={{
+                width: 20,
+                height: 24,
+                borderRadius: 0,
+                border: 'none',
+                background: 'transparent',
+                color: T.ink2,
+                padding: 0,
+                marginRight: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+          >
+            <BackIcon size={15} />
+          </button>
+
           <div style={{
-            width: 54,
-            height: 54,
-            borderRadius: 18,
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
             overflow: 'hidden',
             background: teacher.photo_url
               ? `url(${teacher.photo_url}) center/cover`
-              : '#F8F8F9',
-            border: `1px solid ${T.border}`,
+              : '#F0F0F4',
             color: T.ink2,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 15,
-            fontWeight: 650,
+            fontSize: 13.8,
+            fontWeight: 600,
             flexShrink: 0,
           }}>
             {!teacher.photo_url && initials}
           </div>
 
-          <div style={{
-            flex: 1,
-            minWidth: 0,
-            textAlign: 'center',
-          }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <h1 style={{
-              fontSize: 16,
-              lineHeight: 1.18,
+              fontSize: 14,
               color: T.ink,
-              fontWeight: 620,
+              fontWeight: 600,
               margin: 0,
-              letterSpacing: '-0.02em',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -559,51 +572,15 @@ const handlePickAttachment = async (file?: File | null) => {
               {teacher.name}
             </h1>
             <p style={{
-              fontSize: 12.4,
-              fontWeight: 500,
+              fontSize: 13.8,
               color: T.ink3,
-              margin: '4px 0 0',
-              letterSpacing: '0em',
+              margin: '-2px 0 0',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}>
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            gap: 7,
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            flexShrink: 0,
-            minWidth: 54,
-          }}>
-            <button
-              onClick={() => {
-                try { sessionStorage.setItem('feed-left', '1') } catch {}
-                router.back()
-              }}
-              aria-label="Back"
-              title="Back"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 999,
-                border: `1px solid ${T.border}`,
-                background: T.white,
-                color: T.ink2,
-                padding: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              <BackIcon size={15} />
-            </button>
           </div>
         </div>
       </div>
