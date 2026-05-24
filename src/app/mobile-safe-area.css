@@ -546,3 +546,279 @@ body {
   padding: 9px 0 !important;
   align-self: center !important;
 }
+
+
+/* school-connect-ui-system-motion-v1
+   White Premium UI system.
+   Keep this layer light: tokens, motion helpers and reusable UI utilities only.
+   Do not place page-specific feed/post layout rules here.
+*/
+
+:root {
+  --sc-white: #FFFFFF;
+  --sc-ink: #262626;
+  --sc-ink-2: #5F6268;
+  --sc-ink-3: #9A9CA3;
+  --sc-soft: #F8F8F9;
+  --sc-soft-2: #FBFBFC;
+  --sc-border: rgba(0,0,0,0.06);
+  --sc-primary: #2B2B2F;
+  --sc-danger: #B42318;
+  --sc-success: #2F7D46;
+
+  --sc-radius-sm: 12px;
+  --sc-radius-md: 14px;
+  --sc-radius-lg: 18px;
+  --sc-radius-xl: 24px;
+
+  --sc-space-1: 4px;
+  --sc-space-2: 8px;
+  --sc-space-3: 12px;
+  --sc-space-4: 16px;
+  --sc-space-5: 24px;
+  --sc-space-6: 32px;
+
+  --sc-motion-fast: 160ms;
+  --sc-motion-med: 240ms;
+  --sc-motion-slow: 300ms;
+  --sc-ease: cubic-bezier(.2,.8,.2,1);
+}
+
+html,
+body {
+  background: var(--sc-white);
+  color: var(--sc-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Use these classes page-by-page. Do not force all pages at once. */
+
+.sc-page-enter {
+  animation: sc-page-enter var(--sc-motion-med) var(--sc-ease) both;
+}
+
+.sc-fade-in {
+  animation: sc-fade-in var(--sc-motion-med) var(--sc-ease) both;
+}
+
+.sc-slide-up {
+  animation: sc-slide-up var(--sc-motion-med) var(--sc-ease) both;
+}
+
+.sc-pressable {
+  transition:
+    transform var(--sc-motion-fast) var(--sc-ease),
+    background-color var(--sc-motion-fast) var(--sc-ease),
+    color var(--sc-motion-fast) var(--sc-ease),
+    border-color var(--sc-motion-fast) var(--sc-ease),
+    opacity var(--sc-motion-fast) var(--sc-ease);
+}
+
+.sc-pressable:active {
+  transform: scale(0.985);
+}
+
+.sc-soft-card {
+  background: var(--sc-white);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+}
+
+.sc-soft-surface {
+  background: var(--sc-soft);
+  border-radius: var(--sc-radius-md);
+}
+
+.sc-empty-state {
+  padding: 28px 18px;
+  text-align: center;
+  background: transparent;
+}
+
+.sc-empty-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-soft);
+  color: var(--sc-ink-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.sc-empty-title {
+  margin: 0 0 4px;
+  color: var(--sc-ink);
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.sc-empty-text {
+  margin: 0 auto;
+  max-width: 280px;
+  color: var(--sc-ink-3);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 450;
+}
+
+.sc-primary-button,
+.sc-secondary-button {
+  min-height: 42px;
+  border-radius: var(--sc-radius-md);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 620;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.sc-primary-button {
+  border: none;
+  background: var(--sc-primary);
+  color: var(--sc-white);
+}
+
+.sc-secondary-button {
+  border: 1px solid var(--sc-border);
+  background: var(--sc-white);
+  color: var(--sc-ink-2);
+}
+
+.sc-pill-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.sc-pill-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.sc-pill-tab {
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid var(--sc-border);
+  background: var(--sc-white);
+  color: var(--sc-ink-2);
+  font-size: 12px;
+  font-weight: 620;
+  padding: 0 12px;
+  white-space: nowrap;
+  font-family: inherit;
+  transition:
+    background-color var(--sc-motion-fast) var(--sc-ease),
+    color var(--sc-motion-fast) var(--sc-ease),
+    border-color var(--sc-motion-fast) var(--sc-ease);
+}
+
+.sc-pill-tab[data-active="true"],
+.sc-pill-tab[aria-selected="true"] {
+  border-color: var(--sc-primary);
+  background: var(--sc-primary);
+  color: var(--sc-white);
+}
+
+.sc-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--sc-soft);
+  border-radius: var(--sc-radius-md);
+}
+
+.sc-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.75) 45%,
+    rgba(255,255,255,0) 100%
+  );
+  animation: sc-shimmer 1.25s infinite;
+}
+
+@keyframes sc-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sc-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sc-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sc-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-page-enter,
+  .sc-fade-in,
+  .sc-slide-up,
+  .sc-skeleton::after {
+    animation: none !important;
+  }
+
+  .sc-pressable,
+  .sc-pill-tab {
+    transition: none !important;
+  }
+
+  .sc-pressable:active {
+    transform: none !important;
+  }
+}
+
