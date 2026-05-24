@@ -1,4 +1,5 @@
 'use client'
+// school-ui-shell-carryover-v1
 // teacher-white-alignment-category-v2
 
 import React from 'react'
@@ -154,23 +155,19 @@ type TabsProps = {
 
 export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 }: TabsProps) {
   return (
-    <div style={{
+    <nav style={{
       position: 'sticky',
       top: stickyTop,
       zIndex: 35,
-      padding: CLASS_SPACE_UI.tabs.outerPadding,
+      padding: '8px 14px 10px',
       background: 'rgba(255,255,255,0.98)',
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
     }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns || tabs.length}, minmax(0, 1fr))`,
         gap: 6,
-        padding: CLASS_SPACE_UI.tabs.groupPadding,
-        borderRadius: CLASS_SPACE_UI.tabs.radius,
-        background: CLASS_SPACE_UI.color.soft,
-        border: `1px solid ${CLASS_SPACE_UI.color.border}`,
       }}>
         {tabs.map((tab) => {
           const selected = active === tab.key
@@ -181,23 +178,23 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
               type="button"
               onClick={() => onChange(tab.key)}
               style={{
-                height: CLASS_SPACE_UI.tabs.height,
+                height: 34,
                 minWidth: 0,
-                borderRadius: CLASS_SPACE_UI.tabs.radius,
-                border: '1px solid rgba(0,0,0,0.06)',
-                background: selected ? CLASS_SPACE_UI.color.white : 'transparent',
-                color: selected ? CLASS_SPACE_UI.color.ink : CLASS_SPACE_UI.color.ink3,
-                fontSize: CLASS_SPACE_UI.tabs.fontSize,
-                fontWeight: selected ? CLASS_SPACE_UI.tabs.selectedWeight : CLASS_SPACE_UI.tabs.defaultWeight,
+                borderRadius: 999,
+                border: `1px solid ${selected ? CLASS_SPACE_UI.color.ink : CLASS_SPACE_UI.color.border}`,
+                background: selected ? CLASS_SPACE_UI.color.ink : CLASS_SPACE_UI.color.white,
+                color: selected ? CLASS_SPACE_UI.color.white : CLASS_SPACE_UI.color.ink2,
+                fontSize: 12,
+                fontWeight: 640,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
-                boxShadow: selected ? '0 5px 14px rgba(0,0,0,0.06)' : 'none',
-                transition: 'background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease',
+                boxShadow: 'none',
+                transition: 'background 0.16s ease, color 0.16s ease, border-color 0.16s ease',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 5,
-                padding: '0 8px',
+                padding: '0 7px',
               }}
             >
               <span style={{
@@ -210,16 +207,16 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
 
               {!!tab.badge && tab.badge > 0 && (
                 <span style={{
-                  minWidth: 18,
-                  height: 18,
+                  minWidth: 17,
+                  height: 17,
                   padding: '0 5px',
                   borderRadius: 999,
-                  background: CLASS_SPACE_UI.color.red,
+                  background: selected ? 'rgba(255,255,255,0.18)' : CLASS_SPACE_UI.color.red,
                   color: CLASS_SPACE_UI.color.white,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: 10.5,
+                  fontSize: 10,
                   fontWeight: 650,
                   lineHeight: 1,
                   fontVariantNumeric: 'tabular-nums',
@@ -233,9 +230,10 @@ export function ClassSpaceTabs({ tabs, active, onChange, columns, stickyTop = 0 
           )
         })}
       </div>
-    </div>
+    </nav>
   )
 }
+
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'

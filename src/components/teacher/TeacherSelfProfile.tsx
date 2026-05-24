@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-ui-shell-carryover-v1
 // teacher-white-alignment-category-v2
 // white-premium-app-theme-v1
 // school-connect-route-lock-v1
@@ -250,133 +251,148 @@ export function TeacherSelfProfile({ teacherId, initialSession = null, initialTo
       flexDirection: 'column',
     }}>
 
-      {/* Compact teacher header */}
+      {/* School UI shell carryover: teacher profile header */}
       <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 12,
-        padding: 'calc(7px + env(safe-area-inset-top, 0px)) 14px 8px',
+        flexShrink: 0,
+        padding: 'calc(8px + env(safe-area-inset-top, 0px)) 14px 8px',
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        flexShrink: 0,
         background: 'rgba(255,255,255,0.98)',
         backdropFilter: 'blur(18px)',
         WebkitBackdropFilter: 'blur(18px)',
-        borderBottom: 'none',
       }}>
-        <button onClick={() => fileRef.current?.click()} aria-label="Change profile photo" style={{
-          position: 'relative',
-          width: 46,
-          height: 46,
-          borderRadius: 16,
-          border: 'none',
-          padding: 0,
-          overflow: 'visible',
-          background: teacher.photo_url
-            ? `url(${teacher.photo_url}) center/cover`
-            : '#F8F8F9',
-          color: T.ink2,
+        <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 15,
-          fontWeight: 700,
-          cursor: 'pointer',
-          flexShrink: 0,
+          justifyContent: 'space-between',
+          gap: 10,
         }}>
-          {!teacher.photo_url && initials}
-          <span style={{
-            position: 'absolute',
-            right: -5,
-            bottom: -5,
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            background: '#2B2B2F',
-            color: T.white,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: `2px solid ${T.bg}`,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-          }}>
-            <Camera size={10} strokeWidth={2.2} />
-          </span>
-        </button>
-
-        <input ref={fileRef} type="file" accept="image/*"
-          style={{ display: 'none' }}
-          onChange={e => {
-            const f = e.target.files?.[0]
-            if (f) setCropFile(f)
-            e.target.value = ''
-          }} />
-
-        <div style={{
-          flex: 1,
-          minWidth: 0,
-          minHeight: 48,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}>
-          <h1 style={{
-            fontSize: 15,
-            lineHeight: 1.2,
-            fontWeight: 620,
-            color: T.ink,
-            letterSpacing: '0em',
-            margin: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            {teacher.name}
-          </h1>
-          <p style={{
-            fontSize: 12.5,
-            fontWeight: 520,
-            color: T.ink3,
-            letterSpacing: '0em',
-            margin: '3px 0 0',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}{children?.length ? ` · ${children.length} ${children.length === 1 ? 'child' : 'children'}` : ''}
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
           <button
-            type="button"
-            onClick={copyClassLink}
-            aria-label="Copy class invite link"
-            title="Copy class invite link"
+            onClick={() => fileRef.current?.click()}
+            aria-label="Change profile photo"
             style={{
-              height: 34,
-              minWidth: 54,
-              borderRadius: 999,
+              width: 54,
+              height: 54,
+              borderRadius: 18,
               border: `1px solid ${T.border}`,
-              background: 'transparent',
+              padding: 0,
+              overflow: 'visible',
+              background: teacher.photo_url
+                ? `url(${teacher.photo_url}) center/cover`
+                : '#F8F8F9',
               color: T.ink2,
-              padding: '0 10px',
-              fontSize: 12.5,
-              fontWeight: 620,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 15,
+              fontWeight: 650,
               cursor: 'pointer',
-              fontFamily: 'inherit',
+              flexShrink: 0,
+              position: 'relative',
             }}
           >
-            Link
+            {!teacher.photo_url && initials}
+            <span style={{
+              position: 'absolute',
+              right: -5,
+              bottom: -5,
+              width: 20,
+              height: 20,
+              borderRadius: '50%',
+              background: '#2B2B2F',
+              color: T.white,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `2px solid ${T.bg}`,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.10)',
+            }}>
+              <Camera size={10} strokeWidth={2.2} />
+            </span>
           </button>
-<button
-            onClick={() => setShowClassComposer(true)}
-            aria-label="Create"
-            style={{ ...iconBtn, background: '#2B2B2F', color: T.white, border: 'none' }}
-          >
-            <Plus size={15} strokeWidth={2.1} />
-          </button>
+
+          <input ref={fileRef} type="file" accept="image/*"
+            style={{ display: 'none' }}
+            onChange={e => {
+              const f = e.target.files?.[0]
+              if (f) setCropFile(f)
+              e.target.value = ''
+            }} />
+
+          <div style={{
+            flex: 1,
+            minWidth: 0,
+            textAlign: 'center',
+          }}>
+            <h1 style={{
+              fontSize: 16,
+              lineHeight: 1.18,
+              fontWeight: 620,
+              color: T.ink,
+              letterSpacing: '-0.02em',
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.name}
+            </h1>
+            <p style={{
+              fontSize: 12.4,
+              fontWeight: 500,
+              color: T.ink3,
+              letterSpacing: '0em',
+              margin: '4px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}{children?.length ? ` · ${children.length} ${children.length === 1 ? 'child' : 'children'}` : ''}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: 7, alignItems: 'center', justifyContent: 'flex-end', flexShrink: 0, minWidth: 54 }}>
+            <button
+              type="button"
+              onClick={copyClassLink}
+              aria-label="Copy class invite link"
+              title="Copy class invite link"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: `1px solid ${T.border}`,
+                background: T.white,
+                color: T.ink2,
+                padding: 0,
+                fontSize: 12,
+                fontWeight: 620,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Link
+            </button>
+            <button
+              onClick={() => setShowClassComposer(true)}
+              aria-label="Create"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: 'none',
+                background: '#2B2B2F',
+                color: T.white,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+            >
+              <Plus size={15} strokeWidth={2.1} />
+            </button>
+          </div>
         </div>
       </div>
 

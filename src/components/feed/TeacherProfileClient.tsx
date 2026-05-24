@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-ui-shell-carryover-v1
 // shared-teacher-class-life-feed-v1
 // parent-class-life-reactions-v1
 // parent-teacher-full-dark-image-viewer-v1
@@ -500,18 +501,23 @@ const handlePickAttachment = async (file?: File | null) => {
         flexDirection: 'column',
       }}
     >
-      {/* Top header */}
+      {/* School UI shell carryover: parent class profile header */}
       <div style={{
         position: 'sticky',
         top: 0,
         zIndex: 40,
         flexShrink: 0,
         background: 'rgba(255,255,255,0.98)',
-        backdropFilter: 'blur(14px)',
-        WebkitBackdropFilter: 'blur(14px)',
-        padding: 'calc(4px + env(safe-area-inset-top, 0px)) 14px 5px',
+        backdropFilter: 'blur(18px)',
+        WebkitBackdropFilter: 'blur(18px)',
+        padding: 'calc(8px + env(safe-area-inset-top, 0px)) 14px 8px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}>
           <button
             onClick={() => {
               try { sessionStorage.setItem('feed-left', '1') } catch {}
@@ -519,49 +525,58 @@ const handlePickAttachment = async (file?: File | null) => {
             }}
             aria-label="Back"
             style={{
-                width: 20,
-                height: 24,
-                borderRadius: 0,
-                border: 'none',
-                background: 'transparent',
-                color: T.ink2,
-                padding: 0,
-                marginRight: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              padding: 0,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
           >
             <BackIcon size={15} />
           </button>
 
           <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: teacher.photo_url
-              ? `url(${teacher.photo_url}) center/cover`
-              : '#F0F0F4',
-            color: T.ink2,
+            flex: 1,
+            minWidth: 0,
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 13.8,
-            fontWeight: 600,
-            flexShrink: 0,
+            textAlign: 'center',
           }}>
-            {!teacher.photo_url && initials}
-          </div>
-
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <h1 style={{
+            <div style={{
+              width: 56,
+              height: 56,
+              borderRadius: 18,
+              overflow: 'hidden',
+              background: teacher.photo_url
+                ? `url(${teacher.photo_url}) center/cover`
+                : '#F8F8F9',
+              border: `1px solid ${T.border}`,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               fontSize: 14,
+              fontWeight: 620,
+              marginBottom: 7,
+            }}>
+              {!teacher.photo_url && initials}
+            </div>
+
+            <h1 style={{
+              fontSize: 16,
               color: T.ink,
-              fontWeight: 600,
+              fontWeight: 620,
               margin: 0,
+              letterSpacing: '-0.02em',
+              maxWidth: '100%',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -569,9 +584,10 @@ const handlePickAttachment = async (file?: File | null) => {
               {teacher.name}
             </h1>
             <p style={{
-              fontSize: 13.8,
+              fontSize: 12.5,
               color: T.ink3,
-              margin: '-2px 0 0',
+              margin: '4px 0 0',
+              maxWidth: '100%',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -579,6 +595,8 @@ const handlePickAttachment = async (file?: File | null) => {
               {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
             </p>
           </div>
+
+          <div style={{ width: 34, flexShrink: 0 }} />
         </div>
       </div>
 
