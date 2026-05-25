@@ -12,10 +12,31 @@ const T = {
   ink4:    '#D8D8D8',
   divider: 'rgba(0,0,0,0.06)',
   trackBg: '#EFEFF2',
-  up:      '#22C55E',
-  down:    '#EF4444',
+  up:      '#8FA6A1',
+  down:    '#8FA6A1',
   same:    '#9A9A9A',
 }
+
+
+const SUBJECT_GRAPH = {
+  fill: '#8FA6A1',
+  fillSoft: '#EAF0EE',
+  track: '#F3F5F4',
+  border: 'rgba(143,166,161,0.20)',
+  text: '#51615E',
+}
+
+function subjectGraphOpacity(score: number): number {
+  const value = Number(score)
+  if (!Number.isFinite(value)) return 0.35
+  return Math.max(0.35, Math.min(1, value / 5))
+}
+
+function subjectGraphColor(score: number): string {
+  const opacity = subjectGraphOpacity(score)
+  return `rgba(143, 166, 161, ${opacity})`
+}
+
 
 interface Props {
   report: {
@@ -216,10 +237,10 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
       }}>
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#EF4444" />
-            <stop offset="35%"  stopColor="#F59E0B" />
+            <stop offset="0%"   stopColor="#8FA6A1" />
+            <stop offset="35%"  stopColor="#8FA6A1" />
             <stop offset="70%"  stopColor="#78A6FE" />
-            <stop offset="100%" stopColor="#22C55E" />
+            <stop offset="100%" stopColor="#8FA6A1" />
           </linearGradient>
         </defs>
         {/* Track */}

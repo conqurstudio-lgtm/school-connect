@@ -18,16 +18,36 @@ const T = {
 function LoadingState() {
   return (
     <main style={centerPage}>
+      <style>{`
+        @keyframes reportDotBounce {
+          0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
       <section style={card}>
         <div style={{
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          border: `2px solid ${T.border}`,
-          borderTopColor: T.ink,
-          animation: 'spin 0.7s linear infinite',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 7,
+          height: 24,
           margin: '0 auto 14px',
-        }} />
+        }}>
+          {[0, 1, 2].map((dot) => (
+            <span
+              key={dot}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 999,
+                background: dot === 1 ? '#8FA6A1' : '#D8DFDD',
+                animation: 'reportDotBounce 1.05s ease-in-out infinite',
+                animationDelay: `${dot * 0.14}s`,
+                display: 'block',
+              }}
+            />
+          ))}
+        </div>
         <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>
           Opening weekly report...
         </p>
