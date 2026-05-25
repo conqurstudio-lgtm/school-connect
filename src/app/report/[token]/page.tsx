@@ -137,22 +137,26 @@ export default function ParentMagicReportPage() {
     <main style={{
       minHeight: '100dvh',
       height: '100dvh',
-      overflowY: 'auto',
-      overflowX: 'hidden',
+      overflow: 'hidden',
       background: T.bg,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
     }}>
       <div style={{
         maxWidth: 520,
-        minHeight: '100dvh',
+        height: '100dvh',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
+        background: T.bg,
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 0',
+          padding: 'calc(14px + env(safe-area-inset-top, 0px)) 18px 12px',
+          background: 'rgba(255,255,255,0.98)',
+          borderBottom: `1px solid ${T.border}`,
+          position: 'relative',
+          zIndex: 10,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
@@ -199,20 +203,30 @@ export default function ParentMagicReportPage() {
               alignItems: 'center',
               justifyContent: 'center',
               color: T.ink3,
+              flexShrink: 0,
             }}>
               <LockKeyhole size={15} strokeWidth={1.7} />
             </div>
           </div>
         </header>
 
-        <section style={{ flex: 1, paddingTop: 42 }}>
+        <section style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          padding: '30px 0 8px',
+        }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
 
         <footer style={{
           flexShrink: 0,
-          padding: '10px 24px calc(24px + env(safe-area-inset-bottom, 0px))',
+          padding: '9px 18px calc(14px + env(safe-area-inset-bottom, 0px))',
           textAlign: 'center',
+          background: 'rgba(255,255,255,0.98)',
+          borderTop: `1px solid ${T.border}`,
         }}>
           <p style={{
             fontSize: 11,
@@ -231,6 +245,8 @@ export default function ParentMagicReportPage() {
 
 const centerPage: any = {
   minHeight: '100dvh',
+  height: '100dvh',
+  overflow: 'hidden',
   background: T.bg,
   display: 'flex',
   alignItems: 'center',
