@@ -77,6 +77,29 @@ function shortenSubject(name: string): string {
 }
 
 
+
+function NeedsWorkLottie() {
+  return (
+    <iframe
+      title="Needs work growth animation"
+      src="https://lottie.host/embed/3b532f3d-c7f8-47db-ad79-e57d66dafb42/83wbtVL2ej.lottie"
+      style={{
+        width: 72,
+        height: 72,
+        border: 'none',
+        display: 'block',
+        margin: '-17px auto 0',
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    />
+  )
+}
+
+function isNeedsWorkScore(score: number): boolean {
+  return score > 0 && score < 3
+}
+
 function VeryGoodLottie() {
   return (
     <iframe
@@ -222,7 +245,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         textAlign: 'center',
         fontSize: 38, lineHeight: 1,
       }}>
-        {isVeryGoodScore(score) ? <VeryGoodLottie /> : getScoreEmoji(score)}
+        {isVeryGoodScore(score) ? <VeryGoodLottie /> : isNeedsWorkScore(score) ? <NeedsWorkLottie /> : getScoreEmoji(score)}
       </div>
     </div>
   )
