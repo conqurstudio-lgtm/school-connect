@@ -189,59 +189,63 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(7px + env(safe-area-inset-top, 0px)) 16px 6px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',
           background: 'rgba(255,255,255,0.98)',
           position: 'relative',
           zIndex: 10,
         }}>
-        <div style={{
-          flexShrink: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 58,
-          marginBottom: 2,
-          overflow: 'hidden',
-          pointerEvents: 'none',
-        }}>
-        </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            minHeight: 36,
+          }}>
             <div style={{
               width: 34,
               height: 34,
-              borderRadius: 14,
+              borderRadius: 13,
               background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
               border: `1px solid ${T.border}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: T.ink3,
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 650,
               flexShrink: 0,
             }}>
               {!school?.logo_url && String(school?.name || 'S').slice(0, 1)}
             </div>
 
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: 1,
+            }}>
               <p style={{
                 fontSize: 13,
                 fontWeight: 620,
                 color: T.ink,
                 margin: 0,
+                lineHeight: 1.05,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                lineHeight: 1.02,
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <p style={{ fontSize: 11.5, color: T.ink3, margin: '0', lineHeight: 1.05 }}>
+              <p style={{
+                fontSize: 11.5,
+                color: T.ink3,
+                margin: 0,
+                lineHeight: 1.05,
+              }}>
                 Weekly reports
               </p>
             </div>
-
           </div>
         </header>
 
