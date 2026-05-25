@@ -81,7 +81,7 @@ function VeryGoodLottie() {
   return (
     <iframe
       title="Very good report animation"
-      src="https://lottie.host/embed/d1db11f6-fde8-4a26-b1a6-deedc71e911f/m0PCe7sW7v.lottie"
+      src="https://lottie.host/embed/ac5b63f2-171a-48a3-afc7-db244e3b9766/E6S0SBJleh.lottie"
       style={{
         width: 72,
         height: 72,
