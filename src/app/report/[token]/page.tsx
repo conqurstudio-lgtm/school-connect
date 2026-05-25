@@ -197,7 +197,7 @@ export default function ParentMagicReportPage() {
                 {school?.name || 'School Connect'}
               </p>
               <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-                Latest report first · Swipe left for older weeks
+                Weekly reports
               </p>
             </div>
 

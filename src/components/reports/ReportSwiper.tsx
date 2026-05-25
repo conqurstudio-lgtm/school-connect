@@ -13,26 +13,6 @@ const T = {
 }
 
 
-function formatReportDate(report: any) {
-  const raw = report?.week_starting || report?.published_at || report?.created_at
-  if (!raw) return ''
-  try {
-    return new Date(raw).toLocaleDateString('en-ZA', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    })
-  } catch {
-    return String(raw)
-  }
-}
-
-interface Props {
-  reports: any[]
-  childName: string
-}
-
 export function ReportSwiper({ reports, childName }: Props) {
   const total = Math.max(1, reports.length)
   const [index, setIndex] = useState(0)
@@ -176,33 +156,6 @@ export function ReportSwiper({ reports, childName }: Props) {
                 overflowX: 'hidden',
                 overflowY: 'visible',
               }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 10,
-                  margin: '0 2px 10px',
-                  padding: '0 2px',
-                }}>
-                  <span style={{
-                    fontSize: 12,
-                    fontWeight: 650,
-                    color: report.display_position === 'latest' ? T.ink : T.ink3,
-                    letterSpacing: '0.02em',
-                  }}>
-                    {report.display_position === 'latest' ? 'Latest report' : 'Previous report'}
-                  </span>
-
-                  <span style={{
-                    fontSize: 12,
-                    fontWeight: 500,
-                    color: T.ink3,
-                    whiteSpace: 'nowrap',
-                  }}>
-                    {formatReportDate(report)}
-                  </span>
-                </div>
-
                 <ReportCard report={report} childName={childName} />
               </div>
             </div>
