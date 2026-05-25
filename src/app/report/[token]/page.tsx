@@ -3,69 +3,23 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { CheckCircle2, GraduationCap } from 'lucide-react'
+import { GraduationCap, LockKeyhole } from 'lucide-react'
+import { ReportSwiper } from '@/components/reports/ReportSwiper'
 
 const T = {
-  ink: '#262626',
-  ink2: '#5F6268',
-  ink3: '#9A9CA3',
+  ink: '#1A1A1A',
+  ink2: '#4A4A4A',
+  ink3: '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
-  soft: '#F8F8F9',
+  soft: '#F5F5F7',
   white: '#FFFFFF',
 }
 
-function getAverage(scores: any) {
-  const values = Object.values(scores || {}).map(Number).filter(Number.isFinite)
-  if (!values.length) return 0
-  return values.reduce((a, b) => a + b, 0) / values.length
-}
-
-function scoreLabel(score: number) {
-  if (score >= 4.5) return 'Excellent'
-  if (score >= 3.5) return 'Very good'
-  if (score >= 2.5) return 'Good'
-  if (score >= 1.5) return 'Needs support'
-  return 'Needs attention'
-}
-
-export default function ParentMagicReportPage() {
-  const params = useParams<{ token: string }>()
-  const token = Array.isArray(params?.token) ? params.token[0] : params?.token
-  const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    if (!token) return
-
-    let alive = true
-
-    fetch(`/api/report/${encodeURIComponent(token)}`, { cache: 'no-store' })
-      .then(async res => {
-        const json = await res.json().catch(() => ({}))
-        if (!alive) return
-
-        if (!res.ok) {
-          setError(json.error || 'Report not found')
-          return
-        }
-
-        setData(json)
-      })
-      .catch(() => {
-        if (alive) setError('Could not open this report')
-      })
-      .finally(() => {
-        if (alive) setLoading(false)
-      })
-
-    return () => { alive = false }
-  }, [token])
-
-  if (loading) {
-    return (
-      <main style={pageStyle}>
+function LoadingState() {
+  return (
+    <main style={centerPage}>
+      <section style={card}>
         <div style={{
           width: 18,
           height: 18,
@@ -73,217 +27,234 @@ export default function ParentMagicReportPage() {
           border: `2px solid ${T.border}`,
           borderTopColor: T.ink,
           animation: 'spin 0.7s linear infinite',
+          margin: '0 auto 14px',
         }} />
-      </main>
-    )
+        <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>
+          Opening weekly report...
+        </p>
+      </section>
+    </main>
+  )
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <main style={centerPage}>
+      <section style={card}>
+        <div style={{
+          width: 56,
+          height: 56,
+          borderRadius: 18,
+          background: T.soft,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 16px',
+          color: T.ink3,
+        }}>
+          <GraduationCap size={28} strokeWidth={1.5} />
+        </div>
+
+        <h1 style={{
+          fontSize: 20,
+          fontWeight: 650,
+          color: T.ink,
+          letterSpacing: '-0.03em',
+          margin: '0 0 7px',
+        }}>
+          Report unavailable
+        </h1>
+
+        <p style={{
+          fontSize: 14,
+          lineHeight: 1.5,
+          color: T.ink3,
+          margin: 0,
+        }}>
+          {message || 'This private report link could not be opened.'}
+        </p>
+      </section>
+    </main>
+  )
+}
+
+export default function ParentMagicReportPage() {
+  const params = useParams<{ token: string }>()
+  const rawToken = params?.token
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [payload, setPayload] = useState<any>(null)
+
+  useEffect(() => {
+    if (!token) {
+      setError('Missing report link.')
+      setLoading(false)
+      return
+    }
+
+    let alive = true
+
+    fetch(`/api/report/${encodeURIComponent(token)}`, { cache: 'no-store' })
+      .then(async res => {
+        const json = await res.json().catch(() => ({}))
+
+        if (!alive) return
+
+        if (!res.ok) {
+          setError(json.error || 'This report link is invalid or has expired.')
+          return
+        }
+
+        setPayload(json)
+      })
+      .catch(() => {
+        if (alive) setError('Could not open this report right now.')
+      })
+      .finally(() => {
+        if (alive) setLoading(false)
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [token])
+
+  if (loading) return <LoadingState />
+  if (error || !payload?.report) return <ErrorState message={error} />
+
+  const report = {
+    ...payload.report,
+    child_name: payload.child?.name || 'Your child',
+    teacher_name: payload.teacher?.name || 'Teacher',
+    previous_scores: payload.report.previous_scores || null,
   }
 
-  if (error || !data?.report) {
-    return (
-      <main style={pageStyle}>
-        <section style={cardStyle}>
-          <GraduationCap size={30} color={T.ink3} />
-          <h1 style={titleStyle}>Report unavailable</h1>
-          <p style={textStyle}>{error || 'This private report link could not be opened.'}</p>
-        </section>
-      </main>
-    )
-  }
-
-  const { report, child, teacher, school } = data
-  const scores = report.scores || {}
-  const average = getAverage(scores)
+  const childName = payload.child?.name || 'Your child'
+  const school = payload.school || null
 
   return (
     <main style={{
       minHeight: '100dvh',
+      height: '100dvh',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       background: T.bg,
-      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
-      padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(24px + env(safe-area-inset-bottom, 0px))',
     }}>
-      <div style={{ maxWidth: 520, margin: '0 auto' }}>
-        <section style={{
-          ...cardStyle,
-          textAlign: 'center',
-          marginBottom: 12,
+      <div style={{
+        maxWidth: 520,
+        minHeight: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 0',
         }}>
           <div style={{
-            width: 56,
-            height: 56,
-            borderRadius: 18,
-            background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
-            border: `1px solid ${T.border}`,
-            margin: '0 auto 12px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            color: T.ink3,
-            fontWeight: 650,
+            gap: 10,
           }}>
-            {!school?.logo_url && (school?.name || 'S').charAt(0)}
-          </div>
-
-          <p style={{ fontSize: 12, color: T.ink3, margin: 0 }}>
-            {school?.name || 'School Connect'}
-          </p>
-
-          <h1 style={{
-            fontSize: 22,
-            lineHeight: 1.1,
-            fontWeight: 650,
-            letterSpacing: '-0.04em',
-            color: T.ink,
-            margin: '6px 0 6px',
-          }}>
-            {child?.name || 'Your child'}'s weekly update
-          </h1>
-
-          <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
-            Week starting {report.week_starting}
-          </p>
-        </section>
-
-        <section style={{
-          ...cardStyle,
-          textAlign: 'center',
-          marginBottom: 12,
-        }}>
-          <div style={{
-            width: 150,
-            height: 150,
-            borderRadius: '50%',
-            margin: '0 auto 12px',
-            border: `10px solid ${T.soft}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-          }}>
-            <strong style={{ fontSize: 34, fontWeight: 650, color: T.ink }}>
-              {average.toFixed(1)}
-            </strong>
-            <span style={{ fontSize: 12, color: T.ink3 }}>/ 5</span>
-          </div>
-
-          <p style={{ fontSize: 15, fontWeight: 620, color: T.ink, margin: 0 }}>
-            {scoreLabel(average)}
-          </p>
-        </section>
-
-        <section style={{
-          ...cardStyle,
-          marginBottom: 12,
-        }}>
-          <h2 style={sectionTitleStyle}>Progress areas</h2>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {Object.entries(scores).map(([name, score]: any) => (
-              <div key={name} style={{
-                padding: '11px 0',
-                borderBottom: `1px solid ${T.border}`,
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}>
-                <span style={{ fontSize: 13.5, color: T.ink2 }}>
-                  {name}
-                </span>
-                <strong style={{ fontSize: 13.5, color: T.ink, fontWeight: 650 }}>
-                  {Number(score).toFixed(1)}/5
-                </strong>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {report.comment && (
-          <section style={{
-            ...cardStyle,
-            marginBottom: 12,
-          }}>
-            <h2 style={sectionTitleStyle}>Teacher note</h2>
-            <p style={{
-              fontSize: 14,
-              lineHeight: 1.55,
-              color: T.ink2,
-              margin: 0,
+            <div style={{
+              width: 38,
+              height: 38,
+              borderRadius: 14,
+              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
+              border: `1px solid ${T.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: T.ink3,
+              fontSize: 13,
+              fontWeight: 650,
+              flexShrink: 0,
             }}>
-              {report.comment}
-            </p>
-          </section>
-        )}
+              {!school?.logo_url && String(school?.name || 'S').slice(0, 1)}
+            </div>
 
-        <section style={{
-          padding: 14,
-          borderRadius: 20,
-          background: T.soft,
-          border: `1px solid ${T.border}`,
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 10,
-        }}>
-          <CheckCircle2 size={18} color="#1F9D55" strokeWidth={1.8} style={{ marginTop: 1 }} />
-          <div>
-            <p style={{ fontSize: 13.5, fontWeight: 620, color: T.ink, margin: 0 }}>
-              Private report link
-            </p>
-            <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: '3px 0 0' }}>
-              This page only opens with the private link sent by the school.
-            </p>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 620,
+                color: T.ink,
+                margin: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {school?.name || 'School Connect'}
+              </p>
+              <p style={{
+                fontSize: 12,
+                color: T.ink3,
+                margin: '2px 0 0',
+              }}>
+                Private weekly update
+              </p>
+            </div>
+
+            <div style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              background: T.soft,
+              border: `1px solid ${T.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: T.ink3,
+            }}>
+              <LockKeyhole size={15} strokeWidth={1.7} />
+            </div>
           </div>
+        </header>
+
+        <section style={{ flex: 1, paddingTop: 42 }}>
+          <ReportSwiper reports={[report]} childName={childName} />
         </section>
 
-        <p style={{
-          fontSize: 11,
-          color: '#C4C4C8',
+        <footer style={{
+          flexShrink: 0,
+          padding: '10px 24px calc(24px + env(safe-area-inset-bottom, 0px))',
           textAlign: 'center',
-          margin: '18px 0 0',
-          letterSpacing: '0.04em',
-          fontWeight: 600,
         }}>
-          Powered by School Connect
-        </p>
+          <p style={{
+            fontSize: 11,
+            color: '#CCCCCC',
+            margin: 0,
+            letterSpacing: '0.04em',
+            fontWeight: 500,
+          }}>
+            Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
+          </p>
+        </footer>
       </div>
     </main>
   )
 }
 
-const pageStyle: any = {
+const centerPage: any = {
   minHeight: '100dvh',
   background: T.bg,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   padding: 24,
-  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
 }
 
-const cardStyle: any = {
+const card: any = {
+  width: '100%',
+  maxWidth: 360,
+  textAlign: 'center',
   background: T.white,
   border: `1px solid ${T.border}`,
   borderRadius: 24,
-  padding: 18,
-  boxShadow: '0 12px 34px rgba(0,0,0,0.035)',
-}
-
-const titleStyle: any = {
-  fontSize: 20,
-  fontWeight: 650,
-  color: T.ink,
-  margin: '14px 0 6px',
-}
-
-const textStyle: any = {
-  fontSize: 14,
-  color: T.ink3,
-  lineHeight: 1.5,
-  margin: 0,
-}
-
-const sectionTitleStyle: any = {
-  fontSize: 14,
-  fontWeight: 650,
-  color: T.ink,
-  margin: '0 0 10px',
+  padding: '34px 24px',
+  boxShadow: '0 18px 48px rgba(0,0,0,0.04)',
 }
