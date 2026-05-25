@@ -76,6 +76,29 @@ function shortenSubject(name: string): string {
   return map[name] ?? name
 }
 
+
+function VeryGoodLottie() {
+  return (
+    <iframe
+      title="Very good report animation"
+      src="https://app.lottiefiles.com/share/661fba2a-d09a-411b-8c06-139579d028d1"
+      style={{
+        width: 72,
+        height: 72,
+        border: 'none',
+        display: 'block',
+        margin: '-17px auto 0',
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      }}
+    />
+  )
+}
+
+function isVeryGoodScore(score: number): boolean {
+  return score >= 4 && score < 4.5
+}
+
 // Pick a celebratory or supportive emoji based on the score
 function getScoreEmoji(score: number): string {
   if (score >= 4.5) return '🏆'   // trophy — excellence
@@ -199,7 +222,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         textAlign: 'center',
         fontSize: 38, lineHeight: 1,
       }}>
-        {getScoreEmoji(score)}
+        {isVeryGoodScore(score) ? <VeryGoodLottie /> : getScoreEmoji(score)}
       </div>
     </div>
   )
