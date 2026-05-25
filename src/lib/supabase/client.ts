@@ -6,14 +6,12 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       auth: {
-        // Safari ITP fix — use localStorage explicitly
-        storage:          typeof window !== 'undefined' ? window.localStorage : undefined,
-        persistSession:   true,
+        persistSession: true,
         detectSessionInUrl: true,
-        flowType:         'pkce',
+        flowType: 'pkce',
       },
       global: {
-        fetch: (...args) => fetch(...args),
+        fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init),
       },
     }
   )

@@ -1,0 +1,189 @@
+function ClassLifePostCard({ post, teacher }: any) {
+  const [openImage, setOpenImage] = useState<string | null>(null)
+
+  const images = Array.isArray(post.image_urls)
+    ? post.image_urls
+    : post.image_url
+      ? [post.image_url]
+      : []
+
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <>
+      <article style={{
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 18,
+        overflow: 'hidden',
+        boxShadow: '0 8px 22px rgba(0,0,0,0.022)',
+      }}>
+        <div style={{ padding: 12 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            marginBottom: post.body ? 8 : 0,
+          }}>
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 13.8,
+              fontWeight: 650,
+              flexShrink: 0,
+            }}>
+              {!teacher.photo_url && teacher.name?.charAt(0)}
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.8,
+                fontWeight: 650,
+                color: T.ink,
+                margin: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {teacher.name}
+              </p>
+              <p style={{
+                fontSize: 13.2,
+                color: T.ink3,
+                margin: '-2px 0 0',
+              }}>
+                {typeLabel} · {relTime(post.created_at || post.published_at)}
+              </p>
+            </div>
+          </div>
+
+          {post.body && (
+            <p style={{
+              fontSize: 14,
+              lineHeight: 1.5,
+              color: T.ink2,
+              margin: 0,
+              whiteSpace: 'pre-wrap',
+            }}>
+              {post.body}
+            </p>
+          )}
+        </div>
+
+        {images.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gap: 1,
+            gridTemplateColumns: images.length > 1 ? '1fr 1fr' : '1fr',
+          }}>
+            {images.slice(0, 4).map((url: string, index: number) => (
+              <button
+                key={`${url}-${index}`}
+                type="button"
+                onClick={() => setOpenImage(url)}
+                aria-label="Open image"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: 0,
+                  margin: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'zoom-in',
+                  fontFamily: 'inherit',
+                  lineHeight: 0,
+                }}
+              >
+                <img
+                  src={url}
+                  alt=""
+                  loading="lazy"
+                  style={{
+                    width: '100%',
+                    height: images.length > 1 ? 150 : 220,
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {openImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpenImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            width: '100vw',
+            height: '100dvh',
+            minHeight: '100svh',
+            background: '#050505',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px)',
+            boxSizing: 'border-box',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Close image"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenImage(null)
+            }}
+            style={{
+              position: 'fixed',
+              top: 'calc(12px + env(safe-area-inset-top, 0px))',
+              right: 12,
+              zIndex: 10000,
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.18)',
+              background: 'rgba(0,0,0,0.45)',
+              color: '#FFFFFF',
+              fontSize: 22,
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            ×
+          </button>
+
+          <img
+            src={openImage}
+            alt=""
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
+        </div>
+      )}
+    </>
+  )
+}
+

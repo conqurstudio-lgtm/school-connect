@@ -1,0 +1,28 @@
+===== TEACHER COMPOSER ANCHORS =====
+        <ParentThreadSheet
+function ParentThreadSheet({ parent, teacher, onClose }: any) {
+  const threadScrollRef = useRef<HTMLDivElement>(null)
+    const el = threadScrollRef.current
+  const forceScrollToBottom = (smooth = true, force = true) => {
+    const el = threadScrollRef.current
+    forceScrollToBottom(false)
+    forceScrollToBottom(true)
+      forceScrollToBottom(true)
+        <div ref={threadScrollRef}
+        <div className="teacher-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-teacher-composer-dock" style={{
+          <div className="sc-message-composer-shell sc-teacher-composer-shell" style={{
+              placeholder="Message"
+      <ParentThreadSheet
+
+===== PARENT COMPOSER ANCHORS =====
+  const composerDockRef = useRef<HTMLDivElement | null>(null)
+    const el = threadScrollRef.current
+    const el = threadScrollRef.current
+  const threadScrollRef = useRef<HTMLDivElement>(null)
+      const el = threadScrollRef.current
+              <MessageThreadPersonHeader
+          <div ref={threadScrollRef}
+          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock parent-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-parent-composer-dock" style={{
+            <div className="sc-message-composer-shell sc-parent-composer-shell" style={{
+                placeholder="Message"
+function MessageThreadPersonHeader({ name, subtitle, imageUrl, fallback }: any) {

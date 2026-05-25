@@ -1,0 +1,1346 @@
+
+
+===== src/app/auth/school-setup/page.tsx =====
+'use client'
+
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { generateSlug } from '@/lib/utils'
+import toast from 'react-hot-toast'
+import { ArrowRight, Check, Building2, ChevronLeft } from 'lucide-react'
+
+const SA_PROVINCES = [
+  'Eastern Cape','Free State','Gauteng','KwaZulu-Natal',
+  'Limpopo','Mpumalanga','North West','Northern Cape','Western Cape',
+]
+
+const T = {
+  ink:    '#1A1A1A',
+  ink2:   '#4A4A4A',
+  ink3:   '#9A9A9A',
+  border: 'rgba(0,0,0,0.08)',
+  bg:     '#F7F7F7',
+  white:  '#FFFFFF',
+  red:    '#E8281E',
+}
+
+const input: React.CSSProperties = {
+  width: '100%', padding: '11px 14px', fontSize: 15,
+  border: `1px solid ${T.border}`, borderRadius: 12,
+  background: T.bg, color: T.ink, outline: 'none',
+  fontFamily: 'inherit', transition: 'border-color 0.14s',
+}
+
+const label: React.CSSProperties = {
+  display: 'block', fontSize: 13, fontWeight: 500,
+  color: T.ink2, marginBottom: 6,
+}
+
+// Supabase client is created once outside the component
+const supabase = createClient()
+
+export default function SchoolSetupPage() {
+  const router = useRouter()
+
+  const [step,        setStep]        = useState(0)
+  const [origin,      setOrigin]      = useState('')
+  const [submitting,  setSubmitting]  = useState(false)
+  const [userId,      setUserId]      = useState<string | null>(null)
+  const [sessionReady,setSessionReady]= useState(false)
+
+  // Form fields
+  const [schoolName,    setSchoolName]    = useState('')
+  const [tagline,       setTagline]       = useState('')
+  const [province,      setProvince]      = useState('')
+  const [phone,         setPhone]         = useState('')
+  const [email,         setEmail]         = useState('')
+  const [logoFile,      setLogoFile]      = useState<File | null>(null)
+  const [logoPreview,   setLogoPreview]   = useState<string | null>(null)
+  const [schoolSlug,    setSchoolSlug]    = useState('')
+  const [schoolNameFinal, setSchoolNameFinal] = useState('')
+
+  const logoInputRef = useRef<HTMLInputElement>(null)
+
+  // Confirm session on mount — single attempt with 4s fallback
+  useEffect(() => { setOrigin(window.location.origin) }, [])
+
+  useEffect(() => {
+    let mounted = true
+
+    const init = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!mounted) return
+
+      if (user) {
+        setUserId(user.id)
+        setSessionReady(true)
+        return
+      }
+
+      // Session not immediately available — listen for it (handles email-confirm redirects)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+        if (!mounted) return
+        if (session?.user) {
+          setUserId(session.user.id)
+          setSessionReady(true)
+          subscription.unsubscribe()
+        }
+      })
+
+      // Hard timeout — if no session after 4s, send back to login
+      const timeout = setTimeout(() => {
+        if (mounted) {
+          subscription.unsubscribe()
+          toast.error('Session expired. Please sign in again.')
+          window.location.href = '/auth/login'
+        }
+      }, 4000)
+
+      return () => clearTimeout(timeout)
+    }
+
+    init()
+    return () => { mounted = false }
+  }, [router])
+
+  const handleLogoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Logo must be under 2 MB')
+      return
+    }
+    // Revoke previous blob URL to avoid memory leak
+    if (logoPreview) URL.revokeObjectURL(logoPreview)
+    setLogoFile(file)
+    setLogoPreview(URL.createObjectURL(file))
+  }, [logoPreview])
+
+  // Cleanup blob URL on unmount
+  useEffect(() => {
+    return () => {
+      if (logoPreview) URL.revokeObjectURL(logoPreview)
+    }
+  }, [logoPreview])
+
+  const handleSchoolDetails = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!schoolName.trim()) { toast.error('School name is required'); return }
+    setStep(1)
+  }
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!userId) {
+      toast.error('Session lost. Please sign in again.')
+      window.location.href = '/auth/login'
+      return
+    }
+    if (submitting) return
+    setSubmitting(true)
+
+    try {
+      // Upload logo
+      let logoUrl: string | undefined
+      if (logoFile) {
+        const ext  = logoFile.name.split('.').pop()
+        const path = `schools/${userId}/logo.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('school-assets')
+          .upload(path, logoFile, { upsert: true })
+
+        if (uploadError) {
+          toast.error('Logo upload failed — continuing without logo')
+        } else {
+          const { data: { publicUrl } } = supabase.storage
+            .from('school-assets')
+            .getPublicUrl(path)
+          logoUrl = publicUrl
+        }
+      }
+
+      // Generate unique slug
+      const slug = `${generateSlug(schoolName)}-${Math.random().toString(36).slice(2, 7)}`
+
+      // Create school
+      const { data: school, error: schoolError } = await supabase
+        .from('schools')
+        .insert({
+          name:     schoolName.trim(),
+          slug,
+          tagline:  tagline.trim()  || null,
+          logo_url: logoUrl         || null,
+          province: province        || null,
+          phone:    phone.trim()    || null,
+          owner_id: userId,
+        })
+        .select()
+        .single()
+
+      if (schoolError) {
+        toast.error('Failed to create school. Please try again.')
+        console.error('[school-setup] school insert:', schoolError)
+        return
+      }
+
+      // Update profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ school_id: school.id, onboarding_done: true })
+        .eq('id', userId)
+
+      if (profileError) {
+        // Non-fatal — school exists, profile will heal on next login
+        console.error('[school-setup] profile update:', profileError)
+        toast.error('School created but profile update failed. Contact support if issues persist.')
+      }
+
+      setSchoolSlug(school.slug)
+      setSchoolNameFinal(school.name)
+      setStep(2)
+
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Loading state
+  if (!sessionReady) {
+    return (
+      <div style={{
+        flex: 1, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: 12,
+        padding: 24,
+      }}>
+        <div style={{
+          width: 28, height: 28, borderRadius: '50%',
+          border: '2.5px solid #E8E8E8', borderTopColor: '#1A1A1A',
+          animation: 'spin 0.7s linear infinite',
+        }} />
+        <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Confirming session…</p>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{
+      flex: 1, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: '24px 20px', minHeight: '100dvh',
+      background: T.bg,
+    }}>
+      {/* Step indicator */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 32 }}>
+        {['Details', 'Logo', 'Done'].map((s, i) => (
+          <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: '50%',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 12, fontWeight: 600,
+              background: i <= step ? T.ink : '#E0E0E0',
+              color: i <= step ? T.white : T.ink3,
+              transition: 'all 0.2s',
+            }}>
+              {i < step ? <Check style={{ width: 13, height: 13 }} /> : i + 1}
+            </div>
+            {i < 2 && (
+              <div style={{
+                width: 32, height: 1,
+                background: i < step ? T.ink : '#E0E0E0',
+                transition: 'background 0.3s',
+              }} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Card */}
+      <div style={{
+        width: '100%', maxWidth: 420,
+        background: T.white, borderRadius: 24,
+        border: `1px solid ${T.border}`,
+        padding: '32px 28px',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+      }}>
+
+        {/* ── Step 0: School details ── */}
+        {step === 0 && (
+          <form onSubmit={handleSchoolDetails} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ marginBottom: 4 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 600, color: T.ink, margin: '0 0 4px', letterSpacing: '-0.02em' }}>
+                School details
+              </h2>
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Tell us about your school</p>
+            </div>
+
+            <div>
+              <label style={label}>School name *</label>
+              <input type="text" required value={schoolName}
+                onChange={e => setSchoolName(e.target.value)}
+                placeholder="e.g. Greenfields Primary School" style={input} autoFocus />
+            </div>
+
+            <div>
+              <label style={label}>Tagline <span style={{ color: T.ink3, fontWeight: 400 }}>(optional)</span></label>
+              <input type="text" value={tagline}
+                onChange={e => setTagline(e.target.value)}
+                placeholder="e.g. Excellence in every learner" style={input} />
+            </div>
+
+            <div>
+              <label style={label}>Province</label>
+              <select value={province} onChange={e => setProvince(e.target.value)}
+                style={{ ...input, cursor: 'pointer' }}>
+                <option value="">Select province</option>
+                {SA_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div>
+                <label style={label}>Phone</label>
+                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                  placeholder="012 345 6789" style={input} />
+              </div>
+              <div>
+                <label style={label}>Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder="info@school.co.za" style={input} />
+              </div>
+            </div>
+
+            <button type="submit" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              width: '100%', padding: '13px 0', marginTop: 4,
+              background: T.ink, color: T.white, border: 'none',
+              borderRadius: 12, fontSize: 15, fontWeight: 600,
+              cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '-0.01em',
+            }}>
+              Continue <ArrowRight style={{ width: 16, height: 16 }} />
+            </button>
+          </form>
+        )}
+
+        {/* ── Step 1: Logo ── */}
+        {step === 1 && (
+          <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <h2 style={{ fontSize: 20, fontWeight: 600, color: T.ink, margin: '0 0 4px', letterSpacing: '-0.02em' }}>
+                School logo
+              </h2>
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
+                Parents see this everywhere — you can change it later
+              </p>
+            </div>
+
+            {/* Logo upload */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+              <button type="button" onClick={() => logoInputRef.current?.click()} style={{
+                width: 100, height: 100, borderRadius: 20,
+                border: `2px dashed ${T.border}`, background: T.bg,
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                justifyContent: 'center', gap: 8, cursor: 'pointer',
+                overflow: 'hidden', padding: 0, position: 'relative',
+              }}>
+                {logoPreview ? (
+                  /* Use regular img tag — blob URLs don't work with next/image */
+                  <img src={logoPreview} alt="Logo preview"
+                       style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8 }} />
+                ) : (
+                  <>
+                    <Building2 style={{ width: 28, height: 28, color: T.ink3 }} strokeWidth={1.2} />
+                    <span style={{ fontSize: 11, color: T.ink3 }}>Upload logo</span>
+                  </>
+                )}
+              </button>
+
+              <input ref={logoInputRef} type="file" accept="image/*"
+                     onChange={handleLogoChange} style={{ display: 'none' }} />
+
+              {logoPreview && (
+                <button type="button" onClick={() => logoInputRef.current?.click()} style={{
+                  fontSize: 13, color: T.ink2, background: 'none', border: 'none',
+                  cursor: 'pointer', fontFamily: 'inherit', padding: 0,
+                  textDecoration: 'underline',
+                }}>
+                  Change logo
+                </button>
+              )}
+              <p style={{ fontSize: 11, color: T.ink3, margin: 0 }}>PNG or JPG, max 2 MB</p>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button type="button" onClick={() => setStep(0)} style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '13px 0', background: 'none',
+                border: `1px solid ${T.border}`, borderRadius: 12,
+                fontSize: 15, color: T.ink2, cursor: 'pointer', fontFamily: 'inherit',
+              }}>
+                <ChevronLeft style={{ width: 16, height: 16 }} /> Back
+              </button>
+              <button type="submit" disabled={submitting} style={{
+                flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                padding: '13px 0',
+                background: submitting ? '#CCCCCC' : T.ink,
+                color: T.white, border: 'none', borderRadius: 12,
+                fontSize: 15, fontWeight: 600, cursor: submitting ? 'not-allowed' : 'pointer',
+                fontFamily: 'inherit', letterSpacing: '-0.01em',
+                transition: 'background 0.15s',
+              }}>
+                {submitting ? (
+                  <>
+                    <div style={{ width: 16, height: 16, borderRadius: '50%',
+                                  border: '2px solid rgba(255,255,255,0.3)',
+                                  borderTopColor: T.white,
+                                  animation: 'spin 0.7s linear infinite' }} />
+                    Creating…
+                  </>
+                ) : (
+                  <>{logoPreview ? 'Create School' : 'Skip & Create'} <ArrowRight style={{ width: 16, height: 16 }} /></>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* ── Step 2: Done ── */}
+        {step === 2 && (
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: '50%',
+              background: '#DCFCE7', display: 'flex', alignItems: 'center',
+              justifyContent: 'center', margin: '0 auto 20px',
+            }}>
+              <Check style={{ width: 30, height: 30, color: '#16A34A' }} strokeWidth={2} />
+            </div>
+
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: T.ink,
+                          margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+              {schoolNameFinal} is live!
+            </h2>
+            <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 24px', lineHeight: 1.5 }}>
+              Share this link with parents to invite them to your school feed.
+            </p>
+
+            {/* Invite link */}
+            <div style={{
+              background: T.bg, border: `1px solid ${T.border}`,
+              borderRadius: 12, padding: '12px 14px', marginBottom: 24, textAlign: 'left',
+            }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
+                           textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 5px' }}>
+                Parent invite link
+              </p>
+              <p style={{ fontSize: 13, color: T.ink2, margin: 0,
+                           wordBreak: 'break-all', fontFamily: 'monospace' }}>
+                {origin}/join/{schoolSlug}
+              </p>
+            </div>
+
+            <button onClick={async () => {
+                // Force session refresh so middleware cookie is set
+                const { createClient } = await import('@/lib/supabase/client')
+                const sb = createClient()
+                await sb.auth.getSession()
+                window.location.href = '/feed'
+              }} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              width: '100%', padding: '13px 0',
+              background: T.ink, color: T.white, border: 'none',
+              borderRadius: 12, fontSize: 15, fontWeight: 600,
+              cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '-0.01em',
+            }}>
+              Go to my feed <ArrowRight style={{ width: 16, height: 16 }} />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+
+===== src/app/school/page.tsx =====
+import { SchoolPageClient } from '@/components/school/SchoolPageClient'
+export default function SchoolPage() {
+  return <SchoolPageClient />
+}
+
+
+===== src/components/school/SchoolPageClient.tsx =====
+'use client'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { SchoolProfilePage } from '@/components/school/SchoolProfilePage'
+
+const supabase = createClient()
+
+export function SchoolPageClient() {
+  const router = useRouter()
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) { router.replace('/auth/login'); return }
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      if (!profile) { router.replace('/auth/login'); return }
+      let school = null
+      if (profile.role === 'school') {
+        const { data: s } = await supabase.from('schools').select('*').eq('owner_id', session.user.id).single()
+        school = s
+      } else if (profile.school_id) {
+        const { data: s } = await supabase.from('schools').select('*').eq('id', profile.school_id).single()
+        school = s
+      }
+      if (!school) { router.replace('/feed'); return }
+      setData({ school, profile, isAdmin: profile.role === 'school', userId: session.user.id })
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100dvh' }}>
+      <div style={{ width: 20, height: 20, borderRadius: '50%', border: '2px solid #E8E8E8', borderTopColor: '#1A1A1A', animation: 'spin 0.7s linear infinite' }} />
+    </div>
+  )
+
+  return <SchoolProfilePage {...data} />
+}
+
+
+===== src/components/school/SchoolProfilePage.tsx =====
+// @ts-nocheck
+'use client'
+import { useRouter } from 'next/navigation'
+
+import { useState, useRef, useEffect } from 'react'
+import { ArrowLeft, Camera, Phone, Mail, Globe, MapPin, Users, Copy, Check, Pencil, X, Save, LogOut, Settings } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
+import type { School, Profile } from '@/lib/types'
+import { TeachersTab } from './TeachersTab'
+
+interface SchoolProfilePageProps {
+  school:   School
+  profile:  Profile
+  isAdmin:  boolean
+  userId:   string
+}
+
+const supabase = createClient()
+
+const T = {
+  ink:    '#1A1A1A',
+  ink2:   '#4A4A4A',
+  ink3:   '#9A9A9A',
+  border: 'rgba(0,0,0,0.07)',
+  bg:     '#FCFCFF',
+  white:  '#FFFFFF',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '11px 14px', fontSize: 15,
+  border: `1px solid ${T.border}`, borderRadius: 12,
+  background: T.white, color: T.ink, outline: 'none',
+  fontFamily: 'inherit', boxSizing: 'border-box',
+  transition: 'border-color 0.14s',
+}
+
+function InfoRow({ Icon, label, value, editing, onChange }: {
+  Icon: React.ElementType
+  label: string
+  value?: string | null
+  editing?: boolean
+  onChange?: (v: string) => void
+}) {
+  if (!editing && !value) return null
+  return (
+    <div className="page-in" style={{
+      display: 'flex', alignItems: editing ? 'flex-start' : 'center',
+      gap: 16, padding: '16px 0',
+      borderBottom: `1px solid ${T.border}`,
+    }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+        background: T.white, border: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginTop: editing ? 4 : 0,
+      }}>
+        <Icon style={{ width: 16, height: 16, color: T.ink3 }} strokeWidth={1.5} />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 3px',
+                    textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+          {label}
+        </p>
+        {editing ? (
+          <input
+            value={value ?? ''}
+            onChange={e => onChange?.(e.target.value)}
+            placeholder={`Add ${label.toLowerCase()}`}
+            style={{ ...inputStyle, padding: '8px 12px', fontSize: 14 }}
+          />
+        ) : (
+          <p style={{ fontSize: 15, color: T.ink, margin: 0, wordBreak: 'break-word' }}>
+            {value}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId }: SchoolProfilePageProps) {
+  const router = useRouter()
+  const [school,   setSchool]   = useState(initialSchool)
+  const [tab,      setTab]      = useState<'profile' | 'teachers' | 'settings'>('profile')
+  const [editing,  setEditing]  = useState(false)
+  const [saving,   setSaving]   = useState(false)
+  const [uploading,setUploading]= useState(false)
+  const [copied,   setCopied]   = useState(false)
+
+  // Edit fields
+  const [name,    setName]    = useState(school.name)
+  const [tagline, setTagline] = useState(school.tagline ?? '')
+  const [address, setAddress] = useState(school.address ?? '')
+  const [phone,   setPhone]   = useState(school.phone   ?? '')
+  const [email,   setEmail]   = useState(school.email   ?? '')
+  const [website, setWebsite] = useState(school.website ?? '')
+
+  const logoRef = useRef<HTMLInputElement>(null)
+
+  const [inviteUrl, setInviteUrl] = useState(`/auth/parent-join?slug=${school.slug}`)
+  useEffect(() => {
+    setInviteUrl(`${window.location.origin}/auth/parent-join?slug=${school.slug}`)
+  }, [school.slug])
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) { toast.error('Max 2 MB'); return }
+
+    setUploading(true)
+    const toastId = toast.loading('Uploading photo…')
+
+    try {
+      // 1. Upload to Supabase storage
+      const ext  = file.name.split('.').pop()
+      const path = `schools/${school.owner_id}/logo.${ext}`
+      const { error: upErr } = await supabase.storage
+        .from('school-assets').upload(path, file, { upsert: true })
+      if (upErr) { toast.error('Upload failed', { id: toastId }); return }
+
+      // 2. Get the real public URL + cache bust
+      const { data: { publicUrl } } = supabase.storage.from('school-assets').getPublicUrl(path)
+      const finalUrl = `${publicUrl}?t=${Date.now()}`
+
+      // 3. Save to database
+      await supabase.from('schools').update({ logo_url: publicUrl }).eq('id', school.id)
+
+      // 4. Pre-load the image in the browser BEFORE updating any UI
+      //    This ensures every img tag gets the new photo simultaneously
+      await new Promise<void>((resolve) => {
+        const img = new Image()
+        img.onload  = () => resolve()
+        img.onerror = () => resolve() // resolve anyway so we don't get stuck
+        img.src = finalUrl
+      })
+
+      // 5. Now update everything at once — page + feed header + any other listener
+      setSchool(s => ({ ...s, logo_url: finalUrl }))
+      window.dispatchEvent(new CustomEvent('school-updated', { detail: { logo_url: finalUrl } }))
+      toast.success('Photo updated', { id: toastId })
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleSave = async () => {
+    if (!name.trim()) { toast.error('School name required'); return }
+    setSaving(true)
+    const updates = {
+      name: name.trim(), tagline: tagline.trim() || null,
+      address: address.trim() || null, phone: phone.trim() || null,
+      email: email.trim() || null, website: website.trim() || null,
+    }
+    const { error } = await supabase.from('schools').update(updates).eq('id', school.id)
+    if (error) { toast.error('Failed to save'); setSaving(false); return }
+    setSchool(s => ({ ...s, ...updates }))
+    toast.success('Saved')
+    setEditing(false)
+    setSaving(false)
+    window.dispatchEvent(new Event('school-updated'))
+  }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(inviteUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    toast.success('Invite link copied')
+  }
+
+  const handleCancel = () => {
+    setName(school.name); setTagline(school.tagline ?? '')
+    setAddress(school.address ?? ''); setPhone(school.phone ?? '')
+    setEmail(school.email ?? ''); setWebsite(school.website ?? '')
+    setEditing(false)
+  }
+
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      WebkitOverflowScrolling: 'touch',
+      background: T.bg,
+      display: 'flex', flexDirection: 'column',
+      maxWidth: 520, margin: '0 auto',
+      fontFamily: 'Inter, -apple-system, sans-serif',
+    }}>
+
+      {/* Top bar */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '56px 20px 16px',
+        position: 'sticky', top: 0, zIndex: 10,
+        background: T.bg,
+      }}>
+        <button onClick={() => window.history.back()} style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 15, fontWeight: 500, color: T.ink, fontFamily: 'inherit',
+        }}>
+          <ArrowLeft style={{ width: 18, height: 18 }} strokeWidth={1.8} />
+          Profile
+        </button>
+
+        {isAdmin && !editing && (
+          <button onClick={() => setEditing(true)} style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '7px 14px', borderRadius: 20,
+            border: `1px solid ${T.border}`, background: T.white,
+            fontSize: 13, fontWeight: 500, color: T.ink2,
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            <Pencil style={{ width: 12, height: 12 }} strokeWidth={1.6} />
+            Edit
+          </button>
+        )}
+
+        {isAdmin && editing && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleCancel} style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '7px 14px', borderRadius: 20,
+              border: `1px solid ${T.border}`, background: T.white,
+              fontSize: 13, fontWeight: 500, color: T.ink3,
+              cursor: 'pointer', fontFamily: 'inherit',
+            }}>
+              <X style={{ width: 12, height: 12 }} /> Cancel
+            </button>
+            <button onClick={handleSave} disabled={saving} style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '7px 14px', borderRadius: 20,
+              border: 'none', background: saving ? '#CCC' : T.ink,
+              fontSize: 13, fontWeight: 600, color: T.white,
+              cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+            }}>
+              <Save style={{ width: 12, height: 12 }} />
+              {saving ? 'Saving…' : 'Save'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Tab bar — only for admin */}
+      {isAdmin && (
+        <div style={{
+          display: 'flex', borderBottom: `1px solid ${T.border}`,
+          padding: '0 20px', flexShrink: 0,
+        }}>
+          {(['profile', 'teachers', 'settings'] as const).map(t => (
+            <button key={t} onClick={() => setTab(t)} style={{
+              padding: '10px 18px 10px 0', fontSize: 13,
+              fontWeight: tab === t ? 600 : 400,
+              color: tab === t ? T.ink : T.ink3,
+              background: 'none', border: 'none', cursor: 'pointer',
+              borderBottom: `2px solid ${tab === t ? T.ink : 'transparent'}`,
+              fontFamily: 'inherit', textTransform: 'capitalize',
+              transition: 'all 0.15s',
+            }}>
+              {t === 'profile' ? 'School' : t === 'teachers' ? 'Teachers' : 'Settings'}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* School logo — centered, large */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 20px 32px' }}>
+        <div style={{ position: 'relative' }}>
+          <div style={{
+            width: 120, height: 120, borderRadius: '50%',
+            overflow: 'hidden', background: '#EFEFEF',
+            border: `1px solid ${T.border}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            {school.logo_url
+              ? <img src={school.logo_url} alt={school.name}
+                     style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              : <span style={{ fontSize: 42, fontWeight: 600, color: '#AAAAAA' }}>
+                  {school.name.charAt(0)}
+                </span>
+            }
+          </div>
+
+          {/* Camera button — admin only */}
+          {isAdmin && (
+            <button onClick={() => logoRef.current?.click()} style={{
+              position: 'absolute', bottom: 2, right: 2,
+              width: 32, height: 32, borderRadius: '50%',
+              background: T.ink, border: '2.5px solid #FCFCFF',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}>
+              {uploading
+                ? <div style={{ width: 12, height: 12, borderRadius: '50%',
+                                border: '2px solid rgba(255,255,255,0.3)',
+                                borderTopColor: '#fff',
+                                animation: 'spin 0.7s linear infinite' }} />
+                : <Camera style={{ width: 13, height: 13, color: '#fff' }} />
+              }
+            </button>
+          )}
+          <input ref={logoRef} type="file" accept="image/*"
+                 onChange={handleLogoChange} style={{ display: 'none' }} />
+        </div>
+
+        {/* Name */}
+        {editing ? (
+          <input value={name} onChange={e => setName(e.target.value)}
+            style={{ ...inputStyle, textAlign: 'center', fontSize: 20, fontWeight: 600,
+                     letterSpacing: '-0.02em', marginTop: 16, maxWidth: 320 }} />
+        ) : (
+          <h1 style={{ fontSize: 22, fontWeight: 600, color: T.ink,
+                       letterSpacing: '-0.025em', margin: '16px 0 0', textAlign: 'center' }}>
+            {school.name}
+          </h1>
+        )}
+
+        {/* Tagline */}
+        {editing ? (
+          <input value={tagline} onChange={e => setTagline(e.target.value)}
+            placeholder="Add a tagline…"
+            style={{ ...inputStyle, textAlign: 'center', fontSize: 14, marginTop: 8,
+                     color: T.ink3, maxWidth: 320 }} />
+        ) : school.tagline ? (
+          <p style={{ fontSize: 14, color: T.ink3, margin: '6px 0 0', textAlign: 'center' }}>
+            {school.tagline}
+          </p>
+        ) : null}
+      </div>
+
+      {tab === 'profile' && (
+      <div style={{ padding: '0 24px', flex: 1 }}>
+        <InfoRow Icon={MapPin}  label="Address" value={editing ? address : school.address}
+                 editing={editing} onChange={setAddress} />
+        <InfoRow Icon={Phone}   label="Phone"   value={editing ? phone   : school.phone}
+                 editing={editing} onChange={setPhone} />
+        <InfoRow Icon={Mail}    label="Email"   value={editing ? email   : school.email}
+                 editing={editing} onChange={setEmail} />
+        <InfoRow Icon={Globe}   label="Website" value={editing ? website : school.website}
+                 editing={editing} onChange={setWebsite} />
+
+        {/* Invite link — admin only */}
+        {isAdmin && !editing && (
+          <div style={{ padding: '16px 0', borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                background: T.white, border: `1px solid ${T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Users style={{ width: 16, height: 16, color: T.ink3 }} strokeWidth={1.5} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 11, color: T.ink3, margin: '0 0 4px',
+                            textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  Parent invite link
+                </p>
+                <p style={{ fontSize: 13, color: T.ink2, margin: 0,
+                            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                            fontFamily: 'monospace' }}>
+                  {inviteUrl}
+                </p>
+              </div>
+              <button onClick={handleCopy} style={{
+                display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0,
+                padding: '7px 12px', borderRadius: 20,
+                border: `1px solid ${T.border}`, background: T.white,
+                fontSize: 12, fontWeight: 500, color: T.ink2,
+                cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+              }}>
+                {copied
+                  ? <><Check style={{ width: 11, height: 11 }} /> Copied</>
+                  : <><Copy  style={{ width: 11, height: 11 }} /> Copy</>
+                }
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      )}
+
+      {/* Teachers tab */}
+      {tab === 'teachers' && isAdmin && <TeachersTab />}
+
+      {/* Settings tab */}
+      {tab === 'settings' && isAdmin && (
+        <div style={{ padding: '20px 24px', flex: 1, overflowY: 'auto' }}>
+          <div style={{ marginBottom: 24 }}>
+            <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3, textTransform: 'uppercase',
+                        letterSpacing: '0.06em', margin: '0 0 10px' }}>Account</p>
+            <button onClick={() => {
+              if (confirm('Sign out of School Connect?')) {
+                const { createClient } = require('@/lib/supabase/client')
+                createClient().auth.signOut().then(() => { window.location.href = '/auth/login' })
+              }
+            }} style={{
+              width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+              padding: '14px 16px', background: T.white,
+              border: `1px solid ${T.border}`, borderRadius: 14,
+              cursor: 'pointer', fontFamily: 'inherit', marginBottom: 10,
+            }}>
+              <LogOut style={{ width: 16, height: 16, color: T.ink3 }} strokeWidth={1.5} />
+              <span style={{ fontSize: 14, color: T.ink }}>Sign out</span>
+            </button>
+          </div>
+
+          <div style={{ textAlign: 'center', paddingTop: 16 }}>
+            <p style={{ fontSize: 11, color: '#CCCCCC', margin: 0, letterSpacing: '0.04em', fontWeight: 500 }}>
+              Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Powered by */}
+      <div style={{ textAlign: 'center', padding: '24px 20px 48px' }}>
+        <p style={{ fontSize: 11, color: '#CCCCCC', margin: 0, letterSpacing: '0.04em', fontWeight: 500 }}>
+          Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
+        </p>
+      </div>
+
+    </div>
+  )
+}
+
+
+===== src/components/profile/SchoolProfileSheet.tsx =====
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import { X, Copy, Check, MapPin, Phone, Mail, Globe, Users, FileText, Heart, Pencil, ChevronRight } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import toast from 'react-hot-toast'
+import type { School, Profile } from '@/lib/types'
+
+interface SchoolProfileSheetProps {
+  school:   School
+  profile:  Profile
+  isSchool: boolean
+  userId:   string
+  onClose:  () => void
+}
+
+const supabase = createClient()
+
+const T = {
+  ink:    '#1A1A1A',
+  ink2:   '#4A4A4A',
+  ink3:   '#9A9A9A',
+  border: 'rgba(0,0,0,0.07)',
+  bg:     '#F7F7F7',
+  white:  '#FFFFFF',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '11px 13px', fontSize: 14,
+  border: `1px solid ${T.border}`, borderRadius: 10,
+  background: T.bg, color: T.ink, outline: 'none',
+  fontFamily: 'inherit', boxSizing: 'border-box',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block', fontSize: 12, fontWeight: 500,
+  color: T.ink3, marginBottom: 5, textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+}
+
+interface Stats {
+  members: number
+  posts:   number
+  reactions: number
+}
+
+export function SchoolProfileSheet({
+  school, profile, isSchool, userId, onClose,
+}: SchoolProfileSheetProps) {
+  const [tab,        setTab]        = useState<'school' | 'me'>('school')
+  const [stats,      setStats]      = useState<Stats>({ members: 0, posts: 0, reactions: 0 })
+  const [copied,     setCopied]     = useState(false)
+  const [editing,    setEditing]    = useState(false)
+  const [saving,     setSaving]     = useState(false)
+
+  // Parent edit fields
+  const [childName,  setChildName]  = useState(profile.child_name  ?? '')
+  const [childGrade, setChildGrade] = useState(profile.child_grade ?? '')
+  const [childClass, setChildClass] = useState(profile.child_class ?? '')
+  const [phone,      setPhone]      = useState(profile.phone       ?? '')
+  const [fullName,   setFullName]   = useState(profile.full_name   ?? '')
+
+  const [inviteUrl, setInviteUrl] = useState(`/join/${school.slug}`)
+  useEffect(() => {
+    setInviteUrl(`${window.location.origin}/join/${school.slug}`)
+  }, [school.slug])
+
+  const fetchStats = useCallback(async () => {
+    const [membersRes, postsRes, reactionsRes] = await Promise.all([
+      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('school_id', school.id),
+      supabase.from('posts').select('id', { count: 'exact', head: true }).eq('school_id', school.id).eq('status', 'published'),
+      supabase.from('reactions').select('id', { count: 'exact', head: true }).eq('school_id', school.id),
+    ])
+    setStats({
+      members:   membersRes.count  ?? 0,
+      posts:     postsRes.count    ?? 0,
+      reactions: reactionsRes.count ?? 0,
+    })
+  }, [school.id])
+
+  useEffect(() => { fetchStats() }, [fetchStats])
+
+  const handleCopyInvite = () => {
+    navigator.clipboard.writeText(inviteUrl).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+      toast.success('Invite link copied')
+    })
+  }
+
+  const handleSaveProfile = async () => {
+    setSaving(true)
+    const { error } = await supabase.from('profiles').update({
+      full_name:   fullName.trim()   || null,
+      child_name:  childName.trim()  || null,
+      child_grade: childGrade        || null,
+      child_class: childClass.trim() || null,
+      phone:       phone.trim()      || null,
+    }).eq('id', userId)
+
+    if (error) {
+      toast.error('Failed to save. Please try again.')
+    } else {
+      toast.success('Profile updated')
+      setEditing(false)
+    }
+    setSaving(false)
+  }
+
+  const StatPill = ({ label, value }: { label: string; value: number }) => (
+    <div style={{
+      flex: 1, textAlign: 'center', padding: '14px 8px',
+      background: T.bg, borderRadius: 14, border: `1px solid ${T.border}`,
+    }}>
+      <p style={{ fontSize: 20, fontWeight: 600, color: T.ink,
+                   letterSpacing: '-0.03em', margin: '0 0 2px' }}>
+        {value.toLocaleString()}
+      </p>
+      <p style={{ fontSize: 11, color: T.ink3, margin: 0 }}>{label}</p>
+    </div>
+  )
+
+  const InfoRow = ({ Icon, value }: { Icon: React.ElementType; value?: string | null }) => {
+    if (!value) return null
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Icon style={{ width: 14, height: 14, color: T.ink3, flexShrink: 0 }} strokeWidth={1.5} />
+        <span style={{ fontSize: 13, color: T.ink2, lineHeight: 1.4 }}>{value}</span>
+      </div>
+    )
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 70,
+      background: 'rgba(0,0,0,0.4)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
+    }}>
+
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%', maxWidth: 520, margin: '0 auto',
+        background: T.white, borderRadius: 20,
+        maxHeight: '85dvh', display: 'flex', flexDirection: 'column',
+        animation: 'popUp 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+      }}>
+
+        {/* Header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '14px 20px 0', flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', gap: 0 }}>
+            {['school', 'me'].map(t => (
+              <button key={t} onClick={() => { setTab(t as any); setEditing(false) }} style={{
+                padding: '6px 16px', fontSize: 14, fontWeight: tab === t ? 600 : 400,
+                color: tab === t ? T.ink : T.ink3,
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontFamily: 'inherit',
+                borderBottom: `2px solid ${tab === t ? T.ink : 'transparent'}`,
+                transition: 'all 0.15s',
+              }}>
+                {t === 'school' ? 'School' : 'My profile'}
+              </button>
+            ))}
+          </div>
+          <button onClick={onClose} style={{
+            width: 30, height: 30, borderRadius: 8, border: `1px solid ${T.border}`,
+            background: T.bg, cursor: 'pointer', color: T.ink3,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <X style={{ width: 14, height: 14 }} />
+          </button>
+        </div>
+
+        <div style={{ height: 1, background: T.border, margin: '12px 0 0' }} />
+
+        {/* Content */}
+        <div style={{ overflowY: 'auto', flex: 1, padding: '20px 20px 32px' }}>
+
+          {/* ── School tab ── */}
+          {tab === 'school' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+              {/* Logo + name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{
+                  width: 64, height: 64, borderRadius: 16, flexShrink: 0,
+                  overflow: 'hidden', background: T.bg, border: `1px solid ${T.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {school.logo_url
+                    ? <img src={school.logo_url} alt={school.name}
+                           style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    : <span style={{ fontSize: 24, fontWeight: 600, color: T.ink3 }}>
+                        {school.name.charAt(0)}
+                      </span>
+                  }
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink,
+                               letterSpacing: '-0.02em', margin: '0 0 3px',
+                               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {school.name}
+                  </h2>
+                  {school.tagline && (
+                    <p style={{ fontSize: 13, color: T.ink3, margin: 0, lineHeight: 1.4 }}>
+                      {school.tagline}
+                    </p>
+                  )}
+                  {school.province && (
+                    <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+                      {school.province}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <StatPill label="Members"   value={stats.members}   />
+                <StatPill label="Posts"     value={stats.posts}     />
+                <StatPill label="Reactions" value={stats.reactions} />
+              </div>
+
+              {/* Contact info */}
+              {(school.address || school.phone || school.email || school.website) && (
+                <div style={{
+                  display: 'flex', flexDirection: 'column', gap: 10,
+                  padding: '14px', background: T.bg, borderRadius: 14,
+                  border: `1px solid ${T.border}`,
+                }}>
+                  <InfoRow Icon={MapPin} value={school.address} />
+                  <InfoRow Icon={Phone}  value={school.phone}   />
+                  <InfoRow Icon={Mail}   value={school.email}   />
+                  <InfoRow Icon={Globe}  value={school.website} />
+                </div>
+              )}
+
+              {/* Invite link — visible to all */}
+              <div style={{
+                padding: '14px', background: T.bg, borderRadius: 14,
+                border: `1px solid ${T.border}`,
+              }}>
+                <p style={{ fontSize: 11, fontWeight: 600, color: T.ink3,
+                             textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 8px' }}>
+                  {isSchool ? 'Parent invite link' : 'School link'}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <p style={{ fontSize: 12, color: T.ink2, margin: 0, flex: 1,
+                               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                               fontFamily: 'monospace' }}>
+                    {inviteUrl}
+                  </p>
+                  <button onClick={handleCopyInvite} style={{
+                    display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '7px 12px', borderRadius: 8, flexShrink: 0,
+                    border: `1px solid ${T.border}`, background: T.white,
+                    fontSize: 12, fontWeight: 500, color: T.ink,
+                    cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.15s',
+                  }}>
+                    {copied
+                      ? <><Check style={{ width: 12, height: 12 }} /> Copied</>
+                      : <><Copy style={{ width: 12, height: 12 }} /> Copy</>
+                    }
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── My profile tab ── */}
+          {tab === 'me' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {/* Avatar + name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: '50%', flexShrink: 0,
+                  background: T.bg, border: `1px solid ${T.border}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 22, fontWeight: 600, color: T.ink3,
+                }}>
+                  {(profile.full_name ?? 'P').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <p style={{ fontSize: 16, fontWeight: 600, color: T.ink,
+                               letterSpacing: '-0.02em', margin: '0 0 2px' }}>
+                    {profile.full_name ?? 'Parent'}
+                  </p>
+                  <p style={{ fontSize: 12, color: T.ink3, margin: 0 }}>
+                    {isSchool ? 'School admin' : 'Parent'}
+                    {profile.child_grade ? ` · ${profile.child_grade}` : ''}
+                  </p>
+                </div>
+                {!editing && (
+                  <button onClick={() => setEditing(true)} style={{
+                    marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5,
+                    padding: '7px 12px', borderRadius: 9,
+                    border: `1px solid ${T.border}`, background: T.bg,
+                    fontSize: 12, fontWeight: 500, color: T.ink2,
+                    cursor: 'pointer', fontFamily: 'inherit',
+                  }}>
+                    <Pencil style={{ width: 11, height: 11 }} />
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {!editing ? (
+                /* View mode */
+                <div style={{
+                  display: 'flex', flexDirection: 'column', gap: 0,
+                  background: T.bg, borderRadius: 14, border: `1px solid ${T.border}`,
+                  overflow: 'hidden',
+                }}>
+                  {[
+                    { label: 'Full name',    value: profile.full_name   },
+                    { label: "Child's name", value: profile.child_name  },
+                    { label: 'Grade',        value: profile.child_grade },
+                    { label: 'Class',        value: profile.child_class },
+                    { label: 'Phone',        value: profile.phone       },
+                  ].filter(r => r.value).map((row, i, arr) => (
+                    <div key={row.label} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '13px 14px',
+                      borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : 'none',
+                    }}>
+                      <span style={{ fontSize: 12, color: T.ink3 }}>{row.label}</span>
+                      <span style={{ fontSize: 14, color: T.ink, fontWeight: 400 }}>{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* Edit mode */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div>
+                    <label style={labelStyle}>Full name</label>
+                    <input value={fullName} onChange={e => setFullName(e.target.value)}
+                      placeholder="Your full name" style={inputStyle} autoFocus />
+                  </div>
+                  {!isSchool && (
+                    <>
+                      <div>
+                        <label style={labelStyle}>Child's name</label>
+                        <input value={childName} onChange={e => setChildName(e.target.value)}
+                          placeholder="Child's full name" style={inputStyle} />
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div>
+                          <label style={labelStyle}>Grade</label>
+                          <select value={childGrade} onChange={e => setChildGrade(e.target.value)}
+                            style={{ ...inputStyle, cursor: 'pointer' }}>
+                            <option value="">Select</option>
+                            {['R','1','2','3','4','5','6','7','8','9','10','11','12'].map(g => (
+                              <option key={g} value={`Grade ${g}`}>Grade {g}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label style={labelStyle}>Class</label>
+                          <input value={childClass} onChange={e => setChildClass(e.target.value)}
+                            placeholder="e.g. 4B" style={inputStyle} />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <div>
+                    <label style={labelStyle}>Phone</label>
+                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+                      placeholder="082 000 0000" style={inputStyle} />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                    <button onClick={() => setEditing(false)} style={{
+                      flex: 1, padding: '12px 0', borderRadius: 10,
+                      border: `1px solid ${T.border}`, background: T.bg,
+                      fontSize: 14, fontWeight: 500, color: T.ink2,
+                      cursor: 'pointer', fontFamily: 'inherit',
+                    }}>
+                      Cancel
+                    </button>
+                    <button onClick={handleSaveProfile} disabled={saving} style={{
+                      flex: 2, padding: '12px 0', borderRadius: 10,
+                      border: 'none', background: saving ? '#CCC' : T.ink,
+                      fontSize: 14, fontWeight: 600, color: T.white,
+                      cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    }}>
+                      {saving ? (
+                        <><div style={{ width: 14, height: 14, borderRadius: '50%',
+                          border: '2px solid rgba(255,255,255,0.3)', borderTopColor: T.white,
+                          animation: 'spin 0.7s linear infinite' }} />Saving…</>
+                      ) : 'Save changes'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

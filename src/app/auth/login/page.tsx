@@ -1,31 +1,32 @@
-'use client'
-// auth-copy-motion-polish-v1
-
-import { Suspense, useState, useTransition, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { ArrowRight, Eye, EyeOff } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { createClient } from '@/lib/supabase/client'
+import { ArrowRight, LockKeyhole } from 'lucide-react'
 
-const supabase = createClient()
+type LoginPageProps = {
+  searchParams?: {
+    error?: string
+    created?: string
+    redirectTo?: string
+  }
+}
 
 const T = {
   white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.06)',
-  primary: '#2B2B2F',
+  border: 'rgba(0,0,0,0.07)',
+  soft: '#F8F8F9',
+  red: '#B42318',
+  green: '#1F9D55',
 }
 
-const inputStyle: CSSProperties = {
+const inputStyle: React.CSSProperties = {
   width: '100%',
   minHeight: 48,
   padding: '12px 14px',
   fontSize: 16,
   border: `1px solid ${T.border}`,
-  borderRadius: 14,
+  borderRadius: 15,
   background: T.white,
   color: T.ink,
   outline: 'none',
@@ -33,212 +34,162 @@ const inputStyle: CSSProperties = {
   boxSizing: 'border-box',
 }
 
-const labelStyle: CSSProperties = {
+const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 13,
-  fontWeight: 560,
+  fontSize: 12,
+  fontWeight: 650,
   color: T.ink2,
   marginBottom: 7,
 }
 
-function LoginForm() {
-  const params = useSearchParams()
-  const explicitRedirectTo = params.get('explicitRedirectTo') || params.get('redirectTo')
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isPending, startTransition] = useTransition()
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-
-    startTransition(async () => {
-      try {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        })
-
-        if (error) {
-          toast.error(error.message)
-          return
-        }
-
-        if (explicitRedirectTo) {
-          window.location.href = explicitRedirectTo
-          return
-        }
-
-        const { data: userResult } = await supabase.auth.getUser()
-        const userId = userResult?.user?.id
-
-        let nextPath = '/feed'
-
-        if (userId) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', userId)
-            .maybeSingle()
-
-          if (profile?.role === 'school') {
-            nextPath = '/school'
-          } else if (profile?.role === 'teacher') {
-            nextPath = '/teacher'
-          }
-        }
-
-        window.location.href = nextPath
-      } catch {
-        toast.error('Something went wrong')
-      }
-    })
-  }
+export default function LoginPage({ searchParams }: LoginPageProps) {
+  const error = searchParams?.error ? decodeURIComponent(String(searchParams.error)) : ''
+  const created = searchParams?.created === '1'
+  const redirectTo = searchParams?.redirectTo || '/school'
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 14 }}>
-      <div>
-        <label style={labelStyle}>Email</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={event => setEmail(event.target.value)}
-          autoComplete="email"
-          placeholder="name@example.com"
-          style={inputStyle}
-          autoFocus
-        />
-      </div>
+    <main style={{
+      minHeight: '100dvh',
+      background: T.white,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px 14px',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      <section style={{ width: '100%', maxWidth: 390 }}>
+        <div style={{ textAlign: 'center', marginBottom: 18 }}>
+          <div style={{
+            width: 50,
+            height: 50,
+            borderRadius: 18,
+            background: T.soft,
+            border: `1px solid ${T.border}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 12px',
+            color: T.ink,
+          }}>
+            <LockKeyhole size={24} strokeWidth={1.8} />
+          </div>
 
-      <div>
-        <label style={labelStyle}>Password</label>
-        <div style={{ position: 'relative' }}>
-          <input
-            type={showPassword ? 'text' : 'password'}
-            required
-            value={password}
-            onChange={event => setPassword(event.target.value)}
-            autoComplete="current-password"
-            placeholder="Enter password"
-            style={{ ...inputStyle, paddingRight: 46 }}
-          />
+          <h1 style={{
+            fontSize: 24,
+            lineHeight: 1.1,
+            fontWeight: 650,
+            letterSpacing: '-0.04em',
+            margin: 0,
+          }}>
+            Sign in to School Connect
+          </h1>
+
+          <p style={{ fontSize: 14, color: T.ink3, lineHeight: 1.45, margin: '7px 0 0' }}>
+            Open your school dashboard.
+          </p>
+        </div>
+
+        <form
+          method="post"
+          action="/api/auth/login-redirect"
+          style={{
+            border: `1px solid ${T.border}`,
+            borderRadius: 24,
+            padding: 16,
+            boxShadow: '0 18px 55px rgba(0,0,0,0.045)',
+            display: 'grid',
+            gap: 14,
+          }}
+        >
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+
+          {created && !error && (
+            <div style={{
+              borderRadius: 14,
+              border: '1px solid rgba(31,157,85,0.18)',
+              background: '#F2FBF6',
+              color: T.green,
+              padding: '10px 12px',
+              fontSize: 12.8,
+              lineHeight: 1.4,
+              fontWeight: 560,
+            }}>
+              School created. Sign in with the owner email and password.
+            </div>
+          )}
+
+          {error && (
+            <div style={{
+              borderRadius: 14,
+              border: '1px solid rgba(180,35,24,0.18)',
+              background: '#FFF5F5',
+              color: T.red,
+              padding: '10px 12px',
+              fontSize: 12.8,
+              lineHeight: 1.4,
+              fontWeight: 560,
+            }}>
+              {error}
+            </div>
+          )}
+
+          <label>
+            <span style={labelStyle}>Email</span>
+            <input
+              name="email"
+              type="email"
+              required
+              autoComplete="email"
+              placeholder="name@example.com"
+              style={inputStyle}
+              autoFocus
+            />
+          </label>
+
+          <label>
+            <span style={labelStyle}>Password</span>
+            <input
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              placeholder="Enter password"
+              style={inputStyle}
+            />
+          </label>
+
           <button
-            type="button"
-            onClick={() => setShowPassword(value => !value)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-            className="sc-pressable"
+            type="submit"
             style={{
-              position: 'absolute',
-              right: 11,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 32,
-              height: 32,
-              borderRadius: 999,
+              minHeight: 48,
+              width: '100%',
+              borderRadius: 15,
               border: 'none',
-              background: 'transparent',
-              color: T.ink3,
+              background: T.ink,
+              color: T.white,
+              fontSize: 14.5,
+              fontWeight: 650,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 0,
-              cursor: 'pointer',
+              gap: 8,
+              marginTop: 2,
             }}
           >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            Sign in <ArrowRight size={16} />
           </button>
-        </div>
-      </div>
+        </form>
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="sc-pressable"
-        style={{
-          minHeight: 46,
-          width: '100%',
-          borderRadius: 14,
-          border: 'none',
-          background: isPending ? '#BDBDC2' : T.primary,
-          color: T.white,
-          fontSize: 14.5,
-          fontWeight: 620,
-          cursor: isPending ? 'not-allowed' : 'pointer',
-          fontFamily: 'inherit',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-          marginTop: 2,
-        }}
-      >
-        {isPending ? 'Signing in…' : <>Sign in <ArrowRight size={16} /></>}
-      </button>
-    </form>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <main
-      className="sc-page-enter"
-      style={{
-        minHeight: '100dvh',
-        background: T.white,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-        boxSizing: 'border-box',
-      }}
-    >
-      <div style={{ width: '100%', maxWidth: 430 }}>
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <p style={{
-            margin: 0,
-            color: T.ink,
-            fontSize: 23,
-            fontWeight: 640,
-            letterSpacing: '-0.035em',
-          }}>
-            School Connect
-          </p>
-          <p style={{
-            margin: '6px 0 0',
-            color: T.ink3,
-            fontSize: 13,
-            lineHeight: 1.38,
-          }}>
-            Sign in to your space.
-          </p>
-        </div>
-
-        <div
-          className="sc-slide-up"
-          style={{
-            background: T.white,
-            border: `1px solid ${T.border}`,
-            borderRadius: 28,
-            boxShadow: '0 18px 58px rgba(0,0,0,0.05)',
-            padding: 18,
-          }}
-        >
-          <Suspense fallback={null}>
-            <LoginForm />
-          </Suspense>
-        </div>
-
-        <div style={{ textAlign: 'center', marginTop: 18 }}>
-          <p style={{ margin: 0, color: T.ink3, fontSize: 13 }}>
-            <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
-              Create school account
-            </Link>
-          </p>
-        </div>
-      </div>
+        <p style={{ textAlign: 'center', fontSize: 13, color: T.ink3, margin: '14px 0 0' }}>
+          No school account yet?{' '}
+          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 650, textDecoration: 'none' }}>
+            Create one
+          </Link>
+        </p>
+      </section>
     </main>
   )
 }

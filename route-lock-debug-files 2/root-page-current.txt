@@ -1,0 +1,69 @@
+'use client'
+// root-safe-login-redirect-v3
+
+import { useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+
+export default function HomePage() {
+  useEffect(() => {
+    let alive = true
+
+    const fallbackTimer = window.setTimeout(() => {
+      if (!alive) return
+      window.location.replace('/auth/login')
+    }, 1800)
+
+    const routeUser = async () => {
+      try {
+        const { data: sessionResult } = await supabase.auth.getSession()
+        const session = sessionResult?.session
+
+        if (!alive) return
+
+        if (!session?.user) {
+          window.clearTimeout(fallbackTimer)
+          window.location.replace('/auth/login')
+          return
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .maybeSingle()
+
+        if (!alive) return
+
+        window.clearTimeout(fallbackTimer)
+        window.location.replace(profile?.role === 'school' ? '/school' : '/feed')
+      } catch (error) {
+        if (!alive) return
+        window.clearTimeout(fallbackTimer)
+        window.location.replace('/auth/login')
+      }
+    }
+
+    routeUser()
+
+    return () => {
+      alive = false
+      window.clearTimeout(fallbackTimer)
+    }
+  }, [])
+
+  return (
+    <main style={{
+      minHeight: '100dvh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#FFFFFF',
+      color: '#1A1A1A',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      fontSize: 14,
+      fontWeight: 500,
+    }}>
+      Opening School Connect...
+    </main>
+  )
+}

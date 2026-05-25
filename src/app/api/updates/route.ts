@@ -206,7 +206,7 @@ export async function POST(req: NextRequest) {
     await touchParentTeacherThread(sb, {
       school_id: teacher.school_id,
       teacher_id,
-      parent_id: typeof caller !== 'undefined' ? caller.profile.id : user.id,
+      parent_id: caller.profile.id,
       child_id: child_id || null,
       from: 'parent',
     })

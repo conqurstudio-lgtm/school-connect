@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
-import { TeacherSelfProfile } from '@/components/teacher/TeacherSelfProfile'
+import { TeacherReportDashboard } from '@/components/teacher/TeacherReportDashboard'
 
 const T = {
-  ink: '#1A1A1A',
-  ink3: '#9A9A9A',
-  bg: '#FCFCFF',
+  ink: '#262626',
+  ink3: '#9A9CA3',
+  bg: '#FFFFFF',
   border: 'rgba(0,0,0,0.07)',
   white: '#FFFFFF',
 }
@@ -19,7 +19,7 @@ export default function TeacherTokenEntryPage() {
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
 
   const [session, setSession] = useState<any>(null)
-  const [message, setMessage] = useState('Opening your class dashboard…')
+  const [message, setMessage] = useState('Opening your report tracker...')
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
@@ -41,16 +41,16 @@ export default function TeacherTokenEntryPage() {
 
         if (!res.ok || !json.teacher?.id) {
           setFailed(true)
-          setMessage('This teacher link is invalid or has expired')
+          setMessage(json.error || 'This teacher link is invalid or has expired')
           return
         }
 
         setSession(json)
       })
-      .catch(() => {
+      .catch((error) => {
         if (!cancelled) {
           setFailed(true)
-          setMessage('Could not open teacher link')
+          setMessage(error?.message || 'Could not open teacher link')
         }
       })
 
@@ -58,13 +58,7 @@ export default function TeacherTokenEntryPage() {
   }, [token])
 
   if (session?.teacher?.id) {
-    return (
-      <TeacherSelfProfile
-        teacherId={session.teacher.id}
-        initialSession={session}
-        initialToken={token}
-      />
-    )
+    return <TeacherReportDashboard initialSession={session} initialToken={token} />
   }
 
   return (
@@ -85,13 +79,13 @@ export default function TeacherTokenEntryPage() {
         border: `1px solid ${T.border}`,
         borderRadius: 24,
         padding: '34px 24px',
-        boxShadow: '0 18px 48px rgba(0,0,0,0.06)',
+        boxShadow: '0 18px 48px rgba(0,0,0,0.04)',
       }}>
         <div style={{
           width: 58,
           height: 58,
           borderRadius: 18,
-          background: '#F0F0F4',
+          background: '#F8F8F9',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -104,7 +98,7 @@ export default function TeacherTokenEntryPage() {
         <h1 style={{
           fontSize: 20,
           lineHeight: 1.15,
-          fontWeight: 800,
+          fontWeight: 650,
           letterSpacing: '-0.03em',
           color: T.ink,
           margin: '0 0 8px',
@@ -119,8 +113,8 @@ export default function TeacherTokenEntryPage() {
           margin: 0,
         }}>
           {failed
-            ? 'Ask the school admin to copy a fresh teacher link.'
-            : 'Please wait while we connect you to your class.'}
+            ? 'This is the exact error from the teacher-session API.'
+            : 'Please wait while we connect you to your weekly report tracker.'}
         </p>
       </section>
     </main>

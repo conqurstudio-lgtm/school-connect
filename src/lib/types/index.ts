@@ -12,6 +12,7 @@ export type TeacherStatus    = 'pending' | 'approved' | 'rejected'
 export type RSVPStatus       = 'going' | 'not_going' | 'maybe'
 
 export type NotificationType = 'comment_reply' | 'comment_liked' | 'comment_made_public' | 'new_post'
+export type PostedByKind = 'school' | 'teacher'
 
 export interface School {
   id: string
@@ -100,6 +101,10 @@ export interface Post {
   view_count: number
   edited_at?: string
   teacher_id?: string    // set when a teacher created the post
+  posted_by_kind?: PostedByKind
+  audience_grade?: string | null
+  audience_class?: string | null
+  caption?: string | null
   rsvp_count?: number
   my_rsvp?:    RSVPStatus | null
   submitted_by?: Profile // joined

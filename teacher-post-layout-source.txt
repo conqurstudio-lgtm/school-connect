@@ -1,0 +1,191 @@
+function TeacherClassPostCard({ post, onDelete }: any) {
+  const [openImage, setOpenImage] = useState<string | null>(null)
+
+  const images = Array.isArray(post.image_urls) ? post.image_urls : []
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <>
+      <article style={{
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        borderRadius: 16,
+        overflow: 'hidden',
+      }}>
+        <div style={{ padding: 14 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            marginBottom: post.body || post.event_date || images.length ? 8 : 0,
+          }}>
+            <div>
+              <span style={{
+                display: 'inline-flex',
+                padding: '3px 8px',
+                borderRadius: 999,
+                background: '#F8F8F9',
+                color: T.blue,
+                fontSize: 13.8,
+                fontWeight: 650,
+              }}>
+                {typeLabel}
+              </span>
+              <span style={{ marginLeft: 8, fontSize: 13.8, color: T.ink3 }}>
+                {relTime(post.created_at)}
+              </span>
+            </div>
+
+            <button onClick={onDelete} style={{
+              width: 30,
+              height: 30,
+              borderRadius: '50%',
+              border: `1px solid ${T.border}`,
+              background: '#FFFFFF',
+              color: T.red,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Trash2 size={13} strokeWidth={1.9} />
+            </button>
+          </div>
+
+          {post.body && (
+            <p style={{
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: T.ink,
+              margin: 0,
+              whiteSpace: 'pre-wrap',
+            }}>
+              {post.body}
+            </p>
+          )}
+
+          {post.type === 'event' && (post.event_date || post.event_time || post.event_location) && (
+            <div style={{
+              marginTop: 9,
+              padding: '9px 10px',
+              borderRadius: '50%',
+              background: '#F8F8F9',
+              fontSize: 13.8,
+              color: T.ink2,
+              lineHeight: 1.5,
+            }}>
+              {post.event_date && <div><strong>Date:</strong> {post.event_date}</div>}
+              {post.event_time && <div><strong>Time:</strong> {post.event_time}</div>}
+              {post.event_location && <div><strong>Place:</strong> {post.event_location}</div>}
+            </div>
+          )}
+        </div>
+
+        {images.length > 0 && (
+          <div style={{ display: 'grid', gap: 6, padding: '0 14px 14px' }}>
+            {images.slice(0, 4).map((url: string, i: number) => (
+              <button
+                key={`${url}-${i}`}
+                type="button"
+                onClick={() => setOpenImage(url)}
+                aria-label="Open image"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: 0,
+                  margin: 0,
+                  border: 'none',
+                  background: 'transparent',
+                  cursor: 'zoom-in',
+                  fontFamily: 'inherit',
+                  lineHeight: 0,
+                }}
+              >
+                <img
+                  src={url}
+                  alt=""
+                  style={{
+                    width: '100%',
+                    maxHeight: 260,
+                    objectFit: 'cover',
+                    display: 'block',
+                    borderRadius: 13,
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </article>
+
+      {openImage && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpenImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            width: '100vw',
+            height: '100dvh',
+            minHeight: '100svh',
+            background: '#101114',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px)',
+            boxSizing: 'border-box',
+          }}
+        >
+          <button
+            type="button"
+            aria-label="Close image"
+            onClick={(event) => {
+              event.stopPropagation()
+              setOpenImage(null)
+            }}
+            style={{
+              position: 'fixed',
+              top: 'calc(12px + env(safe-area-inset-top, 0px))',
+              right: 12,
+              zIndex: 10000,
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.18)',
+              background: 'rgba(0,0,0,0.45)',
+              color: '#FFFFFF',
+              fontSize: 22,
+              lineHeight: 1,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            ×
+          </button>
+
+          <img
+            src={openImage}
+            alt=""
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
+        </div>
+      )}
+    </>
+  )
+}
+

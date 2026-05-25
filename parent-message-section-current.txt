@@ -1,0 +1,959 @@
+{classSpaceTab === 'messages' && (
+            <>
+              <MessageThreadPersonHeader
+                name={teacher?.name || teacher?.display_name || 'Teacher'}
+                subtitle={teacher?.class_name ? `${teacher?.grade || 'Class'} · ${teacher.class_name}` : teacher?.grade || 'Teacher messages'}
+                imageUrl={teacher?.photo_url || teacher?.avatar_url || teacher?.profile_photo_url}
+                fallback="T"
+              />
+
+          <div ref={threadScrollRef}
+            onTouchStart={() => { messageUserInteractedRef.current = true }}
+            onWheel={() => { messageUserInteractedRef.current = true }}
+            style={{
+            flex: 1,
+            overflowY: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            minHeight: 0,
+            overscrollBehavior: 'contain',
+            padding: '10px 0 190px',
+          }}>
+            {threadLoading && threadItems.length === 0 ? (
+              <ConversationLoading />
+            ) : threadItems.length === 0 ? (
+              <EmptyConversation teacher={teacher} />
+            ) : (
+              threadItems.map((item, index) => {
+                if (item.kind === 'report') {
+                  return (
+                    <ReportThreadCard
+                      key={`report-${item.data.id}-${index}`}
+                      report={item.data}
+                      teacher={teacher}
+                    />
+                  )
+                }
+
+                return (
+                  <MessageRow
+                    key={`msg-${item.data.id}-${index}`}
+                    update={item.data}
+                    teacher={teacher}
+                    onChanged={() => loadThread(teacher.id)}
+                  />
+                )
+              })
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          <div ref={composerDockRef} className="parent-message-composer-dock teacher-like-composer-dock parent-message-composer-dock premium-message-composer-dock sc-message-composer-dock sc-parent-composer-dock" style={{
+            flexShrink: 0,
+              position: 'sticky',
+            bottom: 0,
+            zIndex: 80,
+            background: T.bg,
+            borderTop: `1px solid ${T.border}`,
+                                    padding: '8px 12px calc(12px + env(safe-area-inset-bottom, 0px))',
+          }}>
+            <AttachmentPreviewTray
+              attachment={attachment}
+              onRemove={() => setAttachment(null)}
+            />
+
+            <div className="sc-message-composer-shell sc-parent-composer-shell" style={{
+              minHeight: 52,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              background: T.white,
+              border: `1px solid ${T.border}`,
+              borderRadius: 22,
+              padding: '7px 7px 7px 12px',
+              boxShadow: '0 10px 28px rgba(0,0,0,0.055)',
+            }}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const f = e.target.files?.[0]
+                  if (f) handlePickAttachment(f)
+                  e.currentTarget.value = ''
+                }}
+              />
+
+              <button
+                type="button"
+                aria-label="Attach file"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingAttachment}
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: attachment ? '#EAF1FF' : '#F4F4F6',
+                  color: attachment ? T.blue : T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: uploadingAttachment ? 'wait' : 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <Paperclip size={16} strokeWidth={2.1} />
+              </button>
+
+              <textarea
+                ref={messageTextareaRef}
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    sendMessage()
+                  }
+                }}
+                rows={1}
+                placeholder="Message"
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  resize: 'none',
+                  background: 'transparent',
+                  color: T.ink,
+                  fontSize: 16,
+                  lineHeight: 1.45,
+                  minHeight: 22,
+                  maxHeight: 92,
+                  overflowY: 'auto',
+                  fontFamily: 'inherit',
+                  padding: '5px 0',
+                }}
+              />
+
+              <button
+                onClick={sendMessage}
+                disabled={(!message.trim() && !attachment) || sending}
+                aria-label="Send"
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: (message.trim() || attachment) && !sending ? T.ink : '#D4D4D8',
+                  color: T.white,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: (message.trim() || attachment) && !sending ? 'pointer' : 'not-allowed',
+                  flexShrink: 0,
+                }}
+              >
+                <Send size={16} strokeWidth={2.2} />
+              </button>
+            </div>
+          </div>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
+
+function MessageSpaceIntro({ teacher, reportsCount = 0, onOpenLife, onOpenReports }: any) {
+  const { hidden, dismiss } = useDismissibleClassGuide(`sc-messages-guide:${teacher?.id || 'unknown'}`)
+
+  if (hidden) return null
+
+  return (
+    <section style={{
+      margin: '8px 14px 8px',
+      padding: 10,
+      borderRadius: 16,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 9,
+      }}>
+        <div style={{
+          width: 26,
+          height: 26,
+          borderRadius: '50%',
+          background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+          color: T.ink2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 13.2,
+          fontWeight: 850,
+          flexShrink: 0,
+          marginTop: 1,
+        }}>
+          {!teacher.photo_url && teacher.name?.charAt(0)}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.2,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            Private teacher inbox
+          </p>
+          <p style={{
+            fontSize: 13.2,
+            color: T.ink3,
+            margin: '-2px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} stays connected to class life.
+          </p>
+        </div>
+
+        <GuideDismissButton onClick={dismiss} />
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: reportsCount > 0 ? '1fr 1fr' : '1fr',
+        gap: 7,
+        marginTop: 9,
+      }}>
+        <button type="button" onClick={onOpenLife} style={messageMiniActionBtn}>
+          View Class Life
+        </button>
+
+        {reportsCount > 0 && (
+          <button type="button" onClick={onOpenReports} style={messageMiniActionBtn}>
+            Reports {reportsCount}
+          </button>
+        )}
+      </div>
+    </section>
+  )
+}
+
+const messageMiniActionBtn: any = {
+  height: 38,
+  borderRadius: 999,
+  border: `1px solid ${T.border}`,
+  background: '#F8F8FB',
+  color: T.ink2,
+  fontSize: 13.8,
+  fontWeight: 850,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+
+function useDismissibleClassGuide(key: string) {
+  const [hidden, setHidden] = useState(false)
+
+  useEffect(() => {
+    try {
+      setHidden(localStorage.getItem(key) === '1')
+    } catch {}
+  }, [key])
+
+  const dismiss = () => {
+    setHidden(true)
+    try { localStorage.setItem(key, '1') } catch {}
+  }
+
+  return { hidden, dismiss }
+}
+
+function GuideDismissButton({ onClick }: any) {
+  return (
+    <button
+      type="button"
+      aria-label="Hide guide"
+      onClick={onClick}
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: '50%',
+        border: `1px solid ${T.border}`,
+        background: '#F8F8FB',
+        color: T.ink3,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        flexShrink: 0,
+        fontFamily: 'inherit',
+        fontSize: 14,
+        lineHeight: 1,
+      }}
+    >
+      ×
+    </button>
+  )
+}
+
+
+function ClassSpaceTabs({ active, onChange, reportsCount = 0 }: any) {
+  const tabs = [
+    { key: 'life', label: 'Class Life' },
+    { key: 'messages', label: 'Messages' },
+    { key: 'reports', label: reportsCount ? `Reports ${reportsCount}` : 'Reports' },
+  ]
+
+  return (
+    <SharedClassSpaceTabs
+      tabs={tabs}
+      active={active}
+      onChange={onChange}
+      columns={3}
+    />
+  )
+}
+
+function ClassLifePanel({ teacher, posts, loading, reports, onOpenMessages, onOpenReports }: any) {
+  return (
+    <div style={{
+      flex: 1,
+      minHeight: 0,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
+    }}>
+      <ClassSpaceWelcome
+        teacher={teacher}
+        reports={reports}
+        onOpenMessages={onOpenMessages}
+        onOpenReports={onOpenReports}
+      />
+
+      {loading ? (
+        <ClassLifeSkeleton />
+      ) : posts.length === 0 ? (
+        <ClassLifeEmpty teacher={teacher} onOpenMessages={onOpenMessages} />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {posts.map((post: any) => (
+            <ClassLifePostCard key={post.id} post={post} teacher={teacher} />
+          ))}
+        </div>
+      )}
+
+      <PoweredByBar />
+    </div>
+  )
+}
+
+function ClassSpaceWelcome({ teacher, reports, onOpenMessages, onOpenReports }: any) {
+  const { hidden, dismiss } = useDismissibleClassGuide(`sc-class-life-guide:${teacher?.id || 'unknown'}`)
+
+  if (hidden) return null
+
+  return (
+    <section style={{
+      padding: 14,
+      borderRadius: 18,
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      marginBottom: 10,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 10,
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.2,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Today in {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''}
+          </p>
+
+          <p style={{
+            fontSize: 13.8,
+            color: T.ink3,
+            margin: '2px 0 10px',
+            lineHeight: 1.45,
+          }}>
+            Class memories, teacher updates, reports and communication stay together here.
+          </p>
+        </div>
+
+        <GuideDismissButton onClick={dismiss} />
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
+        <button type="button" onClick={onOpenMessages} style={classSpaceActionBtn}>
+          Message teacher
+        </button>
+        <button type="button" onClick={onOpenReports} style={classSpaceActionBtn}>
+          Reports {reports?.length ? `(${reports.length})` : ''}
+        </button>
+      </div>
+    </section>
+  )
+}
+
+function ClassLifePostCard({ post, teacher }: any) {
+  const images = Array.isArray(post.image_urls)
+    ? post.image_urls
+    : post.image_url
+      ? [post.image_url]
+      : []
+
+  const typeLabel =
+    post.type === 'event' ? 'Event' :
+    post.type === 'moment' ? 'Moment' :
+    post.type === 'document' ? 'Document' :
+    'Update'
+
+  return (
+    <article style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+      overflow: 'hidden',
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{ padding: 12 }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 9,
+          marginBottom: post.body ? 8 : 0,
+        }}>
+          <div style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+            color: T.ink2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 13.8,
+            fontWeight: 850,
+            flexShrink: 0,
+          }}>
+            {!teacher.photo_url && teacher.name?.charAt(0)}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 13.8,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.name}
+            </p>
+            <p style={{
+              fontSize: 13.2,
+              color: T.ink3,
+              margin: '-2px 0 0',
+            }}>
+              {typeLabel} · {relTime(post.created_at || post.published_at)}
+            </p>
+          </div>
+        </div>
+
+        {post.body && (
+          <p style={{
+            fontSize: 14,
+            lineHeight: 1.5,
+            color: T.ink2,
+            margin: 0,
+            whiteSpace: 'pre-wrap',
+          }}>
+            {post.body}
+          </p>
+        )}
+      </div>
+
+      {images.length > 0 && (
+        <div style={{
+          display: 'grid',
+          gap: 1,
+          gridTemplateColumns: images.length > 1 ? '1fr 1fr' : '1fr',
+        }}>
+          {images.slice(0, 4).map((url: string, index: number) => (
+            <img
+              key={`${url}-${index}`}
+              src={url}
+              alt=""
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: images.length > 1 ? 150 : 220,
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </article>
+  )
+}
+
+function ReportsPanel({ teacher, reports, onOpenMessages }: any) {
+  const latest = reports?.length ? reports[reports.length - 1] : null
+  const { hidden: reportsGuideHidden, dismiss: dismissReportsGuide } = useDismissibleClassGuide(`sc-reports-guide:${teacher?.id || 'unknown'}`)
+
+  return (
+    <div style={{
+      flex: 1,
+      minHeight: 0,
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      padding: '10px 14px calc(var(--sc-bottom-extra, 12px) + env(safe-area-inset-bottom))',
+    }}>
+      {!reportsGuideHidden && (
+      <section style={{
+        padding: 12,
+        borderRadius: 18,
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        marginBottom: 10,
+        boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 30,
+            height: 30,
+            borderRadius: '50%',
+            background: '#F0F4FF',
+            color: T.blue,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <FileText size={15} strokeWidth={1.8} />
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 13.2,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              Reports and progress
+            </p>
+            <p style={{
+              fontSize: 13.2,
+              color: T.ink3,
+              margin: '-2px 0 0',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+              {teacher.grade}{teacher.class_name ? ` · ${teacher.class_name}` : ''} · child progress record
+            </p>
+          </div>
+
+          <GuideDismissButton onClick={dismissReportsGuide} />
+        </div>
+
+        {latest && (
+          <div style={{
+            marginTop: 10,
+            padding: '9px 10px',
+            borderRadius: 14,
+            background: '#F8F8FB',
+            border: `1px solid ${T.border}`,
+          }}>
+            <p style={{
+              fontSize: 13.2,
+              fontWeight: 850,
+              color: T.ink,
+              margin: 0,
+            }}>
+              Latest report ready
+            </p>
+            <p style={{
+              fontSize: 13.2,
+              color: T.ink3,
+              margin: '-1px 0 0',
+            }}>
+              {formatWeek(latest.week_starting || latest.created_at || latest.published_at)}
+            </p>
+          </div>
+        )}
+      </section>
+      )}
+
+      {reports.length === 0 ? (
+        <section style={{
+          padding: '46px 24px',
+          textAlign: 'center',
+          background: T.white,
+          border: `1px solid ${T.border}`,
+          borderRadius: 18,
+          boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+        }}>
+          <FileText size={22} color={T.ink3} strokeWidth={1.6} />
+          <p style={{
+            fontSize: 13.2,
+            color: T.ink,
+            fontWeight: 850,
+            margin: '10px 0 4px',
+          }}>
+            No reports yet
+          </p>
+          <p style={{
+            fontSize: 13.8,
+            color: T.ink3,
+            lineHeight: 1.45,
+            margin: 0,
+          }}>
+            Reports from {teacher.name} will appear here when they are published.
+          </p>
+          <button type="button" onClick={onOpenMessages} style={{
+            ...classSpaceActionBtn,
+            width: '100%',
+            marginTop: 14,
+          }}>
+            Message teacher
+          </button>
+        </section>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[...reports].reverse().map((report: any, index: number) => (
+            <ClassSpaceReportCard
+              key={`report-card-${report.id || index}`}
+              report={report}
+              teacher={teacher}
+            />
+          ))}
+        </div>
+      )}
+
+      <PoweredByBar />
+    </div>
+  )
+}
+
+function ClassSpaceReportCard({ report, teacher }: any) {
+  const scoreValues = Object.values(report.scores || {})
+  const avg = scoreValues.length
+    ? scoreValues.reduce((a: number, b: any) => a + Number(b || 0), 0) / scoreValues.length
+    : 0
+
+  const scoreLabel =
+    avg >= 4 ? 'Strong progress' :
+    avg >= 3 ? 'On track' :
+    avg > 0 ? 'Needs support' :
+    'Progress update'
+
+  return (
+    <article style={{
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+      padding: 12,
+      boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+      }}>
+        <div style={{
+          width: 36,
+          height: 40,
+          borderRadius: '50%',
+          background: '#F0F4FF',
+          color: T.blue,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <FileText size={16} strokeWidth={1.8} />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.8,
+            fontWeight: 850,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            Weekly Report
+          </p>
+          <p style={{
+            fontSize: 13.2,
+            color: T.ink3,
+            margin: '-2px 0 0',
+          }}>
+            {formatWeek(report.week_starting || report.created_at || report.published_at)}
+          </p>
+        </div>
+
+        <div style={{
+          minWidth: 44,
+          height: 38,
+          padding: '0 9px',
+          borderRadius: 999,
+          background: '#F8F8FB',
+          border: `1px solid ${T.border}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: T.ink,
+          fontSize: 13.8,
+          fontWeight: 900,
+          flexShrink: 0,
+        }}>
+          {avg ? avg.toFixed(1) : '—'}
+        </div>
+      </div>
+
+      <div style={{
+        display: 'inline-flex',
+        marginTop: 10,
+        padding: '5px 9px',
+        borderRadius: 999,
+        background: '#F4F6FB',
+        color: T.ink2,
+        fontSize: 13.2,
+        fontWeight: 850,
+      }}>
+        {scoreLabel}
+      </div>
+
+      {report.comment && (
+        <p style={{
+          fontSize: 13.2,
+          color: T.ink2,
+          lineHeight: 1.48,
+          margin: '9px 0 0',
+        }}>
+          {report.comment}
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={() => { window.location.href = '/reports' }}
+        style={{
+          width: '100%',
+          height: 40,
+          marginTop: 11,
+          border: 'none',
+          borderRadius: 999,
+          background: T.ink,
+          color: T.white,
+          fontSize: 13.2,
+          fontWeight: 850,
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        View full report
+      </button>
+    </article>
+  )
+}
+
+
+function ClassLifeEmpty({ teacher, onOpenMessages }: any) {
+  return (
+    <section style={{
+      padding: '46px 24px',
+      textAlign: 'center',
+      background: T.white,
+      border: `1px solid ${T.border}`,
+      borderRadius: 18,
+    }}>
+      <div style={{
+        width: 46,
+        height: 46,
+        borderRadius: '50%',
+        background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : '#F0F0F4',
+        margin: '0 auto 12px',
+      }} />
+      <p style={{
+        fontSize: 14.2,
+        color: T.ink,
+        fontWeight: 850,
+        margin: '0 0 4px',
+      }}>
+        Class Life will appear here
+      </p>
+      <p style={{
+        fontSize: 13.8,
+        color: T.ink3,
+        lineHeight: 1.45,
+        margin: 0,
+      }}>
+        Updates, memories and documents from {teacher.name} will live here.
+      </p>
+      <button type="button" onClick={onOpenMessages} style={{
+        ...classSpaceActionBtn,
+        width: '100%',
+        marginTop: 14,
+      }}>
+        Message teacher
+      </button>
+    </section>
+  )
+}
+
+function ClassLifeSkeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {[0, 1, 2].map((i) => (
+        <div key={i} style={{
+          padding: 12,
+          borderRadius: 18,
+          background: T.white,
+          border: `1px solid ${T.border}`,
+        }}>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'center' }}>
+            <SkeletonBlock style={{ width: 28, height: 28, borderRadius: '50%' }} />
+            <div style={{ flex: 1 }}>
+              <SkeletonBlock style={{ width: '42%', height: 10, borderRadius: 999, marginBottom: 7 }} />
+              <SkeletonBlock style={{ width: '28%', height: 8, borderRadius: 999 }} />
+            </div>
+          </div>
+          <SkeletonBlock style={{ width: '92%', height: 10, borderRadius: 999, marginTop: 14 }} />
+          <SkeletonBlock style={{ width: '68%', height: 10, borderRadius: 999, marginTop: 7 }} />
+          {i === 1 && (
+            <SkeletonBlock style={{ width: '100%', height: 150, borderRadius: 14, marginTop: 12 }} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PoweredByBar() {
+  return (
+    <p style={{
+      fontSize: 13.8,
+      color: T.ink3,
+      textAlign: 'center',
+      margin: '14px 0 0',
+      paddingBottom: 0,
+      opacity: 0.7,
+    }}>
+      Powered by School Connect
+    </p>
+  )
+}
+
+const classSpaceActionBtn: any = {
+  height: 38,
+  borderRadius: 999,
+  border: `1px solid ${T.border}`,
+  background: '#F8F8FB',
+  color: T.ink2,
+  fontSize: 13.2,
+  fontWeight: 850,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+
+// message-thread-alignment-repair-v1
+function MessageThreadPersonHeader({ name, subtitle, imageUrl, fallback }: any) {
+  const initials = String(name || fallback || 'M')
+    .split(' ')
+    .map((part: string) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <div
+      className="message-thread-person-header"
+      style={{
+        flexShrink: 0,
+        margin: '0 14px 8px',
+        padding: '9px 10px',
+        borderRadius: 18,
+        background: T.white,
+        border: `1px solid ${T.border}`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        boxShadow: '0 8px 22px rgba(0,0,0,0.035)',
+      }}
+    >
+      <div style={{
+        width: 38,
+        height: 38,
+        borderRadius: 14,
+        overflow: 'hidden',
+        background: imageUrl ? `url(${imageUrl}) center / cover` : '#F0F0F4',
+        color: T.ink2,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 12.8,
+        fontWeight: 900,
+        flexShrink: 0,
+      }}>
+        {!imageUrl && initials}
+      </div>
+
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <p style={{
+          fontSize: 13.8,
+          fontWeight: 900,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.015em',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {name || 'Messages'}
+        </p>
+
+        <p style={{
+          fontSize: 12.1,
+          color: T.ink3,
+          margin: '2px 0 0',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}>
+          {subtitle || 'Conversation'}
+        </p>
+      </div>
+    </div>
+  )
+}
+

@@ -1,0 +1,548 @@
+/* teacher-white-alignment-category-v2 */
+/* white-premium-app-theme-v1 */
+/* parent-premium-theme-pass-v1 */
+/* school-connect-white-app-background-v15 */
+/* School Connect mobile app foundation */
+:root {
+  --sc-safe-top: env(safe-area-inset-top, 0px);
+  --sc-safe-right: env(safe-area-inset-right, 0px);
+  --sc-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --sc-safe-left: env(safe-area-inset-left, 0px);
+  --sc-mobile-bg: #FFFFFF;
+  --sc-ink: #262626;
+  --sc-ink-2: #5F6268;
+  --sc-ink-3: #9A9CA3;
+  --sc-border: rgba(0,0,0,0.06);
+  --sc-soft: #F8F8F9;
+  --sc-primary: #2B2B2F;
+
+  /*
+    Message composer should use the iPhone safe-area instead of floating far above it.
+    The thread reserve only needs to protect the compact composer height.
+  */
+  --sc-bottom-extra: 12px;
+  --sc-compose-bottom: 0px;
+  --sc-thread-bottom: 42px;
+}
+
+html {
+  background: var(--sc-mobile-bg);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--sc-mobile-bg);
+  overscroll-behavior-y: none;
+  min-height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  body {
+    min-height: 100dvh;
+  }
+}
+
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
+
+button,
+input,
+textarea,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+textarea,
+input {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@media (display-mode: standalone) {
+  :root {
+    --sc-bottom-extra: 14px;
+    --sc-compose-bottom: 0px;
+    --sc-thread-bottom: 40px;
+  }
+
+  html,
+  body {
+    background: var(--sc-mobile-bg);
+  }
+}
+
+
+/* teacher-parent-safe-strip-bg-v1
+   Keep installed-bookmark/PWA bottom cut area the same colour as School Connect pages. */
+html,
+body {
+  background-color: #FFFFFF !important;
+}
+
+@media (max-width: 640px) {
+  body::after {
+    background: #FFFFFF !important;
+  }
+}
+
+
+/* message-composer-safe-area-bg-v1 */
+html,
+body {
+  background-color: #FFFFFF !important;
+}
+
+.premium-message-composer-dock,
+.parent-message-composer-dock,
+.teacher-message-composer-dock {
+  background-color: #FFFFFF !important;
+}
+
+/* ui-alignment-shapes-pass-v1
+   One focused style layer for Parent/Teacher message composer shape alignment.
+   This does not change APIs or logic. */
+html,
+body {
+  background: #FFFFFF !important;
+}
+
+.sc-message-composer-dock {
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 90 !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell {
+  min-height: 52px !important;
+  border-radius: 22px !important;
+  padding: 7px 7px 7px 12px !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.055) !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell textarea {
+  min-height: 36px !important;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  resize: none !important;
+}
+
+.sc-message-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.sc-message-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+.sc-message-composer-dock *,
+.sc-message-composer-shell * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 640px) {
+  .sc-message-composer-dock {
+    left: 0 !important;
+    right: 0 !important;
+  }
+}
+
+/* ui-polish-audit-fixes-v1
+   Focused UI polish layer for alignment, soft actions, badges and quiet report buttons. */
+.sc-parent-ui-root,
+.sc-teacher-ui-root {
+  color: #262626;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sc-parent-ui-root button,
+.sc-teacher-ui-root button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sc-soft-report-button {
+  background: #F4F4F6 !important;
+  color: #5F6268 !important;
+  border: 1px solid rgba(0,0,0,0.07) !important;
+  box-shadow: none !important;
+  min-height: 38px !important;
+  border-radius: 999px !important;
+  font-weight: 650 !important;
+}
+
+.sc-soft-report-button svg {
+  color: #5F6268 !important;
+}
+
+.sc-notification-badge,
+.sc-parent-ui-root [data-notification-badge],
+.sc-teacher-ui-root [data-notification-badge] {
+  min-width: 18px !important;
+  height: 18px !important;
+  padding: 0 5px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.sc-parent-ui-root .sc-muted-copy,
+.sc-teacher-ui-root .sc-muted-copy {
+  color: #9A9CA3 !important;
+  font-weight: 650 !important;
+}
+
+.sc-parent-ui-root .sc-section-title,
+.sc-teacher-ui-root .sc-section-title {
+  font-weight: 650 !important;
+  letter-spacing: -0.025em !important;
+}
+
+
+
+/* message-thread-alignment-repair-v1 */
+.message-thread-person-header {
+  position: relative;
+  z-index: 5;
+}
+
+.sc-message-composer-dock {
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 95 !important;
+}
+
+.sc-message-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-message-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  align-self: center !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-message-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.sc-message-composer-shell textarea {
+  align-self: center !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+}
+
+
+/* teacher-thread-match-parent-ui-v1 */
+.teacher-message-composer-dock.sc-message-composer-dock {
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 95 !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+
+/* teacher-thread-copy-parent-template-v2
+   Teacher thread now uses the same approved message banner and safe-area composer pattern as Parent. */
+.teacher-thread-parent-template-header {
+  background: #FFFFFF !important;
+}
+
+.teacher-thread-person-header {
+  box-sizing: border-box !important;
+}
+
+.teacher-message-composer-dock.sc-message-composer-dock {
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index: 95 !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+
+/* message-scroll-stabilize-teacher-composer-v1
+   Keep approved composer/banner styling while stabilizing message thread scrolling. */
+.teacher-thread-parent-template-header {
+  background: #FFFFFF !important;
+}
+
+.teacher-message-composer-dock.sc-message-composer-dock {
+  display: block !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 95 !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+
+/* message-threads-free-scroll-teacher-composer-v2
+   Threads open at the latest message once, then behave like a free-scrolling feed. */
+.teacher-message-composer-dock.sc-message-composer-dock {
+  display: block !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 95 !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+
+/* teacher-composer-visible-dock-v3
+   Force the Teacher thread composer to remain visible as a bottom flex child,
+   using the same approved safe-area dock look as Parent Messages. */
+.teacher-message-composer-dock.sc-message-composer-dock {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  bottom: auto !important;
+  z-index: 120 !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+  border-radius: 22px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  padding: 0 !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.sc-teacher-composer-shell textarea {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+  align-self: center !important;
+}
+
+
+/* teacher-composer-fixed-visible-dock-v4
+   Teacher composer was present in JSX but could render below the usable viewport.
+   This forces it into a fixed visible safe-area dock with the same measurements as Parent. */
+.teacher-message-composer-dock.sc-message-composer-dock {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: 0 !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  z-index: 999 !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid rgba(0,0,0,0.07) !important;
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell {
+  min-height: 52px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 7px 7px 12px !important;
+  border-radius: 22px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-teacher-composer-shell button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  padding: 0 !important;
+}
+
+.sc-teacher-composer-shell button svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+}
+
+.sc-teacher-composer-shell textarea {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  padding: 9px 0 !important;
+  align-self: center !important;
+}

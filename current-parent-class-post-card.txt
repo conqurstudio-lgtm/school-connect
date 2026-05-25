@@ -1,0 +1,13 @@
+function ClassLifePostCard({ post, teacher }: any) {
+  return (
+    <UnifiedClassLifePostCard
+      post={post}
+      mode="parent"
+      authorName={teacher?.name || teacher?.full_name || 'Teacher'}
+      authorPhotoUrl={teacher?.photo_url || teacher?.avatar_url || null}
+      schoolId={post?.school_id || teacher?.school_id}
+      canReact
+    />
+  )
+}
+
