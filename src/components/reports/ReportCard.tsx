@@ -83,7 +83,7 @@ function ExcellentLottie() {
   return (
     <iframe
       title="Excellent report animation"
-      src="https://lottie.host/embed/13350590-8042-4230-abbd-80ad2946c2d4/AdBugpUttk.lottie"
+      src="https://lottie.host/embed/ac5b63f2-171a-48a3-afc7-db244e3b9766/E6S0SBJleh.lottie"
       style={{
         width: 72,
         height: 72,

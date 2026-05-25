@@ -166,6 +166,30 @@ export default function ParentMagicReportPage() {
           position: 'relative',
           zIndex: 10,
         }}>
+        <div style={{
+          flexShrink: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 58,
+          marginBottom: 2,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}>
+          <iframe
+            title="Weekly report header animation"
+            src="https://lottie.host/embed/e470db9b-42fb-4a33-af38-29232edfef77/skj4jI35E9.lottie"
+            style={{
+              width: 88,
+              height: 88,
+              border: 'none',
+              display: 'block',
+              marginTop: -12,
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 38,
