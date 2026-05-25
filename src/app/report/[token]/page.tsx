@@ -189,7 +189,7 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(14px + env(safe-area-inset-top, 0px)) 18px 12px',
+          padding: 'calc(7px + env(safe-area-inset-top, 0px)) 16px 6px',
           background: 'rgba(255,255,255,0.98)',
           position: 'relative',
           zIndex: 10,
@@ -208,8 +208,8 @@ export default function ParentMagicReportPage() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              width: 38,
-              height: 38,
+              width: 34,
+              height: 34,
               borderRadius: 14,
               background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
               border: `1px solid ${T.border}`,
@@ -226,18 +226,18 @@ export default function ParentMagicReportPage() {
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{
-                fontSize: 13.5,
+                fontSize: 13,
                 fontWeight: 620,
                 color: T.ink,
                 margin: 0,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                lineHeight: 1.08,
+                lineHeight: 1.02,
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <p style={{ fontSize: 12, color: T.ink3, margin: '0', lineHeight: 1.1 }}>
+              <p style={{ fontSize: 11.5, color: T.ink3, margin: '0', lineHeight: 1.05 }}>
                 Weekly reports
               </p>
             </div>
@@ -252,19 +252,19 @@ export default function ParentMagicReportPage() {
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'none',
-          padding: '18px 0 8px',
+          padding: '8px 0 6px',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
 
         <footer style={{
           flexShrink: 0,
-          padding: '9px 18px calc(14px + env(safe-area-inset-bottom, 0px))',
+          padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
           textAlign: 'center',
           background: 'rgba(255,255,255,0.98)',
         }}>
           <p style={{
-            fontSize: 11,
+            fontSize: 10.5,
             color: '#CCCCCC',
             margin: 0,
             letterSpacing: '0.04em',
