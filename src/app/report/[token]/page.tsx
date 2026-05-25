@@ -24,7 +24,14 @@ function LoadingState() {
           40% { transform: scale(1); opacity: 1; }
         }
       `}</style>
-      <section style={card}>
+
+      <div style={{
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -48,10 +55,11 @@ function LoadingState() {
             />
           ))}
         </div>
+
         <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>
           Opening weekly report...
         </p>
-      </section>
+      </div>
     </main>
   )
 }
