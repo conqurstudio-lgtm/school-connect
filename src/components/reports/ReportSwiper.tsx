@@ -28,6 +28,7 @@ export function ReportSwiper({ reports, childName }: Props) {
 
   const [index, setIndex] = useState(latestIndex)
   const [drag, setDrag] = useState(0)
+  const [animationRound, setAnimationRound] = useState(0)
 
   const startX = useRef<number | null>(null)
   const startY = useRef<number | null>(null)
@@ -37,9 +38,18 @@ export function ReportSwiper({ reports, childName }: Props) {
 
   useEffect(() => {
     setIndex(Math.max(0, total - 1))
+    setAnimationRound(round => round + 1)
   }, [total])
 
   const clamp = (n: number) => Math.max(0, Math.min(total - 1, n))
+
+  const moveTo = (nextIndex: number) => {
+    const next = clamp(nextIndex)
+    if (next === index) return
+
+    setIndex(next)
+    setAnimationRound(round => round + 1)
+  }
 
   const lockPageScroll = () => {
     document.documentElement.style.overscrollBehavior = 'none'
@@ -97,11 +107,11 @@ export function ReportSwiper({ reports, childName }: Props) {
     if (gesture.current === 'horizontal') {
       // Older reports are on the LEFT side of the latest report.
       if (deltaX.current > threshold && index > 0) {
-        setIndex(i => clamp(i - 1))
+        moveTo(index - 1)
       }
 
       if (deltaX.current < -threshold && index < total - 1) {
-        setIndex(i => clamp(i + 1))
+        moveTo(index + 1)
       }
     }
 
@@ -164,29 +174,37 @@ export function ReportSwiper({ reports, childName }: Props) {
           width: '100%',
           maxWidth: '100%',
         }}>
-          {(visualReports.length ? visualReports : []).map((report: any) => (
-            <div key={report.id} style={{
-              flex: '0 0 100%',
-              width: '100%',
-              maxWidth: '100%',
-              overflowX: 'hidden',
-              overflowY: 'visible',
-              boxSizing: 'border-box',
-              padding: '0 22px 12px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-            }}>
-              <div style={{
+          {(visualReports.length ? visualReports : []).map((report: any, slideIndex: number) => {
+            const isActive = slideIndex === index
+
+            return (
+              <div key={report.id} style={{
+                flex: '0 0 100%',
                 width: '100%',
-                maxWidth: 430,
+                maxWidth: '100%',
                 overflowX: 'hidden',
                 overflowY: 'visible',
+                boxSizing: 'border-box',
+                padding: '0 22px 12px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
               }}>
-                <ReportCard report={report} childName={childName} />
+                <div style={{
+                  width: '100%',
+                  maxWidth: 430,
+                  overflowX: 'hidden',
+                  overflowY: 'visible',
+                }}>
+                  <ReportCard
+                    key={isActive ? `${report.id}-active-${animationRound}` : `${report.id}-idle`}
+                    report={report}
+                    childName={childName}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -202,7 +220,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           {visualReports.map((_, i) => (
             <button
               key={i}
-              onClick={() => setIndex(i)}
+              onClick={() => moveTo(i)}
               aria-label={`Report ${i + 1}`}
               style={{
                 width: i === index ? 18 : 6,
@@ -221,7 +239,7 @@ export function ReportSwiper({ reports, childName }: Props) {
 
       {total > 1 && index > 0 && (
         <button
-          onClick={() => setIndex(i => clamp(i - 1))}
+          onClick={() => moveTo(index - 1)}
           aria-label="Older report"
           style={arrowStyle('left')}
         >
@@ -231,7 +249,7 @@ export function ReportSwiper({ reports, childName }: Props) {
 
       {total > 1 && index < total - 1 && (
         <button
-          onClick={() => setIndex(i => clamp(i + 1))}
+          onClick={() => moveTo(index + 1)}
           aria-label="Newer report"
           style={arrowStyle('right')}
         >
