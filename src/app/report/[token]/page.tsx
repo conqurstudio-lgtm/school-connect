@@ -127,11 +127,19 @@ export default function ParentMagicReportPage() {
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
 
-  const reports = (payload.reports?.length ? payload.reports : [payload.report]).map((report: any) => ({
-    ...report,
-    child_name: childName,
-    teacher_name: teacherName,
-  }))
+  const reports = (payload.reports?.length ? payload.reports : [payload.report])
+    .slice()
+    .sort((a: any, b: any) => {
+      const aDate = new Date(a.week_starting || a.published_at || a.created_at || 0).getTime()
+      const bDate = new Date(b.week_starting || b.published_at || b.created_at || 0).getTime()
+      return bDate - aDate
+    })
+    .map((report: any, index: number) => ({
+      ...report,
+      child_name: childName,
+      teacher_name: teacherName,
+      display_position: index === 0 ? 'latest' : 'previous',
+    }))
 
   return (
     <main style={{
@@ -189,7 +197,7 @@ export default function ParentMagicReportPage() {
                 {school?.name || 'School Connect'}
               </p>
               <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
-                Latest update + previous results
+                Latest report first · Swipe left for older weeks
               </p>
             </div>
 
