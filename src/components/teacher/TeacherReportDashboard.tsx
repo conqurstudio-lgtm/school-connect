@@ -3,12 +3,9 @@
 
 import { useEffect, useState } from 'react'
 import {
-  CheckCircle2,
   Copy,
   GraduationCap,
   LogOut,
-  Mail,
-  MessageCircle,
   Plus,
   Send,
   Trash2,
@@ -18,15 +15,15 @@ import {
 import toast from 'react-hot-toast'
 
 const T = {
-  ink: '#262626',
+  ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F8F8F9',
+  soft2: '#F4F5F5',
   white: '#FFFFFF',
   red: '#B42318',
-  green: '#1F9D55',
 }
 
 const inputStyle: any = {
@@ -52,6 +49,40 @@ const labelStyle: any = {
   margin: '0 0 6px',
 }
 
+const primaryButton: any = {
+  minHeight: 44,
+  borderRadius: 999,
+  border: 'none',
+  background: T.ink,
+  color: T.white,
+  fontSize: 13,
+  fontWeight: 620,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  padding: '0 15px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+const softButton: any = {
+  minHeight: 40,
+  borderRadius: 999,
+  border: `1px solid ${T.border}`,
+  background: T.white,
+  color: T.ink2,
+  fontSize: 13,
+  fontWeight: 620,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  padding: '0 13px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
 function initials(name?: string) {
   return String(name || '?')
     .split(' ')
@@ -71,21 +102,20 @@ function weekStartToday() {
 }
 
 function formatShortDate(value?: string | null) {
-  if (!value) return 'No reports yet'
+  if (!value) return 'No report yet'
   try {
     return new Date(value).toLocaleDateString('en-ZA', {
       month: 'short',
       day: 'numeric',
     })
   } catch {
-    return 'No reports yet'
+    return 'No report yet'
   }
 }
 
 export function TeacherReportDashboard({ initialSession = null, initialToken = '' }: any) {
   const [session, setSession] = useState(initialSession)
   const [loading, setLoading] = useState(!initialSession)
-  const [tab, setTab] = useState<'roster' | 'reports'>('roster')
   const [showAdd, setShowAdd] = useState(false)
   const [reportChild, setReportChild] = useState<any>(null)
 
@@ -118,62 +148,23 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     window.location.href = '/teacher'
   }
 
-  if (loading) {
-    return (
-      <main style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: T.bg,
-        fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-      }}>
-        <div style={{
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          border: `2px solid ${T.border}`,
-          borderTopColor: T.ink,
-          animation: 'spin 0.7s linear infinite',
-        }} />
-      </main>
-    )
-  }
+  if (loading) return <LoadingScreen />
 
   if (!session?.teacher?.id) {
     return (
-      <main style={{
-        minHeight: '100dvh',
-        background: T.bg,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-      }}>
-        <section style={{
-          width: '100%',
-          maxWidth: 360,
-          textAlign: 'center',
-          background: T.white,
-          border: `1px solid ${T.border}`,
-          borderRadius: 24,
-          padding: '34px 24px',
-        }}>
-          <GraduationCap size={30} color={T.ink3} />
-          <h1 style={{ fontSize: 20, fontWeight: 650, color: T.ink, margin: '14px 0 6px' }}>
-            Teacher link needed
-          </h1>
-          <p style={{ fontSize: 14, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-            Open the private teacher link shared by the school admin.
-          </p>
+      <main style={centerPage}>
+        <section style={emptyCard}>
+          <GraduationCap size={28} color={T.ink3} />
+          <h1 style={emptyTitle}>Teacher link needed</h1>
+          <p style={emptyText}>Open the private teacher link shared by the school admin.</p>
         </section>
       </main>
     )
   }
 
   const { teacher, school, children = [] } = session
-  const classLabel = `${teacher.grade || 'Class'}${teacher.class_name ? ` · ${teacher.class_name}` : ''}`
+  const classLabel = [teacher.grade, teacher.class_name].filter(Boolean).join(' · ') || 'Your class'
+  const hasLearners = children.length > 0
 
   return (
     <div style={{
@@ -194,22 +185,21 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 14px 10px',
-          borderBottom: `1px solid ${T.border}`,
-          background: 'rgba(255,255,255,0.98)',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          background: T.bg,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
-              width: 44,
-              height: 44,
-              borderRadius: 16,
+              width: 38,
+              height: 38,
+              borderRadius: 14,
               background: T.soft,
               border: `1px solid ${T.border}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: T.ink2,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: 650,
               flexShrink: 0,
             }}>
@@ -217,22 +207,23 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-              <h1 style={{
-                fontSize: 15,
+              <p style={{
+                fontSize: 13.5,
                 fontWeight: 620,
                 color: T.ink,
                 margin: 0,
-                letterSpacing: '-0.01em',
+                lineHeight: 1.08,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}>
-                {teacher.name}
-              </h1>
+                {teacher.name || 'Teacher'}
+              </p>
               <p style={{
-                fontSize: 12.5,
+                fontSize: 11.8,
                 color: T.ink3,
-                margin: '3px 0 0',
+                margin: '1px 0 0',
+                lineHeight: 1.1,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -244,9 +235,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             <button
               type="button"
               onClick={signOut}
+              aria-label="Sign out"
               style={{
-                width: 36,
-                height: 36,
+                width: 34,
+                height: 34,
                 borderRadius: 999,
                 border: `1px solid ${T.border}`,
                 background: T.white,
@@ -255,26 +247,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
+                flexShrink: 0,
               }}
-              aria-label="Sign out"
             >
-              <LogOut size={15} strokeWidth={1.8} />
+              <LogOut size={14} strokeWidth={1.8} />
             </button>
           </div>
-
-          <nav style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 7,
-            marginTop: 12,
-          }}>
-            <TabButton active={tab === 'roster'} onClick={() => setTab('roster')}>
-              Roster
-            </TabButton>
-            <TabButton active={tab === 'reports'} onClick={() => setTab('reports')}>
-              Weekly reports
-            </TabButton>
-          </nav>
         </header>
 
         <main style={{
@@ -282,80 +260,117 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '12px 14px calc(24px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
         }}>
           <section style={{
-            padding: 14,
-            borderRadius: 22,
-            background: T.soft,
-            border: `1px solid ${T.border}`,
-            marginBottom: 12,
+            padding: '20px 2px 18px',
+            textAlign: 'left',
           }}>
-            <p style={{ fontSize: 13.5, fontWeight: 650, color: T.ink, margin: 0 }}>
-              Friday report tracker
+            <p style={{
+              fontSize: 12,
+              color: T.ink3,
+              fontWeight: 650,
+              letterSpacing: '0.055em',
+              textTransform: 'uppercase',
+              margin: '0 0 6px',
+            }}>
+              Weekly reports
             </p>
-            <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
-              Add learners once, then send one simple weekly update to each parent by private WhatsApp link.
+
+            <h1 style={{
+              fontSize: 26,
+              lineHeight: 1.05,
+              fontWeight: 650,
+              letterSpacing: '-0.055em',
+              color: T.ink,
+              margin: 0,
+            }}>
+              Send this week’s updates.
+            </h1>
+
+            <p style={{
+              fontSize: 13.5,
+              color: T.ink3,
+              lineHeight: 1.48,
+              margin: '9px 0 0',
+              maxWidth: 360,
+            }}>
+              Add learners once, then send a simple private report link to each parent.
             </p>
           </section>
 
-          {tab === 'roster' && (
-            <>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 10,
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: hasLearners ? '1fr 1fr' : '1fr',
+            gap: 9,
+            marginBottom: 16,
+          }}>
+            <button type="button" onClick={() => setShowAdd(true)} style={{
+              ...primaryButton,
+              width: '100%',
+            }}>
+              <Plus size={14} strokeWidth={2.2} />
+              Add learner
+            </button>
+
+            {hasLearners && (
+              <button type="button" onClick={() => setReportChild(children[0])} style={{
+                ...softButton,
+                width: '100%',
               }}>
-                <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>
-                  {children.length === 0 ? 'No learners yet' : `${children.length} learners`}
-                </p>
-                <button type="button" onClick={() => setShowAdd(true)} style={primarySmallButton}>
-                  <Plus size={13} strokeWidth={2.2} />
-                  Add learner
-                </button>
-              </div>
+                <Send size={14} strokeWidth={2} />
+                Start reports
+              </button>
+            )}
+          </div>
 
-              {children.length === 0 ? (
-                <EmptyRoster onAdd={() => setShowAdd(true)} />
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                  {children.map((child: any) => (
-                    <LearnerCard
-                      key={child.id}
-                      child={child}
-                      onReport={() => setReportChild(child)}
-                      onDeleted={load}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+          <section style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+            <div>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 620,
+                color: T.ink,
+                margin: 0,
+              }}>
+                Class roster
+              </p>
+              <p style={{
+                fontSize: 12.5,
+                color: T.ink3,
+                margin: '2px 0 0',
+              }}>
+                {children.length === 0 ? 'No learners yet' : `${children.length} learners`}
+              </p>
+            </div>
+          </section>
 
-          {tab === 'reports' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              {children.length === 0 ? (
-                <EmptyRoster onAdd={() => setShowAdd(true)} />
-              ) : (
-                children.map((child: any) => (
-                  <ReportActionCard
-                    key={child.id}
-                    child={child}
-                    onReport={() => setReportChild(child)}
-                  />
-                ))
-              )}
+          {!hasLearners ? (
+            <EmptyRoster onAdd={() => setShowAdd(true)} />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {children.map((child: any) => (
+                <LearnerRow
+                  key={child.id}
+                  child={child}
+                  onReport={() => setReportChild(child)}
+                  onDeleted={load}
+                />
+              ))}
             </div>
           )}
 
           <p style={{
-            fontSize: 11,
-            color: '#C4C4C8',
+            fontSize: 10.5,
+            color: '#CCCCCC',
             textAlign: 'center',
-            margin: '20px 0 0',
+            margin: '18px 0 0',
             letterSpacing: '0.04em',
-            fontWeight: 600,
+            fontWeight: 500,
           }}>
             Powered by School Connect
           </p>
@@ -376,48 +391,50 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         <WeeklyReportSheet
           child={reportChild}
           onClose={() => setReportChild(null)}
-          onSaved={() => {
-            load()
-          }}
+          onSaved={() => load()}
         />
       )}
     </div>
   )
 }
 
-function TabButton({ active, onClick, children }: any) {
+function LoadingScreen() {
   return (
-    <button type="button" onClick={onClick} style={{
-      height: 36,
-      borderRadius: 999,
-      border: active ? 'none' : `1px solid ${T.border}`,
-      background: active ? T.ink : T.white,
-      color: active ? T.white : T.ink2,
-      fontSize: 13,
-      fontWeight: 620,
-      fontFamily: 'inherit',
-      cursor: 'pointer',
-    }}>
-      {children}
-    </button>
+    <main style={centerPage}>
+      <style>{`
+        @keyframes teacherDotBounce {
+          0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 7,
+          height: 24,
+          margin: '0 auto 14px',
+        }}>
+          {[0, 1, 2].map((dot) => (
+            <span
+              key={dot}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 999,
+                background: dot === 1 ? '#8FA6A1' : '#D8DFDD',
+                animation: 'teacherDotBounce 1.05s ease-in-out infinite',
+                animationDelay: `${dot * 0.14}s`,
+                display: 'block',
+              }}
+            />
+          ))}
+        </div>
+        <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>Opening class space...</p>
+      </div>
+    </main>
   )
-}
-
-const primarySmallButton: any = {
-  minHeight: 36,
-  borderRadius: 999,
-  border: 'none',
-  background: T.ink,
-  color: T.white,
-  fontSize: 13,
-  fontWeight: 620,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 6,
-  padding: '0 12px',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
 }
 
 function EmptyRoster({ onAdd }: any) {
@@ -443,21 +460,24 @@ function EmptyRoster({ onAdd }: any) {
       }}>
         <Users size={22} strokeWidth={1.6} />
       </div>
+
       <p style={{ fontSize: 15, fontWeight: 620, color: T.ink, margin: '0 0 4px' }}>
         No learners yet
       </p>
+
       <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: '0 0 16px' }}>
-        Add your class roster with parent WhatsApp numbers.
+        Start by adding your class roster.
       </p>
-      <button type="button" onClick={onAdd} style={primarySmallButton}>
-        <Plus size={13} strokeWidth={2.2} />
-        Add learner
+
+      <button type="button" onClick={onAdd} style={primaryButton}>
+        <Plus size={14} strokeWidth={2.2} />
+        Add first learner
       </button>
     </div>
   )
 }
 
-function LearnerCard({ child, onReport, onDeleted }: any) {
+function LearnerRow({ child, onReport, onDeleted }: any) {
   const remove = async () => {
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
@@ -475,24 +495,22 @@ function LearnerCard({ child, onReport, onDeleted }: any) {
 
   return (
     <article style={{
-      padding: 13,
-      borderRadius: 18,
-      background: T.white,
-      border: `1px solid ${T.border}`,
+      padding: '12px 0',
+      borderBottom: `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
-      gap: 12,
+      gap: 11,
     }}>
       <div style={{
-        width: 40,
-        height: 40,
-        borderRadius: 15,
+        width: 38,
+        height: 38,
+        borderRadius: 14,
         background: T.soft,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         color: T.ink2,
-        fontSize: 13,
+        fontSize: 12.5,
         fontWeight: 650,
         flexShrink: 0,
       }}>
@@ -501,7 +519,7 @@ function LearnerCard({ child, onReport, onDeleted }: any) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          fontSize: 14.5,
+          fontSize: 14,
           fontWeight: 600,
           color: T.ink,
           margin: 0,
@@ -512,30 +530,24 @@ function LearnerCard({ child, onReport, onDeleted }: any) {
           {child.name}
         </p>
         <p style={{
-          fontSize: 12.5,
+          fontSize: 12.4,
           color: T.ink3,
           margin: '2px 0 0',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
         }}>
-          WhatsApp: {child.parent_whatsapp || 'missing'}
+          Last: {formatShortDate(child.latest_report_at)}
         </p>
       </div>
 
       <button type="button" onClick={onReport} style={{
-        width: 36,
-        height: 36,
-        borderRadius: 999,
-        border: 'none',
-        background: T.ink,
-        color: T.white,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
+        ...softButton,
+        minHeight: 34,
+        padding: '0 11px',
       }}>
-        <Send size={14} strokeWidth={2} />
+        <Send size={13} strokeWidth={2} />
+        Report
       </button>
 
       <button type="button" onClick={remove} style={{
@@ -549,51 +561,9 @@ function LearnerCard({ child, onReport, onDeleted }: any) {
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
-      }}>
-        <Trash2 size={14} strokeWidth={1.8} />
-      </button>
-    </article>
-  )
-}
-
-function ReportActionCard({ child, onReport }: any) {
-  return (
-    <article style={{
-      padding: 14,
-      borderRadius: 18,
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 12,
-    }}>
-      <div style={{
-        width: 40,
-        height: 40,
-        borderRadius: 15,
-        background: T.soft,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: T.ink2,
-        fontSize: 13,
-        fontWeight: 650,
         flexShrink: 0,
       }}>
-        {initials(child.name)}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 14.5, fontWeight: 600, color: T.ink, margin: 0 }}>
-          {child.name}
-        </p>
-        <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-          {child.report_count || 0} sent · Last: {formatShortDate(child.latest_report_at)}
-        </p>
-      </div>
-
-      <button type="button" onClick={onReport} style={primarySmallButton}>
-        Send report
+        <Trash2 size={13} strokeWidth={1.8} />
       </button>
     </article>
   )
@@ -637,7 +607,7 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
 
   return (
     <BottomSheet onClose={onClose}>
-      <SheetHeader title="Add learner" subtitle="Only the child name and parent WhatsApp number are needed." onClose={onClose} />
+      <SheetHeader title="Add learner" subtitle="Only the details needed for parent updates." onClose={onClose} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <label>
@@ -656,9 +626,8 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
         </label>
 
         <button type="button" onClick={submit} disabled={saving} style={{
-          ...primarySmallButton,
+          ...primaryButton,
           width: '100%',
-          minHeight: 46,
           marginTop: 4,
           opacity: saving ? 0.65 : 1,
           cursor: saving ? 'wait' : 'pointer',
@@ -706,7 +675,7 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
 
       if (json.magic_link) setMagicLink(json.magic_link)
 
-      toast.success('Report ready and WhatsApp queued', { id: tid })
+      toast.success('Report ready', { id: tid })
       onSaved()
     } catch (e: any) {
       toast.error(e.message || 'Could not send report', { id: tid })
@@ -718,7 +687,7 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
   const copyLink = async () => {
     if (!magicLink) return
     await navigator.clipboard.writeText(magicLink)
-    toast.success('Report link copied')
+    toast.success('Parent link copied')
   }
 
   return (
@@ -787,9 +756,8 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
       </label>
 
       <button type="button" onClick={submit} disabled={saving} style={{
-        ...primarySmallButton,
+        ...primaryButton,
         width: '100%',
-        minHeight: 46,
         marginTop: 14,
         opacity: saving ? 0.65 : 1,
         cursor: saving ? 'wait' : 'pointer',
@@ -834,41 +802,13 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
             {magicLink}
           </a>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
-          }}>
-            <button type="button" onClick={copyLink} style={{
-              minHeight: 42,
-              borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink2,
-              fontSize: 13,
-              fontWeight: 620,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 7,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <button type="button" onClick={copyLink} style={softButton}>
               <Copy size={14} />
-              Copy link
+              Copy
             </button>
 
-            <button type="button" onClick={onClose} style={{
-              minHeight: 42,
-              borderRadius: 999,
-              border: 'none',
-              background: T.ink,
-              color: T.white,
-              fontSize: 13,
-              fontWeight: 620,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}>
+            <button type="button" onClick={onClose} style={primaryButton}>
               Done
             </button>
           </div>
@@ -884,7 +824,7 @@ function BottomSheet({ children, onClose }: any) {
       position: 'fixed',
       inset: 0,
       zIndex: 300,
-      background: 'rgba(0,0,0,0.36)',
+      background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',
@@ -897,7 +837,7 @@ function BottomSheet({ children, onClose }: any) {
         background: T.white,
         borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -24px 70px rgba(0,0,0,0.18)',
+        boxShadow: '0 -24px 70px rgba(0,0,0,0.14)',
       }}>
         {children}
       </div>
@@ -941,4 +881,38 @@ function SheetHeader({ title, subtitle, onClose }: any) {
       </button>
     </div>
   )
+}
+
+const centerPage: any = {
+  minHeight: '100dvh',
+  background: T.bg,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 24,
+  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+}
+
+const emptyCard: any = {
+  width: '100%',
+  maxWidth: 360,
+  textAlign: 'center',
+  background: T.white,
+  border: `1px solid ${T.border}`,
+  borderRadius: 24,
+  padding: '34px 24px',
+}
+
+const emptyTitle: any = {
+  fontSize: 20,
+  fontWeight: 650,
+  color: T.ink,
+  margin: '14px 0 6px',
+}
+
+const emptyText: any = {
+  fontSize: 14,
+  color: T.ink3,
+  lineHeight: 1.5,
+  margin: 0,
 }
