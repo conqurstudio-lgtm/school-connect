@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap, LockKeyhole } from 'lucide-react'
+import { GraduationCap } from 'lucide-react'
 import { ReportSwiper } from '@/components/reports/ReportSwiper'
 
 const T = {
@@ -138,6 +138,7 @@ export default function ParentMagicReportPage() {
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
+      overscrollBehaviorX: 'none',
       background: T.bg,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
@@ -154,7 +155,6 @@ export default function ParentMagicReportPage() {
           flexShrink: 0,
           padding: 'calc(14px + env(safe-area-inset-top, 0px)) 18px 12px',
           background: 'rgba(255,255,255,0.98)',
-          borderBottom: `1px solid ${T.border}`,
           position: 'relative',
           zIndex: 10,
         }}>
@@ -193,20 +193,6 @@ export default function ParentMagicReportPage() {
               </p>
             </div>
 
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              background: T.soft,
-              border: `1px solid ${T.border}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: T.ink3,
-              flexShrink: 0,
-            }}>
-              <LockKeyhole size={15} strokeWidth={1.7} />
-            </div>
           </div>
         </header>
 
@@ -216,7 +202,8 @@ export default function ParentMagicReportPage() {
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '30px 0 8px',
+          overscrollBehaviorX: 'none',
+          padding: '18px 0 8px',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
@@ -226,7 +213,6 @@ export default function ParentMagicReportPage() {
           padding: '9px 18px calc(14px + env(safe-area-inset-bottom, 0px))',
           textAlign: 'center',
           background: 'rgba(255,255,255,0.98)',
-          borderTop: `1px solid ${T.border}`,
         }}>
           <p style={{
             fontSize: 11,
