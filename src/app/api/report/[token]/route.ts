@@ -1,5 +1,6 @@
 // Public parent report view by private token.
-// No parent login required.
+// New behavior: token belongs to the child, so the same link shows latest + previous reports.
+// Fallback: old one-report links still work.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -15,6 +16,34 @@ function adminClient() {
   )
 }
 
+async function loadChildPermanentLink(sb: any, token: string) {
+  const { data: link } = await sb
+    .from('child_parent_links')
+    .select('*')
+    .eq('token', token)
+    .eq('is_active', true)
+    .maybeSingle()
+
+  return link || null
+}
+
+async function loadOldReportLink(sb: any, token: string) {
+  const { data: link } = await sb
+    .from('child_report_links')
+    .select('*')
+    .eq('token', token)
+    .maybeSingle()
+
+  return link || null
+}
+
+function attachPreviousScores(reports: any[]) {
+  return reports.map((report, index) => ({
+    ...report,
+    previous_scores: reports[index + 1]?.scores || null,
+  }))
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { token: string } }
@@ -27,45 +56,100 @@ export async function GET(
 
   const sb = adminClient()
 
-  const { data: link, error: linkError } = await sb
-    .from('child_report_links')
-    .select('*')
-    .eq('token', token)
-    .maybeSingle()
+  const childLink = await loadChildPermanentLink(sb, token)
 
-  if (linkError || !link) {
+  if (childLink) {
+    const [{ data: child }, { data: school }] = await Promise.all([
+      sb.from('children').select('*').eq('id', childLink.child_id).maybeSingle(),
+      sb.from('schools').select('id, name, logo_url, tagline').eq('id', childLink.school_id).maybeSingle(),
+    ])
+
+    if (!child) return NextResponse.json({ error: 'Child not found' }, { status: 404 })
+
+    const { data: reports, error: reportsError } = await sb
+      .from('child_reports')
+      .select('*')
+      .eq('child_id', child.id)
+      .eq('status', 'published')
+      .order('week_starting', { ascending: false })
+      .order('published_at', { ascending: false })
+
+    if (reportsError) {
+      return NextResponse.json({ error: reportsError.message }, { status: 500 })
+    }
+
+    const latest = reports?.[0] || null
+    if (!latest) return NextResponse.json({ error: 'No report has been published yet' }, { status: 404 })
+
+    const teacherId = latest.teacher_id || childLink.teacher_id
+    const { data: teacher } = teacherId
+      ? await sb.from('teachers').select('*').eq('id', teacherId).maybeSingle()
+      : { data: null }
+
+    await sb
+      .from('child_parent_links')
+      .update({
+        last_viewed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', childLink.id)
+
+    const reportsWithHistory = attachPreviousScores(reports || [])
+
+    return NextResponse.json({
+      link_type: 'child_permanent',
+      report: reportsWithHistory[0],
+      reports: reportsWithHistory,
+      child,
+      teacher,
+      school,
+    })
+  }
+
+  const oldLink = await loadOldReportLink(sb, token)
+
+  if (!oldLink) {
     return NextResponse.json({ error: 'Report link not found' }, { status: 404 })
   }
 
-  if (link.expires_at && new Date(link.expires_at).getTime() < Date.now()) {
+  if (oldLink.expires_at && new Date(oldLink.expires_at).getTime() < Date.now()) {
     return NextResponse.json({ error: 'This report link has expired' }, { status: 410 })
   }
 
-  const { data: report, error: reportError } = await sb
+  const { data: report } = await sb
     .from('child_reports')
     .select('*')
-    .eq('id', link.report_id)
-    .single()
+    .eq('id', oldLink.report_id)
+    .maybeSingle()
 
-  if (reportError || !report) {
-    return NextResponse.json({ error: 'Report not found' }, { status: 404 })
-  }
+  if (!report) return NextResponse.json({ error: 'Report not found' }, { status: 404 })
 
-  const [{ data: child }, { data: teacher }, { data: school }] = await Promise.all([
-    sb.from('children').select('id, name').eq('id', report.child_id).single(),
-    sb.from('teachers').select('id, name, grade, class_name').eq('id', report.teacher_id).single(),
-    sb.from('schools').select('id, name, logo_url, tagline').eq('id', report.school_id).single(),
+  const [{ data: child }, { data: teacher }, { data: school }, { data: reports }] = await Promise.all([
+    sb.from('children').select('*').eq('id', report.child_id).maybeSingle(),
+    sb.from('teachers').select('*').eq('id', report.teacher_id).maybeSingle(),
+    sb.from('schools').select('id, name, logo_url, tagline').eq('id', report.school_id).maybeSingle(),
+    sb
+      .from('child_reports')
+      .select('*')
+      .eq('child_id', report.child_id)
+      .eq('status', 'published')
+      .order('week_starting', { ascending: false })
+      .order('published_at', { ascending: false }),
   ])
 
-  if (!link.viewed_at) {
+  if (!oldLink.viewed_at) {
     await sb
       .from('child_report_links')
       .update({ viewed_at: new Date().toISOString() })
-      .eq('id', link.id)
+      .eq('id', oldLink.id)
   }
 
+  const reportsWithHistory = attachPreviousScores(reports || [report])
+
   return NextResponse.json({
+    link_type: 'legacy_report',
     report,
+    reports: reportsWithHistory,
     child,
     teacher,
     school,

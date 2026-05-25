@@ -1,6 +1,5 @@
 // /api/teacher/child-report
-// Creates or updates a weekly report, generates a private parent link,
-// and queues a WhatsApp notification for whatsapp-web.js to send later.
+// Saves a weekly report and returns the child's permanent private parent link.
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -17,23 +16,23 @@ function adminClient() {
   )
 }
 
-function isBlockedTeacher(status: unknown) {
-  const value = String(status || '').toLowerCase()
-  return value === 'rejected' || value === 'inactive' || value === 'disabled' || value === 'revoked'
-}
-
 async function getTeacher(req: NextRequest) {
   const token = req.cookies.get('teacher_token')?.value
   if (!token) return null
 
   const sb = adminClient()
+
   const { data } = await sb
     .from('teachers')
-    .select('id, school_id, grade, class_name, status, name')
+    .select('*')
     .eq('access_token', token)
     .maybeSingle()
 
-  if (!data || isBlockedTeacher(data.status)) return null
+  if (!data) return null
+
+  const blocked = ['rejected', 'revoked', 'inactive', 'disabled']
+  if (blocked.includes(String(data.status || '').toLowerCase())) return null
+
   return data
 }
 
@@ -46,8 +45,7 @@ function cleanScores(input: any): Record<string, number> {
     const key = String(name || '').trim()
     const score = Number(raw)
 
-    if (!key) continue
-    if (!Number.isFinite(score)) continue
+    if (!key || !Number.isFinite(score)) continue
 
     out[key] = Math.max(0, Math.min(5, score))
   }
@@ -68,23 +66,37 @@ function publicOrigin(req: NextRequest) {
   ).replace(/\/$/, '')
 }
 
-async function getOrCreateReportLink(sb: any, report: any, token: string) {
+async function getOrCreateChildLink(sb: any, child: any, teacher: any) {
   const { data: existing } = await sb
-    .from('child_report_links')
+    .from('child_parent_links')
     .select('*')
-    .eq('report_id', report.id)
+    .eq('child_id', child.id)
     .maybeSingle()
 
-  if (existing?.token) return existing
+  if (existing?.token) {
+    await sb
+      .from('child_parent_links')
+      .update({
+        school_id: child.school_id,
+        teacher_id: teacher.id,
+        is_active: true,
+        last_sent_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existing.id)
+
+    return existing
+  }
 
   const { data, error } = await sb
-    .from('child_report_links')
+    .from('child_parent_links')
     .insert({
-      report_id: report.id,
-      school_id: report.school_id,
-      child_id: report.child_id,
-      token,
-      expires_at: null,
+      school_id: child.school_id,
+      child_id: child.id,
+      teacher_id: teacher.id,
+      token: tokenValue(),
+      is_active: true,
+      last_sent_at: new Date().toISOString(),
     })
     .select()
     .single()
@@ -114,7 +126,7 @@ export async function POST(req: NextRequest) {
 
   const { data: child, error: childErr } = await sb
     .from('children')
-    .select('id, school_id, name, grade, class_name, status, parent_whatsapp, parent_email, created_by_teacher_id')
+    .select('*')
     .eq('id', childId)
     .maybeSingle()
 
@@ -122,13 +134,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'child not found' }, { status: 404 })
   }
 
-  const childStatus = String(child.status || 'active').toLowerCase()
-  const belongsToTeacher =
-    String(child.school_id) === String(teacher.school_id) &&
-    childStatus === 'active' &&
-    String(child.created_by_teacher_id || '') === String(teacher.id)
+  const sameSchool = child.school_id === teacher.school_id
+  const sameTeacher = !child.created_by_teacher_id || child.created_by_teacher_id === teacher.id
+  const activeChild = !child.status || String(child.status).toLowerCase() === 'active'
 
-  if (!belongsToTeacher) {
+  if (!sameSchool || !sameTeacher || !activeChild) {
     return NextResponse.json({ error: 'child is not in your roster' }, { status: 403 })
   }
 
@@ -152,6 +162,10 @@ export async function POST(req: NextRequest) {
     const { data, error } = await sb
       .from('child_reports')
       .update({
+        school_id: teacher.school_id,
+        child_id: child.id,
+        teacher_id: teacher.id,
+        week_starting: weekStarting,
         scores,
         comment,
         status: 'published',
@@ -185,7 +199,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const linkRow = await getOrCreateReportLink(sb, savedReport, tokenValue())
+    const linkRow = await getOrCreateChildLink(sb, child, teacher)
     const origin = publicOrigin(req)
     const magicLink = origin
       ? `${origin}/report/${encodeURIComponent(linkRow.token)}`
@@ -206,6 +220,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       report: savedReport,
       magic_link: magicLink,
+      parent_link_type: 'child_permanent',
       whatsapp_status: 'queued',
       updated: Boolean(existing?.id),
       created: !existing?.id,
@@ -213,7 +228,7 @@ export async function POST(req: NextRequest) {
   } catch (e: any) {
     return NextResponse.json({
       report: savedReport,
-      warning: e?.message || 'Report saved, but notification link could not be created',
+      warning: e?.message || 'Report saved, but child parent link could not be created',
     })
   }
 }

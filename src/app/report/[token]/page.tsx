@@ -8,7 +8,6 @@ import { ReportSwiper } from '@/components/reports/ReportSwiper'
 
 const T = {
   ink: '#1A1A1A',
-  ink2: '#4A4A4A',
   ink3: '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
@@ -124,15 +123,15 @@ export default function ParentMagicReportPage() {
   if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
-  const report = {
-    ...payload.report,
-    child_name: payload.child?.name || 'Your child',
-    teacher_name: payload.teacher?.name || 'Teacher',
-    previous_scores: payload.report.previous_scores || null,
-  }
-
   const childName = payload.child?.name || 'Your child'
+  const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
+
+  const reports = (payload.reports?.length ? payload.reports : [payload.report]).map((report: any) => ({
+    ...report,
+    child_name: childName,
+    teacher_name: teacherName,
+  }))
 
   return (
     <main style={{
@@ -155,11 +154,7 @@ export default function ParentMagicReportPage() {
           flexShrink: 0,
           padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 0',
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 38,
               height: 38,
@@ -189,12 +184,8 @@ export default function ParentMagicReportPage() {
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <p style={{
-                fontSize: 12,
-                color: T.ink3,
-                margin: '2px 0 0',
-              }}>
-                Private weekly update
+              <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+                Latest update + previous results
               </p>
             </div>
 
@@ -215,7 +206,7 @@ export default function ParentMagicReportPage() {
         </header>
 
         <section style={{ flex: 1, paddingTop: 42 }}>
-          <ReportSwiper reports={[report]} childName={childName} />
+          <ReportSwiper reports={reports} childName={childName} />
         </section>
 
         <footer style={{
