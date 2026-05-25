@@ -1,21 +1,32 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ReportCard } from './ReportCard'
 
 const T = {
   ink: '#1A1A1A',
-  ink3: '#9A9A9A',
   trackBg: '#EFEFF2',
   border: 'rgba(0,0,0,0.07)',
 }
 
+interface Props {
+  reports: any[]
+  childName: string
+}
 
 export function ReportSwiper({ reports, childName }: Props) {
-  const total = Math.max(1, reports.length)
-  const [index, setIndex] = useState(0)
+  // Parent report page passes newest-first.
+  // We reverse only the visual carousel order so older reports sit to the LEFT.
+  const visualReports = useMemo(() => {
+    return (reports || []).slice().reverse()
+  }, [reports])
+
+  const total = Math.max(1, visualReports.length)
+  const latestIndex = Math.max(0, total - 1)
+
+  const [index, setIndex] = useState(latestIndex)
   const [drag, setDrag] = useState(0)
 
   const startX = useRef<number | null>(null)
@@ -25,10 +36,20 @@ export function ReportSwiper({ reports, childName }: Props) {
   const gesture = useRef<'none' | 'horizontal' | 'vertical'>('none')
 
   useEffect(() => {
-    setIndex(0)
-  }, [reports.length])
+    setIndex(Math.max(0, total - 1))
+  }, [total])
 
   const clamp = (n: number) => Math.max(0, Math.min(total - 1, n))
+
+  const lockPageScroll = () => {
+    document.documentElement.style.overscrollBehavior = 'none'
+    document.body.style.overscrollBehavior = 'none'
+  }
+
+  const unlockPageScroll = () => {
+    document.documentElement.style.overscrollBehavior = ''
+    document.body.style.overscrollBehavior = ''
+  }
 
   const onStart = (x: number, y: number) => {
     startX.current = x
@@ -47,8 +68,13 @@ export function ReportSwiper({ reports, childName }: Props) {
     const absX = Math.abs(deltaX.current)
     const absY = Math.abs(deltaY.current)
 
-    if (gesture.current === 'none' && (absX > 8 || absY > 8)) {
-      gesture.current = absX > absY + 8 ? 'horizontal' : 'vertical'
+    if (gesture.current === 'none' && (absX > 6 || absY > 6)) {
+      if (absX >= absY * 0.72) {
+        gesture.current = 'horizontal'
+        lockPageScroll()
+      } else {
+        gesture.current = 'vertical'
+      }
     }
 
     if (gesture.current !== 'horizontal') {
@@ -56,9 +82,9 @@ export function ReportSwiper({ reports, childName }: Props) {
       return
     }
 
-    const atStart = index === 0 && deltaX.current > 0
-    const atEnd = index === total - 1 && deltaX.current < 0
-    const resistance = atStart || atEnd ? 0.22 : 1
+    const atLeftEnd = index === 0 && deltaX.current > 0
+    const atRightEnd = index === total - 1 && deltaX.current < 0
+    const resistance = atLeftEnd || atRightEnd ? 0.22 : 1
 
     setDrag(deltaX.current * resistance)
   }
@@ -66,15 +92,16 @@ export function ReportSwiper({ reports, childName }: Props) {
   const onEnd = () => {
     if (startX.current === null) return
 
-    const threshold = 55
+    const threshold = 42
 
     if (gesture.current === 'horizontal') {
-      if (deltaX.current < -threshold && index < total - 1) {
-        setIndex(i => clamp(i + 1))
-      }
-
+      // Older reports are on the LEFT side of the latest report.
       if (deltaX.current > threshold && index > 0) {
         setIndex(i => clamp(i - 1))
+      }
+
+      if (deltaX.current < -threshold && index < total - 1) {
+        setIndex(i => clamp(i + 1))
       }
     }
 
@@ -84,6 +111,7 @@ export function ReportSwiper({ reports, childName }: Props) {
     deltaY.current = 0
     gesture.current = 'none'
     setDrag(0)
+    unlockPageScroll()
   }
 
   return (
@@ -94,7 +122,6 @@ export function ReportSwiper({ reports, childName }: Props) {
       overflowY: 'visible',
       position: 'relative',
       overscrollBehaviorX: 'none',
-      touchAction: 'pan-y',
       boxSizing: 'border-box',
     }}>
       <div
@@ -103,7 +130,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           maxWidth: '100%',
           overflowX: 'hidden',
           overflowY: 'visible',
-          touchAction: 'pan-y',
+          touchAction: 'none',
           userSelect: 'none',
           position: 'relative',
           boxSizing: 'border-box',
@@ -112,9 +139,9 @@ export function ReportSwiper({ reports, childName }: Props) {
         onTouchMove={e => {
           onMove(e.touches[0].clientX, e.touches[0].clientY)
 
-          // Stop only horizontal gestures from moving the whole page sideways.
           if (gesture.current === 'horizontal') {
             e.preventDefault()
+            e.stopPropagation()
           }
         }}
         onTouchEnd={onEnd}
@@ -137,7 +164,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           width: '100%',
           maxWidth: '100%',
         }}>
-          {(reports.length ? reports : []).map((report: any) => (
+          {(visualReports.length ? visualReports : []).map((report: any) => (
             <div key={report.id} style={{
               flex: '0 0 100%',
               width: '100%',
@@ -172,7 +199,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           minHeight: 34,
           padding: '2px 0 10px',
         }}>
-          {reports.map((_, i) => (
+          {visualReports.map((_, i) => (
             <button
               key={i}
               onClick={() => setIndex(i)}
@@ -195,7 +222,7 @@ export function ReportSwiper({ reports, childName }: Props) {
       {total > 1 && index > 0 && (
         <button
           onClick={() => setIndex(i => clamp(i - 1))}
-          aria-label="Previous report"
+          aria-label="Older report"
           style={arrowStyle('left')}
         >
           <ChevronLeft size={23} color={T.ink} strokeWidth={2} />
@@ -205,7 +232,7 @@ export function ReportSwiper({ reports, childName }: Props) {
       {total > 1 && index < total - 1 && (
         <button
           onClick={() => setIndex(i => clamp(i + 1))}
-          aria-label="Next report"
+          aria-label="Newer report"
           style={arrowStyle('right')}
         >
           <ChevronRight size={23} color={T.ink} strokeWidth={2} />

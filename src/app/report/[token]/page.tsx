@@ -193,10 +193,11 @@ export default function ParentMagicReportPage() {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                lineHeight: 1.08,
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <p style={{ fontSize: 12, color: T.ink3, margin: '2px 0 0' }}>
+              <p style={{ fontSize: 12, color: T.ink3, margin: '0', lineHeight: 1.1 }}>
                 Weekly reports
               </p>
             </div>
