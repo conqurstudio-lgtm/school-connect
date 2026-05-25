@@ -12,8 +12,8 @@ const T = {
   ink4:    '#D8D8D8',
   divider: 'rgba(0,0,0,0.06)',
   trackBg: '#EFEFF2',
-  up:      '#8FA6A1',
-  down:    '#8FA6A1',
+  up:      '#22C55E',
+  down:    '#EF4444',
   same:    '#9A9A9A',
 }
 
@@ -237,10 +237,10 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
       }}>
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#8FA6A1" />
-            <stop offset="35%"  stopColor="#8FA6A1" />
+            <stop offset="0%"   stopColor="#EF4444" />
+            <stop offset="35%"  stopColor="#F59E0B" />
             <stop offset="70%"  stopColor="#78A6FE" />
-            <stop offset="100%" stopColor="#8FA6A1" />
+            <stop offset="100%" stopColor="#22C55E" />
           </linearGradient>
         </defs>
         {/* Track */}
@@ -418,12 +418,12 @@ export function ReportCard({ report, childName }: Props) {
                     <div style={{
                       position: 'absolute', inset: 'auto 0',
                       height: 3, width: '100%', borderRadius: 2,
-                      background: T.trackBg,
+                      background: '#F3F5F4',
                     }} />
                     <div style={{
                       position: 'absolute', inset: 'auto 0 auto 0',
                       height: 3, width: `${pct}%`, borderRadius: 2,
-                      background: T.ink,
+                      background: '#8FA6A1',
                       transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
                     }} />
                   </div>
