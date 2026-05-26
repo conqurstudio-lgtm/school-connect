@@ -95,19 +95,6 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
           pointerEvents: 'none',
         }}
       />
-
-      {hasNew && (
-        <span style={{
-          position: 'absolute',
-          top: 5,
-          right: 5,
-          width: 7,
-          height: 7,
-          borderRadius: 999,
-          background: '#8FA6A1',
-          border: '1.5px solid #FFFFFF',
-        }} />
-      )}
     </button>
   )
 }
