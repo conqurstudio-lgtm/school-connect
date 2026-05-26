@@ -1,15 +1,15 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  ArrowLeft,
   Camera,
   ChevronDown,
   Copy,
   GraduationCap,
   LogOut,
   Plus,
-  Send,
   Settings,
   Trash2,
   Users,
@@ -23,12 +23,13 @@ const T = {
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
   bg: '#F0F0F0',
-  soft: '#F8F8F9',
+  soft: '#F7F7F8',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
   accentSoft: '#EEF3F1',
   white: '#FFFFFF',
   red: '#B42318',
+  green: '#5B8F7F',
 }
 
 const inputStyle: any = {
@@ -58,7 +59,7 @@ const primaryButton: any = {
   minHeight: 42,
   borderRadius: 999,
   border: 'none',
-  background: T.ink,
+  background: T.accent,
   color: T.white,
   fontSize: 13,
   fontWeight: 560,
@@ -71,10 +72,15 @@ const primaryButton: any = {
   fontFamily: 'inherit',
 }
 
+const darkButton: any = {
+  ...primaryButton,
+  background: T.ink,
+}
+
 const softButton: any = {
   minHeight: 38,
   borderRadius: 999,
-  border: `1px solid ${T.border}`,
+  border: 'none',
   background: T.white,
   color: T.ink2,
   fontSize: 13,
@@ -106,15 +112,6 @@ function weekStartToday() {
   return d.toISOString().slice(0, 10)
 }
 
-function readFileAsDataUrl(file: File) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result || ''))
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-
 function formatShortDate(value?: string | null) {
   if (!value) return 'No report yet'
   try {
@@ -127,13 +124,61 @@ function formatShortDate(value?: string | null) {
   }
 }
 
+function formatWeek(value?: string | null) {
+  if (!value) return 'No week'
+  try {
+    return new Date(value).toLocaleDateString('en-ZA', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    })
+  } catch {
+    return String(value)
+  }
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+function isMarkedThisWeek(child: any, weekStart: string) {
+  return child.latest_week_starting === weekStart
+}
+
+function averageScore(scores: any) {
+  const values = Object.values(scores || {}).map(Number).filter(n => Number.isFinite(n))
+  if (!values.length) return null
+  return values.reduce((sum, n) => sum + n, 0) / values.length
+}
+
 export function TeacherReportDashboard({ initialSession = null, initialToken = '' }: any) {
   const [session, setSession] = useState(initialSession)
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const [reportChild, setReportChild] = useState<any>(null)
+  const [activeChild, setActiveChild] = useState<any>(null)
   const [rosterOpen, setRosterOpen] = useState(true)
+  const [weekStart, setWeekStart] = useState(weekStartToday())
+
+  const loadStatuses = async (children: any[]) => {
+    try {
+      const res = await fetch('/api/teacher/report-status', { cache: 'no-store' })
+      const json = await res.json().catch(() => ({}))
+      const latest = json.latestByChild || {}
+
+      return children.map((child: any) => ({
+        ...child,
+        ...(latest[child.id] || {}),
+      }))
+    } catch {
+      return children
+    }
+  }
 
   const load = async () => {
     try {
@@ -149,7 +194,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         return
       }
 
-      setSession(json)
+      const mergedChildren = await loadStatuses(json.children || [])
+
+      setSession({
+        ...json,
+        children: mergedChildren,
+      })
     } finally {
       setLoading(false)
     }
@@ -181,6 +231,39 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const { teacher, school, children = [] } = session
   const classLabel = [teacher.grade, teacher.class_name].filter(Boolean).join(' · ') || 'Your class'
   const hasLearners = children.length > 0
+  const completedCount = children.filter((child: any) => isMarkedThisWeek(child, weekStart)).length
+  const pendingCount = Math.max(0, children.length - completedCount)
+
+  const openChild = (child: any) => {
+    setActiveChild(child)
+  }
+
+  const nextPendingAfter = (child: any) => {
+    const currentIndex = children.findIndex((c: any) => c.id === child.id)
+    const after = children.slice(currentIndex + 1).find((c: any) => !isMarkedThisWeek(c, weekStart))
+    const before = children.slice(0, currentIndex).find((c: any) => !isMarkedThisWeek(c, weekStart))
+    return after || before || null
+  }
+
+  if (activeChild) {
+    return (
+      <TeacherReportWorkspace
+        child={activeChild}
+        children={children}
+        weekStart={weekStart}
+        onBack={() => setActiveChild(null)}
+        onSaved={async (updatedChild: any) => {
+          await load()
+          setActiveChild((current: any) => current?.id === updatedChild.id ? { ...current, ...updatedChild } : current)
+        }}
+        onNext={(currentChild: any) => {
+          const next = nextPendingAfter(currentChild)
+          if (next) setActiveChild(next)
+          else setActiveChild(null)
+        }}
+      />
+    )
+  }
 
   return (
     <div style={{
@@ -238,13 +321,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         }}>
           <section style={{
             textAlign: 'center',
-            minHeight: 270,
-            padding: '30px 18px 28px',
-            borderRadius: 32,
+            minHeight: 260,
+            padding: '28px 18px 26px',
+            borderRadius: 28,
             background: T.white,
             border: 'none',
             boxShadow: 'none',
-            marginBottom: 16,
+            marginBottom: 14,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -253,7 +336,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             <div style={{
               width: 92,
               height: 92,
-              borderRadius: 28,
+              borderRadius: 32,
               background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
               border: 'none',
               display: 'flex',
@@ -262,42 +345,55 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               margin: '0 auto 18px',
               color: T.accent,
               fontSize: 25,
-              fontWeight: 600,
+              fontWeight: 560,
               boxShadow: 'none',
+              overflow: 'hidden',
             }}>
               {!teacher.photo_url && initials(teacher.name)}
             </div>
 
             <h1 style={{
-              fontSize: 21,
+              fontSize: 22,
               lineHeight: 1.08,
               fontWeight: 560,
               letterSpacing: '-0.045em',
               color: T.ink,
-              margin: '0 0 4px',
+              margin: '0 0 7px',
             }}>
               {teacher.name || 'Teacher'}
             </h1>
 
             <p style={{
-              fontSize: 12.5,
+              fontSize: 12.8,
               color: T.ink3,
-              lineHeight: 1.25,
+              lineHeight: 1.35,
               margin: 0,
             }}>
               {school?.name || 'School'} · {classLabel}
             </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 9,
+              width: '100%',
+              maxWidth: 260,
+              marginTop: 20,
+            }}>
+              <MiniStat label="Sent" value={completedCount} />
+              <MiniStat label="Pending" value={pendingCount} />
+            </div>
           </section>
 
           <section style={{
             display: 'flex',
             alignItems: 'center',
             gap: 12,
-            padding: '13px 14px',
-            borderRadius: 22,
+            padding: '14px 15px',
+            borderRadius: 24,
             background: T.white,
             border: 'none',
-            marginBottom: 16,
+            marginBottom: 14,
           }}>
             <div style={{
               width: 38,
@@ -314,20 +410,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-              }}>
+              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
                 Add learners
               </p>
-              <p style={{
-                fontSize: 12.5,
-                color: T.ink3,
-                lineHeight: 1.35,
-                margin: '2px 0 0',
-              }}>
+              <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
                 Build your roster once.
               </p>
             </div>
@@ -337,14 +423,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               minHeight: 36,
               padding: '0 14px',
               flexShrink: 0,
-              background: T.accent,
             }}>
               Add
             </button>
           </section>
 
           <section style={{
-            borderRadius: 22,
+            borderRadius: 24,
             background: T.white,
             border: 'none',
             overflow: 'hidden',
@@ -357,7 +442,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 width: '100%',
                 background: T.white,
                 border: 'none',
-                padding: 14,
+                padding: 15,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 11,
@@ -381,11 +466,11 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               </div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-                  Learners
+                <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+                  Weekly checklist
                 </p>
                 <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                  {children.length === 0 ? 'No learners yet' : `${children.length} learners`}
+                  {children.length === 0 ? 'No learners yet' : `${completedCount}/${children.length} reports sent`}
                 </p>
               </div>
 
@@ -402,10 +487,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </button>
 
             {rosterOpen && (
-              <div style={{
-                borderTop: `1px solid ${T.border}`,
-                padding: '4px 14px 12px',
-              }}>
+              <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
                 {!hasLearners ? (
                   <EmptyRoster onAdd={() => setShowAdd(true)} />
                 ) : (
@@ -413,8 +495,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     <LearnerRow
                       key={child.id}
                       child={child}
+                      weekStart={weekStart}
                       isLast={index === children.length - 1}
-                      onReport={() => setReportChild(child)}
+                      onOpen={() => openChild(child)}
                       onDeleted={load}
                     />
                   ))
@@ -425,7 +508,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
           <p style={{
             fontSize: 10.5,
-            color: '#CCCCCC',
+            color: '#B8B8BC',
             textAlign: 'center',
             margin: '18px 0 0',
             letterSpacing: '0.04em',
@@ -456,23 +539,30 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           onUpdated={(updatedTeacher: any) => {
             setSession((current: any) => ({
               ...current,
-              teacher: {
-                ...current.teacher,
-                ...updatedTeacher,
-              },
+              teacher: { ...current.teacher, ...updatedTeacher },
             }))
           }}
           onSignOut={signOut}
         />
       )}
+    </div>
+  )
+}
 
-      {reportChild && (
-        <WeeklyReportSheet
-          child={reportChild}
-          onClose={() => setReportChild(null)}
-          onSaved={() => load()}
-        />
-      )}
+function MiniStat({ label, value }: any) {
+  return (
+    <div style={{
+      padding: '10px 8px',
+      borderRadius: 17,
+      background: T.soft,
+      textAlign: 'center',
+    }}>
+      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
+        {value}
+      </p>
+      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
+        {label}
+      </p>
     </div>
   )
 }
@@ -502,7 +592,7 @@ function LoadingScreen() {
                 width: 8,
                 height: 8,
                 borderRadius: 999,
-                background: dot === 1 ? '#8FA6A1' : '#D8DFDD',
+                background: dot === 1 ? T.accent : '#D8DFDD',
                 animation: 'teacherDotBounce 1.05s ease-in-out infinite',
                 animationDelay: `${dot * 0.14}s`,
                 display: 'block',
@@ -526,10 +616,9 @@ function EmptyRoster({ onAdd }: any) {
       background: 'transparent',
       marginTop: 10,
     }}>
-      <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 4px' }}>
+      <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
         No learners yet
       </p>
-
       <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
         Tap Add to create your roster.
       </p>
@@ -537,7 +626,9 @@ function EmptyRoster({ onAdd }: any) {
   )
 }
 
-function LearnerRow({ child, isLast, onReport, onDeleted }: any) {
+function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
+  const done = isMarkedThisWeek(child, weekStart)
+
   const remove = async () => {
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
@@ -561,60 +652,78 @@ function LearnerRow({ child, isLast, onReport, onDeleted }: any) {
       alignItems: 'center',
       gap: 10,
     }}>
-      <div style={{
-        width: 36,
-        height: 36,
-        borderRadius: 14,
-        background: T.soft,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: T.ink2,
-        fontSize: 12,
-        fontWeight: 560,
-        flexShrink: 0,
-      }}>
-        {initials(child.name)}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          fontSize: 13.8,
+      <button
+        type="button"
+        onClick={onOpen}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          border: 'none',
+          background: 'transparent',
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          textAlign: 'left',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        <div style={{
+          width: 36,
+          height: 36,
+          borderRadius: 14,
+          background: done ? T.accentSoft : T.soft,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: done ? T.accent : T.ink2,
+          fontSize: 12,
           fontWeight: 540,
-          color: T.ink,
-          margin: 0,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
+          flexShrink: 0,
         }}>
-          {child.name}
-        </p>
-        <p style={{
-          fontSize: 12.2,
-          color: T.ink3,
-          margin: '2px 0 0',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}>
-          {formatShortDate(child.latest_report_at)}
-        </p>
-      </div>
+          {initials(child.name)}
+        </div>
 
-      <button type="button" onClick={onReport} style={{
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.8,
+            fontWeight: 540,
+            color: T.ink,
+            margin: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>
+            {child.name}
+          </p>
+          <p style={{
+            fontSize: 12.2,
+            color: done ? T.green : T.ink3,
+            margin: '2px 0 0',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>
+            {done ? 'Sent this week' : 'Pending this week'}
+          </p>
+        </div>
+      </button>
+
+      <button type="button" onClick={onOpen} style={{
         ...softButton,
         minHeight: 32,
         padding: '0 12px',
         fontSize: 12.5,
       }}>
-        Report
+        Open
       </button>
 
       <button type="button" onClick={remove} style={{
         width: 32,
         height: 32,
         borderRadius: 999,
-        border: `1px solid ${T.border}`,
+        border: 'none',
         background: T.white,
         color: T.red,
         display: 'flex',
@@ -629,6 +738,368 @@ function LearnerRow({ child, isLast, onReport, onDeleted }: any) {
   )
 }
 
+function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, onNext }: any) {
+  const subjects = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
+  const [week, setWeek] = useState(weekStart)
+  const [scores, setScores] = useState<Record<string, number>>({
+    Mathematics: 3,
+    English: 3,
+    'Life Skills': 3,
+    Behaviour: 3,
+  })
+  const [comment, setComment] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [magicLink, setMagicLink] = useState('')
+  const [history, setHistory] = useState<any[]>([])
+  const [historyLoading, setHistoryLoading] = useState(true)
+
+  const nextChild = useMemo(() => {
+    const currentIndex = children.findIndex((item: any) => item.id === child.id)
+    const after = children.slice(currentIndex + 1).find((item: any) => !isMarkedThisWeek(item, weekStart))
+    const before = children.slice(0, currentIndex).find((item: any) => !isMarkedThisWeek(item, weekStart))
+    return after || before || null
+  }, [child.id, children, weekStart])
+
+  useEffect(() => {
+    setWeek(weekStart)
+    setScores({ Mathematics: 3, English: 3, 'Life Skills': 3, Behaviour: 3 })
+    setComment('')
+    setMagicLink('')
+    setHistoryLoading(true)
+
+    fetch(`/api/teacher/report-history?child_id=${encodeURIComponent(child.id)}`, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(json => {
+        setHistory(json.reports || [])
+        if (json.magic_link) setMagicLink(json.magic_link)
+      })
+      .catch(() => setHistory([]))
+      .finally(() => setHistoryLoading(false))
+  }, [child.id, weekStart])
+
+  const submit = async () => {
+    if (saving) return
+
+    setSaving(true)
+    const tid = toast.loading('Saving report...')
+
+    try {
+      const res = await fetch('/api/teacher/child-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          child_id: child.id,
+          week_starting: week,
+          scores,
+          comment: comment.trim(),
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not send report')
+
+      if (json.magic_link) setMagicLink(json.magic_link)
+
+      const updatedChild = {
+        ...child,
+        latest_week_starting: week,
+        latest_report_at: new Date().toISOString(),
+      }
+
+      toast.success('Report saved', { id: tid })
+      await onSaved(updatedChild)
+
+      setHistory((current) => [
+        json.report,
+        ...current.filter((item) => item.id !== json.report?.id),
+      ].filter(Boolean))
+    } catch (e: any) {
+      toast.error(e.message || 'Could not send report', { id: tid })
+    }
+
+    setSaving(false)
+  }
+
+  const copyLink = async () => {
+    if (!magicLink) {
+      toast.error('Save a report first')
+      return
+    }
+
+    await navigator.clipboard.writeText(magicLink)
+    toast.success('Parent link copied')
+  }
+
+  return (
+    <div style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.bg,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.bg,
+      }}>
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          background: T.bg,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button type="button" onClick={onBack} style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: 'none',
+              background: T.white,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}>
+              <ArrowLeft size={16} />
+            </button>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}>
+                {child.name}
+              </p>
+              <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
+                Weekly report
+              </p>
+            </div>
+
+            <button type="button" onClick={copyLink} style={{
+              ...softButton,
+              minHeight: 34,
+              padding: '0 12px',
+              background: T.white,
+            }}>
+              <Copy size={13} />
+              Copy
+            </button>
+          </div>
+        </header>
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+        }}>
+          <section style={{
+            borderRadius: 28,
+            background: T.white,
+            border: 'none',
+            padding: 18,
+            marginBottom: 14,
+          }}>
+            <label>
+              <span style={labelStyle}>Week starting</span>
+              <input type="date" value={week} onChange={e => setWeek(e.target.value)} style={inputStyle} />
+            </label>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 18 }}>
+              {subjects.map(subject => (
+                <div key={subject}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: 7,
+                  }}>
+                    <span style={{ fontSize: 13.5, fontWeight: 560, color: T.ink }}>
+                      {subject}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 540, color: T.ink3 }}>
+                      {scores[subject]}/5
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
+                    {[1, 2, 3, 4, 5].map(score => {
+                      const active = scores[subject] === score
+                      return (
+                        <button
+                          key={score}
+                          type="button"
+                          onClick={() => setScores(prev => ({ ...prev, [subject]: score }))}
+                          style={{
+                            height: 38,
+                            borderRadius: 999,
+                            border: active ? 'none' : `1px solid ${T.border}`,
+                            background: active ? T.accent : T.white,
+                            color: active ? T.white : T.ink2,
+                            fontSize: 13,
+                            fontWeight: 540,
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                          }}
+                        >
+                          {score}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section style={{
+            borderRadius: 24,
+            background: T.white,
+            border: 'none',
+            padding: 16,
+            marginBottom: 14,
+          }}>
+            <label>
+              <span style={labelStyle}>Teacher note optional</span>
+              <textarea
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                rows={5}
+                placeholder="Add a short note, or leave empty for an automatic comment."
+                style={{ ...inputStyle, resize: 'none', lineHeight: 1.5 }}
+              />
+            </label>
+          </section>
+
+          <section style={{
+            borderRadius: 24,
+            background: T.white,
+            border: 'none',
+            padding: 16,
+            marginBottom: 14,
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 10,
+              marginBottom: 10,
+            }}>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
+                  Previous reports
+                </p>
+                <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+                  Recent history for this child.
+                </p>
+              </div>
+            </div>
+
+            {historyLoading ? (
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Loading history...</p>
+            ) : history.length === 0 ? (
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>No previous reports yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {history.slice(0, 4).map((report: any) => (
+                  <HistoryCard key={report.id} report={report} />
+                ))}
+              </div>
+            )}
+          </section>
+        </main>
+
+        <footer style={{
+          flexShrink: 0,
+          padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
+          background: T.bg,
+          display: 'grid',
+          gridTemplateColumns: nextChild ? '1fr 1fr' : '1fr',
+          gap: 8,
+        }}>
+          <button type="button" onClick={submit} disabled={saving} style={{
+            ...darkButton,
+            width: '100%',
+            opacity: saving ? 0.65 : 1,
+            cursor: saving ? 'wait' : 'pointer',
+          }}>
+            {saving ? 'Saving...' : 'Save report'}
+          </button>
+
+          {nextChild && (
+            <button type="button" onClick={() => onNext(child)} style={{
+              ...primaryButton,
+              width: '100%',
+            }}>
+              Next learner
+            </button>
+          )}
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+function HistoryCard({ report }: any) {
+  const avg = averageScore(report.scores)
+
+  return (
+    <div style={{
+      padding: '10px 0',
+      borderTop: `1px solid ${T.border}`,
+    }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: 10,
+        alignItems: 'center',
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: 13.2, fontWeight: 540, color: T.ink, margin: 0 }}>
+            {formatWeek(report.week_starting)}
+          </p>
+          <p style={{
+            fontSize: 12.2,
+            color: T.ink3,
+            margin: '2px 0 0',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            maxWidth: 260,
+          }}>
+            {report.comment || 'Weekly update sent.'}
+          </p>
+        </div>
+
+        <div style={{
+          minWidth: 42,
+          height: 28,
+          borderRadius: 999,
+          background: T.accentSoft,
+          color: T.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12.5,
+          fontWeight: 560,
+        }}>
+          {avg ? avg.toFixed(1) : '-'}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut }: any) {
   const fileRef = useRef<HTMLInputElement>(null)
@@ -655,15 +1126,10 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
     try {
       const dataUrl = await readFileAsDataUrl(file)
-
       const res = await fetch('/api/teacher/profile-photo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          data_url: dataUrl,
-          content_type: file.type,
-          file_name: file.name,
-        }),
+        body: JSON.stringify({ data_url: dataUrl, content_type: file.type, file_name: file.name }),
       })
 
       const json = await res.json().catch(() => ({}))
@@ -725,13 +1191,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
         </div>
       </div>
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        onChange={handlePhoto}
-        style={{ display: 'none' }}
-      />
+      <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
 
       <button
         type="button"
@@ -829,7 +1289,7 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
         </label>
 
         <button type="button" onClick={submit} disabled={saving} style={{
-          ...primaryButton,
+          ...darkButton,
           width: '100%',
           marginTop: 4,
           opacity: saving ? 0.65 : 1,
@@ -838,185 +1298,6 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
           {saving ? 'Saving...' : 'Save learner'}
         </button>
       </div>
-    </BottomSheet>
-  )
-}
-
-function WeeklyReportSheet({ child, onClose, onSaved }: any) {
-  const subjects = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
-  const [week, setWeek] = useState(weekStartToday())
-  const [scores, setScores] = useState<Record<string, number>>({
-    Mathematics: 3,
-    English: 3,
-    'Life Skills': 3,
-    Behaviour: 3,
-  })
-  const [comment, setComment] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [magicLink, setMagicLink] = useState('')
-
-  const submit = async () => {
-    if (saving) return
-
-    setSaving(true)
-    const tid = toast.loading('Sending report...')
-
-    try {
-      const res = await fetch('/api/teacher/child-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          child_id: child.id,
-          week_starting: week,
-          scores,
-          comment: comment.trim(),
-        }),
-      })
-
-      const json = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(json.error || 'Could not send report')
-
-      if (json.magic_link) setMagicLink(json.magic_link)
-
-      toast.success('Report ready', { id: tid })
-      onSaved()
-    } catch (e: any) {
-      toast.error(e.message || 'Could not send report', { id: tid })
-    }
-
-    setSaving(false)
-  }
-
-  const copyLink = async () => {
-    if (!magicLink) return
-    await navigator.clipboard.writeText(magicLink)
-    toast.success('Parent link copied')
-  }
-
-  return (
-    <BottomSheet onClose={onClose}>
-      <SheetHeader title="Weekly report" subtitle={child.name} onClose={onClose} />
-
-      <label>
-        <span style={labelStyle}>Week starting</span>
-        <input type="date" value={week} onChange={e => setWeek(e.target.value)} style={inputStyle} />
-      </label>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 13, marginTop: 14 }}>
-        {subjects.map(subject => (
-          <div key={subject}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: 7,
-            }}>
-              <span style={{ fontSize: 13.5, fontWeight: 560, color: T.ink }}>
-                {subject}
-              </span>
-              <span style={{ fontSize: 13, fontWeight: 540, color: T.ink3 }}>
-                {scores[subject]}/5
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
-              {[1, 2, 3, 4, 5].map(score => {
-                const active = scores[subject] === score
-                return (
-                  <button
-                    key={score}
-                    type="button"
-                    onClick={() => setScores(prev => ({ ...prev, [subject]: score }))}
-                    style={{
-                      height: 38,
-                      borderRadius: 999,
-                      border: active ? 'none' : `1px solid ${T.border}`,
-                      background: active ? T.accent : T.white,
-                      color: active ? T.white : T.ink2,
-                      fontSize: 13,
-                      fontWeight: 540,
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    {score}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <label style={{ display: 'block', marginTop: 14 }}>
-        <span style={labelStyle}>Teacher note optional</span>
-        <textarea
-          value={comment}
-          onChange={e => setComment(e.target.value)}
-          rows={4}
-          placeholder="Add a short note, or leave empty for an automatic comment."
-          style={{ ...inputStyle, resize: 'none', lineHeight: 1.5 }}
-        />
-      </label>
-
-      <button type="button" onClick={submit} disabled={saving} style={{
-        ...primaryButton,
-        width: '100%',
-        marginTop: 14,
-        opacity: saving ? 0.65 : 1,
-        cursor: saving ? 'wait' : 'pointer',
-      }}>
-        <Send size={14} strokeWidth={2} />
-        {saving ? 'Sending...' : 'Send report'}
-      </button>
-
-      {magicLink && (
-        <div style={{
-          marginTop: 12,
-          padding: 12,
-          borderRadius: 18,
-          background: T.soft,
-          border: `1px solid ${T.border}`,
-        }}>
-          <p style={{
-            fontSize: 12,
-            color: T.ink3,
-            fontWeight: 600,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            margin: '0 0 7px',
-          }}>
-            Parent report link
-          </p>
-
-          <a
-            href={magicLink}
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: 'block',
-              fontSize: 13,
-              lineHeight: 1.45,
-              color: T.ink,
-              wordBreak: 'break-all',
-              textDecoration: 'none',
-              marginBottom: 10,
-            }}
-          >
-            {magicLink}
-          </a>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <button type="button" onClick={copyLink} style={softButton}>
-              <Copy size={14} />
-              Copy
-            </button>
-
-            <button type="button" onClick={onClose} style={primaryButton}>
-              Done
-            </button>
-          </div>
-        </div>
-      )}
     </BottomSheet>
   )
 }
@@ -1072,8 +1353,8 @@ function SheetHeader({ title, subtitle, onClose }: any) {
         width: 34,
         height: 34,
         borderRadius: 999,
-        border: `1px solid ${T.border}`,
-        background: T.white,
+        border: 'none',
+        background: T.soft,
         color: T.ink3,
         display: 'flex',
         alignItems: 'center',
@@ -1101,7 +1382,7 @@ const emptyCard: any = {
   maxWidth: 360,
   textAlign: 'center',
   background: T.white,
-  border: `1px solid ${T.border}`,
+  border: 'none',
   borderRadius: 24,
   padding: '34px 24px',
 }

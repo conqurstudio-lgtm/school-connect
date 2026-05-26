@@ -1,0 +1,59 @@
+// @ts-nocheck
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+function adminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
+async function getTeacher(req: NextRequest) {
+  const token = req.cookies.get('teacher_token')?.value
+  if (!token) return null
+
+  const sb = adminClient()
+  const { data } = await sb.from('teachers').select('*').eq('access_token', token).maybeSingle()
+  if (!data) return null
+
+  const blocked = ['rejected', 'revoked', 'inactive', 'disabled']
+  if (blocked.includes(String(data.status || '').toLowerCase())) return null
+
+  return data
+}
+
+export async function GET(req: NextRequest) {
+  const teacher = await getTeacher(req)
+  if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const sb = adminClient()
+
+  const { data, error } = await sb
+    .from('child_reports')
+    .select('id, child_id, week_starting, published_at, created_at, status')
+    .eq('teacher_id', teacher.id)
+    .eq('status', 'published')
+    .order('week_starting', { ascending: false })
+    .order('published_at', { ascending: false })
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  const latestByChild: any = {}
+
+  for (const row of data || []) {
+    if (!latestByChild[row.child_id]) {
+      latestByChild[row.child_id] = {
+        latest_report_id: row.id,
+        latest_week_starting: row.week_starting,
+        latest_report_at: row.published_at || row.created_at,
+      }
+    }
+  }
+
+  return NextResponse.json({ latestByChild })
+}
