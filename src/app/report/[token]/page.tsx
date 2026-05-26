@@ -62,10 +62,10 @@ function MomentBellLink({ token }: { token: string }) {
       aria-label="View Moments"
       style={{
         position: 'absolute',
-        top: 'calc(9px + env(safe-area-inset-top, 0px))',
-        right: 14,
-        width: 34,
-        height: 34,
+        top: 'calc(8px + env(safe-area-inset-top, 0px))',
+        right: 13,
+        width: 38,
+        height: 38,
         borderRadius: 999,
         background: '#FFFFFF',
         display: 'inline-flex',
@@ -82,8 +82,8 @@ function MomentBellLink({ token }: { token: string }) {
         title="Moments"
         aria-hidden="true"
         style={{
-          width: 25,
-          height: 25,
+          width: 30,
+          height: 30,
           border: 'none',
           display: 'block',
           pointerEvents: 'none',
@@ -93,8 +93,8 @@ function MomentBellLink({ token }: { token: string }) {
       {hasNew && (
         <span style={{
           position: 'absolute',
-          top: 4,
-          right: 4,
+          top: 5,
+          right: 5,
           width: 7,
           height: 7,
           borderRadius: 999,
@@ -125,7 +125,7 @@ function SchoolQuickView({ school }: { school: any }) {
     <details style={{
       position: 'relative',
       width: 'fit-content',
-      marginTop: 3,
+      marginTop: 0,
     }}>
       <summary style={{
         listStyle: 'none',
@@ -133,12 +133,12 @@ function SchoolQuickView({ school }: { school: any }) {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: 21,
-        padding: '0 9px',
+        minHeight: 18,
+        padding: '0 7px',
         borderRadius: 999,
-        background: '#F0F0F0',
-        color: '#9A9A9A',
-        fontSize: 11.5,
+        background: '#DAE5E6',
+        color: '#5F6268',
+        fontSize: 10.5,
         fontWeight: 540,
         lineHeight: 1,
         userSelect: 'none',
@@ -148,7 +148,7 @@ function SchoolQuickView({ school }: { school: any }) {
 
       <div style={{
         position: 'absolute',
-        top: 28,
+        top: 23,
         left: 0,
         zIndex: 100,
         width: 272,
@@ -598,7 +598,7 @@ export default function ParentMagicReportPage() {
             display: 'flex',
             alignItems: 'center',
             gap: 9,
-            minHeight: 36,
+            minHeight: 34,
           }}>
             <div style={{
               width: 34,
@@ -623,14 +623,14 @@ export default function ParentMagicReportPage() {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              gap: 1,
+              gap: 0,
             }}>
               <p style={{
                 fontSize: 13,
                 fontWeight: 620,
                 color: T.ink,
                 margin: 0,
-                lineHeight: 1.05,
+                lineHeight: 1,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
