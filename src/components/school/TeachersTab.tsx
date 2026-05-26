@@ -225,6 +225,9 @@ export function TeachersTab() {
     <div style={{
       paddingTop: teachers.length ? 4 : 10,
       background: T.white,
+      overflow: 'visible',
+      position: 'relative',
+      zIndex: 30,
     }}>
       {teachers.length === 0 ? (
         <div style={{
@@ -252,7 +255,7 @@ export function TeachersTab() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'visible', position: 'relative', zIndex: 30 }}>
           {teachers.map((teacher, index) => (
             <TeacherRow
               key={teacher.id}
@@ -309,6 +312,8 @@ function TeacherRow({
       alignItems: 'center',
       gap: 10,
       position: 'relative',
+      overflow: 'visible',
+      zIndex: isMenu ? 80 : 1,
       opacity: isActive ? 1 : 0.62,
     }}>
       <div style={{
@@ -401,14 +406,15 @@ function TeacherRow({
         <div style={{
           position: 'absolute',
           right: 0,
-          top: 48,
-          zIndex: 30,
+          top: 42,
+          zIndex: 9999,
           background: T.white,
           borderRadius: 16,
           border: `1px solid ${T.border}`,
           boxShadow: '0 14px 38px rgba(0,0,0,0.10)',
           padding: 6,
           minWidth: 178,
+          transform: 'translateY(2px)',
         }}>
           <MenuItem onClick={onRotate} Icon={RotateCw} label="Issue new link" />
           {isActive ? (

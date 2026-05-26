@@ -182,7 +182,7 @@ function MiniStat({ label, value }: any) {
       <p style={{
         fontSize: 18,
         fontWeight: 560,
-        color: label === 'Role' ? T.accent : T.ink,
+        color: T.ink,
         margin: 0,
         minHeight: 22,
         display: 'flex',
@@ -580,7 +580,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
-    <SectionCard style={{ padding: 0, overflow: 'hidden' }}>
+    <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20 }}>
       <div style={{
         width: '100%',
         background: T.white,
@@ -675,7 +675,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
           justifyContent: 'center',
           fontSize: 16,
           fontWeight: 560,
-          overflow: 'hidden',
+          overflow: 'visible',
           flexShrink: 0,
         }}>
           {!school.logo_url && initialsFrom(school.name)}
@@ -983,7 +983,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               marginTop: 20,
             }}>
               <MiniStat label="Teachers" value={teacherCountLoading ? '...' : teacherCount} />
-              <MiniStat label="Role" value={<User size={18} strokeWidth={1.8} />} />
+              <MiniStat label="Admin" value={<User size={18} strokeWidth={2.25} />} />
             </div>
           </SectionCard>
 
