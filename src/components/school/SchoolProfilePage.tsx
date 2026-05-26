@@ -7,9 +7,11 @@ import {
   ChevronDown,
   LogOut,
   Pencil,
+  Plus,
   Save,
   Settings,
   Users,
+  User,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -179,7 +181,16 @@ function MiniStat({ label, value }: any) {
       background: T.soft,
       textAlign: 'center',
     }}>
-      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
+      <p style={{
+        fontSize: 18,
+        fontWeight: 560,
+        color: label === 'Role' ? T.accent : T.ink,
+        margin: 0,
+        minHeight: 22,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
         {value}
       </p>
       <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
@@ -569,64 +580,122 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
-function TeachersAccordion({ open, setOpen, teacherCount, teacherCountLoading }: any) {
+function TeachersAccordion({ open, setOpen, teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'hidden' }}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        style={{
-          width: '100%',
-          background: T.white,
-          border: 'none',
-          padding: 15,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          cursor: 'pointer',
-          textAlign: 'left',
-          fontFamily: 'inherit',
-        }}
-      >
-        <div style={{
-          width: 38,
-          height: 38,
-          borderRadius: 14,
-          background: T.accentSoft,
-          color: T.accent,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <Users size={18} strokeWidth={1.7} />
-        </div>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-            Teachers & classes
-          </p>
-          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-            {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
-          </p>
-        </div>
-
-        <ChevronDown
-          size={16}
-          strokeWidth={1.9}
+      <div style={{
+        width: '100%',
+        background: T.white,
+        border: 'none',
+        padding: 15,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        textAlign: 'left',
+        fontFamily: 'inherit',
+      }}>
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
           style={{
-            color: T.ink3,
-            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.16s ease',
-            flexShrink: 0,
+            flex: 1,
+            minWidth: 0,
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            cursor: 'pointer',
+            textAlign: 'left',
+            fontFamily: 'inherit',
           }}
-        />
-      </button>
+        >
+          <div style={{
+            width: 38,
+            height: 38,
+            borderRadius: 14,
+            background: T.accentSoft,
+            color: T.accent,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <Users size={18} strokeWidth={1.7} />
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+              Teachers & classes
+            </p>
+            <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+              {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
+            </p>
+          </div>
+        </button>
+
+        {open ? (
+          <button
+            type="button"
+            onClick={onAddTeacher}
+            style={{
+              minWidth: 58,
+              height: 34,
+              borderRadius: 999,
+              border: 'none',
+              background: T.accent,
+              color: T.white,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 5,
+              fontSize: 12.5,
+              fontWeight: 540,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              flexShrink: 0,
+            }}
+          >
+            <Plus size={13} strokeWidth={2} />
+            Add
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open teachers"
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: 'none',
+              background: T.soft,
+              color: T.ink3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <ChevronDown
+              size={16}
+              strokeWidth={1.9}
+              style={{
+                color: T.ink3,
+                transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.16s ease',
+              }}
+            />
+          </button>
+        )}
+      </div>
 
       {open && (
         <div style={{
           borderTop: `1px solid ${T.border}`,
-          padding: '12px 14px 14px',
+          padding: '0 14px 12px',
           background: T.white,
         }}>
           <TeachersTab />
@@ -821,6 +890,21 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     window.location.href = '/auth/login'
   }
 
+  const triggerAddTeacher = () => {
+    setTeachersOpen(true)
+
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('school-connect-open-add-teacher'))
+
+      const buttons = Array.from(document.querySelectorAll('button'))
+      const addButton = buttons.find((button: any) =>
+        /add teacher|create teacher/i.test(String(button.textContent || ''))
+      ) as HTMLButtonElement | undefined
+
+      addButton?.click()
+    }, 120)
+  }
+
   const location = schoolLocation(school)
   const href = websiteHref(school.website)
 
@@ -954,7 +1038,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               marginTop: 20,
             }}>
               <MiniStat label="Teachers" value={teacherCountLoading ? '...' : teacherCount} />
-              <MiniStat label="Role" value={isAdmin ? 'Admin' : 'School'} />
+              <MiniStat label="Role" value={<User size={18} strokeWidth={1.8} />} />
             </div>
           </SectionCard>
 
@@ -964,6 +1048,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               setOpen={setTeachersOpen}
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}
+              onAddTeacher={triggerAddTeacher}
             />
           )}
 
