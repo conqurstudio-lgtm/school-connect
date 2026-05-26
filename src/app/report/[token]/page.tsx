@@ -58,6 +58,48 @@ function ReportSafeAreaStyle() {
   )
 }
 
+
+function ReportLinkedSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
+      }
+
+      .parent-report-safe-screen,
+      .report-linked-screen {
+        background: #FFFFFF;
+      }
+
+      .parent-report-safe-screen::before,
+      .parent-report-safe-screen::after,
+      .report-linked-screen::before,
+      .report-linked-screen::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .parent-report-safe-screen::before,
+      .report-linked-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .parent-report-safe-screen::after,
+      .report-linked-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+    `}</style>
+  )
+}
+
 function LoadingState() {
   return (
     <main className="parent-report-safe-screen" style={{

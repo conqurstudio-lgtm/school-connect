@@ -811,6 +811,43 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   )
 }
 
+
+function ReportLinkedSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
+      }
+
+      .report-linked-screen {
+        background: #FFFFFF;
+      }
+
+      .report-linked-screen::before,
+      .report-linked-screen::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .report-linked-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .report-linked-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+    `}</style>
+  )
+}
+
 function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, onNext }: any) {
   const subjects = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
   const [week, setWeek] = useState(weekStart)
@@ -912,7 +949,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      background: T.bg,
+      background: '#FFFFFF',
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
       color: T.ink,
     }}>
@@ -922,12 +959,12 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        background: T.bg,
+        background: '#FFFFFF',
       }}>
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: T.bg,
+          background: '#FFFFFF',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button type="button" onClick={onBack} style={{
@@ -935,7 +972,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
               height: 34,
               borderRadius: 999,
               border: 'none',
-              background: T.bg,
+              background: '#FFFFFF',
               color: T.ink2,
               display: 'flex',
               alignItems: 'center',
@@ -971,12 +1008,13 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: T.bg,
+          background: '#FFFFFF',
         }}>
           <section style={{
             borderRadius: 28,
-            background: T.bg,
+            background: '#FFFFFF',
             border: 'none',
+            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 18,
             marginBottom: 14,
           }}>
@@ -1035,6 +1073,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
             borderRadius: 24,
             background: T.white,
             border: 'none',
+            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 16,
             marginBottom: 14,
           }}>
@@ -1054,6 +1093,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
             borderRadius: 24,
             background: T.white,
             border: 'none',
+            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 16,
             marginBottom: 14,
           }}>
@@ -1091,7 +1131,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <footer style={{
           flexShrink: 0,
           padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          background: T.bg,
+          background: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
           gap: 8,
