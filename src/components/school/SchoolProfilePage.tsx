@@ -1,44 +1,15 @@
 // @ts-nocheck
 'use client'
-// empty-states-copy-motion-v1
-// white-premium-app-theme-v1
-// school-admin-landing-route-repair-v1
-// school-connect-white-app-background-v15
-// school-home-icon-life-view-v6
-// school-logo-home-settings-flow-v7
-// school-logo-home-onboarding-cues-v8
-// school-home-simple-empty-state-v9
-// school-logo-static-blue-setup-dot-v10
-// school-home-empty-card-match-teachers-v11
-// school-home-empty-card-theme-standard-v12
-// school-home-empty-card-transparent-v13
-// school-logo-adjust-crop-v14
-// school-life-feed-unification-v1
-// school-life-admin-images-v3
-// school-life-image-edge-scroll-v4
-// school-life-image-lightbox-v5
-// school-life-dark-image-viewer-v6
-// school-life-admin-engagement-v1
-// school-life-feed-build-repair-v2
-// school-profile-clean-light-card-v4
-// school-profile-spacing-icon-cleanup-v5
 
-import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import {
-  Home,
-  Building2,
   Camera,
   ChevronDown,
   LogOut,
-  Mail,
-  MapPin,
-  MoreHorizontal,
   Pencil,
-  Phone,
   Save,
   Settings,
-  ShieldCheck,
+  Users,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -47,72 +18,124 @@ import type { School, Profile } from '@/lib/types'
 import { TeachersTab } from './TeachersTab'
 
 interface SchoolProfilePageProps {
-  school:   School
-  profile:  Profile
-  isAdmin:  boolean
-  userId:   string
+  school: School
+  profile: Profile
+  isAdmin: boolean
+  userId: string
 }
-
-type SchoolView = 'home' | 'profile' | 'classes' | 'settings'
 
 const supabase = createClient()
 
 const T = {
-  ink:    '#262626',
-  ink2:   '#5F6268',
-  ink3:   '#9A9CA3',
+  ink: '#252525',
+  ink2: '#5F6268',
+  ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg:     '#FFFFFF',
-  soft:   '#F4F4F6',
-  soft2:  '#F8F8FB',
-  white:  '#FFFFFF',
+  bg: '#FFFFFF',
+  soft: '#F7F7F8',
+  soft2: '#F4F5F5',
+  accent: '#8FA6A1',
+  accentSoft: '#EEF3F1',
+  white: '#FFFFFF',
+  red: '#B42318',
 }
 
-const inputStyle: React.CSSProperties = {
+const inputStyle: any = {
   width: '100%',
-  padding: '11px 13px',
-  fontSize: 16,
-  border: `1px solid ${T.border}`,
+  boxSizing: 'border-box',
+  padding: '12px 13px',
   borderRadius: 14,
+  border: `1px solid ${T.border}`,
   background: T.white,
   color: T.ink,
+  fontSize: 16,
   outline: 'none',
   fontFamily: 'inherit',
-  boxSizing: 'border-box',
 }
 
-const labelStyle: React.CSSProperties = {
+const labelStyle: any = {
   display: 'block',
   fontSize: 11,
-  fontWeight: 650,
+  fontWeight: 600,
   color: T.ink3,
   textTransform: 'uppercase',
-  letterSpacing: '0.055em',
+  letterSpacing: '0.06em',
   margin: '0 0 6px',
 }
 
-const quietButton: React.CSSProperties = {
-  height: 38,
+const primaryButton: any = {
+  minHeight: 42,
   borderRadius: 999,
-  border: `1px solid ${T.border}`,
+  border: 'none',
+  background: T.ink,
+  color: T.white,
+  fontSize: 13,
+  fontWeight: 560,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  padding: '0 15px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+const softButton: any = {
+  minHeight: 38,
+  borderRadius: 999,
+  border: 'none',
   background: T.white,
   color: T.ink2,
   fontSize: 13,
-  fontWeight: 650,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
+  fontWeight: 540,
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   gap: 7,
   padding: '0 13px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
 }
 
-const primaryButton: React.CSSProperties = {
-  ...quietButton,
-  border: 'none',
-  background: T.ink,
-  color: T.white,
+function SchoolSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
+      }
+
+      .school-safe-screen {
+        background: #FFFFFF;
+      }
+
+      .school-safe-screen::before,
+      .school-safe-screen::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .school-safe-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .school-safe-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+
+      @keyframes schoolDotBounce {
+        0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
+        40% { transform: scale(1); opacity: 1; }
+      }
+    `}</style>
+  )
 }
 
 function initialsFrom(name?: string | null) {
@@ -124,30 +147,24 @@ function initialsFrom(name?: string | null) {
     .toUpperCase()
 }
 
+function schoolLocation(school: any) {
+  return [school?.address, school?.province, school?.country].filter(Boolean).join(' · ')
+}
 
-function formatShortDate(iso?: string | null) {
-  if (!iso) return ''
-  try {
-    return new Date(iso).toLocaleDateString('en-ZA', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return ''
-  }
+function websiteHref(value?: string | null) {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`
 }
 
 function SectionCard({ children, style = {} }: any) {
   return (
     <section style={{
-      margin: '0 14px 10px',
-      padding: 14,
-      borderRadius: 22,
+      borderRadius: 28,
       background: T.white,
-      border: `1px solid ${T.border}`,
-      boxShadow: '0 10px 28px rgba(0,0,0,0.028)',
+      border: 'none',
+      boxShadow: '0 18px 45px rgba(0,0,0,0.06)',
+      padding: 16,
       ...style,
     }}>
       {children}
@@ -155,162 +172,86 @@ function SectionCard({ children, style = {} }: any) {
   )
 }
 
-function SectionTitle({ eyebrow, title, subtitle }: any) {
-  return (
-    <div style={{ marginBottom: 10 }}>
-      {eyebrow && (
-        <p style={{
-          fontSize: 11,
-          fontWeight: 650,
-          color: T.ink3,
-          textTransform: 'uppercase',
-          letterSpacing: '0.07em',
-          margin: '0 0 4px',
-        }}>
-          {eyebrow}
-        </p>
-      )}
-      <h2 style={{
-        fontSize: 16,
-        fontWeight: 650,
-        color: T.ink,
-        letterSpacing: '-0.02em',
-        margin: 0,
-      }}>
-        {title}
-      </h2>
-      {subtitle && (
-        <p style={{
-          fontSize: 13,
-          color: T.ink3,
-          lineHeight: 1.45,
-          margin: '4px 0 0',
-        }}>
-          {subtitle}
-        </p>
-      )}
-    </div>
-  )
-}
-
-function AccordionCard({ title, subtitle, icon, children, defaultOpen = false }: any) {
-  const [open, setOpen] = useState(defaultOpen)
-
+function MiniStat({ label, value }: any) {
   return (
     <div style={{
-      borderRadius: 20,
-      background: T.white,
-      border: `1px solid ${T.border}`,
-      overflow: 'hidden',
-      boxShadow: '0 8px 22px rgba(0,0,0,0.022)',
+      padding: '10px 8px',
+      borderRadius: 17,
+      background: T.soft,
+      textAlign: 'center',
     }}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        style={{
-          width: '100%',
-          background: T.white,
-          border: 'none',
-          padding: 13,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 11,
-          cursor: 'pointer',
-          textAlign: 'left',
-          fontFamily: 'inherit',
-        }}
-      >
-        <div style={{
-          width: 38,
-          height: 38,
-          borderRadius: 14,
-          background: T.soft,
-          color: T.ink2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          {icon}
-        </div>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontSize: 14,
-            fontWeight: 650,
-            color: T.ink,
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
-            {title}
-          </p>
-          {subtitle && (
-            <p style={{
-              fontSize: 12.5,
-              color: T.ink3,
-              margin: '2px 0 0',
-              lineHeight: 1.35,
-            }}>
-              {subtitle}
-            </p>
-          )}
-        </div>
-
-        <ChevronDown
-          size={16}
-          strokeWidth={1.9}
-          style={{
-            color: T.ink3,
-            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.16s ease',
-            flexShrink: 0,
-          }}
-        />
-      </button>
-
-      {open && (
-        <div style={{
-          borderTop: `1px solid ${T.border}`,
-          padding: '3px 13px 13px',
-          background: T.white,
-        }}>
-          {children}
-        </div>
-      )}
+      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
+        {value}
+      </p>
+      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
+        {label}
+      </p>
     </div>
   )
 }
 
-function DetailLine({ label, value }: any) {
-  if (!value) return null
+function BottomSheet({ children, onClose }: any) {
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 3000,
+      background: 'rgba(0,0,0,0.30)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        maxHeight: '90dvh',
+        overflowY: 'auto',
+        background: T.white,
+        borderRadius: '24px 24px 0 0',
+        padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+        boxShadow: '0 -18px 48px rgba(0,0,0,0.10)',
+      }}>
+        {children}
+      </div>
+    </div>
+  )
+}
 
+function SheetHeader({ title, subtitle, onClose }: any) {
   return (
     <div style={{
       display: 'flex',
+      alignItems: 'flex-start',
       justifyContent: 'space-between',
-      gap: 14,
-      padding: '12px 0',
-      borderBottom: `1px solid ${T.border}`,
+      gap: 12,
+      marginBottom: 16,
     }}>
-      <span style={{
-        fontSize: 12.5,
+      <div>
+        <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
+          {title}
+        </h2>
+        {subtitle && (
+          <p style={{ fontSize: 13, color: T.ink3, margin: '3px 0 0' }}>
+            {subtitle}
+          </p>
+        )}
+      </div>
+
+      <button type="button" onClick={onClose} style={{
+        width: 34,
+        height: 34,
+        borderRadius: 999,
+        border: 'none',
+        background: T.soft,
         color: T.ink3,
-        fontWeight: 500,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
       }}>
-        {label}
-      </span>
-      <span style={{
-        fontSize: 13,
-        color: T.ink2,
-        fontWeight: 500,
-        textAlign: 'right',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        maxWidth: '62%',
-      }}>
-        {value}
-      </span>
+        <X size={16} />
+      </button>
     </div>
   )
 }
@@ -321,6 +262,7 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   const [tagline, setTagline] = useState(school.tagline || '')
   const [address, setAddress] = useState(school.address || '')
   const [province, setProvince] = useState(school.province || '')
+  const [country, setCountry] = useState(school.country || '')
   const [phone, setPhone] = useState(school.phone || '')
   const [email, setEmail] = useState(school.email || '')
   const [website, setWebsite] = useState(school.website || '')
@@ -332,21 +274,27 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
     }
 
     setSaving(true)
+
     const updates = {
       name: name.trim(),
       tagline: tagline.trim() || null,
       address: address.trim() || null,
       province: province.trim() || null,
+      country: country.trim() || null,
       phone: phone.trim() || null,
       email: email.trim() || null,
       website: website.trim() || null,
     }
 
-    const { error } = await supabase.from('schools').update(updates).eq('id', school.id)
+    const { error } = await supabase
+      .from('schools')
+      .update(updates)
+      .eq('id', school.id)
+
     setSaving(false)
 
     if (error) {
-      toast.error('Could not save school details')
+      toast.error(error.message || 'Could not save school details')
       return
     }
 
@@ -355,61 +303,68 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 10 }}>
-      <div>
-        <label style={labelStyle}>School name</label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <label>
+        <span style={labelStyle}>School name</span>
         <input value={name} onChange={e => setName(e.target.value)} style={inputStyle} />
-      </div>
+      </label>
 
-      <div>
-        <label style={labelStyle}>Short tagline</label>
-        <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="e.g. Together we grow" style={inputStyle} />
+      <label>
+        <span style={labelStyle}>Short tagline</span>
+        <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="Together we grow" style={inputStyle} />
+      </label>
+
+      <label>
+        <span style={labelStyle}>Address</span>
+        <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Street or area" style={inputStyle} />
+      </label>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <label>
+          <span style={labelStyle}>Province</span>
+          <input value={province} onChange={e => setProvince(e.target.value)} placeholder="Gauteng" style={inputStyle} />
+        </label>
+
+        <label>
+          <span style={labelStyle}>Country</span>
+          <input value={country} onChange={e => setCountry(e.target.value)} placeholder="South Africa" style={inputStyle} />
+        </label>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        <div>
-          <label style={labelStyle}>Phone</label>
+        <label>
+          <span style={labelStyle}>Phone</span>
           <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="011 000 0000" style={inputStyle} />
-        </div>
-        <div>
-          <label style={labelStyle}>Email</label>
+        </label>
+
+        <label>
+          <span style={labelStyle}>Email</span>
           <input value={email} onChange={e => setEmail(e.target.value)} placeholder="info@school.co.za" style={inputStyle} />
-        </div>
+        </label>
       </div>
 
-      <div>
-        <label style={labelStyle}>Location</label>
-        <input value={province || address} onChange={e => {
-          setProvince(e.target.value)
-          if (!address) setAddress(e.target.value)
-        }} placeholder="Johannesburg, Gauteng" style={inputStyle} />
-      </div>
-
-      <div>
-        <label style={labelStyle}>Website</label>
+      <label>
+        <span style={labelStyle}>Website</span>
         <input value={website} onChange={e => setWebsite(e.target.value)} placeholder="https://..." style={inputStyle} />
-      </div>
+      </label>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 2 }}>
-        <button type="button" onClick={onCancel} style={quietButton}>
-          <X size={14} strokeWidth={2} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 4 }}>
+        <button type="button" onClick={onCancel} style={softButton}>
           Cancel
         </button>
+
         <button type="button" disabled={saving} onClick={save} style={{
           ...primaryButton,
-          opacity: saving ? 0.6 : 1,
+          opacity: saving ? 0.65 : 1,
           cursor: saving ? 'wait' : 'pointer',
         }}>
-          <Save size={14} strokeWidth={2} />
+          <Save size={14} strokeWidth={1.8} />
           {saving ? 'Saving...' : 'Save'}
         </button>
       </div>
     </div>
   )
 }
-
-
-
 
 function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   const [zoom, setZoom] = useState(1.18)
@@ -437,9 +392,11 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
   const moveDrag = (event: any) => {
     if (!dragRef.current) return
+
     const nextX = dragRef.current.initialX + (event.clientX - dragRef.current.startX)
     const nextY = dragRef.current.initialY + (event.clientY - dragRef.current.startY)
     const max = 64
+
     setOffset({
       x: Math.max(-max, Math.min(max, nextX)),
       y: Math.max(-max, Math.min(max, nextY)),
@@ -498,7 +455,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
     <div style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 2000,
+      zIndex: 4000,
       background: 'rgba(0,0,0,0.28)',
       display: 'flex',
       alignItems: 'flex-end',
@@ -511,31 +468,32 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         maxWidth: 420,
         background: T.white,
         borderRadius: 24,
-        border: `1px solid ${T.border}`,
+        border: 'none',
         boxShadow: '0 24px 70px rgba(0,0,0,0.18)',
         padding: 16,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 14 }}>
-          <p style={{ fontSize: 16, fontWeight: 650, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: T.ink, margin: 0 }}>
             Adjust school logo
           </p>
           <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
-            Zoom and drag until it fits the circle.
+            Zoom and drag until it fits the square.
           </p>
         </div>
 
-        <div style={{
-          width: cropSize,
-          height: cropSize,
-          borderRadius: 999,
-          overflow: 'hidden',
-          margin: '0 auto',
-          background: T.soft,
-          border: `1px dashed ${T.border}`,
-          position: 'relative',
-          touchAction: 'none',
-          cursor: 'grab',
-        }}
+        <div
+          style={{
+            width: cropSize,
+            height: cropSize,
+            borderRadius: 32,
+            overflow: 'hidden',
+            margin: '0 auto',
+            background: T.soft,
+            border: `1px dashed ${T.border}`,
+            position: 'relative',
+            touchAction: 'none',
+            cursor: 'grab',
+          }}
           onPointerDown={startDrag}
           onPointerMove={moveDrag}
           onPointerUp={stopDrag}
@@ -561,24 +519,19 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         </div>
 
         <div style={{ marginTop: 16 }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 8,
-          }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
             <button type="button" onClick={() => {
               setZoom(1.18)
               setOffset({ x: 0, y: 0 })
             }} style={{
-              border: `1px solid ${T.border}`,
-              background: T.white,
+              border: 'none',
+              background: T.soft,
               color: T.ink2,
               borderRadius: 999,
-              padding: '5px 9px',
+              padding: '6px 10px',
               fontSize: 12,
-              fontWeight: 600,
+              fontWeight: 540,
               fontFamily: 'inherit',
               cursor: 'pointer',
             }}>
@@ -597,37 +550,19 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
           />
         </div>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 9,
-          marginTop: 16,
-        }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
           <button type="button" onClick={onCancel} disabled={uploading} style={{
+            ...softButton,
             height: 40,
-            borderRadius: 999,
-            border: `1px solid ${T.border}`,
-            background: T.white,
-            color: T.ink2,
-            fontSize: 13,
-            fontWeight: 650,
-            cursor: uploading ? 'wait' : 'pointer',
-            fontFamily: 'inherit',
+            opacity: uploading ? 0.65 : 1,
           }}>
             Cancel
           </button>
 
           <button type="button" onClick={apply} disabled={uploading} style={{
+            ...primaryButton,
             height: 40,
-            borderRadius: 999,
-            border: 'none',
-            background: T.ink,
-            color: T.white,
-            fontSize: 13,
-            fontWeight: 650,
-            cursor: uploading ? 'wait' : 'pointer',
-            fontFamily: 'inherit',
-            opacity: uploading ? 0.72 : 1,
+            opacity: uploading ? 0.65 : 1,
           }}>
             {uploading ? 'Saving...' : 'Apply logo'}
           </button>
@@ -637,502 +572,171 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
-
-function ActivityCard({ post }: any) {
-  const [openImage, setOpenImage] = useState<string | null>(null)
-  const images = Array.isArray(post.image_urls) ? post.image_urls : []
-  const teacher = post.teacher || null
-
-  const authorName =
-    post.posted_by_kind === 'teacher'
-      ? (teacher?.name || 'Teacher')
-      : 'School'
-
-  const authorInitials = initialsFrom(authorName)
-  const avatarUrl = post.posted_by_kind === 'teacher' ? teacher?.photo_url : null
-
-  const context = [
-    post.audience_grade || teacher?.grade,
-    post.audience_class || teacher?.class_name,
-  ].filter(Boolean).join(' · ')
-
-  const typeLabel =
-    post.type === 'event' ? 'Event'
-    : post.type === 'moment' ? 'Moment'
-    : post.type === 'document' ? 'Document'
-    : post.posted_by_kind === 'teacher' ? 'Class update'
-    : 'School update'
-
-  const body = post.body || post.title || post.caption || ''
-  const mediaBleedLeft = 62
-  const reactionCount = Number(post.reaction_count || 0)
-  const commentCount = Number(post.comment_count || 0)
-  const flagCount = Number(post.report_count || post.flag_count || 0)
-  const hasEngagement = reactionCount > 0 || commentCount > 0 || flagCount > 0
-
+function TeachersAccordion({ open, setOpen, teacherCount, teacherCountLoading }: any) {
   return (
-    <>
-      <article style={{
-        display: 'grid',
-        gridTemplateColumns: '38px 1fr',
-        gap: 10,
-        padding: '2px 0 18px',
-        borderBottom: `1px solid ${T.border}`,
-      }}>
+    <SectionCard style={{ padding: 0, overflow: 'hidden' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        style={{
+          width: '100%',
+          background: T.white,
+          border: 'none',
+          padding: 15,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          cursor: 'pointer',
+          textAlign: 'left',
+          fontFamily: 'inherit',
+        }}
+      >
         <div style={{
           width: 38,
           height: 38,
           borderRadius: 14,
-          background: avatarUrl ? `url(${avatarUrl}) center/cover` : T.soft,
-          border: `1px solid ${T.border}`,
-          color: T.ink2,
+          background: T.accentSoft,
+          color: T.accent,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 12,
-          fontWeight: 600,
-          overflow: 'hidden',
+          flexShrink: 0,
         }}>
-          {!avatarUrl && authorInitials}
+          <Users size={18} strokeWidth={1.7} />
         </div>
 
-        <div style={{ minWidth: 0 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 10,
-          }}>
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 600,
-                color: T.ink,
-                margin: 0,
-                letterSpacing: '-0.01em',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}>
-                {authorName}
-              </p>
-
-              <p style={{
-                fontSize: 12.2,
-                color: T.ink3,
-                margin: '2px 0 0',
-                lineHeight: 1.35,
-              }}>
-                {[typeLabel, context, formatShortDate(post.created_at)].filter(Boolean).join(' · ')}
-              </p>
-            </div>
-
-            <button type="button" aria-label="Post options" style={{
-              width: 28,
-              height: 28,
-              borderRadius: 999,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink3,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}>
-              <MoreHorizontal size={15} strokeWidth={1.8} />
-            </button>
-          </div>
-
-          {body && (
-            <p style={{
-              fontSize: 13.6,
-              color: T.ink2,
-              lineHeight: 1.5,
-              margin: '8px 0 0',
-              whiteSpace: 'pre-wrap',
-            }}>
-              {body}
-            </p>
-          )}
-
-          {images.length === 1 && (
-            <button type="button" onClick={() => setOpenImage(images[0])} style={{
-              marginTop: 10,
-              padding: 0,
-              border: 'none',
-              background: 'transparent',
-              width: '100%',
-              display: 'block',
-              cursor: 'zoom-in',
-              fontFamily: 'inherit',
-            }}>
-              <img
-                src={images[0]}
-                alt=""
-                style={{
-                  width: '100%',
-                  height: 260,
-                  objectFit: 'cover',
-                  borderRadius: 20,
-                  border: `1px solid ${T.border}`,
-                  display: 'block',
-                  background: T.soft,
-                }}
-              />
-            </button>
-          )}
-
-          {images.length > 1 && (
-            <div style={{
-              marginTop: 10,
-              display: 'flex',
-              gap: 8,
-              overflowX: 'auto',
-              overflowY: 'hidden',
-              WebkitOverflowScrolling: 'touch',
-              scrollBehavior: 'smooth',
-              scrollSnapType: 'x proximity',
-              marginLeft: -mediaBleedLeft,
-              marginRight: -14,
-              padding: `0 14px 3px ${mediaBleedLeft}px`,
-              scrollPaddingLeft: mediaBleedLeft,
-            }}>
-              {images.map((src: string, index: number) => (
-                <button
-                  key={`${src}-${index}`}
-                  type="button"
-                  onClick={() => setOpenImage(src)}
-                  style={{
-                    width: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
-                    minWidth: `calc(82% - ${Math.round(mediaBleedLeft * 0.82)}px)`,
-                    height: 260,
-                    borderRadius: 20,
-                    overflow: 'hidden',
-                    background: T.soft,
-                    border: `1px solid ${T.border}`,
-                    scrollSnapAlign: 'start',
-                    flexShrink: 0,
-                    padding: 0,
-                    cursor: 'zoom-in',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-
-          {(post.event_date || post.event_time || post.event_location) && (
-            <div style={{
-              marginTop: 10,
-              padding: '9px 0 0',
-              borderTop: `1px solid ${T.border}`,
-              fontSize: 12.5,
-              color: T.ink3,
-              lineHeight: 1.45,
-            }}>
-              {[post.event_date, post.event_time, post.event_location].filter(Boolean).join(' · ')}
-            </div>
-          )}
-
-          {hasEngagement && (
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 6,
-              marginTop: 10,
-              paddingTop: 9,
-              borderTop: `1px solid ${T.border}`,
-            }}>
-              {reactionCount > 0 && (
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  height: 28,
-                  padding: '0 10px',
-                  borderRadius: 999,
-                  background: '#F7F7F9',
-                  border: `1px solid ${T.border}`,
-                  color: T.ink3,
-                  fontSize: 12.2,
-                  fontWeight: 600,
-                }}>
-                  ♡ {reactionCount} {reactionCount === 1 ? 'reaction' : 'reactions'}
-                </span>
-              )}
-
-              {commentCount > 0 && (
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  height: 28,
-                  padding: '0 10px',
-                  borderRadius: 999,
-                  background: '#F7F7F9',
-                  border: `1px solid ${T.border}`,
-                  color: T.ink3,
-                  fontSize: 12.2,
-                  fontWeight: 600,
-                }}>
-                  💬 {commentCount} {commentCount === 1 ? 'question' : 'questions'}
-                </span>
-              )}
-
-              {flagCount > 0 && (
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 5,
-                  height: 28,
-                  padding: '0 10px',
-                  borderRadius: 999,
-                  background: '#FFF1F1',
-                  border: '1px solid rgba(220,38,38,0.16)',
-                  color: '#B42318',
-                  fontSize: 12.2,
-                  fontWeight: 600,
-                }}>
-                  ⚑ {flagCount} {flagCount === 1 ? 'flag' : 'flags'}
-                </span>
-              )}
-            </div>
-          )}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+            Teachers & classes
+          </p>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+            {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
+          </p>
         </div>
-      </article>
 
-      {openImage && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpenImage(null)}
+        <ChevronDown
+          size={16}
+          strokeWidth={1.9}
           style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2200,
-            background: '#101114',
-            color: '#FFFFFF',
-            display: 'flex',
-            flexDirection: 'column',
-            fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+            color: T.ink3,
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.16s ease',
+            flexShrink: 0,
           }}
-        >
-          <div style={{
-            flexShrink: 0,
-            height: 'calc(54px + env(safe-area-inset-top, 0px))',
-            padding: 'calc(10px + env(safe-area-inset-top, 0px)) 14px 8px',
-            background: 'rgba(5,5,5,0.96)',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 600,
-                margin: 0,
-                color: '#FFFFFF',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}>
-                {authorName}
-              </p>
-              <p style={{
-                fontSize: 11.8,
-                color: 'rgba(255,255,255,0.56)',
-                margin: '2px 0 0',
-              }}>
-                {typeLabel}
-              </p>
-            </div>
+        />
+      </button>
 
-            <button
-              type="button"
-              aria-label="Close image"
-              onClick={(event) => {
-                event.stopPropagation()
-                setOpenImage(null)
-              }}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 999,
-                border: '1px solid rgba(255,255,255,0.16)',
-                background: 'rgba(255,255,255,0.10)',
-                color: '#FFFFFF',
-                fontSize: 22,
-                lineHeight: 1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              ×
-            </button>
-          </div>
-
-          <div
-            onClick={() => setOpenImage(null)}
-            style={{
-              flex: 1,
-              minHeight: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-              overflow: 'hidden',
-              background: '#101114',
-            }}
-          >
-            <img
-              src={openImage}
-              alt=""
-              onClick={(event) => event.stopPropagation()}
-              style={{
-                width: '100%',
-                height: '100%',
-                maxWidth: '100%',
-                maxHeight: '100%',
-                objectFit: 'contain',
-                display: 'block',
-              }}
-            />
-          </div>
-
-          <div style={{
-            flexShrink: 0,
-            minHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))',
-            padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-            background: 'rgba(5,5,5,0.96)',
-            borderTop: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <div style={{
-              width: 42,
-              height: 4,
-              borderRadius: 999,
-              background: 'rgba(255,255,255,0.22)',
-            }} />
-          </div>
+      {open && (
+        <div style={{
+          borderTop: `1px solid ${T.border}`,
+          padding: '12px 14px 14px',
+          background: T.white,
+        }}>
+          <TeachersTab />
         </div>
       )}
-    </>
+    </SectionCard>
+  )
+}
+
+function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, uploading, onSignOut }: any) {
+  return (
+    <BottomSheet onClose={onClose}>
+      <SheetHeader title="Settings" subtitle="School profile and account" onClose={onClose} />
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: 12,
+        borderRadius: 20,
+        background: T.soft,
+        marginBottom: 12,
+      }}>
+        <div style={{
+          width: 52,
+          height: 52,
+          borderRadius: 18,
+          background: school.logo_url ? `url(${school.logo_url}) center/cover` : T.accentSoft,
+          color: T.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 16,
+          fontWeight: 560,
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}>
+          {!school.logo_url && initialsFrom(school.name)}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
+            {school.name || 'School'}
+          </p>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {schoolLocation(school) || 'School profile'}
+          </p>
+        </div>
+      </div>
+
+      {isAdmin && (
+        <>
+          <button type="button" onClick={onLogoClick} disabled={uploading} style={{
+            ...softButton,
+            width: '100%',
+            justifyContent: 'flex-start',
+            height: 44,
+            background: T.white,
+            opacity: uploading ? 0.65 : 1,
+          }}>
+            <Camera size={15} strokeWidth={1.8} />
+            {uploading ? 'Uploading logo...' : 'Change school logo'}
+          </button>
+
+          <button type="button" onClick={onEditProfile} style={{
+            ...softButton,
+            width: '100%',
+            justifyContent: 'flex-start',
+            height: 44,
+            background: T.white,
+            marginTop: 8,
+          }}>
+            <Pencil size={15} strokeWidth={1.8} />
+            Edit school details
+          </button>
+        </>
+      )}
+
+      <button type="button" onClick={onSignOut} style={{
+        ...softButton,
+        width: '100%',
+        justifyContent: 'flex-start',
+        height: 44,
+        background: T.white,
+        color: T.red,
+        marginTop: 8,
+      }}>
+        <LogOut size={15} strokeWidth={1.8} />
+        Sign out
+      </button>
+    </BottomSheet>
   )
 }
 
 export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId }: SchoolProfilePageProps) {
-  const router = useRouter()
   const [school, setSchool] = useState(initialSchool)
-  const [tab, setTab] = useState<SchoolView>('home')
-  const [editing, setEditing] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [posts, setPosts] = useState<any[]>([])
-  const [postsLoading, setPostsLoading] = useState(false)
-  const [postsError, setPostsError] = useState('')
   const [teacherCount, setTeacherCount] = useState(0)
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
-  const logoRef = useRef<HTMLInputElement>(null)
+  const [teachersOpen, setTeachersOpen] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showEditDetails, setShowEditDetails] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const [logoDraft, setLogoDraft] = useState<any>(null)
-
-  const setupCueActive = !postsLoading && !teacherCountLoading && posts.length === 0 && teacherCount === 0
-
+  const logoRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (tab !== 'home') return
-
     let alive = true
-
-    const loadPosts = async () => {
-      setPostsLoading(true)
-      setPostsError('')
-
-      const { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('school_id', school.id)
-        .eq('status', 'published')
-        .order('created_at', { ascending: false })
-        .limit(30)
-
-      if (!alive) return
-
-      if (error) {
-        setPostsError(error.message || 'Could not load activity')
-        setPosts([])
-      } else {
-        const rawPosts = data || []
-        const teacherIds = Array.from(new Set(
-          rawPosts
-            .map((post: any) => post.teacher_id)
-            .filter(Boolean)
-        ))
-
-        let teacherMap: any = {}
-
-        if (teacherIds.length > 0) {
-          const { data: teacherRows } = await supabase
-            .from('teachers')
-            .select('id,name,photo_url,grade,class_name')
-            .in('id', teacherIds)
-
-          teacherMap = Object.fromEntries((teacherRows || []).map((teacher: any) => [teacher.id, teacher]))
-        }
-
-        const postIds = rawPosts.map((post: any) => post.id).filter(Boolean)
-        let reactionMap: any = {}
-        let commentMap: any = {}
-
-        if (postIds.length > 0) {
-          const [reactionRows, commentRows] = await Promise.all([
-            supabase
-              .from('reactions')
-              .select('post_id,type')
-              .in('post_id', postIds),
-            supabase
-              .from('comments')
-              .select('post_id,created_at')
-              .in('post_id', postIds),
-          ])
-
-          for (const reaction of (reactionRows.data || [])) {
-            reactionMap[reaction.post_id] = (reactionMap[reaction.post_id] || 0) + 1
-          }
-
-          for (const comment of (commentRows.data || [])) {
-            commentMap[comment.post_id] = (commentMap[comment.post_id] || 0) + 1
-          }
-        }
-
-        setPosts(rawPosts.map((post: any) => ({
-          ...post,
-          teacher: post.teacher_id ? teacherMap[post.teacher_id] || null : null,
-          reaction_count: reactionMap[post.id] || post.reaction_count || 0,
-          comment_count: commentMap[post.id] || post.comment_count || 0,
-        })))
-      }
-
-      setPostsLoading(false)
-    }
 
     const loadTeacherCount = async () => {
       setTeacherCountLoading(true)
@@ -1144,21 +748,16 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
       if (!alive) return
 
-      if (!error) {
-        setTeacherCount(count || 0)
-      }
-
+      if (!error) setTeacherCount(count || 0)
       setTeacherCountLoading(false)
     }
 
     loadTeacherCount()
 
-    loadPosts()
-
     return () => {
       alive = false
     }
-  }, [tab, school.id])
+  }, [school.id])
 
   const uploadAdjustedLogo = async (blob: Blob) => {
     setUploading(true)
@@ -1173,7 +772,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         .upload(path, file, { upsert: true, contentType: 'image/png' })
 
       if (uploadError) {
-        toast.error('Logo upload failed', { id: toastId })
+        toast.error(uploadError.message || 'Logo upload failed', { id: toastId })
         return
       }
 
@@ -1181,25 +780,28 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         .from('school-assets')
         .getPublicUrl(path)
 
-      await supabase.from('schools').update({ logo_url: publicUrl }).eq('id', school.id)
+      await supabase
+        .from('schools')
+        .update({ logo_url: publicUrl })
+        .eq('id', school.id)
 
       const finalUrl = `${publicUrl}?t=${Date.now()}`
-      setSchool((s: any) => ({ ...s, logo_url: finalUrl }))
+
+      setSchool((current: any) => ({ ...current, logo_url: finalUrl }))
       window.dispatchEvent(new CustomEvent('school-updated', { detail: { logo_url: finalUrl } }))
       toast.success('Logo updated', { id: toastId })
 
-      if (logoDraft?.previewUrl) {
-        URL.revokeObjectURL(logoDraft.previewUrl)
-      }
+      if (logoDraft?.previewUrl) URL.revokeObjectURL(logoDraft.previewUrl)
       setLogoDraft(null)
     } finally {
       setUploading(false)
     }
   }
 
-  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    e.target.value = ''
+  const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
     if (!file) return
 
     if (file.size > 5 * 1024 * 1024) {
@@ -1212,183 +814,21 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   }
 
   const cancelLogoAdjust = () => {
-    if (logoDraft?.previewUrl) {
-      URL.revokeObjectURL(logoDraft.previewUrl)
-    }
+    if (logoDraft?.previewUrl) URL.revokeObjectURL(logoDraft.previewUrl)
     setLogoDraft(null)
   }
 
-const signOut = async () => {
+  const signOut = async () => {
     if (!confirm('Sign out of School Connect?')) return
     await supabase.auth.signOut()
     window.location.href = '/auth/login'
   }
 
-  const renderSchoolProfileCard = () => (
-    <SectionCard style={{ padding: 16 }}>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}>
-        <div style={{ position: 'relative' }}>
-          <div style={{
-            width: 78,
-            height: 78,
-            borderRadius: 24,
-            background: school.logo_url ? T.white : T.soft,
-            border: `1px solid ${T.border}`,
-            overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            {school.logo_url ? (
-              <img
-                src={school.logo_url}
-                alt={school.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', padding: 0 }}
-              />
-            ) : (
-              <span style={{ fontSize: 24, fontWeight: 600, color: T.ink3 }}>
-                {initialsFrom(school.name)}
-              </span>
-            )}
-          </div>
-
-          {isAdmin && (
-            <>
-              <button type="button" onClick={() => logoRef.current?.click()} style={{
-                position: 'absolute',
-                right: -4,
-                bottom: -4,
-                width: 30,
-                height: 30,
-                borderRadius: 999,
-                border: `2px solid ${T.white}`,
-                background: T.ink,
-                color: T.white,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: uploading ? 'wait' : 'pointer',
-              }}>
-                {uploading ? (
-                  <span style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: '50%',
-                    border: '2px solid rgba(255,255,255,0.35)',
-                    borderTopColor: T.white,
-                    animation: 'spin 0.7s linear infinite',
-                  }} />
-                ) : (
-                  <Camera size={13} strokeWidth={2} />
-                )}
-              </button>
-              <input
-                ref={logoRef}
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleLogoChange}
-              />
-            </>
-          )}
-        </div>
-
-        <h1 style={{
-          fontSize: 18,
-          fontWeight: 600,
-          color: T.ink,
-          margin: '12px 0 0',
-          letterSpacing: '-0.02em',
-        }}>
-          {school.name}
-        </h1>
-
-        <p style={{
-          fontSize: 13.2,
-          color: T.ink3,
-          lineHeight: 1.42,
-          margin: '5px 0 0',
-          maxWidth: 320,
-        }}>
-          {school.tagline || 'A simple school space for teachers, classes and official school communication.'}
-        </p>
-
-        {(school.province || school.address || school.phone || school.email) && (
-          <div style={{
-            width: '100%',
-            marginTop: 14,
-            borderTop: `1px solid ${T.border}`,
-            paddingTop: 10,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 7,
-            alignItems: 'center',
-          }}>
-            {(school.province || school.address || school.phone) && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-                flexWrap: 'wrap',
-                width: '100%',
-              }}>
-                {(school.province || school.address) && (
-                  <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontSize: 12.6,
-                    color: T.ink3,
-                    lineHeight: 1.35,
-                  }}>
-                    <MapPin size={13} strokeWidth={1.7} />
-                    <span>{school.province || school.address}</span>
-                  </div>
-                )}
-
-                {school.phone && (
-                  <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontSize: 12.6,
-                    color: T.ink3,
-                    lineHeight: 1.35,
-                  }}>
-                    <Phone size={13} strokeWidth={1.7} />
-                    <span>{school.phone}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {school.email && (
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                fontSize: 12.6,
-                color: T.ink3,
-                lineHeight: 1.35,
-              }}>
-                <Mail size={13} strokeWidth={1.7} />
-                <span>{school.email}</span>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </SectionCard>
-  )
+  const location = schoolLocation(school)
+  const href = websiteHref(school.website)
 
   return (
-    <div style={{
+    <div className="school-safe-screen" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1396,12 +836,7 @@ const signOut = async () => {
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
     }}>
-        <style>{`
-          @keyframes schoolSettingsDotPulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.45); opacity: 0.72; }
-          }
-        `}</style>
+      <SchoolSafeAreaStyle />
 
       {logoDraft && (
         <LogoAdjustModal
@@ -1411,6 +846,14 @@ const signOut = async () => {
           onApply={uploadAdjustedLogo}
         />
       )}
+
+      <input
+        ref={logoRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleLogoChange}
+      />
 
       <div style={{
         maxWidth: 520,
@@ -1422,158 +865,31 @@ const signOut = async () => {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(6px + env(safe-area-inset-top, 0px)) 14px 8px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           background: T.bg,
-          borderBottom: `1px solid ${T.border}`,
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
+          display: 'flex',
+          justifyContent: 'flex-end',
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 10,
-          }}>
-            <button type="button" onClick={() => setTab('home')} aria-label="Home" style={{
-              width: 40,
-              height: 40,
+          <button
+            type="button"
+            onClick={() => setShowSettings(true)}
+            aria-label="Settings"
+            style={{
+              width: 34,
+              height: 34,
               borderRadius: 999,
-              border: `1px solid ${tab === 'home' ? 'rgba(37,99,235,0.42)' : T.border}`,
-              background: tab === 'home'
-                ? 'linear-gradient(135deg, rgba(37,99,235,0.12), rgba(34,197,94,0.10))'
-                : T.white,
-              color: T.ink,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-              padding: 0,
-              position: 'relative',
-              overflow: 'visible',
-              boxShadow: tab === 'home' ? '0 8px 20px rgba(37,99,235,0.10)' : 'none',
-            }}>
-              <span style={{
-                width: 31,
-                height: 31,
-                borderRadius: 999,
-                background: school.logo_url ? T.white : T.soft,
-                border: `1px solid ${T.border}`,
-                overflow: 'hidden',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: T.ink2,
-                fontSize: 10.5,
-                fontWeight: 600,
-              }}>
-                {school.logo_url ? (
-                  <img
-                    src={school.logo_url}
-                    alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', padding: 0, display: 'block' }}
-                  />
-                ) : (
-                  initialsFrom(school.name)
-                )}
-              </span>
-
-              <span style={{
-                position: 'absolute',
-                right: 3,
-                bottom: 3,
-                width: 7,
-                height: 7,
-                borderRadius: 999,
-                background: tab === 'home' ? '#2563EB' : '#D1D1D6',
-                border: `1.5px solid ${T.white}`,
-              }} />
-            </button>
-
-            <div style={{ flex: 1, minWidth: 0, textAlign: 'center' }}>
-              <p style={{
-                fontSize: 14,
-                fontWeight: 650,
-                color: T.ink,
-                margin: 0,
-                letterSpacing: '-0.015em',
-              }}>
-                {school.name || 'School'}
-              </p>
-              <p style={{
-                fontSize: 11.5,
-                color: T.ink3,
-                margin: '1px 0 0',
-              }}>
-                {tab === 'home' ? 'School Life' : 'Profile and classes'}
-              </p>
-            </div>
-
-            <button type="button" onClick={() => { setTab('profile'); setEditing(false) }} aria-label="Customize school" style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: `1px solid ${T.border}`,
+              border: 'none',
               background: T.white,
-              color: T.ink2,
-              display: 'inline-flex',
+              color: T.ink3,
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
-              position: 'relative',
-            }}>
-              <Settings size={16} strokeWidth={1.9} />
-              {setupCueActive && (
-                <span style={{
-                  position: 'absolute',
-                  right: 5,
-                  top: 5,
-                  width: 8,
-                  height: 8,
-                  borderRadius: 999,
-                  background: '#2563EB',
-                  border: `1.5px solid ${T.white}`,
-                }} />
-              )}
-            </button>
-          </div>
-
-          {isAdmin && (
-            <nav style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 6,
-              marginTop: 10,
-            }}>
-              {[
-                ['profile', 'Profile'],
-                ['classes', 'Classes'],
-                ['settings', 'Settings'],
-              ].map(([key, label]) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => { setTab(key as SchoolView); setEditing(false) }}
-                  style={{
-                    height: 34,
-                    borderRadius: 999,
-                    border: `1px solid ${tab === key ? T.ink : T.border}`,
-                    background: tab === key ? T.ink : T.white,
-                    color: tab === key ? T.white : T.ink2,
-                    fontSize: 12,
-                    fontWeight: 650,
-                    fontFamily: 'inherit',
-                    cursor: 'pointer',
-                    padding: '0 6px',
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </nav>
-          )}
+            }}
+          >
+            <Settings size={15} strokeWidth={1.8} />
+          </button>
         </header>
 
         <main style={{
@@ -1581,234 +897,217 @@ const signOut = async () => {
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '10px 0 calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.bg,
         }}>
-
-          {tab === 'home' && (
-            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {postsLoading ? (
-                <SectionCard style={{ marginLeft: 0, marginRight: 0, textAlign: 'center' }}>
-                  <div style={{
-                    width: 18,
-                    height: 18,
-                    borderRadius: '50%',
-                    border: `2px solid ${T.border}`,
-                    borderTopColor: T.ink,
-                    animation: 'spin 0.7s linear infinite',
-                    margin: '0 auto',
-                  }} />
-                </SectionCard>
-              ) : postsError ? (
-                <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
-                  <p style={{ fontSize: 13, color: T.ink2, margin: 0 }}>
-                    Could not load latest activity.
-                  </p>
-                </SectionCard>
-              ) : posts.length === 0 ? (
-                <div style={{
-                  padding: '48px 20px',
-                  textAlign: 'center',
-                  border: `1px dashed ${T.border}`,
-                  borderRadius: 16,
-                  background: 'transparent',
-                }}>
-                  <div style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 14,
-                    background: '#F8F8F9',
-                    border: `1px solid ${T.border}`,
-                    margin: '0 auto 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: T.ink3,
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}>
-                    {initialsFrom(school.name)}
-                  </div>
-
-                  <p style={{ fontSize: 15, color: T.ink, fontWeight: 600, margin: '0 0 4px' }}>
-                    Nothing shared yet
-                  </p>
-
-                  <p style={{ fontSize: 13, color: T.ink3, margin: '0 0 16px', lineHeight: 1.5 }}>
-                    School Life will appear here.
-                  </p>
-
-                  <button type="button" onClick={() => { setTab('classes'); setEditing(false) }} style={{
-                    padding: '8px 14px',
-                    borderRadius: 999,
-                    background: T.ink,
-                    color: T.white,
-                    border: 'none',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}>
-                    Add teachers
-                  </button>
-                </div>
-              ) : (
-                posts.map(post => <ActivityCard key={post.id} post={post} />)
-              )}
+          <SectionCard style={{
+            minHeight: 260,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+            marginBottom: 14,
+            padding: '28px 18px 26px',
+          }}>
+            <div style={{
+              width: 92,
+              height: 92,
+              borderRadius: 32,
+              background: school.logo_url ? `url(${school.logo_url}) center/cover` : T.accentSoft,
+              color: T.accent,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 25,
+              fontWeight: 560,
+              overflow: 'hidden',
+              marginBottom: 18,
+            }}>
+              {!school.logo_url && initialsFrom(school.name)}
             </div>
+
+            <h1 style={{
+              fontSize: 22,
+              lineHeight: 1.08,
+              fontWeight: 560,
+              letterSpacing: '-0.045em',
+              color: T.ink,
+              margin: '0 0 7px',
+            }}>
+              {school.name || 'School'}
+            </h1>
+
+            <p style={{
+              maxWidth: 310,
+              fontSize: 13,
+              color: T.ink3,
+              lineHeight: 1.5,
+              margin: 0,
+            }}>
+              {school.tagline || 'School Connect keeps your school structure simple and organized.'}
+            </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 9,
+              width: '100%',
+              maxWidth: 260,
+              marginTop: 20,
+            }}>
+              <MiniStat label="Teachers" value={teacherCountLoading ? '...' : teacherCount} />
+              <MiniStat label="Role" value={isAdmin ? 'Admin' : 'School'} />
+            </div>
+          </SectionCard>
+
+          {isAdmin && (
+            <TeachersAccordion
+              open={teachersOpen}
+              setOpen={setTeachersOpen}
+              teacherCount={teacherCount}
+              teacherCountLoading={teacherCountLoading}
+            />
           )}
 
-          {tab === 'profile' && (
-            <>
-              {renderSchoolProfileCard()}
-
-              <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <AccordionCard
-                  defaultOpen
-                  icon={<Building2 size={17} strokeWidth={1.8} />}
-                  title="School details"
-                  subtitle="Update profile information."
-                >
-                  {editing ? (
-                    <EditSchoolDetails
-                      school={school}
-                      onCancel={() => setEditing(false)}
-                      onSaved={(updates: any) => {
-                        setSchool((s: any) => ({ ...s, ...updates }))
-                        setEditing(false)
-                        window.dispatchEvent(new Event('school-updated'))
-                      }}
-                    />
-                  ) : (
-                    <div>
-                      <DetailLine label="School name" value={school.name} />
-                      <DetailLine label="Tagline" value={school.tagline} />
-                      <DetailLine label="Location" value={school.province || school.address} />
-                      <DetailLine label="Phone" value={school.phone} />
-                      <DetailLine label="Email" value={school.email} />
-                      <DetailLine label="Website" value={school.website} />
-
-                      {isAdmin && (
-                        <button type="button" onClick={() => setEditing(true)} style={{ ...primaryButton, width: '100%', marginTop: 12 }}>
-                          <Pencil size={14} strokeWidth={2} />
-                          Edit profile
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </AccordionCard>
-
-                <AccordionCard
-                  icon={<ShieldCheck size={17} strokeWidth={1.8} />}
-                  title="School role"
-                  subtitle="The school creates the structure."
-                >
-                  <p style={{
-                    fontSize: 13,
-                    color: T.ink3,
-                    lineHeight: 1.5,
-                    margin: 0,
-                  }}>
-                    Add teachers and classes.
-                  </p>
-                </AccordionCard>
+          <SectionCard style={{
+            marginTop: 14,
+            padding: 15,
+          }}>
+            <button
+              type="button"
+              onClick={() => setShowEditDetails(true)}
+              style={{
+                width: '100%',
+                border: 'none',
+                background: 'transparent',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontFamily: 'inherit',
+              }}
+            >
+              <div style={{
+                width: 38,
+                height: 38,
+                borderRadius: 14,
+                background: T.soft,
+                color: T.ink3,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Pencil size={17} strokeWidth={1.8} />
               </div>
-            </>
-          )}
 
-          {tab === 'classes' && isAdmin && (
-            <div style={{ padding: '0 14px' }}>
-              <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2, boxShadow: 'none' }}>
-                <p style={{
-                  fontSize: 13.5,
-                  fontWeight: 650,
-                  color: T.ink,
-                  margin: '0 0 3px',
-                }}>
-                  Classes
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
+                  School details
                 </p>
                 <p style={{
-                  fontSize: 12.8,
+                  fontSize: 12.5,
                   color: T.ink3,
-                  lineHeight: 1.45,
-                  margin: 0,
+                  margin: '2px 0 0',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
                 }}>
-                  Add teachers and classes.
+                  {location || school.email || school.phone || 'Add location, website and contacts.'}
                 </p>
-              </SectionCard>
+              </div>
+            </button>
 
-              <TeachersTab />
-            </div>
-          )}
+            {(href || school.email || school.phone) && (
+              <div style={{
+                marginTop: 12,
+                paddingTop: 12,
+                borderTop: `1px solid ${T.border}`,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+              }}>
+                {href && (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      fontSize: 12.5,
+                      color: T.accent,
+                      textDecoration: 'none',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {school.website}
+                  </a>
+                )}
 
-          {tab === 'settings' && isAdmin && (
-            <div style={{ padding: '0 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
-                <SectionTitle
-                  eyebrow="Settings"
-                  title="Account"
-                  subtitle="Simple account actions."
-                />
+                {school.email && (
+                  <span style={{ fontSize: 12.5, color: T.ink3 }}>
+                    {school.email}
+                  </span>
+                )}
 
-                <button type="button" onClick={signOut} style={{
-                  ...quietButton,
-                  width: '100%',
-                  justifyContent: 'flex-start',
-                  height: 44,
-                  borderRadius: 16,
-                }}>
-                  <LogOut size={15} strokeWidth={1.9} />
-                  Sign out
-                </button>
-              </SectionCard>
-
-              <SectionCard style={{ marginLeft: 0, marginRight: 0, background: T.soft2 }}>
-                <p style={{
-                  fontSize: 13,
-                  fontWeight: 650,
-                  color: T.ink,
-                  margin: '0 0 2px',
-                }}>
-                  Product principle
-                </p>
-                <p style={{
-                  fontSize: 13,
-                  color: T.ink3,
-                  lineHeight: 1.45,
-                  margin: 0,
-                }}>
-                  The school creates the structure. Teachers run the class spaces.
-                </p>
-              </SectionCard>
-            </div>
-          )}
-
-          {!isAdmin && (
-            <div style={{ padding: '0 14px' }}>
-              <SectionCard style={{ marginLeft: 0, marginRight: 0 }}>
-                <SectionTitle
-                  eyebrow="School"
-                  title="Official school profile"
-                  subtitle="This is the school connected to your class space."
-                />
-                <button type="button" onClick={() => { setTab('home'); setEditing(false) }} style={{ ...primaryButton, width: '100%', marginTop: 8 }}>
-                  School life
-                </button>
-              </SectionCard>
-            </div>
-          )}
+                {school.phone && (
+                  <span style={{ fontSize: 12.5, color: T.ink3 }}>
+                    {school.phone}
+                  </span>
+                )}
+              </div>
+            )}
+          </SectionCard>
 
           <p style={{
-            fontSize: 11,
-            color: '#C4C4C8',
+            fontSize: 10.5,
+            color: '#B8B8BC',
             textAlign: 'center',
-            margin: '16px 0 0',
+            margin: '18px 0 0',
             letterSpacing: '0.04em',
-            fontWeight: 600,
+            fontWeight: 500,
           }}>
             Powered by School Connect
           </p>
         </main>
       </div>
+
+      {showSettings && (
+        <SettingsSheet
+          school={school}
+          isAdmin={isAdmin}
+          uploading={uploading}
+          onClose={() => setShowSettings(false)}
+          onLogoClick={() => logoRef.current?.click()}
+          onEditProfile={() => {
+            setShowSettings(false)
+            setShowEditDetails(true)
+          }}
+          onSignOut={signOut}
+        />
+      )}
+
+      {showEditDetails && (
+        <BottomSheet onClose={() => setShowEditDetails(false)}>
+          <SheetHeader
+            title="School details"
+            subtitle="Keep the school profile simple and useful."
+            onClose={() => setShowEditDetails(false)}
+          />
+
+          <EditSchoolDetails
+            school={school}
+            onCancel={() => setShowEditDetails(false)}
+            onSaved={(updates: any) => {
+              setSchool((current: any) => ({ ...current, ...updates }))
+              setShowEditDetails(false)
+              window.dispatchEvent(new Event('school-updated'))
+            }}
+          />
+        </BottomSheet>
+      )}
     </div>
   )
 }
