@@ -23,7 +23,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#F0F0F0',
+  bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
@@ -964,7 +964,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: '#FFFFFF',
+          background: T.bg,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button type="button" onClick={onBack} style={{
@@ -1008,7 +1008,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: '#FFFFFF',
+          background: T.bg,
         }}>
           <section style={{
             borderRadius: 28,
@@ -1131,10 +1131,10 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <footer style={{
           flexShrink: 0,
           padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          background: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
           gap: 8,
+          background: T.bg,
         }}>
           <div style={{
             display: 'grid',
