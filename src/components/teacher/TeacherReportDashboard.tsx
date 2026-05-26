@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import {
+  ChevronDown,
   Copy,
   GraduationCap,
   LogOut,
@@ -118,6 +119,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
   const [reportChild, setReportChild] = useState<any>(null)
+  const [rosterOpen, setRosterOpen] = useState(true)
 
   const load = async () => {
     try {
@@ -185,74 +187,31 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           background: T.bg,
+          display: 'flex',
+          justifyContent: 'flex-end',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: T.soft,
+          <button
+            type="button"
+            onClick={signOut}
+            aria-label="Sign out"
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
               border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink3,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: T.ink2,
-              fontSize: 13,
-              fontWeight: 650,
+              cursor: 'pointer',
               flexShrink: 0,
-            }}>
-              {initials(teacher.name)}
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 620,
-                color: T.ink,
-                margin: 0,
-                lineHeight: 1.08,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {teacher.name || 'Teacher'}
-              </p>
-              <p style={{
-                fontSize: 11.8,
-                color: T.ink3,
-                margin: '1px 0 0',
-                lineHeight: 1.1,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {school?.name || 'School'} · {classLabel}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={signOut}
-              aria-label="Sign out"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 999,
-                border: `1px solid ${T.border}`,
-                background: T.white,
-                color: T.ink3,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              <LogOut size={14} strokeWidth={1.8} />
-            </button>
-          </div>
+            }}
+          >
+            <LogOut size={14} strokeWidth={1.8} />
+          </button>
         </header>
 
         <main style={{
@@ -263,106 +222,157 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
         }}>
           <section style={{
-            padding: '20px 2px 18px',
-            textAlign: 'left',
+            textAlign: 'center',
+            padding: '2px 8px 26px',
           }}>
-            <p style={{
-              fontSize: 12,
-              color: T.ink3,
+            <div style={{
+              width: 78,
+              height: 78,
+              borderRadius: 28,
+              background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.soft,
+              border: `1px solid ${T.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 12px',
+              color: T.ink2,
+              fontSize: 22,
               fontWeight: 650,
-              letterSpacing: '0.055em',
-              textTransform: 'uppercase',
-              margin: '0 0 6px',
+              boxShadow: '0 14px 34px rgba(0,0,0,0.035)',
             }}>
-              Weekly reports
-            </p>
+              {!teacher.photo_url && initials(teacher.name)}
+            </div>
 
             <h1 style={{
-              fontSize: 26,
-              lineHeight: 1.05,
+              fontSize: 21,
+              lineHeight: 1.08,
               fontWeight: 650,
-              letterSpacing: '-0.055em',
+              letterSpacing: '-0.045em',
               color: T.ink,
-              margin: 0,
+              margin: '0 0 4px',
             }}>
-              Send this week’s updates.
+              {teacher.name || 'Teacher'}
             </h1>
 
             <p style={{
-              fontSize: 13.5,
+              fontSize: 12.5,
               color: T.ink3,
-              lineHeight: 1.48,
-              margin: '9px 0 0',
-              maxWidth: 360,
+              lineHeight: 1.25,
+              margin: 0,
             }}>
-              Add learners once, then send a simple private report link to each parent.
+              {school?.name || 'School'} · {classLabel}
             </p>
-          </section>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: hasLearners ? '1fr 1fr' : '1fr',
-            gap: 9,
-            marginBottom: 16,
-          }}>
-            <button type="button" onClick={() => setShowAdd(true)} style={{
-              ...primaryButton,
-              width: '100%',
+            <p style={{
+              maxWidth: 330,
+              fontSize: 13,
+              color: T.ink3,
+              lineHeight: 1.5,
+              margin: '18px auto 0',
             }}>
-              <Plus size={14} strokeWidth={2.2} />
-              Add learner
-            </button>
+              Add your learners, then send one weekly update for each child.
+            </p>
 
-            {hasLearners && (
-              <button type="button" onClick={() => setReportChild(children[0])} style={{
-                ...softButton,
-                width: '100%',
-              }}>
-                <Send size={14} strokeWidth={2} />
-                Start reports
-              </button>
-            )}
-          </div>
+            <button type="button" onClick={() => setShowAdd(true)} style={{
+              marginTop: 16,
+              width: 72,
+              height: 72,
+              borderRadius: 24,
+              border: 'none',
+              background: T.ink,
+              color: T.white,
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              boxShadow: '0 16px 38px rgba(0,0,0,0.12)',
+            }}>
+              <Plus size={19} strokeWidth={2.2} />
+              <span style={{ fontSize: 12, fontWeight: 650 }}>Add</span>
+            </button>
+          </section>
 
           <section style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 10,
+            borderRadius: 22,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            overflow: 'hidden',
+            boxShadow: '0 10px 28px rgba(0,0,0,0.028)',
           }}>
-            <div>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 620,
-                color: T.ink,
-                margin: 0,
-              }}>
-                Class roster
-              </p>
-              <p style={{
-                fontSize: 12.5,
+            <button
+              type="button"
+              onClick={() => setRosterOpen(!rosterOpen)}
+              style={{
+                width: '100%',
+                background: T.white,
+                border: 'none',
+                padding: 14,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 11,
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontFamily: 'inherit',
+              }}
+            >
+              <div style={{
+                width: 38,
+                height: 38,
+                borderRadius: 14,
+                background: T.soft,
                 color: T.ink3,
-                margin: '2px 0 0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
               }}>
-                {children.length === 0 ? 'No learners yet' : `${children.length} learners`}
-              </p>
-            </div>
-          </section>
+                <Users size={18} strokeWidth={1.7} />
+              </div>
 
-          {!hasLearners ? (
-            <EmptyRoster onAdd={() => setShowAdd(true)} />
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {children.map((child: any) => (
-                <LearnerRow
-                  key={child.id}
-                  child={child}
-                  onReport={() => setReportChild(child)}
-                  onDeleted={load}
-                />
-              ))}
-            </div>
-          )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 14, fontWeight: 650, color: T.ink, margin: 0 }}>
+                  Learners
+                </p>
+                <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+                  {children.length === 0 ? 'No learners added yet' : `${children.length} learners added`}
+                </p>
+              </div>
+
+              <ChevronDown
+                size={16}
+                strokeWidth={1.9}
+                style={{
+                  color: T.ink3,
+                  transform: rosterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.16s ease',
+                  flexShrink: 0,
+                }}
+              />
+            </button>
+
+            {rosterOpen && (
+              <div style={{
+                borderTop: `1px solid ${T.border}`,
+                padding: '4px 14px 14px',
+              }}>
+                {!hasLearners ? (
+                  <EmptyRoster onAdd={() => setShowAdd(true)} />
+                ) : (
+                  children.map((child: any) => (
+                    <LearnerRow
+                      key={child.id}
+                      child={child}
+                      onReport={() => setReportChild(child)}
+                      onDeleted={load}
+                    />
+                  ))
+                )}
+              </div>
+            )}
+          </section>
 
           <p style={{
             fontSize: 10.5,
@@ -382,6 +392,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           onClose={() => setShowAdd(false)}
           onCreated={() => {
             setShowAdd(false)
+            setRosterOpen(true)
             load()
           }}
         />
@@ -440,39 +451,20 @@ function LoadingScreen() {
 function EmptyRoster({ onAdd }: any) {
   return (
     <div style={{
-      padding: '42px 20px',
+      padding: '34px 16px',
       textAlign: 'center',
       border: `1px dashed ${T.border}`,
-      borderRadius: 18,
+      borderRadius: 16,
       background: 'transparent',
+      marginTop: 10,
     }}>
-      <div style={{
-        width: 48,
-        height: 48,
-        borderRadius: 15,
-        background: T.soft,
-        border: `1px solid ${T.border}`,
-        margin: '0 auto 12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: T.ink3,
-      }}>
-        <Users size={22} strokeWidth={1.6} />
-      </div>
-
-      <p style={{ fontSize: 15, fontWeight: 620, color: T.ink, margin: '0 0 4px' }}>
+      <p style={{ fontSize: 14.5, fontWeight: 620, color: T.ink, margin: '0 0 4px' }}>
         No learners yet
       </p>
 
-      <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: '0 0 16px' }}>
-        Start by adding your class roster.
+      <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
+        Use the Add button above to create your roster.
       </p>
-
-      <button type="button" onClick={onAdd} style={primaryButton}>
-        <Plus size={14} strokeWidth={2.2} />
-        Add first learner
-      </button>
     </div>
   )
 }
@@ -499,18 +491,18 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
       borderBottom: `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
-      gap: 11,
+      gap: 10,
     }}>
       <div style={{
-        width: 38,
-        height: 38,
+        width: 36,
+        height: 36,
         borderRadius: 14,
         background: T.soft,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         color: T.ink2,
-        fontSize: 12.5,
+        fontSize: 12,
         fontWeight: 650,
         flexShrink: 0,
       }}>
@@ -519,7 +511,7 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          fontSize: 14,
+          fontSize: 13.8,
           fontWeight: 600,
           color: T.ink,
           margin: 0,
@@ -530,14 +522,14 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
           {child.name}
         </p>
         <p style={{
-          fontSize: 12.4,
+          fontSize: 12.2,
           color: T.ink3,
           margin: '2px 0 0',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
         }}>
-          Last: {formatShortDate(child.latest_report_at)}
+          {formatShortDate(child.latest_report_at)}
         </p>
       </div>
 
@@ -551,8 +543,8 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
       </button>
 
       <button type="button" onClick={remove} style={{
-        width: 34,
-        height: 34,
+        width: 32,
+        height: 32,
         borderRadius: 999,
         border: `1px solid ${T.border}`,
         background: T.white,
