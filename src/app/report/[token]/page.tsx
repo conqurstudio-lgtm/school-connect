@@ -15,6 +15,43 @@ const T = {
   white: '#FFFFFF',
 }
 
+
+function ReportPageSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
+      }
+
+      .parent-report-safe-screen {
+        background: #FFFFFF;
+      }
+
+      .parent-report-safe-screen::before,
+      .parent-report-safe-screen::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .parent-report-safe-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .parent-report-safe-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+    `}</style>
+  )
+}
+
 function LoadingState() {
   return (
     <main style={centerPage}>
@@ -175,24 +212,25 @@ export default function ParentMagicReportPage() {
       height: '100dvh',
       overflow: 'hidden',
       overscrollBehaviorX: 'none',
-      background: T.bg,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
-    }}>
+          background: '#FFFFFF',
+        }}>
+      <ReportPageSafeAreaStyle />
       <div style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        background: T.bg,
+        background: '#FFFFFF',
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',
-          background: 'rgba(255,255,255,0.98)',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',255,255,0.98)',
           position: 'relative',
           zIndex: 10,
+          background: '#FFFFFF',
         }}>
           <div style={{
             display: 'flex',
@@ -264,8 +302,8 @@ export default function ParentMagicReportPage() {
         <footer style={{
           flexShrink: 0,
           padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
-          textAlign: 'center',
-          background: 'rgba(255,255,255,0.98)',
+          textAlign: 'center',255,255,0.98)',
+          background: '#FFFFFF',
         }}>
           <p style={{
             fontSize: 10.5,
@@ -286,7 +324,7 @@ const centerPage: any = {
   minHeight: '100dvh',
   height: '100dvh',
   overflow: 'hidden',
-  background: T.bg,
+  background: '#FFFFFF',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
