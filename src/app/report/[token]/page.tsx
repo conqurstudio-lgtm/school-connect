@@ -26,6 +26,7 @@ const T = {
 
 
 
+
 function MomentBellLink({ token }: { token: string }) {
   const [hasNew, setHasNew] = useState(false)
 
@@ -66,7 +67,6 @@ function MomentBellLink({ token }: { token: string }) {
         height: 34,
         borderRadius: 999,
         background: '#FFFFFF',
-        color: '#8FA6A1',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -76,35 +76,18 @@ function MomentBellLink({ token }: { token: string }) {
         zIndex: 30,
       }}
     >
-      {hasNew ? (
-        <iframe
-          src="https://lottie.host/embed/488285be-2e3b-4bdc-90bd-8dd96f8b23e7/dGDEAvE4Mc.lottie"
-          title="Moments"
-          aria-hidden="true"
-          style={{
-            width: 25,
-            height: 25,
-            border: 'none',
-            display: 'block',
-            pointerEvents: 'none',
-          }}
-        />
-      ) : (
-        <span style={{
-          width: 22,
-          height: 22,
-          borderRadius: 999,
-          background: '#EEF3F1',
-          color: '#8FA6A1',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12,
-          lineHeight: 1,
-        }}>
-          🔔
-        </span>
-      )}
+      <iframe
+        src="https://lottie.host/embed/488285be-2e3b-4bdc-90bd-8dd96f8b23e7/dGDEAvE4Mc.lottie"
+        title="Moments"
+        aria-hidden="true"
+        style={{
+          width: 25,
+          height: 25,
+          border: 'none',
+          display: 'block',
+          pointerEvents: 'none',
+        }}
+      />
 
       {hasNew && (
         <span style={{
