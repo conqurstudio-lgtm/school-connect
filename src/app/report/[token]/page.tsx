@@ -8,15 +8,21 @@ import { ReportSwiper } from '@/components/reports/ReportSwiper'
 
 const T = {
   ink: '#1A1A1A',
+  ink2: '#5F6268',
   ink3: '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F5F5F7',
+  soft2: '#F8F8F9',
   white: '#FFFFFF',
+  accent: '#8FA6A1',
+  accentSoft: '#EEF3F1',
 }
 
 
-function ReportPageSafeAreaStyle() {
+
+
+function ReportSafeAreaStyle() {
   return (
     <style>{`
       html,
@@ -54,7 +60,18 @@ function ReportPageSafeAreaStyle() {
 
 function LoadingState() {
   return (
-    <main style={centerPage}>
+    <main className="parent-report-safe-screen" style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: '#FFFFFF',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+    }}>
+      <ReportSafeAreaStyle />
       <style>{`
         @keyframes reportDotBounce {
           0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
@@ -93,7 +110,7 @@ function LoadingState() {
           ))}
         </div>
 
-        <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>
+        <p style={{ fontSize: 14, color: '#9A9CA3', margin: 0 }}>
           Opening weekly report...
         </p>
       </div>
@@ -216,7 +233,6 @@ export default function ParentMagicReportPage() {
       color: T.ink,
           background: '#FFFFFF',
         }}>
-      <ReportPageSafeAreaStyle />
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -227,7 +243,7 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',255,255,0.98)',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
@@ -302,7 +318,7 @@ export default function ParentMagicReportPage() {
         <footer style={{
           flexShrink: 0,
           padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
-          textAlign: 'center',255,255,0.98)',
+          textAlign: 'center',
           background: '#FFFFFF',
         }}>
           <p style={{
@@ -340,5 +356,4 @@ const card: any = {
   border: `1px solid ${T.border}`,
   borderRadius: 24,
   padding: '34px 24px',
-  boxShadow: '0 18px 48px rgba(0,0,0,0.04)',
-}
+  boxShadow: '0 18px 48px rgba(0,0,0,0.08)'}
