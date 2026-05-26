@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowLeft,
+  ArrowRight,
   Camera,
   ChevronDown,
   Copy,
@@ -233,6 +234,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const hasLearners = children.length > 0
   const completedCount = children.filter((child: any) => isMarkedThisWeek(child, weekStart)).length
   const pendingCount = Math.max(0, children.length - completedCount)
+  const pendingChildren = children.filter((child: any) => !isMarkedThisWeek(child, weekStart))
+  const sentChildren = children.filter((child: any) => isMarkedThisWeek(child, weekStart))
 
   const openChild = (child: any) => {
     setActiveChild(child)
@@ -491,16 +494,25 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 {!hasLearners ? (
                   <EmptyRoster onAdd={() => setShowAdd(true)} />
                 ) : (
-                  children.map((child: any, index: number) => (
-                    <LearnerRow
-                      key={child.id}
-                      child={child}
+                  <>
+                    <ChecklistGroup
+                      title="Pending reports"
+                      subtitle="Still needs this week’s update."
+                      items={pendingChildren}
                       weekStart={weekStart}
-                      isLast={index === children.length - 1}
-                      onOpen={() => openChild(child)}
+                      onOpen={openChild}
                       onDeleted={load}
                     />
-                  ))
+
+                    <ChecklistGroup
+                      title="Sent reports"
+                      subtitle="Already sent this week."
+                      items={sentChildren}
+                      weekStart={weekStart}
+                      onOpen={openChild}
+                      onDeleted={load}
+                    />
+                  </>
                 )}
               </div>
             )}
@@ -622,6 +634,67 @@ function EmptyRoster({ onAdd }: any) {
       <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
         Tap Add to create your roster.
       </p>
+    </div>
+  )
+}
+
+
+function ChecklistGroup({ title, subtitle, items, weekStart, onOpen, onDeleted }: any) {
+  if (!items?.length) return null
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 10,
+        padding: '4px 0 2px',
+      }}>
+        <div>
+          <p style={{
+            fontSize: 12.5,
+            fontWeight: 560,
+            color: T.ink,
+            margin: 0,
+          }}>
+            {title}
+          </p>
+          <p style={{
+            fontSize: 11.8,
+            color: T.ink3,
+            margin: '2px 0 0',
+          }}>
+            {subtitle}
+          </p>
+        </div>
+
+        <span style={{
+          minWidth: 26,
+          height: 24,
+          borderRadius: 999,
+          background: T.soft,
+          color: T.ink3,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          fontWeight: 560,
+        }}>
+          {items.length}
+        </span>
+      </div>
+
+      {items.map((child: any, index: number) => (
+        <LearnerRow
+          key={child.id}
+          child={child}
+          weekStart={weekStart}
+          isLast={index === items.length - 1}
+          onOpen={() => onOpen(child)}
+          onDeleted={onDeleted}
+        />
+      ))}
     </div>
   )
 }
@@ -777,11 +850,11 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       .finally(() => setHistoryLoading(false))
   }, [child.id, weekStart])
 
-  const submit = async () => {
+  const submit = async (moveNext = false) => {
     if (saving) return
 
     setSaving(true)
-    const tid = toast.loading('Saving report...')
+    const tid = toast.loading('Sending report...')
 
     try {
       const res = await fetch('/api/teacher/child-report', {
@@ -806,13 +879,17 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         latest_report_at: new Date().toISOString(),
       }
 
-      toast.success('Report saved', { id: tid })
+      toast.success('Report sent', { id: tid })
       await onSaved(updatedChild)
 
       setHistory((current) => [
         json.report,
         ...current.filter((item) => item.id !== json.report?.id),
       ].filter(Boolean))
+
+      if (moveNext) {
+        onNext(updatedChild)
+      }
     } catch (e: any) {
       toast.error(e.message || 'Could not send report', { id: tid })
     }
@@ -885,16 +962,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
                 Weekly report
               </p>
             </div>
-
-            <button type="button" onClick={copyLink} style={{
-              ...softButton,
-              minHeight: 34,
-              padding: '0 12px',
-              background: T.white,
-            }}>
-              <Copy size={13} />
-              Copy
-            </button>
           </div>
         </header>
 
@@ -1024,27 +1091,65 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <footer style={{
           flexShrink: 0,
           padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          display: 'grid',
-          gridTemplateColumns: nextChild ? '1fr 1fr' : '1fr',
-          gap: 8,
           background: T.bg,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
         }}>
-          <button type="button" onClick={submit} disabled={saving} style={{
-            ...darkButton,
-            width: '100%',
-            opacity: saving ? 0.65 : 1,
-            cursor: saving ? 'wait' : 'pointer',
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 8,
           }}>
-            {saving ? 'Saving...' : 'Save report'}
-          </button>
+            <button type="button" onClick={() => submit(false)} disabled={saving} style={{
+              ...darkButton,
+              width: '100%',
+              opacity: saving ? 0.65 : 1,
+              cursor: saving ? 'wait' : 'pointer',
+            }}>
+              {saving ? 'Sending...' : 'Send report'}
+            </button>
+
+            <button type="button" onClick={copyLink} style={{
+              ...softButton,
+              width: '100%',
+              background: T.white,
+            }}>
+              <Copy size={14} strokeWidth={1.8} />
+              Copy
+            </button>
+          </div>
 
           {nextChild && (
-            <button type="button" onClick={() => onNext(child)} style={{
-              ...primaryButton,
-              width: '100%',
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: 2,
             }}>
-              Next learner
-            </button>
+              <button
+                type="button"
+                onClick={() => submit(true)}
+                disabled={saving}
+                aria-label="Send and move to next learner"
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.accent,
+                  color: T.white,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: saving ? 'wait' : 'pointer',
+                  opacity: saving ? 0.65 : 1,
+                  fontFamily: 'inherit',
+                }}
+              >
+                <ArrowRight size={18} strokeWidth={2.2} />
+              </button>
+            </div>
           )}
         </footer>
       </div>
