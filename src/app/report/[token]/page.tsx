@@ -114,7 +114,7 @@ function SchoolQuickView({ school }: { school: any }) {
         {(school?.tagline || school?.phone || school?.email || school?.website) && (
           <div style={{
             marginTop: 11,
-            paddingTop: 10,
+            paddingTop: 18,
             borderTop: '1px solid rgba(0,0,0,0.07)',
             display: 'flex',
             flexDirection: 'column',
@@ -501,7 +501,7 @@ export default function ParentMagicReportPage() {
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'none',
-          padding: '8px 0 6px',
+          padding: '18px 0 6px',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
