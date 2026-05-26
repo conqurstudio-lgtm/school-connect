@@ -163,7 +163,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [activeChild, setActiveChild] = useState<any>(null)
-  const [rosterOpen, setRosterOpen] = useState(true)
+  const [rosterOpen, setRosterOpen] = useState(false)
   const [weekStart, setWeekStart] = useState(weekStartToday())
 
   const loadStatuses = async (children: any[]) => {
@@ -329,7 +329,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             borderRadius: 28,
             background: T.bg,
             border: 'none',
-            boxShadow: 'none',
             marginBottom: 14,
             display: 'flex',
             flexDirection: 'column',
@@ -349,7 +348,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               color: T.accent,
               fontSize: 25,
               fontWeight: 560,
-              boxShadow: 'none',
               overflow: 'hidden',
             }}>
               {!teacher.photo_url && initials(teacher.name)}
@@ -436,7 +434,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             background: T.white,
             border: 'none',
             overflow: 'hidden',
-            boxShadow: 'none',
           }}>
             <button
               type="button"
@@ -863,13 +860,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
   const [history, setHistory] = useState<any[]>([])
   const [historyLoading, setHistoryLoading] = useState(true)
 
-  const nextChild = useMemo(() => {
-    const currentIndex = children.findIndex((item: any) => item.id === child.id)
-    const after = children.slice(currentIndex + 1).find((item: any) => !isMarkedThisWeek(item, weekStart))
-    const before = children.slice(0, currentIndex).find((item: any) => !isMarkedThisWeek(item, weekStart))
-    return after || before || null
-  }, [child.id, children, weekStart])
-
   useEffect(() => {
     setWeek(weekStart)
     setScores({ Mathematics: 3, English: 3, 'Life Skills': 3, Behaviour: 3 })
@@ -887,7 +877,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       .finally(() => setHistoryLoading(false))
   }, [child.id, weekStart])
 
-  const submit = async (moveNext = false) => {
+  const submit = async () => {
     if (saving) return
 
     setSaving(true)
@@ -923,10 +913,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         json.report,
         ...current.filter((item) => item.id !== json.report?.id),
       ].filter(Boolean))
-
-      if (moveNext) {
-        onNext(updatedChild)
-      }
     } catch (e: any) {
       toast.error(e.message || 'Could not send report', { id: tid })
     }
@@ -1014,7 +1000,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
             borderRadius: 28,
             background: '#FFFFFF',
             border: 'none',
-            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 18,
             marginBottom: 14,
           }}>
@@ -1073,7 +1058,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
             borderRadius: 24,
             background: T.white,
             border: 'none',
-            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 16,
             marginBottom: 14,
           }}>
@@ -1093,7 +1077,6 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
             borderRadius: 24,
             background: T.white,
             border: 'none',
-            boxShadow: '0 18px 45px rgba(0,0,0,0.075)',
             padding: 16,
             marginBottom: 14,
           }}>
@@ -1131,66 +1114,41 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <footer style={{
           flexShrink: 0,
           padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'grid',
+          gridTemplateColumns: '1fr 46px',
           gap: 8,
+          alignItems: 'center',
           background: T.bg,
         }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
+          <button type="button" onClick={submit} disabled={saving} style={{
+            ...darkButton,
+            width: '100%',
+            opacity: saving ? 0.65 : 1,
+            cursor: saving ? 'wait' : 'pointer',
           }}>
-            <button type="button" onClick={() => submit(false)} disabled={saving} style={{
-              ...darkButton,
-              width: '100%',
-              opacity: saving ? 0.65 : 1,
-              cursor: saving ? 'wait' : 'pointer',
-            }}>
-              {saving ? 'Sending...' : 'Send report'}
-            </button>
+            {saving ? 'Sending...' : 'Send report'}
+          </button>
 
-            <button type="button" onClick={copyLink} style={{
-              ...softButton,
-              width: '100%',
+          <button
+            type="button"
+            onClick={copyLink}
+            aria-label="Copy parent link"
+            style={{
+              width: 46,
+              height: 42,
+              borderRadius: 999,
+              border: 'none',
               background: T.white,
-            }}>
-              <Copy size={14} strokeWidth={1.8} />
-              Copy
-            </button>
-          </div>
-
-          {nextChild && (
-            <div style={{
+              color: T.ink2,
               display: 'flex',
-              justifyContent: 'center',
               alignItems: 'center',
-              paddingTop: 2,
-            }}>
-              <button
-                type="button"
-                onClick={() => submit(true)}
-                disabled={saving}
-                aria-label="Send and move to next learner"
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: T.accent,
-                  color: T.white,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: saving ? 'wait' : 'pointer',
-                  opacity: saving ? 0.65 : 1,
-                  fontFamily: 'inherit',
-                }}
-              >
-                <ArrowRight size={18} strokeWidth={2.2} />
-              </button>
-            </div>
-          )}
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Copy size={16} strokeWidth={1.8} />
+          </button>
         </footer>
       </div>
     </div>
@@ -1467,7 +1425,6 @@ function BottomSheet({ children, onClose }: any) {
         background: T.white,
         borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 48px rgba(0,0,0,0.10)',
       }}>
         {children}
       </div>
