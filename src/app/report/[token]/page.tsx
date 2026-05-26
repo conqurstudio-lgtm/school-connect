@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 import { ReportSwiper } from '@/components/reports/ReportSwiper'
+import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 
 const T = {
   ink: '#1A1A1A',
@@ -28,7 +29,8 @@ const T = {
 
 
 
-function MomentBellLink({ token }: { token: string }) {
+
+function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
 
   useEffect(() => {
@@ -57,8 +59,9 @@ function MomentBellLink({ token }: { token: string }) {
   }, [token])
 
   return (
-    <a
-      href={`/moments/${token}`}
+    <button
+      type="button"
+      onClick={onOpen}
       aria-label="View Moments"
       style={{
         position: 'absolute',
@@ -67,6 +70,7 @@ function MomentBellLink({ token }: { token: string }) {
         width: 38,
         height: 38,
         borderRadius: 999,
+        border: 'none',
         background: '#FFFFFF',
         display: 'inline-flex',
         alignItems: 'center',
@@ -75,6 +79,8 @@ function MomentBellLink({ token }: { token: string }) {
         flexShrink: 0,
         overflow: 'visible',
         zIndex: 30,
+        cursor: 'pointer',
+        padding: 0,
       }}
     >
       <iframe
@@ -102,7 +108,7 @@ function MomentBellLink({ token }: { token: string }) {
           border: '1.5px solid #FFFFFF',
         }} />
       )}
-    </a>
+    </button>
   )
 }
 
@@ -514,6 +520,7 @@ export default function ParentMagicReportPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
+  const [showMoments, setShowMoments] = useState(false)
 
   useEffect(() => {
     if (!token) {
@@ -551,6 +558,16 @@ export default function ParentMagicReportPage() {
 
   if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
+
+  if (showMoments) {
+    return (
+      <ParentMomentsPage
+        token={token || ''}
+        embedded={true}
+        onClose={() => setShowMoments(false)}
+      />
+    )
+  }
 
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
@@ -645,7 +662,7 @@ export default function ParentMagicReportPage() {
                 marginTop: 3,
               }}>
                 <SchoolQuickView school={school} />
-                <MomentBellLink token={token} />
+                <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
               </div>
             </div>
           </div>

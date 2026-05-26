@@ -84,7 +84,7 @@ function LoadingDots() {
   )
 }
 
-export function ParentMomentsPage({ token }: { token: string }) {
+export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [child, setChild] = useState<any>(null)
   const [moments, setMoments] = useState<any[]>([])
@@ -162,21 +162,43 @@ export function ParentMomentsPage({ token }: { token: string }) {
           background: T.bg,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <a href={`/report/${token}`} style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: T.soft,
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textDecoration: 'none',
-              flexShrink: 0,
-            }}>
-              <ArrowLeft size={16} />
-            </a>
+            {embedded ? (
+              <button
+                type="button"
+                onClick={onClose}
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                }}
+              >
+                <ArrowLeft size={16} />
+              </button>
+            ) : (
+              <a href={`/report/${token}`} style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: 'none',
+                background: T.soft,
+                color: T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                flexShrink: 0,
+              }}>
+                <ArrowLeft size={16} />
+              </a>
+            )}
 
             <div style={{ minWidth: 0 }}>
               <p style={{
