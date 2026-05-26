@@ -92,12 +92,16 @@ function teacherLink(token: string): string {
   return `${window.location.origin}/teacher-link/${token}`
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
+
 export function TeachersTab() {
   const [teachers, setTeachers] = useState<Teacher[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
-  const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [floatingMenu, setFloatingMenu] = useState<any>(null)
 
   const load = async () => {
     setLoading(true)
@@ -126,6 +130,20 @@ export function TeachersTab() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!floatingMenu) return
+
+    const close = () => setFloatingMenu(null)
+
+    window.addEventListener('resize', close)
+    window.addEventListener('scroll', close, true)
+
+    return () => {
+      window.removeEventListener('resize', close)
+      window.removeEventListener('scroll', close, true)
+    }
+  }, [floatingMenu])
+
   const copyLink = async (teacher: Teacher) => {
     const url = teacherLink(teacher.access_token)
 
@@ -140,7 +158,7 @@ export function TeachersTab() {
   }
 
   const updateTeacher = async (id: string, action: string) => {
-    setOpenMenu(null)
+    setFloatingMenu(null)
 
     const tid = toast.loading(action === 'rotate' ? 'Generating new link...' : 'Updating...')
 
@@ -172,7 +190,7 @@ export function TeachersTab() {
   }
 
   const deleteTeacher = async (id: string) => {
-    setOpenMenu(null)
+    setFloatingMenu(null)
 
     if (!confirm('Delete this teacher? This cannot be undone.')) return
 
@@ -187,6 +205,25 @@ export function TeachersTab() {
     } catch {
       toast.error('Could not delete teacher', { id: tid })
     }
+  }
+
+  const openTeacherMenu = (event: any, teacher: Teacher) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const menuWidth = 184
+    const menuHeight = 126
+
+    const left = clamp(rect.right - menuWidth, 12, window.innerWidth - menuWidth - 12)
+    let top = rect.bottom + 8
+
+    if (top + menuHeight > window.innerHeight - 12) {
+      top = rect.top - menuHeight - 8
+    }
+
+    setFloatingMenu({
+      teacher,
+      left,
+      top: clamp(top, 12, window.innerHeight - menuHeight - 12),
+    })
   }
 
   if (loading) {
@@ -255,23 +292,35 @@ export function TeachersTab() {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'visible', position: 'relative', zIndex: 30 }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'visible',
+          position: 'relative',
+          zIndex: 30,
+        }}>
           {teachers.map((teacher, index) => (
             <TeacherRow
               key={teacher.id}
               teacher={teacher}
               isLast={index === teachers.length - 1}
               copiedId={copiedId}
-              openMenu={openMenu}
-              setOpenMenu={setOpenMenu}
               onCopy={copyLink}
-              onRevoke={() => updateTeacher(teacher.id, 'revoke')}
-              onReactivate={() => updateTeacher(teacher.id, 'reactivate')}
-              onRotate={() => updateTeacher(teacher.id, 'rotate')}
-              onDelete={() => deleteTeacher(teacher.id)}
+              onMenu={openTeacherMenu}
             />
           ))}
         </div>
+      )}
+
+      {floatingMenu && (
+        <FloatingTeacherMenu
+          menu={floatingMenu}
+          onClose={() => setFloatingMenu(null)}
+          onRotate={() => updateTeacher(floatingMenu.teacher.id, 'rotate')}
+          onRevoke={() => updateTeacher(floatingMenu.teacher.id, 'revoke')}
+          onReactivate={() => updateTeacher(floatingMenu.teacher.id, 'reactivate')}
+          onDelete={() => deleteTeacher(floatingMenu.teacher.id)}
+        />
       )}
 
       {showAdd && (
@@ -291,16 +340,10 @@ function TeacherRow({
   teacher,
   isLast,
   copiedId,
-  openMenu,
-  setOpenMenu,
   onCopy,
-  onRevoke,
-  onReactivate,
-  onRotate,
-  onDelete,
+  onMenu,
 }: any) {
   const t = teacher as Teacher
-  const isMenu = openMenu === t.id
   const isCopied = copiedId === t.id
   const isActive = t.status === 'active'
 
@@ -313,7 +356,6 @@ function TeacherRow({
       gap: 10,
       position: 'relative',
       overflow: 'visible',
-      zIndex: isMenu ? 80 : 1,
       opacity: isActive ? 1 : 0.62,
     }}>
       <div style={{
@@ -383,7 +425,7 @@ function TeacherRow({
 
       <button
         type="button"
-        onClick={() => setOpenMenu(isMenu ? null : t.id)}
+        onClick={(event) => onMenu(event, t)}
         aria-label="Teacher options"
         style={{
           width: 34,
@@ -401,33 +443,49 @@ function TeacherRow({
       >
         <MoreVertical size={15} strokeWidth={1.8} />
       </button>
-
-      {isMenu && (
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          top: 42,
-          zIndex: 9999,
-          background: T.white,
-          borderRadius: 16,
-          border: `1px solid ${T.border}`,
-          boxShadow: '0 14px 38px rgba(0,0,0,0.10)',
-          padding: 6,
-          minWidth: 178,
-          transform: 'translateY(2px)',
-          transform: 'translateY(2px)',
-          transform: 'translateY(2px)',
-        }}>
-          <MenuItem onClick={onRotate} Icon={RotateCw} label="Issue new link" />
-          {isActive ? (
-            <MenuItem onClick={onRevoke} Icon={Slash} label="Revoke access" danger />
-          ) : (
-            <MenuItem onClick={onReactivate} Icon={Check} label="Reactivate" />
-          )}
-          <MenuItem onClick={onDelete} Icon={Trash2} label="Delete" danger />
-        </div>
-      )}
     </article>
+  )
+}
+
+function FloatingTeacherMenu({ menu, onClose, onRotate, onRevoke, onReactivate, onDelete }: any) {
+  const teacher = menu.teacher as Teacher
+  const isActive = teacher.status === 'active'
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 9000,
+          background: 'transparent',
+        }}
+      />
+
+      <div style={{
+        position: 'fixed',
+        left: menu.left,
+        top: menu.top,
+        zIndex: 9001,
+        background: T.white,
+        borderRadius: 16,
+        border: `1px solid ${T.border}`,
+        boxShadow: '0 18px 48px rgba(0,0,0,0.16)',
+        padding: 6,
+        minWidth: 184,
+      }}>
+        <MenuItem onClick={onRotate} Icon={RotateCw} label="Issue new link" />
+
+        {isActive ? (
+          <MenuItem onClick={onRevoke} Icon={Slash} label="Revoke access" danger />
+        ) : (
+          <MenuItem onClick={onReactivate} Icon={Check} label="Reactivate" />
+        )}
+
+        <MenuItem onClick={onDelete} Icon={Trash2} label="Delete" danger />
+      </div>
+    </>
   )
 }
 
