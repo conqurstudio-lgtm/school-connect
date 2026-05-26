@@ -163,7 +163,6 @@ function SectionCard({ children, style = {} }: any) {
       borderRadius: 28,
       background: T.white,
       border: 'none',
-      boxShadow: '0 18px 45px rgba(0,0,0,0.06)',
       padding: 16,
       ...style,
     }}>
@@ -210,7 +209,6 @@ function BottomSheet({ children, onClose }: any) {
         background: T.white,
         borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 48px rgba(0,0,0,0.10)',
       }}>
         {children}
       </div>
@@ -469,7 +467,6 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         background: T.white,
         borderRadius: 24,
         border: 'none',
-        boxShadow: '0 24px 70px rgba(0,0,0,0.18)',
         padding: 16,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 14 }}>
