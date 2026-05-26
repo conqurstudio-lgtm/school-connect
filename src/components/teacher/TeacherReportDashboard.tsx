@@ -33,7 +33,7 @@ const inputStyle: any = {
   padding: '12px 13px',
   borderRadius: 14,
   border: `1px solid ${T.border}`,
-  background: '#FFFFFF',
+  background: T.white,
   color: T.ink,
   fontSize: 16,
   outline: 'none',
@@ -43,7 +43,7 @@ const inputStyle: any = {
 const labelStyle: any = {
   display: 'block',
   fontSize: 11,
-  fontWeight: 650,
+  fontWeight: 600,
   color: T.ink3,
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
@@ -51,13 +51,13 @@ const labelStyle: any = {
 }
 
 const primaryButton: any = {
-  minHeight: 44,
+  minHeight: 42,
   borderRadius: 999,
   border: 'none',
   background: T.ink,
   color: T.white,
   fontSize: 13,
-  fontWeight: 620,
+  fontWeight: 560,
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -68,13 +68,13 @@ const primaryButton: any = {
 }
 
 const softButton: any = {
-  minHeight: 40,
+  minHeight: 38,
   borderRadius: 999,
   border: `1px solid ${T.border}`,
   background: T.white,
   color: T.ink2,
   fontSize: 13,
-  fontWeight: 620,
+  fontWeight: 540,
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -220,6 +220,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.bg,
         }}>
           <section style={{
             textAlign: 'center',
@@ -242,7 +243,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               margin: '0 auto 12px',
               color: T.ink2,
               fontSize: 22,
-              fontWeight: 650,
+              fontWeight: 600,
               boxShadow: 'none',
             }}>
               {!teacher.photo_url && initials(teacher.name)}
@@ -251,7 +252,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             <h1 style={{
               fontSize: 21,
               lineHeight: 1.08,
-              fontWeight: 650,
+              fontWeight: 600,
               letterSpacing: '-0.045em',
               color: T.ink,
               margin: '0 0 4px',
@@ -267,36 +268,58 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             }}>
               {school?.name || 'School'} · {classLabel}
             </p>
+          </section>
 
-            <p style={{
-              maxWidth: 330,
-              fontSize: 13,
+          <section style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '13px 14px',
+            borderRadius: 22,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            marginBottom: 14,
+          }}>
+            <div style={{
+              width: 38,
+              height: 38,
+              borderRadius: 14,
+              background: T.soft,
               color: T.ink3,
-              lineHeight: 1.5,
-              margin: '18px auto 0',
-            }}>
-              Add your learners, then send one weekly update for each child.
-            </p>
-
-            <button type="button" onClick={() => setShowAdd(true)} style={{
-              marginTop: 16,
-              width: 72,
-              height: 72,
-              borderRadius: 24,
-              border: 'none',
-              background: T.ink,
-              color: T.white,
-              display: 'inline-flex',
-              flexDirection: 'column',
+              display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 4,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              boxShadow: 'none',
+              flexShrink: 0,
             }}>
-              <Plus size={19} strokeWidth={2.2} />
-              <span style={{ fontSize: 12, fontWeight: 650 }}>Add</span>
+              <Plus size={17} strokeWidth={1.8} />
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+              }}>
+                Add learners
+              </p>
+              <p style={{
+                fontSize: 12.5,
+                color: T.ink3,
+                lineHeight: 1.35,
+                margin: '2px 0 0',
+              }}>
+                Build your roster once.
+              </p>
+            </div>
+
+            <button type="button" onClick={() => setShowAdd(true)} style={{
+              ...primaryButton,
+              minHeight: 36,
+              padding: '0 14px',
+              flexShrink: 0,
+            }}>
+              Add
             </button>
           </section>
 
@@ -338,11 +361,11 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               </div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 14, fontWeight: 650, color: T.ink, margin: 0 }}>
+                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
                   Learners
                 </p>
                 <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                  {children.length === 0 ? 'No learners added yet' : `${children.length} learners added`}
+                  {children.length === 0 ? 'No learners yet' : `${children.length} learners`}
                 </p>
               </div>
 
@@ -361,15 +384,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             {rosterOpen && (
               <div style={{
                 borderTop: `1px solid ${T.border}`,
-                padding: '4px 14px 14px',
+                padding: '4px 14px 12px',
               }}>
                 {!hasLearners ? (
                   <EmptyRoster onAdd={() => setShowAdd(true)} />
                 ) : (
-                  children.map((child: any) => (
+                  children.map((child: any, index: number) => (
                     <LearnerRow
                       key={child.id}
                       child={child}
+                      isLast={index === children.length - 1}
                       onReport={() => setReportChild(child)}
                       onDeleted={load}
                     />
@@ -456,25 +480,25 @@ function LoadingScreen() {
 function EmptyRoster({ onAdd }: any) {
   return (
     <div style={{
-      padding: '34px 16px',
+      padding: '30px 16px',
       textAlign: 'center',
       border: `1px dashed ${T.border}`,
       borderRadius: 16,
       background: 'transparent',
       marginTop: 10,
     }}>
-      <p style={{ fontSize: 14.5, fontWeight: 620, color: T.ink, margin: '0 0 4px' }}>
+      <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 4px' }}>
         No learners yet
       </p>
 
       <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-        Use the Add button above to create your roster.
+        Tap Add to create your roster.
       </p>
     </div>
   )
 }
 
-function LearnerRow({ child, onReport, onDeleted }: any) {
+function LearnerRow({ child, isLast, onReport, onDeleted }: any) {
   const remove = async () => {
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
@@ -493,7 +517,7 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
   return (
     <article style={{
       padding: '12px 0',
-      borderBottom: `1px solid ${T.border}`,
+      borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
       gap: 10,
@@ -508,7 +532,7 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
         justifyContent: 'center',
         color: T.ink2,
         fontSize: 12,
-        fontWeight: 650,
+        fontWeight: 560,
         flexShrink: 0,
       }}>
         {initials(child.name)}
@@ -517,7 +541,7 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
           fontSize: 13.8,
-          fontWeight: 600,
+          fontWeight: 540,
           color: T.ink,
           margin: 0,
           whiteSpace: 'nowrap',
@@ -540,10 +564,10 @@ function LearnerRow({ child, onReport, onDeleted }: any) {
 
       <button type="button" onClick={onReport} style={{
         ...softButton,
-        minHeight: 34,
-        padding: '0 11px',
+        minHeight: 32,
+        padding: '0 12px',
+        fontSize: 12.5,
       }}>
-        <Send size={13} strokeWidth={2} />
         Report
       </button>
 
@@ -704,10 +728,10 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
               justifyContent: 'space-between',
               marginBottom: 7,
             }}>
-              <span style={{ fontSize: 13.5, fontWeight: 620, color: T.ink }}>
+              <span style={{ fontSize: 13.5, fontWeight: 560, color: T.ink }}>
                 {subject}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 620, color: T.ink3 }}>
+              <span style={{ fontSize: 13, fontWeight: 540, color: T.ink3 }}>
                 {scores[subject]}/5
               </span>
             </div>
@@ -727,7 +751,7 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
                       background: active ? T.ink : T.white,
                       color: active ? T.white : T.ink2,
                       fontSize: 13,
-                      fontWeight: 620,
+                      fontWeight: 540,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
                     }}
@@ -774,7 +798,7 @@ function WeeklyReportSheet({ child, onClose, onSaved }: any) {
           <p style={{
             fontSize: 12,
             color: T.ink3,
-            fontWeight: 650,
+            fontWeight: 600,
             letterSpacing: '0.05em',
             textTransform: 'uppercase',
             margin: '0 0 7px',
@@ -852,7 +876,7 @@ function SheetHeader({ title, subtitle, onClose }: any) {
       marginBottom: 16,
     }}>
       <div>
-        <h2 style={{ fontSize: 17, fontWeight: 650, color: T.ink, margin: 0 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
           {title}
         </h2>
         {subtitle && (
@@ -902,7 +926,7 @@ const emptyCard: any = {
 
 const emptyTitle: any = {
   fontSize: 20,
-  fontWeight: 650,
+  fontWeight: 600,
   color: T.ink,
   margin: '14px 0 6px',
 }
