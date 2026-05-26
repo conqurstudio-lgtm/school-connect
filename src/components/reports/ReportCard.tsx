@@ -295,6 +295,49 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
   )
 }
 
+
+function TeacherNameTag({ name }: { name?: string | null }) {
+  if (!name) return null
+
+  return (
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 7,
+      flexWrap: 'wrap',
+      marginTop: 4,
+    }}>
+      <span style={{
+        fontSize: 13,
+        fontWeight: 540,
+        color: '#5F6268',
+        lineHeight: 1.2,
+      }}>
+        {name}
+      </span>
+
+      <span style={{
+        height: 22,
+        padding: '0 9px',
+        borderRadius: 999,
+        background: '#EEF3F1',
+        color: '#78918C',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 11,
+        fontWeight: 560,
+        letterSpacing: '0.01em',
+        lineHeight: 1,
+        whiteSpace: 'nowrap',
+      }}>
+        From your teacher
+      </span>
+    </div>
+  )
+}
+
 export function ReportCard({ report, childName }: Props) {
   const [expanded, setExpanded] = useState(false)
   const overall  = getOverallScore(report.scores)
@@ -360,7 +403,7 @@ export function ReportCard({ report, childName }: Props) {
               fontSize: 12, color: T.ink4, margin: '14px 0 0',
               fontWeight: 500,
             }}>
-              {report.teacher_name}
+              {report.teacher_name ? <TeacherNameTag name={report.teacher_name} /> : null}
             </p>
           )}
         </div>
