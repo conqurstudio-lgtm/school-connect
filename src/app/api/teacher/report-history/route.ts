@@ -33,16 +33,25 @@ export async function GET(req: NextRequest) {
 
   const url = new URL(req.url)
   const childId = String(url.searchParams.get('child_id') || '').trim()
+
   if (!childId) return NextResponse.json({ error: 'child_id required' }, { status: 400 })
 
   const sb = adminClient()
 
-  const { data: child } = await sb.from('children').select('*').eq('id', childId).maybeSingle()
-  if (!child) return NextResponse.json({ error: 'child not found' }, { status: 404 })
+  const { data: child, error: childError } = await sb
+    .from('children')
+    .select('*')
+    .eq('id', childId)
+    .maybeSingle()
+
+  if (childError || !child) return NextResponse.json({ error: 'child not found' }, { status: 404 })
 
   const sameSchool = child.school_id === teacher.school_id
   const sameTeacher = !child.created_by_teacher_id || child.created_by_teacher_id === teacher.id
-  if (!sameSchool || !sameTeacher) return NextResponse.json({ error: 'child is not in your roster' }, { status: 403 })
+
+  if (!sameSchool || !sameTeacher) {
+    return NextResponse.json({ error: 'child is not in your roster' }, { status: 403 })
+  }
 
   const { data: reports, error } = await sb
     .from('child_reports')
@@ -73,5 +82,9 @@ export async function GET(req: NextRequest) {
     ? (origin ? `${origin}/report/${encodeURIComponent(link.token)}` : `/report/${encodeURIComponent(link.token)}`)
     : ''
 
-  return NextResponse.json({ child, reports: reports || [], magic_link })
+  return NextResponse.json({
+    child,
+    reports: reports || [],
+    magic_link,
+  })
 }
