@@ -1,14 +1,16 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
+  Camera,
   ChevronDown,
   Copy,
   GraduationCap,
   LogOut,
   Plus,
   Send,
+  Settings,
   Trash2,
   Users,
   X,
@@ -20,7 +22,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FFFFFF',
+  bg: '#F0F0F0',
   soft: '#F8F8F9',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
@@ -104,6 +106,15 @@ function weekStartToday() {
   return d.toISOString().slice(0, 10)
 }
 
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 function formatShortDate(value?: string | null) {
   if (!value) return 'No report yet'
   try {
@@ -120,6 +131,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [session, setSession] = useState(initialSession)
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
   const [reportChild, setReportChild] = useState<any>(null)
   const [rosterOpen, setRosterOpen] = useState(true)
 
@@ -196,13 +208,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         }}>
           <button
             type="button"
-            onClick={signOut}
-            aria-label="Sign out"
+            onClick={() => setShowSettings(true)}
+            aria-label="Settings"
             style={{
               width: 34,
               height: 34,
               borderRadius: 999,
-              border: `1px solid ${T.border}`,
+              border: 'none',
               background: T.white,
               color: T.ink3,
               display: 'flex',
@@ -212,7 +224,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               flexShrink: 0,
             }}
           >
-            <LogOut size={14} strokeWidth={1.8} />
+            <Settings size={15} strokeWidth={1.8} />
           </button>
         </header>
 
@@ -226,25 +238,30 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         }}>
           <section style={{
             textAlign: 'center',
-            padding: '18px 16px 20px',
-            borderRadius: 24,
+            minHeight: 270,
+            padding: '30px 18px 28px',
+            borderRadius: 32,
             background: T.white,
-            border: `1px solid ${T.border}`,
+            border: 'none',
             boxShadow: 'none',
-            marginBottom: 14,
+            marginBottom: 16,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}>
             <div style={{
-              width: 78,
-              height: 78,
+              width: 92,
+              height: 92,
               borderRadius: 28,
               background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
-              border: `1px solid ${T.border}`,
+              border: 'none',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 12px',
+              margin: '0 auto 18px',
               color: T.accent,
-              fontSize: 22,
+              fontSize: 25,
               fontWeight: 600,
               boxShadow: 'none',
             }}>
@@ -254,7 +271,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             <h1 style={{
               fontSize: 21,
               lineHeight: 1.08,
-              fontWeight: 600,
+              fontWeight: 560,
               letterSpacing: '-0.045em',
               color: T.ink,
               margin: '0 0 4px',
@@ -279,8 +296,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             padding: '13px 14px',
             borderRadius: 22,
             background: T.white,
-            border: `1px solid ${T.border}`,
-            marginBottom: 14,
+            border: 'none',
+            marginBottom: 16,
           }}>
             <div style={{
               width: 38,
@@ -329,7 +346,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           <section style={{
             borderRadius: 22,
             background: T.white,
-            border: `1px solid ${T.border}`,
+            border: 'none',
             overflow: 'hidden',
             boxShadow: 'none',
           }}>
@@ -427,6 +444,25 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             setRosterOpen(true)
             load()
           }}
+        />
+      )}
+
+      {showSettings && (
+        <SettingsSheet
+          teacher={teacher}
+          school={school}
+          classLabel={classLabel}
+          onClose={() => setShowSettings(false)}
+          onUpdated={(updatedTeacher: any) => {
+            setSession((current: any) => ({
+              ...current,
+              teacher: {
+                ...current.teacher,
+                ...updatedTeacher,
+              },
+            }))
+          }}
+          onSignOut={signOut}
         />
       )}
 
@@ -590,6 +626,149 @@ function LearnerRow({ child, isLast, onReport, onDeleted }: any) {
         <Trash2 size={13} strokeWidth={1.8} />
       </button>
     </article>
+  )
+}
+
+
+function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut }: any) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+
+  const handlePhoto = async (event: any) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please choose an image file')
+      return
+    }
+
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error('Image must be under 4 MB')
+      return
+    }
+
+    setUploading(true)
+    const tid = toast.loading('Updating photo...')
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file)
+
+      const res = await fetch('/api/teacher/profile-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data_url: dataUrl,
+          content_type: file.type,
+          file_name: file.name,
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not update photo')
+
+      onUpdated({ photo_url: json.photo_url })
+      toast.success('Photo updated', { id: tid })
+    } catch (e: any) {
+      toast.error(e.message || 'Could not update photo', { id: tid })
+    }
+
+    setUploading(false)
+  }
+
+  return (
+    <BottomSheet onClose={onClose}>
+      <SheetHeader title="Settings" subtitle="Profile and account" onClose={onClose} />
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        padding: 12,
+        borderRadius: 20,
+        background: T.soft,
+        marginBottom: 12,
+      }}>
+        <div style={{
+          width: 52,
+          height: 52,
+          borderRadius: 18,
+          background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
+          color: T.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 16,
+          fontWeight: 560,
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}>
+          {!teacher.photo_url && initials(teacher.name)}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
+            {teacher.name || 'Teacher'}
+          </p>
+          <p style={{
+            fontSize: 12.5,
+            color: T.ink3,
+            margin: '2px 0 0',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {school?.name || 'School'} · {classLabel}
+          </p>
+        </div>
+      </div>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhoto}
+        style={{ display: 'none' }}
+      />
+
+      <button
+        type="button"
+        disabled={uploading}
+        onClick={() => fileRef.current?.click()}
+        style={{
+          ...softButton,
+          width: '100%',
+          justifyContent: 'flex-start',
+          height: 44,
+          border: 'none',
+          background: T.white,
+          opacity: uploading ? 0.65 : 1,
+        }}
+      >
+        <Camera size={15} strokeWidth={1.8} />
+        {uploading ? 'Uploading photo...' : 'Change profile photo'}
+      </button>
+
+      <button
+        type="button"
+        onClick={onSignOut}
+        style={{
+          ...softButton,
+          width: '100%',
+          justifyContent: 'flex-start',
+          height: 44,
+          border: 'none',
+          background: T.white,
+          color: T.red,
+          marginTop: 8,
+        }}
+      >
+        <LogOut size={15} strokeWidth={1.8} />
+        Sign out
+      </button>
+    </BottomSheet>
   )
 }
 
