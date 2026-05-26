@@ -17,6 +17,7 @@ import {
   X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 
 const T = {
   ink: '#252525',
@@ -162,6 +163,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [momentDraft, setMomentDraft] = useState<any>(null)
+  const momentFileRef = useRef<HTMLInputElement>(null)
   const [activeChild, setActiveChild] = useState<any>(null)
   const [rosterOpen, setRosterOpen] = useState(false)
   const [weekStart, setWeekStart] = useState(weekStartToday())
@@ -213,6 +216,31 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const signOut = async () => {
     await fetch('/api/teacher-session', { method: 'POST' })
     window.location.href = '/teacher'
+  }
+
+  const handleMomentFileChange = (event: any) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) return
+
+    const allowed =
+      file.type.startsWith('image/') ||
+      file.type === 'application/pdf' ||
+      file.type.includes('word') ||
+      file.type.includes('document')
+
+    if (!allowed) {
+      toast.error('Choose an image or document')
+      return
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('Moment file must be under 8 MB')
+      return
+    }
+
+    setMomentDraft({ file })
   }
 
   if (loading) return <LoadingScreen />
@@ -290,8 +318,30 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           display: 'flex',
           justifyContent: 'flex-end',
+          gap: 8,
           background: T.bg,
         }}>
+          <button
+            type="button"
+            onClick={() => momentFileRef.current?.click()}
+            aria-label="Create Moment"
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: 'none',
+              background: T.accent,
+              color: T.white,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <Plus size={15} strokeWidth={2} />
+          </button>
+
           <button
             type="button"
             onClick={() => setShowSettings(true)}
@@ -527,6 +577,23 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           </p>
         </main>
       </div>
+
+      <input
+        ref={momentFileRef}
+        type="file"
+        accept="image/*,application/pdf,.pdf,.doc,.docx"
+        style={{ display: 'none' }}
+        onChange={handleMomentFileChange}
+      />
+
+      {momentDraft && (
+        <TeacherMomentComposer
+          draft={momentDraft}
+          learners={children}
+          onClose={() => setMomentDraft(null)}
+          onCreated={() => setMomentDraft(null)}
+        />
+      )}
 
       {showAdd && (
         <AddLearnerSheet

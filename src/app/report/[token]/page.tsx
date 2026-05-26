@@ -24,6 +24,32 @@ const T = {
 
 
 
+
+function MomentBellLink({ token }: { token: string }) {
+  return (
+    <a
+      href={`/moments/${token}`}
+      aria-label="View Moments"
+      style={{
+        width: 24,
+        height: 24,
+        borderRadius: 999,
+        background: '#F0F0F0',
+        color: '#8FA6A1',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textDecoration: 'none',
+        fontSize: 12,
+        lineHeight: 1,
+        flexShrink: 0,
+      }}
+    >
+      🔔
+    </a>
+  )
+}
+
 function SchoolQuickView({ school }: { school: any }) {
   const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()
 
@@ -554,7 +580,15 @@ export default function ParentMagicReportPage() {
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <SchoolQuickView school={school} />
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                marginTop: 3,
+              }}>
+                <SchoolQuickView school={school} />
+                <MomentBellLink token={token} />
+              </div>
             </div>
           </div>
         </header>
