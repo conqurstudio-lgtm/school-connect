@@ -25,30 +25,103 @@ const T = {
 
 
 
+
 function MomentBellLink({ token }: { token: string }) {
+  const [hasNew, setHasNew] = useState(false)
+
+  useEffect(() => {
+    if (!token) return
+
+    let alive = true
+
+    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(json => {
+        if (!alive) return
+
+        const nextHasNew = Array.isArray(json.moments)
+          ? json.moments.some((moment: any) => !moment?.recipient?.viewed_at)
+          : false
+
+        setHasNew(nextHasNew)
+      })
+      .catch(() => {
+        if (alive) setHasNew(false)
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [token])
+
   return (
     <a
       href={`/moments/${token}`}
       aria-label="View Moments"
       style={{
-        width: 24,
-        height: 24,
+        position: 'absolute',
+        top: 'calc(9px + env(safe-area-inset-top, 0px))',
+        right: 14,
+        width: 34,
+        height: 34,
         borderRadius: 999,
-        background: '#F0F0F0',
+        background: '#FFFFFF',
         color: '#8FA6A1',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
         textDecoration: 'none',
-        fontSize: 12,
-        lineHeight: 1,
         flexShrink: 0,
+        overflow: 'visible',
+        zIndex: 30,
       }}
     >
-      🔔
+      {hasNew ? (
+        <iframe
+          src="https://lottie.host/embed/488285be-2e3b-4bdc-90bd-8dd96f8b23e7/dGDEAvE4Mc.lottie"
+          title="Moments"
+          aria-hidden="true"
+          style={{
+            width: 25,
+            height: 25,
+            border: 'none',
+            display: 'block',
+            pointerEvents: 'none',
+          }}
+        />
+      ) : (
+        <span style={{
+          width: 22,
+          height: 22,
+          borderRadius: 999,
+          background: '#EEF3F1',
+          color: '#8FA6A1',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          lineHeight: 1,
+        }}>
+          🔔
+        </span>
+      )}
+
+      {hasNew && (
+        <span style={{
+          position: 'absolute',
+          top: 4,
+          right: 4,
+          width: 7,
+          height: 7,
+          borderRadius: 999,
+          background: '#8FA6A1',
+          border: '1.5px solid #FFFFFF',
+        }} />
+      )}
     </a>
   )
 }
+
 
 function SchoolQuickView({ school }: { school: any }) {
   const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()

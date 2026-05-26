@@ -37,6 +37,14 @@ export async function GET(req: NextRequest) {
 
   if (recError) return NextResponse.json({ error: recError.message }, { status: 500 })
 
+  if (!peek && (recipients || []).some((row: any) => !row.viewed_at)) {
+    await sb
+      .from('moment_recipients')
+      .update({ viewed_at: new Date().toISOString() })
+      .eq('child_id', child.id)
+      .is('viewed_at', null)
+  }
+
   const momentIds = (recipients || []).map((row: any) => row.moment_id)
   if (!momentIds.length) return NextResponse.json({ child, moments: [] })
 
