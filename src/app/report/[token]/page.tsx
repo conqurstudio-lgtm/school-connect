@@ -22,9 +22,165 @@ const T = {
 
 
 
+
+function SchoolQuickView({ school }: { school: any }) {
+  const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()
+  const location = [school?.province, school?.address].filter(Boolean).join(' · ')
+
+  return (
+    <details style={{
+      position: 'relative',
+      width: 'fit-content',
+      marginTop: 3,
+    }}>
+      <summary style={{
+        listStyle: 'none',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 21,
+        padding: '0 9px',
+        borderRadius: 999,
+        background: '#F0F0F0',
+        color: '#9A9A9A',
+        fontSize: 11.5,
+        fontWeight: 540,
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>
+        View school
+      </summary>
+
+      <div style={{
+        position: 'absolute',
+        top: 28,
+        left: 0,
+        zIndex: 100,
+        width: 260,
+        padding: 12,
+        borderRadius: 20,
+        background: '#FFFFFF',
+        boxShadow: '0 18px 45px rgba(0,0,0,0.10)',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+        }}>
+          <div style={{
+            width: 42,
+            height: 42,
+            borderRadius: 15,
+            background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
+            color: '#8FA6A1',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 15,
+            fontWeight: 560,
+            flexShrink: 0,
+            overflow: 'hidden',
+          }}>
+            {!school?.logo_url && schoolInitial}
+          </div>
+
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{
+              fontSize: 13.5,
+              fontWeight: 560,
+              color: '#252525',
+              margin: 0,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}>
+              {school?.name || 'School'}
+            </p>
+
+            <p style={{
+              fontSize: 12,
+              color: '#9A9A9A',
+              margin: '2px 0 0',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}>
+              {location || 'School profile'}
+            </p>
+          </div>
+        </div>
+
+        {(school?.tagline || school?.phone || school?.email || school?.website) && (
+          <div style={{
+            marginTop: 11,
+            paddingTop: 10,
+            borderTop: '1px solid rgba(0,0,0,0.07)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 7,
+          }}>
+            {school?.tagline && (
+              <p style={{
+                fontSize: 12.5,
+                color: '#5F6268',
+                lineHeight: 1.45,
+                margin: 0,
+              }}>
+                {school.tagline}
+              </p>
+            )}
+
+            {school?.phone && (
+              <p style={{ fontSize: 12.2, color: '#9A9A9A', margin: 0 }}>
+                {school.phone}
+              </p>
+            )}
+
+            {school?.email && (
+              <p style={{
+                fontSize: 12.2,
+                color: '#9A9A9A',
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}>
+                {school.email}
+              </p>
+            )}
+
+            {school?.website && (
+              <a
+                href={school.website}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  fontSize: 12.2,
+                  color: '#8FA6A1',
+                  textDecoration: 'none',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {school.website}
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </details>
+  )
+}
+
 function ReportSafeAreaStyle() {
   return (
     <style>{`
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+
       html,
       body {
         background: #FFFFFF !important;
@@ -333,14 +489,7 @@ export default function ParentMagicReportPage() {
               }}>
                 {school?.name || 'School Connect'}
               </p>
-              <p style={{
-                fontSize: 11.5,
-                color: T.ink3,
-                margin: 0,
-                lineHeight: 1.05,
-              }}>
-                Weekly reports
-              </p>
+              <SchoolQuickView school={school} />
             </div>
           </div>
         </header>
