@@ -4,10 +4,8 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   Camera,
-  ChevronDown,
   LogOut,
   Pencil,
-  Plus,
   Save,
   Settings,
   Users,
@@ -580,7 +578,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
-function TeachersAccordion({ open, setOpen, teacherCount, teacherCountLoading, onAddTeacher }: any) {
+function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'hidden' }}>
       <div style={{
@@ -594,113 +592,60 @@ function TeachersAccordion({ open, setOpen, teacherCount, teacherCountLoading, o
         textAlign: 'left',
         fontFamily: 'inherit',
       }}>
+        <div style={{
+          width: 38,
+          height: 38,
+          borderRadius: 14,
+          background: T.accentSoft,
+          color: T.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <Users size={18} strokeWidth={1.7} />
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+            Teachers & classes
+          </p>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+            {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
+          </p>
+        </div>
+
         <button
           type="button"
-          onClick={() => setOpen(!open)}
+          onClick={onAddTeacher}
           style={{
-            flex: 1,
-            minWidth: 0,
+            minWidth: 54,
+            height: 34,
+            borderRadius: 999,
             border: 'none',
-            background: 'transparent',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            cursor: 'pointer',
-            textAlign: 'left',
-            fontFamily: 'inherit',
-          }}
-        >
-          <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: 14,
-            background: T.accentSoft,
-            color: T.accent,
-            display: 'flex',
+            background: T.accent,
+            color: T.white,
+            display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
+            fontSize: 12.5,
+            fontWeight: 540,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
             flexShrink: 0,
-          }}>
-            <Users size={18} strokeWidth={1.7} />
-          </div>
-
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-              Teachers & classes
-            </p>
-            <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-              {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
-            </p>
-          </div>
+          }}
+        >
+          Add
         </button>
-
-        {open ? (
-          <button
-            type="button"
-            onClick={onAddTeacher}
-            style={{
-              minWidth: 58,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: T.accent,
-              color: T.white,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 5,
-              fontSize: 12.5,
-              fontWeight: 540,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              flexShrink: 0,
-            }}
-          >
-            <Plus size={13} strokeWidth={2} />
-            Add
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            aria-label="Open teachers"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: T.soft,
-              color: T.ink3,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <ChevronDown
-              size={16}
-              strokeWidth={1.9}
-              style={{
-                color: T.ink3,
-                transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.16s ease',
-              }}
-            />
-          </button>
-        )}
       </div>
 
-      {open && (
-        <div style={{
-          borderTop: `1px solid ${T.border}`,
-          padding: '0 14px 12px',
-          background: T.white,
-        }}>
-          <TeachersTab />
-        </div>
-      )}
+      <div style={{
+        borderTop: `1px solid ${T.border}`,
+        padding: '0 14px 12px',
+        background: T.white,
+      }}>
+        <TeachersTab />
+      </div>
     </SectionCard>
   )
 }
@@ -794,7 +739,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [school, setSchool] = useState(initialSchool)
   const [teacherCount, setTeacherCount] = useState(0)
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
-  const [teachersOpen, setTeachersOpen] = useState(false)
+  const [teachersOpen, setTeachersOpen] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
   const [showEditDetails, setShowEditDetails] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -1044,8 +989,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
           {isAdmin && (
             <TeachersAccordion
-              open={teachersOpen}
-              setOpen={setTeachersOpen}
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}
               onAddTeacher={triggerAddTeacher}
