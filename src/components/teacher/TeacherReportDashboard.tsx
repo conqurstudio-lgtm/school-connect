@@ -298,7 +298,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               height: 34,
               borderRadius: 999,
               border: 'none',
-              background: T.white,
+              background: T.bg,
               color: T.ink3,
               display: 'flex',
               alignItems: 'center',
@@ -324,7 +324,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             minHeight: 260,
             padding: '28px 18px 26px',
             borderRadius: 28,
-            background: T.white,
+            background: T.bg,
             border: 'none',
             boxShadow: 'none',
             marginBottom: 14,
@@ -858,7 +858,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
               height: 34,
               borderRadius: 999,
               border: 'none',
-              background: T.white,
+              background: T.bg,
               color: T.ink2,
               display: 'flex',
               alignItems: 'center',
@@ -904,10 +904,11 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.bg,
         }}>
           <section style={{
             borderRadius: 28,
-            background: T.white,
+            background: T.bg,
             border: 'none',
             padding: 18,
             marginBottom: 14,
@@ -1203,7 +1204,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
           justifyContent: 'flex-start',
           height: 44,
           border: 'none',
-          background: T.white,
+          background: T.bg,
           opacity: uploading ? 0.65 : 1,
         }}
       >
