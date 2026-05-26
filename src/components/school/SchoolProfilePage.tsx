@@ -685,7 +685,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
           <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
             {school.name || 'School'}
           </p>
-          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0', overflow: 'visible', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {schoolLocation(school) || 'School profile'}
           </p>
         </div>

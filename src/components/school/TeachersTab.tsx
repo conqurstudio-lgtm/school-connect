@@ -415,6 +415,7 @@ function TeacherRow({
           padding: 6,
           minWidth: 178,
           transform: 'translateY(2px)',
+          transform: 'translateY(2px)',
         }}>
           <MenuItem onClick={onRotate} Icon={RotateCw} label="Issue new link" />
           {isActive ? (
