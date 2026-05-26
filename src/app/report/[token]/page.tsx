@@ -78,7 +78,7 @@ function MomentBellLink({ token }: { token: string }) {
       }}
     >
       <iframe
-        src="https://lottie.host/embed/488285be-2e3b-4bdc-90bd-8dd96f8b23e7/dGDEAvE4Mc.lottie"
+        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
         title="Moments"
         aria-hidden="true"
         style={{
