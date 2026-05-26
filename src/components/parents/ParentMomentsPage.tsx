@@ -41,6 +41,30 @@ function formatShortDate(value?: string) {
   }
 }
 
+function formatTimeAgo(value?: string) {
+  if (!value) return ''
+
+  const then = new Date(value).getTime()
+  if (!Number.isFinite(then)) return ''
+
+  const diff = Math.max(0, Date.now() - then)
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+  const week = 7 * day
+
+  if (diff < minute) return 'now'
+  if (diff < hour) return `${Math.floor(diff / minute)}m ago`
+  if (diff < day) return `${Math.floor(diff / hour)}h ago`
+  if (diff < week) return `${Math.floor(diff / day)}d ago`
+
+  return new Date(value).toLocaleDateString('en-ZA', {
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
+
 function SafeStyle() {
   return (
     <style>{`
@@ -353,26 +377,45 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
       </div>
 
       <div style={{ minWidth: 0 }}>
-        <p style={{
-          fontSize: 13.8,
-          fontWeight: 560,
-          color: T.ink,
-          margin: 0,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 10,
         }}>
-          {teacherName}
-        </p>
+          <p style={{
+            flex: 1,
+            minWidth: 0,
+            fontSize: 13.8,
+            fontWeight: 560,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+            {teacherName}
+            <span style={{
+              color: T.ink3,
+              fontSize: 11.5,
+              fontWeight: 520,
+              marginLeft: 5,
+            }}>
+              · Your teacher
+            </span>
+          </p>
 
-        <p style={{
-          fontSize: 12.2,
-          color: T.ink3,
-          margin: '2px 0 0',
-          lineHeight: 1.35,
-        }}>
-          Your teacher · {formatShortDate(moment.created_at)}
-        </p>
+          <span style={{
+            fontSize: 10.8,
+            color: T.ink3,
+            fontWeight: 520,
+            whiteSpace: 'nowrap',
+            lineHeight: 1.4,
+            marginTop: 1,
+          }}>
+            {formatTimeAgo(moment.created_at)}
+          </span>
+        </div>
 
         {moment.note && (
           <p style={{
