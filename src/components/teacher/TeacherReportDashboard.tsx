@@ -12,12 +12,14 @@ import {
   LogOut,
   Plus,
   Settings,
+  Eye,
   Trash2,
   Users,
   X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
+import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 
 const T = {
   ink: '#252525',
@@ -163,6 +165,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showTeacherMoments, setShowTeacherMoments] = useState(false)
+  const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0 })
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement>(null)
   const [activeChild, setActiveChild] = useState<any>(null)
@@ -204,6 +208,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         ...json,
         children: mergedChildren,
       })
+
+      loadMomentSummary()
     } finally {
       setLoading(false)
     }
@@ -216,6 +222,21 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const signOut = async () => {
     await fetch('/api/teacher-session', { method: 'POST' })
     window.location.href = '/teacher'
+  }
+
+  const loadMomentSummary = async () => {
+    try {
+      const res = await fetch('/api/teacher/moments/list?summary=1', { cache: 'no-store' })
+      const json = await res.json().catch(() => ({}))
+      if (res.ok && json.summary) {
+        setMomentSummary({
+          moments: Number(json.summary.moments || 0),
+          reactions: Number(json.summary.reactions || 0),
+        })
+      }
+    } catch {
+      // Keep dashboard clean if summary is unavailable.
+    }
   }
 
   const handleMomentFileChange = (event: any) => {
@@ -274,6 +295,23 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     const after = children.slice(currentIndex + 1).find((c: any) => !isMarkedThisWeek(c, weekStart))
     const before = children.slice(0, currentIndex).find((c: any) => !isMarkedThisWeek(c, weekStart))
     return after || before || null
+  }
+
+  if (showTeacherMoments) {
+    return (
+      <TeacherMomentsPage
+        teacher={teacher}
+        onBack={() => setShowTeacherMoments(false)}
+        onChanged={(summary: any) => {
+          if (summary) {
+            setMomentSummary({
+              moments: Number(summary.moments || 0),
+              reactions: Number(summary.reactions || 0),
+            })
+          }
+        }}
+      />
+    )
   }
 
   if (activeChild) {

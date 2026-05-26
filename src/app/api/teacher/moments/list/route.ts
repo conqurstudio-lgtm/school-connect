@@ -99,7 +99,6 @@ async function buildMomentRows(sb: any, moments: any[]) {
 
     return {
       ...moment,
-      is_pinned: Boolean(moment.is_pinned),
       recipients: recipientMap[moment.id] || [],
       recipient_count: (recipientMap[moment.id] || []).length,
       reactions: momentReactions,
@@ -121,8 +120,6 @@ export async function GET(req: NextRequest) {
     .from('moments')
     .select('*')
     .eq('teacher_id', teacher.id)
-    .is('deleted_at', null)
-    .order('is_pinned', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(summaryOnly ? 200 : 80)
 
@@ -139,41 +136,4 @@ export async function GET(req: NextRequest) {
     },
     moments: summaryOnly ? [] : rows,
   })
-}
-
-export async function PATCH(req: NextRequest) {
-  const teacher = await getTeacher(req)
-  if (!teacher) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-
-  const body = await req.json().catch(() => ({}))
-  const id = String(body.id || '').trim()
-  const action = String(body.action || '').trim()
-
-  if (!id) return NextResponse.json({ error: 'Moment ID is required' }, { status: 400 })
-
-  const sb = adminClient()
-
-  let updates: any = {}
-
-  if (action === 'pin') {
-    updates = { is_pinned: true }
-  } else if (action === 'unpin') {
-    updates = { is_pinned: false }
-  } else if (action === 'delete') {
-    updates = { deleted_at: new Date().toISOString() }
-  } else {
-    return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
-  }
-
-  const { data, error } = await sb
-    .from('moments')
-    .update(updates)
-    .eq('id', id)
-    .eq('teacher_id', teacher.id)
-    .select('id,is_pinned,deleted_at')
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  return NextResponse.json({ moment: data })
 }

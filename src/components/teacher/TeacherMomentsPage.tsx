@@ -1,22 +1,9 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import {
-  ArrowLeft,
-  Camera,
-  FileText,
-  Heart,
-  MoreVertical,
-  Pin,
-  PinOff,
-  Smile,
-  ThumbsUp,
-  Trash2,
-  X,
-} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 
 const T = {
   ink: '#252525',
@@ -25,11 +12,9 @@ const T = {
   border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
-  soft2: '#F4F5F5',
   accent: '#8FA6A1',
   accentSoft: '#EEF3F1',
   white: '#FFFFFF',
-  red: '#B42318',
 }
 
 function initials(name?: string) {
@@ -98,7 +83,13 @@ function SafeStyle() {
 function LoadingDots() {
   return (
     <div style={{ padding: '34px 0', textAlign: 'center' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, height: 24 }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 7,
+        height: 24,
+      }}>
         {[0, 1, 2].map(dot => (
           <span key={dot} style={{
             width: 8,
@@ -115,33 +106,11 @@ function LoadingDots() {
   )
 }
 
-function MiniStat({ label, value }: any) {
-  return (
-    <div style={{
-      padding: '10px 8px',
-      borderRadius: 17,
-      background: T.soft,
-      textAlign: 'center',
-    }}>
-      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
-        {value}
-      </p>
-      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
-        {label}
-      </p>
-    </div>
-  )
-}
-
-export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }: any) {
-  const fileRef = useRef<HTMLInputElement>(null)
+export function TeacherMomentsPage({ teacher, onBack, onChanged }: any) {
   const [loading, setLoading] = useState(true)
   const [moments, setMoments] = useState<any[]>([])
-  const [summary, setSummary] = useState({ moments: 0, reactions: 0 })
   const [openImage, setOpenImage] = useState('')
-  const [momentDraft, setMomentDraft] = useState<any>(null)
   const [reactionMoment, setReactionMoment] = useState<any>(null)
-  const [openMenu, setOpenMenu] = useState<string | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -153,10 +122,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
       if (!res.ok) throw new Error(json.error || 'Could not load Moments')
 
       setMoments(json.moments || [])
-      setSummary({
-        moments: Number(json.summary?.moments || 0),
-        reactions: Number(json.summary?.reactions || 0),
-      })
       onChanged?.(json.summary)
     } catch (error: any) {
       toast.error(error.message || 'Could not load Moments')
@@ -168,74 +133,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   useEffect(() => {
     load()
   }, [])
-
-  const handleMomentFileChange = (event: any) => {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-
-    if (!file) return
-
-    const allowed =
-      file.type.startsWith('image/') ||
-      file.type === 'application/pdf' ||
-      file.type.includes('word') ||
-      file.type.includes('document')
-
-    if (!allowed) {
-      toast.error('Choose an image or document')
-      return
-    }
-
-    if (file.size > 8 * 1024 * 1024) {
-      toast.error('Moment file must be under 8 MB')
-      return
-    }
-
-    setMomentDraft({ file })
-  }
-
-  const refreshAfterCreate = async () => {
-    setMomentDraft(null)
-    await load()
-  }
-
-  const updateMoment = async (moment: any, action: 'pin' | 'unpin' | 'delete') => {
-    setOpenMenu(null)
-
-    if (action === 'delete' && !confirm('Delete this Moment from your workspace?')) return
-
-    const tid = toast.loading(
-      action === 'delete'
-        ? 'Deleting Moment...'
-        : action === 'pin'
-          ? 'Pinning Moment...'
-          : 'Unpinning Moment...'
-    )
-
-    try {
-      const res = await fetch('/api/teacher/moments/list', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: moment.id, action }),
-      })
-
-      const json = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(json.error || 'Could not update Moment')
-
-      toast.success(
-        action === 'delete'
-          ? 'Moment deleted'
-          : action === 'pin'
-            ? 'Moment pinned'
-            : 'Moment unpinned',
-        { id: tid }
-      )
-
-      await load()
-    } catch (error: any) {
-      toast.error(error.message || 'Could not update Moment', { id: tid })
-    }
-  }
 
   return (
     <main style={{
@@ -249,23 +146,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
     }}>
       <SafeStyle />
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*,application/pdf,.pdf,.doc,.docx"
-        style={{ display: 'none' }}
-        onChange={handleMomentFileChange}
-      />
-
-      {momentDraft && (
-        <TeacherMomentComposer
-          draft={momentDraft}
-          learners={learners}
-          onClose={() => setMomentDraft(null)}
-          onCreated={refreshAfterCreate}
-        />
-      )}
-
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -276,26 +156,42 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
           background: T.bg,
-          display: 'flex',
-          justifyContent: 'flex-start',
         }}>
-          <button type="button" onClick={onBack} style={{
-            width: 34,
-            height: 34,
-            borderRadius: 999,
-            border: 'none',
-            background: T.bg,
-            color: T.ink3,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}>
-            <ArrowLeft size={16} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button type="button" onClick={onBack} style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              border: 'none',
+              background: T.soft,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}>
+              <ArrowLeft size={16} />
+            </button>
+
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
+                Moments preview
+              </p>
+              <p style={{
+                fontSize: 12.5,
+                color: T.ink3,
+                margin: '2px 0 0',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}>
+                Parent view of your shared updates
+              </p>
+            </div>
+          </div>
         </header>
 
         <section style={{
@@ -304,125 +200,36 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+          padding: '34px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
-          <section style={{
-            textAlign: 'center',
-            minHeight: 260,
-            padding: '28px 18px 26px',
-            borderRadius: 28,
-            background: T.bg,
-            border: 'none',
-            marginBottom: 14,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <div style={{
-              width: 92,
-              height: 92,
-              borderRadius: 32,
-              background: T.accentSoft,
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 18px',
-              color: T.accent,
-              fontSize: 32,
-              fontWeight: 560,
-              overflow: 'hidden',
-            }}>
-              M
-            </div>
-
-            <h1 style={{
-              fontSize: 22,
-              lineHeight: 1.08,
-              fontWeight: 560,
-              letterSpacing: '-0.045em',
-              color: T.ink,
-              margin: '0 0 7px',
-            }}>
-              Moments
-            </h1>
-
-            <p style={{
-              maxWidth: 300,
-              fontSize: 12.8,
-              color: T.ink3,
-              lineHeight: 1.4,
-              margin: 0,
-            }}>
-              Create updates and see how parents respond.
-            </p>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 9,
-              width: '100%',
-              maxWidth: 260,
-              marginTop: 20,
-            }}>
-              <MiniStat label="Moments" value={summary.moments} />
-              <MiniStat label="Reactions" value={summary.reactions} />
-            </div>
-          </section>
-
-          <CreateMomentCard onCreate={() => fileRef.current?.click()} />
-
-          <div style={{
-            marginTop: 20,
-            marginBottom: 10,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 10,
-          }}>
-            <div>
-              <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-                Moments shared
-              </p>
-              <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                Pin important updates or manage old ones.
-              </p>
-            </div>
-          </div>
-
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
             <div style={{
-              padding: '34px 18px',
+              padding: '38px 18px',
               textAlign: 'center',
               borderRadius: 22,
               border: `1px dashed ${T.border}`,
               background: 'transparent',
             }}>
               <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
-                No Moments yet
+                No Moments shared yet
               </p>
               <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-                Create your first private photo or document update.
+                Share a Moment from the teacher page to preview it here.
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
               {moments.map((moment, index) => (
-                <TeacherMomentPost
+                <TeacherPreviewMomentPost
                   key={moment.id}
                   moment={moment}
                   teacher={teacher}
                   isLast={index === moments.length - 1}
                   onImage={setOpenImage}
                   onReactions={() => setReactionMoment(moment)}
-                  openMenu={openMenu}
-                  setOpenMenu={setOpenMenu}
-                  onPin={() => updateMoment(moment, moment.is_pinned ? 'unpin' : 'pin')}
-                  onDelete={() => updateMoment(moment, 'delete')}
                 />
               ))}
             </div>
@@ -492,88 +299,11 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   )
 }
 
-function CreateMomentCard({ onCreate }: any) {
-  return (
-    <section style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 12,
-      padding: '14px 15px',
-      borderRadius: 24,
-      background: '#EEF3F1',
-      border: 'none',
-      marginBottom: 14,
-    }}>
-      <div style={{
-        width: 38,
-        height: 38,
-        borderRadius: 14,
-        background: T.white,
-        color: T.accent,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        <Camera size={17} strokeWidth={1.8} />
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-          Create Moment
-        </p>
-        <p style={{ fontSize: 12.5, color: T.ink2, lineHeight: 1.35, margin: '2px 0 0' }}>
-          Share a private update with parents.
-        </p>
-      </div>
-
-      <button type="button" onClick={onCreate} style={{
-        minHeight: 36,
-        borderRadius: 999,
-        border: 'none',
-        background: T.accent,
-        color: T.white,
-        fontSize: 13,
-        fontWeight: 560,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '0 14px',
-        cursor: 'pointer',
-        fontFamily: 'inherit',
-        flexShrink: 0,
-      }}>
-        Add
-      </button>
-    </section>
-  )
-}
-
-function TeacherMomentPost({
-  moment,
-  teacher,
-  isLast,
-  onImage,
-  onReactions,
-  openMenu,
-  setOpenMenu,
-  onPin,
-  onDelete,
-}: any) {
-  const teacherName = teacher?.name || 'You'
+function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReactions }: any) {
+  const teacherName = teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
-  const names = (moment.recipients || [])
-    .map((row: any) => row.child?.name)
-    .filter(Boolean)
-    .slice(0, 3)
-
-  const sharedText = isPrivate
-    ? (names.length ? `Shared to ${names.join(', ')}` : 'Shared to parent')
-    : `Shared with class · ${moment.recipient_count || 0} parents`
-
   const reactionTotal = Number(moment.reaction_count || 0)
-  const isMenuOpen = openMenu === moment.id
 
   return (
     <article style={{
@@ -583,7 +313,6 @@ function TeacherMomentPost({
       padding: '0 0 24px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
-      position: 'relative',
     }}>
       <div style={{
         width: 38,
@@ -602,7 +331,7 @@ function TeacherMomentPost({
         {!teacher?.photo_url && initials(teacherName)}
       </div>
 
-      <div style={{ minWidth: 0, position: 'relative' }}>
+      <div style={{ minWidth: 0 }}>
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -627,81 +356,21 @@ function TeacherMomentPost({
               fontWeight: 520,
               marginLeft: 5,
             }}>
-              · Your Moment
+              · Your teacher
             </span>
           </p>
 
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 7,
-            flexShrink: 0,
+          <span style={{
+            fontSize: 10.8,
+            color: T.ink3,
+            fontWeight: 520,
+            whiteSpace: 'nowrap',
+            lineHeight: 1.4,
+            marginTop: 1,
           }}>
-            {moment.is_pinned && (
-              <span style={{ color: T.accent, display: 'inline-flex' }}>
-                <Pin size={12} strokeWidth={1.8} />
-              </span>
-            )}
-
-            <span style={{
-              fontSize: 10.8,
-              color: T.ink3,
-              fontWeight: 520,
-              whiteSpace: 'nowrap',
-              lineHeight: 1.4,
-              marginTop: 1,
-            }}>
-              {formatTimeAgo(moment.created_at)}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => setOpenMenu(isMenuOpen ? null : moment.id)}
-              style={{
-                width: 26,
-                height: 26,
-                borderRadius: 999,
-                border: 'none',
-                background: 'transparent',
-                color: T.ink3,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            >
-              <MoreVertical size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+            {formatTimeAgo(moment.created_at)}
+          </span>
         </div>
-
-        {isMenuOpen && (
-          <div style={{
-            position: 'absolute',
-            top: 30,
-            right: 0,
-            zIndex: 50,
-            minWidth: 150,
-            padding: 6,
-            borderRadius: 16,
-            background: T.white,
-            border: `1px solid ${T.border}`,
-            boxShadow: '0 14px 38px rgba(0,0,0,0.10)',
-          }}>
-            <MenuItem
-              Icon={moment.is_pinned ? PinOff : Pin}
-              label={moment.is_pinned ? 'Unpin' : 'Pin'}
-              onClick={onPin}
-            />
-            <MenuItem
-              Icon={Trash2}
-              label="Delete"
-              onClick={onDelete}
-              danger
-            />
-          </div>
-        )}
 
         {moment.note && (
           <p style={{
@@ -727,7 +396,7 @@ function TeacherMomentPost({
           fontWeight: 560,
           marginTop: 10,
         }}>
-          {sharedText}
+          {isPrivate ? 'Shared only to parent' : 'Shared with class'}
         </span>
 
         <div style={{ marginTop: 12 }}>
@@ -845,35 +514,6 @@ function TeacherMomentPost({
         </button>
       </div>
     </article>
-  )
-}
-
-function MenuItem({ Icon, label, onClick, danger }: any) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      style={{
-        width: '100%',
-        minHeight: 36,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 9,
-        padding: '0 10px',
-        background: 'transparent',
-        border: 'none',
-        borderRadius: 12,
-        cursor: 'pointer',
-        fontSize: 12.8,
-        fontWeight: 520,
-        color: danger ? T.red : T.ink2,
-        fontFamily: 'inherit',
-        textAlign: 'left',
-      }}
-    >
-      <Icon size={14} strokeWidth={1.8} />
-      {label}
-    </button>
   )
 }
 
