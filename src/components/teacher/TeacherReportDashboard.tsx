@@ -223,7 +223,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         }}>
           <section style={{
             textAlign: 'center',
-            padding: '2px 8px 26px',
+            padding: '18px 16px 20px',
+            borderRadius: 24,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            boxShadow: 'none',
+            marginBottom: 14,
           }}>
             <div style={{
               width: 78,
@@ -238,7 +243,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               color: T.ink2,
               fontSize: 22,
               fontWeight: 650,
-              boxShadow: '0 14px 34px rgba(0,0,0,0.035)',
+              boxShadow: 'none',
             }}>
               {!teacher.photo_url && initials(teacher.name)}
             </div>
@@ -288,7 +293,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               gap: 4,
               cursor: 'pointer',
               fontFamily: 'inherit',
-              boxShadow: '0 16px 38px rgba(0,0,0,0.12)',
+              boxShadow: 'none',
             }}>
               <Plus size={19} strokeWidth={2.2} />
               <span style={{ fontSize: 12, fontWeight: 650 }}>Add</span>
@@ -300,7 +305,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             background: T.white,
             border: `1px solid ${T.border}`,
             overflow: 'hidden',
-            boxShadow: '0 10px 28px rgba(0,0,0,0.028)',
+            boxShadow: 'none',
           }}>
             <button
               type="button"
@@ -829,7 +834,7 @@ function BottomSheet({ children, onClose }: any) {
         background: T.white,
         borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -24px 70px rgba(0,0,0,0.14)',
+        boxShadow: '0 -18px 48px rgba(0,0,0,0.10)',
       }}>
         {children}
       </div>
