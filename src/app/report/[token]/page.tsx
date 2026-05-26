@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 import { ReportSwiper } from '@/components/reports/ReportSwiper'
@@ -113,7 +113,10 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 }
 
 
+
 function SchoolQuickView({ school }: { school: any }) {
+  const [open, setOpen] = useState(false)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()
 
   const location = [
@@ -127,204 +130,234 @@ function SchoolQuickView({ school }: { school: any }) {
     ? (/^https?:\/\//i.test(rawWebsite) ? rawWebsite : `https://${rawWebsite}`)
     : ''
 
+  useEffect(() => {
+    if (!open) return
+
+    const closeOnOutside = (event: PointerEvent) => {
+      if (!wrapRef.current) return
+
+      if (!wrapRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    document.addEventListener('pointerdown', closeOnOutside)
+    document.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open])
+
   return (
-    <details style={{
+    <div ref={wrapRef} style={{
       position: 'relative',
       width: 'fit-content',
       marginTop: 0,
     }}>
-      <summary style={{
-        listStyle: 'none',
-        cursor: 'pointer',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 999,
-        minHeight: 18,
-        padding: '0 7px',
-        background: 'transparent',
-        border: '1px solid rgba(0,0,0,0.10)',
-        color: '#9A9A9A',
-        fontSize: 10.5,
-        fontWeight: 540,
-        lineHeight: 1,
-        userSelect: 'none',
-      }}>
-        View school
-      </summary>
-
-      <div style={{
-        position: 'absolute',
-        top: 23,
-        left: 0,
-        zIndex: 100,
-        width: 272,
-        padding: 12,
-        borderRadius: 20,
-        background: '#FFFFFF',
-        boxShadow: '0 18px 45px rgba(0,0,0,0.10)',
-      }}>
-        <div style={{
-          display: 'flex',
+      <button
+        type="button"
+        onClick={() => setOpen(current => !current)}
+        style={{
+          cursor: 'pointer',
+          display: 'inline-flex',
           alignItems: 'center',
-          gap: 10,
+          justifyContent: 'center',
+          minHeight: 20,
+          padding: '2px 8px',
+          borderRadius: 999,
+          background: 'transparent',
+          border: '1px solid rgba(0,0,0,0.10)',
+          color: '#9A9A9A',
+          fontSize: 10,
+          fontWeight: 540,
+          lineHeight: 1,
+          userSelect: 'none',
+          fontFamily: 'inherit',
+        }}
+      >
+        View school
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: 25,
+          left: 0,
+          zIndex: 100,
+          width: 272,
+          padding: 12,
+          borderRadius: 20,
+          background: '#FFFFFF',
+          boxShadow: '0 18px 45px rgba(0,0,0,0.10)',
         }}>
           <div style={{
-            width: 42,
-            height: 42,
-            borderRadius: 15,
-            background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
-            color: '#8FA6A1',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 15,
-            fontWeight: 560,
-            flexShrink: 0,
-            overflow: 'hidden',
+            gap: 10,
           }}>
-            {!school?.logo_url && schoolInitial}
-          </div>
-
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{
-              fontSize: 13.5,
+            <div style={{
+              width: 42,
+              height: 42,
+              borderRadius: 15,
+              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
+              color: '#8FA6A1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 15,
               fontWeight: 560,
-              color: '#252525',
-              margin: 0,
+              flexShrink: 0,
               overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
             }}>
-              {school?.name || 'School'}
-            </p>
+              {!school?.logo_url && schoolInitial}
+            </div>
 
-            <p style={{
-              fontSize: 12,
-              color: '#9A9A9A',
-              margin: '2px 0 0',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}>
-              School profile
-            </p>
-          </div>
-        </div>
-
-        <div style={{
-          marginTop: 11,
-          paddingTop: 10,
-          borderTop: '1px solid rgba(0,0,0,0.07)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 9,
-        }}>
-          {school?.tagline && (
-            <p style={{
-              fontSize: 12.5,
-              color: '#5F6268',
-              lineHeight: 1.45,
-              margin: 0,
-            }}>
-              {school.tagline}
-            </p>
-          )}
-
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}>
-            <span style={{
-              fontSize: 10.5,
-              color: '#B8B8BC',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.055em',
-            }}>
-              Location
-            </span>
-
-            <span style={{
-              fontSize: 12.5,
-              color: '#5F6268',
-              lineHeight: 1.4,
-            }}>
-              {location || 'Location not added yet'}
-            </span>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}>
-            <span style={{
-              fontSize: 10.5,
-              color: '#B8B8BC',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.055em',
-            }}>
-              Website
-            </span>
-
-            {websiteHref ? (
-              <a
-                href={websiteHref}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  fontSize: 12.5,
-                  color: '#8FA6A1',
-                  lineHeight: 1.4,
-                  textDecoration: 'none',
-                  wordBreak: 'break-word',
-                }}
-              >
-                {rawWebsite}
-              </a>
-            ) : (
-              <span style={{
-                fontSize: 12.5,
-                color: '#9A9A9A',
-                lineHeight: 1.4,
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 560,
+                color: '#252525',
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
               }}>
-                Website not added yet
-              </span>
-            )}
+                {school?.name || 'School'}
+              </p>
+
+              <p style={{
+                fontSize: 12,
+                color: '#9A9A9A',
+                margin: '2px 0 0',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}>
+                School profile
+              </p>
+            </div>
           </div>
 
-          {(school?.phone || school?.email) && (
+          <div style={{
+            marginTop: 11,
+            paddingTop: 10,
+            borderTop: '1px solid rgba(0,0,0,0.07)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 9,
+          }}>
+            {school?.tagline && (
+              <p style={{
+                fontSize: 12.5,
+                color: '#5F6268',
+                lineHeight: 1.45,
+                margin: 0,
+              }}>
+                {school.tagline}
+              </p>
+            )}
+
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: 4,
-              paddingTop: 2,
+              gap: 2,
             }}>
-              {school?.phone && (
-                <span style={{ fontSize: 12.2, color: '#9A9A9A' }}>
-                  {school.phone}
-                </span>
-              )}
+              <span style={{
+                fontSize: 10.5,
+                color: '#B8B8BC',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.055em',
+              }}>
+                Location
+              </span>
 
-              {school?.email && (
+              <span style={{
+                fontSize: 12.5,
+                color: '#5F6268',
+                lineHeight: 1.4,
+              }}>
+                {location || 'Location not added yet'}
+              </span>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}>
+              <span style={{
+                fontSize: 10.5,
+                color: '#B8B8BC',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.055em',
+              }}>
+                Website
+              </span>
+
+              {websiteHref ? (
+                <a
+                  href={websiteHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    fontSize: 12.5,
+                    color: '#8FA6A1',
+                    lineHeight: 1.4,
+                    textDecoration: 'none',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  {rawWebsite}
+                </a>
+              ) : (
                 <span style={{
-                  fontSize: 12.2,
+                  fontSize: 12.5,
                   color: '#9A9A9A',
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
+                  lineHeight: 1.4,
                 }}>
-                  {school.email}
+                  Website not added yet
                 </span>
               )}
             </div>
-          )}
+
+            {(school?.phone || school?.email) && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                paddingTop: 2,
+              }}>
+                {school?.phone && (
+                  <span style={{ fontSize: 12.2, color: '#9A9A9A' }}>
+                    {school.phone}
+                  </span>
+                )}
+
+                {school?.email && (
+                  <span style={{
+                    fontSize: 12.2,
+                    color: '#9A9A9A',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    {school.email}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </details>
+      )}
+    </div>
   )
 }
 
