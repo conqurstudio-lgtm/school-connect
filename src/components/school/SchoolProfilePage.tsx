@@ -857,7 +857,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     <div className="school-safe-screen" style={{
       minHeight: '100dvh',
       height: '100dvh',
-      overflow: 'hidden',
+      overflow: 'visible',
       background: T.bg,
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
