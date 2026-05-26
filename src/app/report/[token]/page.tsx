@@ -23,9 +23,20 @@ const T = {
 
 
 
+
 function SchoolQuickView({ school }: { school: any }) {
   const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()
-  const location = [school?.province, school?.address].filter(Boolean).join(' · ')
+
+  const location = [
+    school?.address,
+    school?.province,
+    school?.country,
+  ].filter(Boolean).join(' · ')
+
+  const rawWebsite = String(school?.website || '').trim()
+  const websiteHref = rawWebsite
+    ? (/^https?:\/\//i.test(rawWebsite) ? rawWebsite : `https://${rawWebsite}`)
+    : ''
 
   return (
     <details style={{
@@ -57,7 +68,7 @@ function SchoolQuickView({ school }: { school: any }) {
         top: 28,
         left: 0,
         zIndex: 100,
-        width: 260,
+        width: 272,
         padding: 12,
         borderRadius: 20,
         background: '#FFFFFF',
@@ -106,73 +117,127 @@ function SchoolQuickView({ school }: { school: any }) {
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
             }}>
-              {location || 'School profile'}
+              School profile
             </p>
           </div>
         </div>
 
-        {(school?.tagline || school?.phone || school?.email || school?.website) && (
+        <div style={{
+          marginTop: 11,
+          paddingTop: 10,
+          borderTop: '1px solid rgba(0,0,0,0.07)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 9,
+        }}>
+          {school?.tagline && (
+            <p style={{
+              fontSize: 12.5,
+              color: '#5F6268',
+              lineHeight: 1.45,
+              margin: 0,
+            }}>
+              {school.tagline}
+            </p>
+          )}
+
           <div style={{
-            marginTop: 11,
-            paddingTop: 18,
-            borderTop: '1px solid rgba(0,0,0,0.07)',
             display: 'flex',
             flexDirection: 'column',
-            gap: 7,
+            gap: 2,
           }}>
-            {school?.tagline && (
-              <p style={{
-                fontSize: 12.5,
-                color: '#5F6268',
-                lineHeight: 1.45,
-                margin: 0,
-              }}>
-                {school.tagline}
-              </p>
-            )}
+            <span style={{
+              fontSize: 10.5,
+              color: '#B8B8BC',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.055em',
+            }}>
+              Location
+            </span>
 
-            {school?.phone && (
-              <p style={{ fontSize: 12.2, color: '#9A9A9A', margin: 0 }}>
-                {school.phone}
-              </p>
-            )}
+            <span style={{
+              fontSize: 12.5,
+              color: '#5F6268',
+              lineHeight: 1.4,
+            }}>
+              {location || 'Location not added yet'}
+            </span>
+          </div>
 
-            {school?.email && (
-              <p style={{
-                fontSize: 12.2,
-                color: '#9A9A9A',
-                margin: 0,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                {school.email}
-              </p>
-            )}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}>
+            <span style={{
+              fontSize: 10.5,
+              color: '#B8B8BC',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.055em',
+            }}>
+              Website
+            </span>
 
-            {school?.website && (
+            {websiteHref ? (
               <a
-                href={school.website}
+                href={websiteHref}
                 target="_blank"
                 rel="noreferrer"
                 style={{
-                  fontSize: 12.2,
+                  fontSize: 12.5,
                   color: '#8FA6A1',
+                  lineHeight: 1.4,
                   textDecoration: 'none',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {rawWebsite}
+              </a>
+            ) : (
+              <span style={{
+                fontSize: 12.5,
+                color: '#9A9A9A',
+                lineHeight: 1.4,
+              }}>
+                Website not added yet
+              </span>
+            )}
+          </div>
+
+          {(school?.phone || school?.email) && (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+              paddingTop: 2,
+            }}>
+              {school?.phone && (
+                <span style={{ fontSize: 12.2, color: '#9A9A9A' }}>
+                  {school.phone}
+                </span>
+              )}
+
+              {school?.email && (
+                <span style={{
+                  fontSize: 12.2,
+                  color: '#9A9A9A',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
-                }}
-              >
-                {school.website}
-              </a>
-            )}
-          </div>
-        )}
+                }}>
+                  {school.email}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </details>
   )
 }
+
 
 function ReportSafeAreaStyle() {
   return (
