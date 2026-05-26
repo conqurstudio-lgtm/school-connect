@@ -318,31 +318,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           display: 'flex',
           justifyContent: 'flex-end',
-          gap: 8,
           background: T.bg,
         }}>
-          <button
-            type="button"
-            onClick={() => momentFileRef.current?.click()}
-            aria-label="Create Moment"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: T.accent,
-              color: T.white,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <Plus size={15} strokeWidth={2} />
-          </button>
-
-          <button
+<button
             type="button"
             onClick={() => setShowSettings(true)}
             aria-label="Settings"
@@ -470,6 +448,49 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </div>
 
             <button type="button" onClick={() => setShowAdd(true)} style={{
+              ...primaryButton,
+              minHeight: 36,
+              padding: '0 14px',
+              flexShrink: 0,
+            }}>
+              Add
+            </button>
+          </section>
+
+          <section style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '14px 15px',
+            borderRadius: 24,
+            background: '#EEF3F1',
+            border: 'none',
+            marginBottom: 14,
+          }}>
+            <div style={{
+              width: 38,
+              height: 38,
+              borderRadius: 14,
+              background: T.white,
+              color: T.accent,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <Camera size={17} strokeWidth={1.8} />
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
+                Private Moments
+              </p>
+              <p style={{ fontSize: 12.5, color: T.ink2, lineHeight: 1.35, margin: '2px 0 0' }}>
+                Share private photo/document updates.
+              </p>
+            </div>
+
+            <button type="button" onClick={() => momentFileRef.current?.click()} style={{
               ...primaryButton,
               minHeight: 36,
               padding: '0 14px',
