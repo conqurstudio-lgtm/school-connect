@@ -349,7 +349,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
           margin: '2px 0 0',
           lineHeight: 1.35,
         }}>
-          From your teacher · {formatShortDate(moment.created_at)}
+          Your teacher · {formatShortDate(moment.created_at)}
         </p>
 
         {moment.note && (

@@ -332,7 +332,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
         lineHeight: 1,
         whiteSpace: 'nowrap',
       }}>
-        From your teacher
+        Your teacher
       </span>
     </div>
   )
