@@ -285,9 +285,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
-          background: T.bg,
           display: 'flex',
           justifyContent: 'flex-end',
+          background: T.bg,
         }}>
           <button
             type="button"
@@ -1024,10 +1024,10 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <footer style={{
           flexShrink: 0,
           padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          background: T.bg,
           display: 'grid',
           gridTemplateColumns: nextChild ? '1fr 1fr' : '1fr',
           gap: 8,
+          background: T.bg,
         }}>
           <button type="button" onClick={submit} disabled={saving} style={{
             ...darkButton,
