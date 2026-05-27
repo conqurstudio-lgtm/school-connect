@@ -127,6 +127,8 @@ export function ReportSwiper({ reports, childName }: Props) {
   return (
     <div style={{
       width: '100%',
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
       maxWidth: '100%',
       overflowX: 'hidden',
       overflowY: 'visible',
@@ -137,6 +139,8 @@ export function ReportSwiper({ reports, childName }: Props) {
       <div
         style={{
           width: '100%',
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
           maxWidth: '100%',
           overflowX: 'hidden',
           overflowY: 'visible',
@@ -172,6 +176,8 @@ export function ReportSwiper({ reports, childName }: Props) {
             : 'none',
           willChange: 'transform',
           width: '100%',
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
           maxWidth: '100%',
         }}>
           {(visualReports.length ? visualReports : []).map((report: any, slideIndex: number) => {
@@ -180,6 +186,8 @@ export function ReportSwiper({ reports, childName }: Props) {
             return (
               <div key={report.id} style={{
                 flex: '0 0 100%',
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
                 width: '100%',
                 maxWidth: '100%',
                 overflowX: 'hidden',
@@ -190,8 +198,10 @@ export function ReportSwiper({ reports, childName }: Props) {
                 alignItems: 'flex-start',
                 justifyContent: 'center',
               }}>
-                <div style={{
+                <div data-report-slide="true" style={{
                   width: '100%',
+              scrollSnapAlign: 'center',
+              scrollSnapStop: 'always',
                   maxWidth: 430,
                   overflowX: 'hidden',
                   overflowY: 'visible',
