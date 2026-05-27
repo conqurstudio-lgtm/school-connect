@@ -17,7 +17,6 @@ const T = {
   same:    '#9A9A9A',
 }
 
-
 const SUBJECT_GRAPH = {
   fill: '#8FA6A1',
   fillSoft: '#EAF0EE',
@@ -36,7 +35,6 @@ function subjectGraphColor(score: number): string {
   const opacity = subjectGraphOpacity(score)
   return `rgba(143, 166, 161, ${opacity})`
 }
-
 
 interface Props {
   report: {
@@ -97,83 +95,12 @@ function shortenSubject(name: string): string {
   return map[name] ?? name
 }
 
-
-
-
-function ExcellentLottie() {
-  return (
-    <iframe
-      title="Excellent report animation"
-      src="https://lottie.host/embed/04633cb1-caf6-48a0-81d9-4c1c2727af1c/HSWdIadTQd.lottie"
-      style={{
-        width: 72,
-        height: 72,
-        border: 'none',
-        display: 'block',
-        margin: '-17px auto 0',
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}
-    />
-  )
-}
-
-function isExcellentScore(score: number): boolean {
-  return score >= 4.5
-}
-
-function NeedsWorkLottie() {
-  return (
-    <iframe
-      title="Needs work growth animation"
-      src="https://lottie.host/embed/3b532f3d-c7f8-47db-ad79-e57d66dafb42/83wbtVL2ej.lottie"
-      style={{
-        width: 72,
-        height: 72,
-        border: 'none',
-        display: 'block',
-        margin: '-17px auto 0',
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}
-    />
-  )
-}
-
-function isNeedsWorkScore(score: number): boolean {
-  return score > 0 && score < 3
-}
-
-function VeryGoodLottie() {
-  return (
-    <iframe
-      title="Very good report animation"
-      src="https://lottie.host/embed/ac5b63f2-171a-48a3-afc7-db244e3b9766/E6S0SBJleh.lottie"
-      style={{
-        width: 72,
-        height: 72,
-        border: 'none',
-        display: 'block',
-        margin: '-17px auto 0',
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}
-    />
-  )
-}
-
-function isVeryGoodScore(score: number): boolean {
-  return score >= 4 && score < 4.5
-}
-
-// Pick a celebratory or supportive emoji based on the score
+// Pick a powerful and encouraging emoji based on the score
 function getScoreEmoji(score: number): string {
-  if (score >= 4.5) return '🏆'   // trophy — excellence
-  if (score >= 4)   return '🌟'   // star — very good
-  if (score >= 3.5) return '✨'   // sparkles — good
-  if (score >= 3)   return '🌱'   // sprout — growing
-  if (score >= 2)   return '💪'   // muscle — keep going
-  return '🤝'                     // hands — we're here together
+  if (score >= 4.5) return '🏆'   // excellent
+  if (score >= 4)   return '✨'   // very good
+  if (score >= 3.5) return '⭐'   // good
+  return '🌱'                    // needs work / growing
 }
 
 function formatWeek(date: string): string {
@@ -289,12 +216,11 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         textAlign: 'center',
         fontSize: 38, lineHeight: 1,
       }}>
-        {isExcellentScore(score) ? <ExcellentLottie /> : isVeryGoodScore(score) ? <VeryGoodLottie /> : isNeedsWorkScore(score) ? <NeedsWorkLottie /> : getScoreEmoji(score)}
+        {getScoreEmoji(score)}
       </div>
     </div>
   )
 }
-
 
 function TeacherNameTag({ name }: { name?: string | null }) {
   if (!name) return null
