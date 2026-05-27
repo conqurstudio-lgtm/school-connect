@@ -2,281 +2,290 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { ReportCard } from './ReportCard'
+import { ReportCard } from '@/components/reports/ReportCard'
 
 const T = {
-  ink: '#1A1A1A',
-  trackBg: '#EFEFF2',
+  ink: '#252525',
+  ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
+  accent: '#8FA6A1',
+  soft: '#F7F7F8',
+  bg: '#FFFFFF',
 }
 
-interface Props {
-  reports: any[]
-  childName: string
+function getReports(props: any) {
+  if (Array.isArray(props?.reports)) return props.reports
+  if (Array.isArray(props?.items)) return props.items
+  if (Array.isArray(props?.data)) return props.data
+  if (props?.report) return [props.report]
+  return []
 }
 
-export function ReportSwiper({ reports, childName }: Props) {
-  // Parent report page passes newest-first.
-  // We reverse only the visual carousel order so older reports sit to the LEFT.
-  const visualReports = useMemo(() => {
-    return (reports || []).slice().reverse()
-  }, [reports])
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
+}
 
-  const total = Math.max(1, visualReports.length)
-  const latestIndex = Math.max(0, total - 1)
+export function ReportSwiper(props: any) {
+  const reports = getReports(props)
+  const total = reports.length
 
-  const [index, setIndex] = useState(latestIndex)
-  const [drag, setDrag] = useState(0)
-  const [animationRound, setAnimationRound] = useState(0)
+  const initialIndex = Number.isFinite(Number(props?.initialIndex))
+    ? Number(props.initialIndex)
+    : 0
 
-  const startX = useRef<number | null>(null)
-  const startY = useRef<number | null>(null)
-  const deltaX = useRef(0)
-  const deltaY = useRef(0)
-  const gesture = useRef<'none' | 'horizontal' | 'vertical'>('none')
+  const [activeIndex, setActiveIndex] = useState(() => clamp(initialIndex, 0, Math.max(0, total - 1)))
+  const [dragX, setDragX] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const [directionLocked, setDirectionLocked] = useState<'x' | 'y' | null>(null)
+
+  const startRef = useRef({
+    x: 0,
+    y: 0,
+    started: false,
+  })
 
   useEffect(() => {
-    setIndex(Math.max(0, total - 1))
-    setAnimationRound(round => round + 1)
+    setActiveIndex(current => clamp(current, 0, Math.max(0, total - 1)))
   }, [total])
 
-  const clamp = (n: number) => Math.max(0, Math.min(total - 1, n))
+  const canGoPrev = activeIndex > 0
+  const canGoNext = activeIndex < total - 1
+
+  const translate = useMemo(() => {
+    return `translate3d(calc(${-activeIndex * 100}% + ${dragX}px), 0, 0)`
+  }, [activeIndex, dragX])
 
   const moveTo = (nextIndex: number) => {
-    const next = clamp(nextIndex)
-    if (next === index) return
-
-    setIndex(next)
-    setAnimationRound(round => round + 1)
+    setActiveIndex(clamp(nextIndex, 0, Math.max(0, total - 1)))
+    setDragX(0)
+    setIsDragging(false)
+    setDirectionLocked(null)
+    startRef.current.started = false
   }
 
-  const lockPageScroll = () => {
-    document.documentElement.style.overscrollBehavior = 'none'
-    document.body.style.overscrollBehavior = 'none'
+  const handlePointerDown = (event: any) => {
+    if (total <= 1) return
+
+    startRef.current = {
+      x: event.clientX ?? 0,
+      y: event.clientY ?? 0,
+      started: true,
+    }
+
+    setIsDragging(true)
+    setDirectionLocked(null)
+    setDragX(0)
+
+    try {
+      event.currentTarget.setPointerCapture?.(event.pointerId)
+    } catch {}
   }
 
-  const unlockPageScroll = () => {
-    document.documentElement.style.overscrollBehavior = ''
-    document.body.style.overscrollBehavior = ''
-  }
+  const handlePointerMove = (event: any) => {
+    if (!startRef.current.started || total <= 1) return
 
-  const onStart = (x: number, y: number) => {
-    startX.current = x
-    startY.current = y
-    deltaX.current = 0
-    deltaY.current = 0
-    gesture.current = 'none'
-  }
+    const currentX = event.clientX ?? 0
+    const currentY = event.clientY ?? 0
 
-  const onMove = (x: number, y: number) => {
-    if (startX.current === null || startY.current === null) return
+    const dx = currentX - startRef.current.x
+    const dy = currentY - startRef.current.y
 
-    deltaX.current = x - startX.current
-    deltaY.current = y - startY.current
+    if (!directionLocked) {
+      if (Math.abs(dx) < 7 && Math.abs(dy) < 7) return
 
-    const absX = Math.abs(deltaX.current)
-    const absY = Math.abs(deltaY.current)
+      const nextLock = Math.abs(dx) > Math.abs(dy) * 1.15 ? 'x' : 'y'
+      setDirectionLocked(nextLock)
 
-    if (gesture.current === 'none' && (absX > 6 || absY > 6)) {
-      if (absX >= absY * 0.72) {
-        gesture.current = 'horizontal'
-        lockPageScroll()
-      } else {
-        gesture.current = 'vertical'
+      if (nextLock === 'y') {
+        setIsDragging(false)
+        setDragX(0)
+        return
       }
     }
 
-    if (gesture.current !== 'horizontal') {
-      setDrag(0)
-      return
+    if (directionLocked === 'y') return
+
+    event.preventDefault?.()
+
+    let nextDrag = dx
+
+    if ((!canGoPrev && dx > 0) || (!canGoNext && dx < 0)) {
+      nextDrag = dx * 0.22
     }
 
-    const atLeftEnd = index === 0 && deltaX.current > 0
-    const atRightEnd = index === total - 1 && deltaX.current < 0
-    const resistance = atLeftEnd || atRightEnd ? 0.22 : 1
-
-    setDrag(deltaX.current * resistance)
+    setDragX(nextDrag)
   }
 
-  const onEnd = () => {
-    if (startX.current === null) return
+  const handlePointerEnd = () => {
+    if (!startRef.current.started || total <= 1) return
 
-    const threshold = 42
+    const threshold = 58
 
-    if (gesture.current === 'horizontal') {
-      // Older reports are on the LEFT side of the latest report.
-      if (deltaX.current > threshold && index > 0) {
-        moveTo(index - 1)
+    if (directionLocked === 'x') {
+      if (dragX <= -threshold && canGoNext) {
+        moveTo(activeIndex + 1)
+        return
       }
 
-      if (deltaX.current < -threshold && index < total - 1) {
-        moveTo(index + 1)
+      if (dragX >= threshold && canGoPrev) {
+        moveTo(activeIndex - 1)
+        return
       }
     }
 
-    startX.current = null
-    startY.current = null
-    deltaX.current = 0
-    deltaY.current = 0
-    gesture.current = 'none'
-    setDrag(0)
-    unlockPageScroll()
+    moveTo(activeIndex)
+  }
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      moveTo(activeIndex - 1)
+    }
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      moveTo(activeIndex + 1)
+    }
+  }
+
+  if (!total) {
+    return (
+      <div style={{
+        minHeight: 260,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: 24,
+      }}>
+        <div>
+          <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
+            No reports yet
+          </p>
+          <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
+            Weekly reports will appear here.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div style={{
-      width: '100%',
-      maxWidth: '100%',
-      overflowX: 'hidden',
-      overflowY: 'visible',
-      position: 'relative',
-      overscrollBehaviorX: 'none',
-      boxSizing: 'border-box',
-    }}>
+    <section
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      style={{
+        width: '100%',
+        height: '100%',
+        minHeight: 0,
+        display: 'grid',
+        gridTemplateRows: '1fr auto',
+        background: T.bg,
+        overflow: 'hidden',
+        outline: 'none',
+      }}
+    >
       <div
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
         style={{
+          minHeight: 0,
           width: '100%',
-          maxWidth: '100%',
-          overflowX: 'hidden',
-          overflowY: 'visible',
-          touchAction: 'none',
-          userSelect: 'none',
-          position: 'relative',
-          boxSizing: 'border-box',
+          height: '100%',
+          overflow: 'hidden',
+          touchAction: directionLocked === 'x' ? 'none' : 'pan-y',
+          userSelect: isDragging ? 'none' : 'auto',
+          cursor: total > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
         }}
-        onTouchStart={e => onStart(e.touches[0].clientX, e.touches[0].clientY)}
-        onTouchMove={e => {
-          onMove(e.touches[0].clientX, e.touches[0].clientY)
-
-          if (gesture.current === 'horizontal') {
-            e.preventDefault()
-            e.stopPropagation()
-          }
-        }}
-        onTouchEnd={onEnd}
-        onTouchCancel={onEnd}
-        onMouseDown={e => onStart(e.clientX, e.clientY)}
-        onMouseMove={e => {
-          if (startX.current !== null) onMove(e.clientX, e.clientY)
-        }}
-        onMouseUp={onEnd}
-        onMouseLeave={onEnd}
       >
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          transform: `translate3d(calc(${-index * 100}% + ${drag}px), 0, 0)`,
-          transition: drag === 0
-            ? 'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)'
-            : 'none',
-          willChange: 'transform',
-          width: '100%',
-          maxWidth: '100%',
-        }}>
-          {(visualReports.length ? visualReports : []).map((report: any, slideIndex: number) => {
-            const isActive = slideIndex === index
-
-            return (
-              <div key={report.id} style={{
-                flex: '0 0 100%',
+        <div
+          style={{
+            display: 'flex',
+            width: `${total * 100}%`,
+            height: '100%',
+            transform: translate,
+            transition: isDragging && directionLocked === 'x'
+              ? 'none'
+              : 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1)',
+            willChange: 'transform',
+          }}
+        >
+          {reports.map((report: any, index: number) => (
+            <article
+              key={report?.id || report?.created_at || index}
+              aria-hidden={index !== activeIndex}
+              style={{
+                width: `${100 / total}%`,
+                height: '100%',
+                minWidth: 0,
+                flex: '0 0 auto',
+                overflow: 'hidden',
+                position: 'relative',
+              }}
+            >
+              <div style={{
                 width: '100%',
-                maxWidth: '100%',
+                height: '100%',
+                overflowY: 'auto',
                 overflowX: 'hidden',
-                overflowY: 'visible',
-                boxSizing: 'border-box',
-                padding: '0 22px 12px',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain',
+                padding: '0 0 10px',
               }}>
-                <div style={{
-                  width: '100%',
-                  maxWidth: 430,
-                  overflowX: 'hidden',
-                  overflowY: 'visible',
-                }}>
-                  <ReportCard
-                    key={isActive ? `${report.id}-active-${animationRound}` : `${report.id}-idle`}
-                    report={report}
-                    childName={childName}
-                  />
-                </div>
+                <ReportCard
+                  {...props}
+                  report={report}
+                  reports={reports}
+                  activeIndex={activeIndex}
+                  index={index}
+                  total={total}
+                  isActive={index === activeIndex}
+                />
               </div>
-            )
-          })}
+            </article>
+          ))}
         </div>
       </div>
 
       {total > 1 && (
-        <div style={{
+        <footer style={{
+          flexShrink: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 8,
+          gap: 7,
           minHeight: 34,
-          padding: '2px 0 10px',
+          padding: '4px 0 2px',
+          background: T.bg,
         }}>
-          {visualReports.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => moveTo(i)}
-              aria-label={`Report ${i + 1}`}
-              style={{
-                width: i === index ? 18 : 6,
-                height: 6,
-                borderRadius: 999,
-                background: i === index ? T.ink : T.trackBg,
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-              }}
-            />
-          ))}
-        </div>
-      )}
+          {reports.map((report: any, index: number) => {
+            const active = index === activeIndex
 
-      {total > 1 && index > 0 && (
-        <button
-          onClick={() => moveTo(index - 1)}
-          aria-label="Older report"
-          style={arrowStyle('left')}
-        >
-          <ChevronLeft size={23} color={T.ink} strokeWidth={2} />
-        </button>
+            return (
+              <button
+                key={report?.id || report?.created_at || index}
+                type="button"
+                aria-label={`View report ${index + 1}`}
+                onClick={() => moveTo(index)}
+                style={{
+                  width: active ? 18 : 6,
+                  height: 6,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: active ? T.accent : 'rgba(0,0,0,0.14)',
+                  padding: 0,
+                  cursor: 'pointer',
+                  transition: 'width 180ms ease, background 180ms ease',
+                }}
+              />
+            )
+          })}
+        </footer>
       )}
-
-      {total > 1 && index < total - 1 && (
-        <button
-          onClick={() => moveTo(index + 1)}
-          aria-label="Newer report"
-          style={arrowStyle('right')}
-        >
-          <ChevronRight size={23} color={T.ink} strokeWidth={2} />
-        </button>
-      )}
-    </div>
+    </section>
   )
 }
 
-function arrowStyle(side: 'left' | 'right'): any {
-  return {
-    position: 'fixed',
-    [side]: 10,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: 34,
-    height: 34,
-    borderRadius: 999,
-    background: 'rgba(255,255,255,0.90)',
-    border: `1px solid ${T.border}`,
-    boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
-    padding: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    zIndex: 30,
-  }
-}
+export default ReportSwiper
