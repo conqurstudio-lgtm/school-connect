@@ -635,7 +635,7 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
             onClick={submit}
             disabled={saving}
             style={{
-              minHeight: 44,
+              minHeight: 48,
               ...primaryButton,
               width: '100%',
               marginTop: 4,
