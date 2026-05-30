@@ -284,29 +284,29 @@ export function TeachersTab() {
           </p>
 
           <button
-            type="button"
-            onClick={() => setShowAdd(true)}
-            aria-label="Add teacher"
-            style={{
-              minHeight: 38,
-              borderRadius: 999,
-              border: 'none',
-              background: T.white,
-              color: T.accent,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 7,
-              padding: '0 13px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              fontSize: 13,
-              fontWeight: 540,
-            }}
-          >
-            <Plus size={15} strokeWidth={2} />
-            Add
-          </button>
+          type="button"
+          onClick={() => setShowAdd(true)}
+          aria-label="Add teacher"
+          style={{
+            minHeight: 38,
+            borderRadius: 999,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 7,
+            padding: '0 14px',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            fontSize: 13,
+            fontWeight: 540,
+          }}
+        >
+          <Plus size={15} strokeWidth={2.1} />
+          Add
+        </button>
         </div>
       ) : (
         <div style={{

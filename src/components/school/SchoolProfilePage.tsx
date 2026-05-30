@@ -576,6 +576,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
           </button>
 
           <button type="button" onClick={apply} disabled={uploading} style={{
+              minHeight: 38,
             ...primaryButton,
             height: 40,
             opacity: uploading ? 0.65 : 1,
@@ -590,10 +591,10 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
-    <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20 }}>
+    <SectionCard style={{ padding: '0 14px', overflow: 'visible', position: 'relative', zIndex: 20 }}>
       <div style={{
         width: '100%',
-        background: T.white,
+        background: T.ink,
         border: 'none',
         padding: 15,
         display: 'flex',
@@ -607,7 +608,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           height: 38,
           borderRadius: 14,
           background: T.accentSoft,
-          color: T.accent,
+          color: T.white,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -620,7 +621,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
             Teachers & classes
           </p>
-          <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+          <p style={{ fontSize: 12.5, color: T.white, margin: '2px 0 0' }}>
             {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
           </p>
         </div>
@@ -633,8 +634,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             height: 34,
             borderRadius: 999,
             border: 'none',
-            background: T.white,
-            color: T.accent,
+            background: T.ink,
+            color: T.white,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
