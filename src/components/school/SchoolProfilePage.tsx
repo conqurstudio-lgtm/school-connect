@@ -579,7 +579,6 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
-
 function SchoolSetupChecklist({ school, teacherCount, teacherCountLoading }: any) {
   const profileReady = Boolean(
     school?.name ||
@@ -724,6 +723,131 @@ function SchoolSetupChecklist({ school, teacherCount, teacherCountLoading }: any
   )
 }
 
+function SchoolDetailsCompletion({ school, teacherCount, teacherCountLoading }: any) {
+  const profileReady = Boolean(
+    school?.name ||
+    school?.school_name ||
+    school?.schoolName ||
+    school?.profile_complete
+  )
+
+  const logoReady = Boolean(
+    school?.logo_url ||
+    school?.logoUrl ||
+    school?.logo
+  )
+
+  const detailsReady = Boolean(
+    school?.website ||
+    school?.address ||
+    school?.province ||
+    school?.country ||
+    school?.location
+  )
+
+  const teachersReady = Number(teacherCount || 0) > 0
+
+  const steps = [
+    { label: 'Profile', done: profileReady },
+    { label: 'Logo', done: logoReady },
+    { label: 'Details', done: detailsReady },
+    { label: 'Teachers', done: teachersReady },
+  ]
+
+  const completed = steps.filter(step => step.done).length
+  const total = steps.length
+  const ready = completed === total
+
+  return (
+    <div style={{
+      marginTop: 13,
+      paddingTop: 12,
+      borderTop: `1px solid ${T.border}`,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 10,
+        marginBottom: 9,
+      }}>
+        <p style={{
+          fontSize: 12.3,
+          color: T.ink3,
+          lineHeight: 1.35,
+          margin: 0,
+        }}>
+          {ready ? 'Ready for onboarding.' : 'Complete these basics to start.'}
+        </p>
+
+        <span style={{
+          minHeight: 23,
+          borderRadius: 999,
+          background: ready ? T.accentSoft : T.soft,
+          color: ready ? T.accent : T.ink3,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '0 9px',
+          fontSize: 11.5,
+          fontWeight: 540,
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}>
+          {completed}/{total}
+        </span>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 7,
+      }}>
+        {steps.map((step, index) => (
+          <div key={step.label} style={{
+            minHeight: 32,
+            borderRadius: 14,
+            background: step.done ? T.accentSoft : T.soft,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            padding: '0 9px',
+          }}>
+            <span style={{
+              width: 16,
+              height: 16,
+              borderRadius: 999,
+              background: step.done ? T.accent : T.white,
+              color: step.done ? T.white : T.ink3,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              border: step.done ? 'none' : `1px solid ${T.border}`,
+              fontSize: 9.5,
+              lineHeight: 1,
+            }}>
+              {step.done ? '✓' : index + 1}
+            </span>
+
+            <span style={{
+              flex: 1,
+              minWidth: 0,
+              fontSize: 11.8,
+              fontWeight: 520,
+              color: step.done ? T.accent : T.ink2,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}>
+              {step.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
@@ -1141,6 +1265,120 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}              />
 
+              <SectionCard style={{
+                          marginBottom: 14,
+                          padding: 15,
+                        }}>
+                          <button
+                            type="button"
+                            onClick={() => setShowEditDetails(true)}
+                            style={{
+                              width: '100%',
+                              border: 'none',
+                              background: 'transparent',
+                              padding: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 12,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              fontFamily: 'inherit',
+                            }}
+                          >
+                            <div style={{
+                              width: 38,
+                              height: 38,
+                              borderRadius: 14,
+                              background: T.soft,
+                              color: T.ink3,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}>
+                              <Pencil size={17} strokeWidth={1.8} />
+                            </div>
+
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
+                                School details
+                              </p>
+                              <p style={{
+                                fontSize: 12.5,
+                                color: T.ink3,
+                                margin: '2px 0 0',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis',
+                              }}>
+                                {location || school.email || school.phone || 'Add location, website and contacts.'}
+                              </p>
+                            </div>
+
+                            <span style={{
+                              minHeight: 28,
+                              borderRadius: 999,
+                              background: T.accent,
+                              color: T.white,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '0 11px',
+                              fontSize: 12,
+                              fontWeight: 540,
+                              flexShrink: 0,
+                              marginLeft: 'auto',
+                            }}>
+                              Edit
+                            </span>
+              </button>
+
+                          {(href || school.email || school.phone) && (
+                            <div style={{
+                              marginTop: 12,
+                              paddingTop: 12,
+                              borderTop: `1px solid ${T.border}`,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 6,
+                            }}>
+                              {href && (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{
+                                    fontSize: 12.5,
+                                    color: T.accent,
+                                    textDecoration: 'none',
+                                    wordBreak: 'break-word',
+                                  }}
+                                >
+                                  {school.website}
+                                </a>
+                              )}
+
+                              {school.email && (
+                                <span style={{ fontSize: 12.5, color: T.ink3 }}>
+                                  {school.email}
+                                </span>
+                              )}
+
+                              {school.phone && (
+                                <span style={{ fontSize: 12.5, color: T.ink3 }}>
+                                  {school.phone}
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                    <SchoolDetailsCompletion
+                      school={school}
+                      teacherCount={teacherCount}
+                      teacherCountLoading={teacherCountLoading}
+                    />
+              </SectionCard>
+
               <TeachersAccordion
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}
@@ -1148,96 +1386,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             </>
           )}
 
-          <SectionCard style={{
-            marginTop: 14,
-            padding: 15,
-          }}>
-            <button
-              type="button"
-              onClick={() => setShowEditDetails(true)}
-              style={{
-                width: '100%',
-                border: 'none',
-                background: 'transparent',
-                padding: 0,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                cursor: 'pointer',
-                textAlign: 'left',
-                fontFamily: 'inherit',
-              }}
-            >
-              <div style={{
-                width: 38,
-                height: 38,
-                borderRadius: 14,
-                background: T.soft,
-                color: T.ink3,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <Pencil size={17} strokeWidth={1.8} />
-              </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                  School details
-                </p>
-                <p style={{
-                  fontSize: 12.5,
-                  color: T.ink3,
-                  margin: '2px 0 0',
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                }}>
-                  {location || school.email || school.phone || 'Add location, website and contacts.'}
-                </p>
-              </div>
-            </button>
-
-            {(href || school.email || school.phone) && (
-              <div style={{
-                marginTop: 12,
-                paddingTop: 12,
-                borderTop: `1px solid ${T.border}`,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 6,
-              }}>
-                {href && (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      fontSize: 12.5,
-                      color: T.accent,
-                      textDecoration: 'none',
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {school.website}
-                  </a>
-                )}
-
-                {school.email && (
-                  <span style={{ fontSize: 12.5, color: T.ink3 }}>
-                    {school.email}
-                  </span>
-                )}
-
-                {school.phone && (
-                  <span style={{ fontSize: 12.5, color: T.ink3 }}>
-                    {school.phone}
-                  </span>
-                )}
-              </div>
-            )}
-          </SectionCard>
+          
 
           <p style={{
             fontSize: 10.5,
