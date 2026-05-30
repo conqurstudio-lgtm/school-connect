@@ -36,6 +36,213 @@ const T = {
   green: '#5B8F7F',
 }
 
+function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
+  const [zoom, setZoom] = useState(1.18)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const dragRef = useRef<any>(null)
+
+  const cropSize = 230
+  const outputSize = 512
+
+  useEffect(() => {
+    return () => {
+      dragRef.current = null
+    }
+  }, [])
+
+  const startDrag = (event: any) => {
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+      initialX: offset.x,
+      initialY: offset.y,
+    }
+  }
+
+  const moveDrag = (event: any) => {
+    if (!dragRef.current) return
+
+    const nextX = dragRef.current.initialX + (event.clientX - dragRef.current.startX)
+    const nextY = dragRef.current.initialY + (event.clientY - dragRef.current.startY)
+    const max = 64
+
+    setOffset({
+      x: Math.max(-max, Math.min(max, nextX)),
+      y: Math.max(-max, Math.min(max, nextY)),
+    })
+  }
+
+  const stopDrag = () => {
+    dragRef.current = null
+  }
+
+  const createCroppedBlob = async () => {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = reject
+      img.src = draft.previewUrl
+    })
+
+    const canvas = document.createElement('canvas')
+    canvas.width = outputSize
+    canvas.height = outputSize
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('Could not prepare logo image')
+
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, outputSize, outputSize)
+
+    const baseScale = Math.max(outputSize / image.naturalWidth, outputSize / image.naturalHeight)
+    const scale = baseScale * zoom
+    const drawWidth = image.naturalWidth * scale
+    const drawHeight = image.naturalHeight * scale
+    const outputOffsetX = offset.x * (outputSize / cropSize)
+    const outputOffsetY = offset.y * (outputSize / cropSize)
+
+    const dx = (outputSize - drawWidth) / 2 + outputOffsetX
+    const dy = (outputSize - drawHeight) / 2 + outputOffsetY
+
+    ctx.drawImage(image, dx, dy, drawWidth, drawHeight)
+
+    return await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) reject(new Error('Could not crop logo'))
+        else resolve(blob)
+      }, 'image/png', 0.94)
+    })
+  }
+
+  const apply = async () => {
+    const blob = await createCroppedBlob()
+    await onApply(blob)
+  }
+
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 10000,
+      background: 'rgba(0,0,0,0.28)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      padding: '18px 12px calc(18px + env(safe-area-inset-bottom, 0px))',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: 420,
+        background: T.white,
+        borderRadius: 24,
+        border: 'none',
+        padding: 16,
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: 14 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: T.ink, margin: 0 }}>
+            Adjust profile photo
+          </p>
+          <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
+            Zoom and drag until it fits the square.
+          </p>
+        </div>
+
+        <div
+          style={{
+            width: cropSize,
+            height: cropSize,
+            borderRadius: 32,
+            overflow: 'hidden',
+            margin: '0 auto',
+            background: T.soft,
+            border: `1px dashed ${T.border}`,
+            position: 'relative',
+            touchAction: 'none',
+            cursor: 'grab',
+          }}
+          onPointerDown={startDrag}
+          onPointerMove={moveDrag}
+          onPointerUp={stopDrag}
+          onPointerCancel={stopDrag}
+        >
+          <img
+            src={draft.previewUrl}
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+              transformOrigin: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
+            <button type="button" onClick={() => {
+              setZoom(1.18)
+              setOffset({ x: 0, y: 0 })
+            }} style={{
+              minHeight: 44,
+              border: 'none',
+              background: T.soft,
+              color: T.ink2,
+              borderRadius: 999,
+              padding: '6px 10px',
+              fontSize: 12,
+              fontWeight: 540,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}>
+              Reset
+            </button>
+          </div>
+
+          <input
+            type="range"
+            min="1"
+            max="2.8"
+            step="0.01"
+            value={zoom}
+            onChange={(event) => setZoom(Number(event.target.value))}
+            style={{ width: '100%' }}
+          />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
+          <button type="button" onClick={onCancel} disabled={false} style={{
+            ...softButton,
+            minHeight: 44,
+            opacity: uploading ? 0.65 : 1,
+          }}>
+            Cancel
+          </button>
+
+          <button type="button" onClick={apply} disabled={false} style={{
+              minHeight: 44,
+            ...primaryButton,
+            minHeight: 44,
+            opacity: uploading ? 0.65 : 1,
+          }}>
+            {uploading ? 'Saving...' : 'Apply photo'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function TeacherSafeAreaStyle() {
   return (
     <style>{`
@@ -209,6 +416,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [loading, setLoading] = useState(!initialSession)
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [photoDraft, setPhotoDraft] = useState<any>(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showTeacherMoments, setShowTeacherMoments] = useState(false)
   const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0 })
   const [momentDraft, setMomentDraft] = useState<any>(null)
@@ -216,6 +425,61 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [activeChild, setActiveChild] = useState<any>(null)
   const [rosterOpen, setRosterOpen] = useState(false)
   const [weekStart, setWeekStart] = useState(weekStartToday())
+
+  const cancelTeacherPhotoAdjust = () => {
+    if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+    setPhotoDraft(null)
+  }
+
+  const handleTeacherPhotoSelected = async (file: File) => {
+    if (!file) return
+
+    setShowSettings(false)
+
+    if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+
+    const previewUrl = URL.createObjectURL(file)
+    setPhotoDraft({ file, previewUrl })
+  }
+
+  const uploadAdjustedTeacherPhoto = async (blob: Blob) => {
+    setUploadingPhoto(true)
+
+    try {
+      const adjustedFile = new File([blob], 'teacher-profile-photo.jpg', { type: 'image/jpeg' })
+      const dataUrl = await readFileAsDataUrl(adjustedFile)
+
+      const res = await fetch('/api/teacher/profile-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+
+      if (!res.ok) throw new Error(json.error || 'Could not update photo')
+
+      setSession((current: any) => {
+        if (!current) return current
+
+        return {
+          ...current,
+          teacher: {
+            ...current.teacher,
+            photo_url: json.photo_url,
+          },
+        }
+      })
+
+      if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+      setPhotoDraft(null)
+      toast.success('Profile photo updated')
+    } catch (error: any) {
+      toast.error(error.message || 'Could not update photo')
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
 
   const loadStatuses = async (children: any[]) => {
     try {
@@ -388,6 +652,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       color: T.ink,
     }}>
       <TeacherSafeAreaStyle />
+
+      {photoDraft && (
+        <TeacherPhotoAdjustModal
+          draft={photoDraft}
+          uploading={uploadingPhoto}
+          onCancel={cancelTeacherPhotoAdjust}
+          onApply={uploadAdjustedTeacherPhoto}
+        />
+      )}
+
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -723,7 +997,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             }))
           }}
           onSignOut={signOut}
-        />
+                  onPhotoSelected={handleTeacherPhotoSelected}
+/>
       )}
     </div>
   )
@@ -1374,47 +1649,18 @@ function HistoryCard({ report }: any) {
   )
 }
 
-function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut }: any) {
+function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut, onPhotoSelected }: any) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
 
   const handlePhoto = async (event: any) => {
     const file = event.target.files?.[0]
-    event.target.value = ''
 
     if (!file) return
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please choose an image file')
-      return
-    }
-
-    if (file.size > 4 * 1024 * 1024) {
-      toast.error('Image must be under 4 MB')
-      return
-    }
-
-    setUploading(true)
-    const tid = toast.loading('Updating photo...')
-
-    try {
-      const dataUrl = await readFileAsDataUrl(file)
-      const res = await fetch('/api/teacher/profile-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data_url: dataUrl, content_type: file.type, file_name: file.name }),
-      })
-
-      const json = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(json.error || 'Could not update photo')
-
-      onUpdated({ photo_url: json.photo_url })
-      toast.success('Photo updated', { id: tid })
-    } catch (e: any) {
-      toast.error(e.message || 'Could not update photo', { id: tid })
-    }
-
-    setUploading(false)
+    event.target.value = ''
+    onClose()
+    onPhotoSelected?.(file)
   }
 
   return (
@@ -1468,7 +1714,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
       <button
         type="button"
-        disabled={uploading}
+        disabled={false}
         onClick={() => fileRef.current?.click()}
         style={{
           ...softButton,
@@ -1481,7 +1727,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
         }}
       >
         <Camera size={15} strokeWidth={1.8} />
-        {uploading ? 'Uploading photo...' : 'Change profile photo'}
+        Change profile photo
       </button>
 
       <button
