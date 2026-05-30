@@ -12,7 +12,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FFFFFF',
+  bg: '#FCFCFE',
   soft: '#F5F5F7',
   soft2: '#F8F8F9',
   white: '#FFFFFF',
@@ -358,7 +358,7 @@ function ReportSafeAreaStyle() {
 
       html,
       body {
-        background: #FFFFFF !important;
+        background: #FCFCFE !important;
       }
 
       .parent-report-safe-screen {
@@ -395,7 +395,7 @@ function ReportLinkedSafeAreaStyle() {
     <style>{`
       html,
       body {
-        background: #FFFFFF !important;
+        background: #FCFCFE !important;
       }
 
       .parent-report-safe-screen,
@@ -437,7 +437,7 @@ function LoadingState() {
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      background: '#FFFFFF',
+      background: '#FCFCFE',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -725,7 +725,7 @@ const centerPage: any = {
   minHeight: '100dvh',
   height: '100dvh',
   overflow: 'hidden',
-  background: '#FFFFFF',
+  background: '#FCFCFE',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

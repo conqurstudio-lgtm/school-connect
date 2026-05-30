@@ -26,7 +26,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FFFFFF',
+  bg: '#FCFCFE',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
@@ -940,7 +940,7 @@ function ReportLinkedSafeAreaStyle() {
     <style>{`
       html,
       body {
-        background: #FFFFFF !important;
+        background: #FCFCFE !important;
       }
 
       .report-linked-screen {
@@ -1061,7 +1061,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      background: '#FFFFFF',
+      background: '#FCFCFE',
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
       color: T.ink,
     }}>
