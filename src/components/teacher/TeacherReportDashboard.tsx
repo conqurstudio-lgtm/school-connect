@@ -363,12 +363,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             onClick={() => setShowSettings(true)}
             aria-label="Settings"
             style={{
-              width: 34,
-              height: 34,
+              width: 36,
+              height: 36,
               borderRadius: 999,
               border: 'none',
               background: T.bg,
-              color: T.ink3,
+              color: T.ink2,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -376,7 +376,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               flexShrink: 0,
             }}
           >
-            <Settings size={15} strokeWidth={1.8} />
+            <Settings size={17} strokeWidth={2.05} />
           </button>
         </header>
 

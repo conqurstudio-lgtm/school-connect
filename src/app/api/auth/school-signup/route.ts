@@ -144,7 +144,6 @@ export async function POST(req: NextRequest) {
     tagline: 'Simple weekly child updates for parents.',
     phone: schoolPhone || null,
     email: schoolEmail || ownerEmail,
-    country: 'South Africa',
     owner_id: userId,
     is_verified: false,
     is_active: true,

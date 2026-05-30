@@ -132,7 +132,6 @@ export async function POST(req: NextRequest) {
       phone: form.school_phone || null,
       email: form.school_email || null,
       owner_id: ownerId,
-      country: 'South Africa',
       is_active: true,
       is_verified: false,
       settings: { mvp: 'weekly_reports' },
@@ -143,7 +142,6 @@ export async function POST(req: NextRequest) {
       phone: form.school_phone || null,
       email: form.school_email || null,
       owner_id: ownerId,
-      country: 'South Africa',
       is_active: true,
       is_verified: false,
     },
@@ -153,7 +151,6 @@ export async function POST(req: NextRequest) {
       phone: form.school_phone || null,
       email: form.school_email || null,
       owner_id: ownerId,
-      country: 'South Africa',
     },
     {
       name: form.school_name,

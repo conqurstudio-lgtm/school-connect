@@ -147,8 +147,20 @@ function initialsFrom(name?: string | null) {
     .toUpperCase()
 }
 
+const SOUTH_AFRICAN_PROVINCES = [
+  'Eastern Cape',
+  'Free State',
+  'Gauteng',
+  'KwaZulu-Natal',
+  'Limpopo',
+  'Mpumalanga',
+  'Northern Cape',
+  'North West',
+  'Western Cape',
+]
+
 function schoolLocation(school: any) {
-  return [school?.address, school?.province, school?.country].filter(Boolean).join(' · ')
+  return [school?.address, school?.province].filter(Boolean).join(' · ')
 }
 
 function websiteHref(value?: string | null) {
@@ -203,8 +215,8 @@ function BottomSheet({ children, onClose }: any) {
     <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 3000,
-      background: 'rgba(0,0,0,0.30)',
+      zIndex: 5000,
+      background: 'rgba(0,0,0,0.28)',
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',
@@ -269,7 +281,6 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
   const [tagline, setTagline] = useState(school.tagline || '')
   const [address, setAddress] = useState(school.address || '')
   const [province, setProvince] = useState(school.province || '')
-  const [country, setCountry] = useState(school.country || '')
   const [phone, setPhone] = useState(school.phone || '')
   const [email, setEmail] = useState(school.email || '')
   const [website, setWebsite] = useState(school.website || '')
@@ -287,7 +298,6 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
       tagline: tagline.trim() || null,
       address: address.trim() || null,
       province: province.trim() || null,
-      country: country.trim() || null,
       phone: phone.trim() || null,
       email: email.trim() || null,
       website: website.trim() || null,
@@ -329,12 +339,12 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <label>
           <span style={labelStyle}>Province</span>
-          <input value={province} onChange={e => setProvince(e.target.value)} placeholder="Gauteng" style={inputStyle} />
-        </label>
-
-        <label>
-          <span style={labelStyle}>Country</span>
-          <input value={country} onChange={e => setCountry(e.target.value)} placeholder="South Africa" style={inputStyle} />
+          <select value={province} onChange={e => setProvince(e.target.value)} style={inputStyle}>
+            <option value="">Select province</option>
+            {SOUTH_AFRICAN_PROVINCES.map(item => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
         </label>
       </div>
 
@@ -905,7 +915,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
-          background: T.bg,
+          background: 'transparent',
           display: 'flex',
           justifyContent: 'flex-end',
         }}>

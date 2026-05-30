@@ -78,7 +78,6 @@ export async function POST(req: NextRequest) {
         phone: schoolPhone,
         email: schoolEmail,
         owner_id: ownerId,
-        country: 'South Africa',
         is_active: true,
         is_verified: false,
         settings: { mvp: 'weekly_reports' },
