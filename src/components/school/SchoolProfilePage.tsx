@@ -723,132 +723,6 @@ function SchoolSetupChecklist({ school, teacherCount, teacherCountLoading }: any
   )
 }
 
-function SchoolDetailsCompletion({ school, teacherCount, teacherCountLoading }: any) {
-  const profileReady = Boolean(
-    school?.name ||
-    school?.school_name ||
-    school?.schoolName ||
-    school?.profile_complete
-  )
-
-  const logoReady = Boolean(
-    school?.logo_url ||
-    school?.logoUrl ||
-    school?.logo
-  )
-
-  const detailsReady = Boolean(
-    school?.website ||
-    school?.address ||
-    school?.province ||
-    school?.country ||
-    school?.location
-  )
-
-  const teachersReady = Number(teacherCount || 0) > 0
-
-  const steps = [
-    { label: 'Profile', done: profileReady },
-    { label: 'Logo', done: logoReady },
-    { label: 'Details', done: detailsReady },
-    { label: 'Teachers', done: teachersReady },
-  ]
-
-  const completed = steps.filter(step => step.done).length
-  const total = steps.length
-  const ready = completed === total
-
-  return (
-    <div style={{
-      marginTop: 13,
-      paddingTop: 12,
-      borderTop: `1px solid ${T.border}`,
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 10,
-        marginBottom: 9,
-      }}>
-        <p style={{
-          fontSize: 12.3,
-          color: T.ink3,
-          lineHeight: 1.35,
-          margin: 0,
-        }}>
-          {ready ? 'Ready for onboarding.' : 'Complete these basics to start.'}
-        </p>
-
-        <span style={{
-          minHeight: 23,
-          borderRadius: 999,
-          background: ready ? T.accentSoft : T.soft,
-          color: ready ? T.accent : T.ink3,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0 9px',
-          fontSize: 11.5,
-          fontWeight: 540,
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}>
-          {completed}/{total}
-        </span>
-      </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 7,
-      }}>
-        {steps.map((step, index) => (
-          <div key={step.label} style={{
-            minHeight: 32,
-            borderRadius: 14,
-            background: step.done ? T.accentSoft : T.soft,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 7,
-            padding: '0 9px',
-          }}>
-            <span style={{
-              width: 16,
-              height: 16,
-              borderRadius: 999,
-              background: step.done ? T.accent : T.white,
-              color: step.done ? T.white : T.ink3,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              border: step.done ? 'none' : `1px solid ${T.border}`,
-              fontSize: 9.5,
-              lineHeight: 1,
-            }}>
-              {step.done ? '✓' : index + 1}
-            </span>
-
-            <span style={{
-              flex: 1,
-              minWidth: 0,
-              fontSize: 11.8,
-              fontWeight: 520,
-              color: step.done ? T.accent : T.ink2,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}>
-              {step.label}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20 }}>
@@ -1371,13 +1245,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
                               )}
                             </div>
                           )}
-
-                    <SchoolDetailsCompletion
-                      school={school}
-                      teacherCount={teacherCount}
-                      teacherCountLoading={teacherCountLoading}
-                    />
-              </SectionCard>
+</SectionCard>
 
               <TeachersAccordion
               teacherCount={teacherCount}
