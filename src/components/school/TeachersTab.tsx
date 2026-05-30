@@ -268,20 +268,20 @@ export function TeachersTab() {
             minHeight: 38,
             borderRadius: 999,
             border: 'none',
-            background: T.white,
-            color: T.accent,
+            background: T.ink,
+            color: T.white,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 7,
-            padding: '0 13px',
+            padding: '0 14px',
             cursor: 'pointer',
             fontFamily: 'inherit',
             fontSize: 13,
             fontWeight: 540,
           }}
         >
-          <Plus size={15} strokeWidth={2} />
+          <Plus size={15} strokeWidth={2.1} />
           Add
         </button>
         </div>
