@@ -594,7 +594,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
     <SectionCard style={{ padding: '0 14px', overflow: 'visible', position: 'relative', zIndex: 20 }}>
       <div style={{
         width: '100%',
-        background: T.ink,
+        background: T.white,
         border: 'none',
         padding: 15,
         display: 'flex',
@@ -608,7 +608,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           height: 38,
           borderRadius: 14,
           background: T.accentSoft,
-          color: T.white,
+          color: T.accent,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -621,7 +621,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
             Teachers & classes
           </p>
-          <p style={{ fontSize: 12.5, color: T.white, margin: '2px 0 0' }}>
+          <p style={{ fontSize: 12.5, color: T.accent, margin: '2px 0 0' }}>
             {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
           </p>
         </div>
@@ -634,8 +634,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             height: 34,
             borderRadius: 999,
             border: 'none',
-            background: T.ink,
-            color: T.white,
+            background: T.white,
+            color: T.accent,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
