@@ -472,7 +472,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
     <div style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 4000,
+      zIndex: 10000,
       background: 'rgba(0,0,0,0.28)',
       display: 'flex',
       alignItems: 'flex-end',
@@ -828,6 +828,11 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     event.target.value = ''
 
     if (!file) return
+
+    // Close sheets before opening the logo resizer, so the resizer becomes the next visible step.
+    setShowSettings(false)
+    setShowEditDetails(false)
+
 
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Logo must be under 5 MB')
