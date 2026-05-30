@@ -283,12 +283,26 @@ export function TeachersTab() {
             Add teachers and share their private link.
           </p>
 
-          <button type="button" onClick={() => setShowAdd(true)} style={{
-            ...primaryButton,
-            minHeight: 38,
-          }}>
-            <Plus size={14} strokeWidth={2} />
-            Add teacher
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            aria-label="Add teacher"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 999,
+              border: 'none',
+              background: T.ink,
+              color: T.white,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Plus size={17} strokeWidth={2.1} />
           </button>
         </div>
       ) : (

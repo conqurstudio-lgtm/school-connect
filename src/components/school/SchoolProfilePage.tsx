@@ -914,12 +914,12 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             onClick={openSettings}
             aria-label="Settings"
             style={{
-              width: 34,
-              height: 34,
+              width: 36,
+              height: 36,
               borderRadius: 999,
               border: 'none',
               background: T.white,
-              color: T.ink3,
+              color: T.ink2,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -928,7 +928,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             
               position: 'relative',}}
           >
-            <Settings size={15} strokeWidth={1.8} />
+            <Settings size={17} strokeWidth={2.05} />
           
             {!settingsSeen && (
               <span
