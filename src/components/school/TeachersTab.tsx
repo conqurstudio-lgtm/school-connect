@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Check, Copy, MoreVertical, Plus, RotateCw, Slash, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
@@ -95,6 +96,18 @@ function teacherLink(token: string): string {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
+}
+
+function SheetPortal({ children }: any) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted || typeof document === 'undefined') return null
+
+  return createPortal(children, document.body)
 }
 
 export function TeachersTab() {
@@ -318,13 +331,15 @@ export function TeachersTab() {
       )}
 
       {showAdd && (
-        <AddTeacherSheet
-          onClose={() => setShowAdd(false)}
-          onCreated={() => {
-            setShowAdd(false)
-            load()
-          }}
-        />
+        <SheetPortal>
+          <AddTeacherSheet
+            onClose={() => setShowAdd(false)}
+            onCreated={() => {
+              setShowAdd(false)
+              load()
+            }}
+          />
+        </SheetPortal>
       )}
     </div>
   )
@@ -556,7 +571,7 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
     <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 9000,
+      zIndex: 10000,
       background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
