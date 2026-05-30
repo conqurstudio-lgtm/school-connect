@@ -371,12 +371,12 @@ function EditSchoolDetails({ school, onCancel, onSaved }: any) {
         </button>
 
         <button type="button" disabled={saving} onClick={save} style={{
+              minHeight: 44,
           ...primaryButton,
           opacity: saving ? 0.65 : 1,
           cursor: saving ? 'wait' : 'pointer',
         }}>
-          <Save size={14} strokeWidth={1.8} />
-          {saving ? 'Saving...' : 'Save'}
+{saving ? 'Saving...' : 'Save'}
         </button>
       </div>
     </div>
@@ -541,6 +541,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
               setZoom(1.18)
               setOffset({ x: 0, y: 0 })
             }} style={{
+              minHeight: 44,
               border: 'none',
               background: T.soft,
               color: T.ink2,
@@ -569,16 +570,16 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
           <button type="button" onClick={onCancel} disabled={uploading} style={{
             ...softButton,
-            height: 40,
+            minHeight: 44,
             opacity: uploading ? 0.65 : 1,
           }}>
             Cancel
           </button>
 
           <button type="button" onClick={apply} disabled={uploading} style={{
-              minHeight: 38,
+              minHeight: 44,
             ...primaryButton,
-            height: 40,
+            minHeight: 44,
             opacity: uploading ? 0.65 : 1,
           }}>
             {uploading ? 'Saving...' : 'Apply logo'}
@@ -631,7 +632,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           onClick={onAddTeacher}
           style={{
             minWidth: 54,
-            height: 34,
+            minHeight: 44,
             borderRadius: 999,
             border: 'none',
             background: T.white,
@@ -705,6 +706,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
       {isAdmin && (
         <>
           <button type="button" onClick={onLogoClick} disabled={uploading} style={{
+              minHeight: 44,
             ...softButton,
             width: '100%',
             justifyContent: 'flex-start',
@@ -712,8 +714,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
             background: T.white,
             opacity: uploading ? 0.65 : 1,
           }}>
-            <Camera size={15} strokeWidth={1.8} />
-            {uploading ? 'Uploading logo...' : 'Change school logo'}
+{uploading ? 'Uploading logo...' : 'Change school logo'}
           </button>
 
           <button type="button" onClick={onEditProfile} style={{

@@ -278,7 +278,7 @@ export function TeachersTab() {
           onClick={() => setShowAdd(true)}
           aria-label="Add teacher"
           style={{
-            minHeight: 38,
+            minHeight: 44,
             borderRadius: 999,
             border: 'none',
             background: T.ink,
@@ -287,14 +287,14 @@ export function TeachersTab() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 7,
-            padding: '0 14px',
+            padding: '0 16px',
             cursor: 'pointer',
             fontFamily: 'inherit',
             fontSize: 13,
             fontWeight: 540,
           }}
         >
-          <Plus size={15} strokeWidth={2.1} />
+<Plus size={15} strokeWidth={2.1} />
           Add
         </button>
         </div>
@@ -635,6 +635,7 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
             onClick={submit}
             disabled={saving}
             style={{
+              minHeight: 44,
               ...primaryButton,
               width: '100%',
               marginTop: 4,
