@@ -228,32 +228,8 @@ export function TeachersTab() {
 
   if (loading) {
     return (
-      <div style={{ padding: '34px 0', textAlign: 'center' }}>
-        <style>{`
-          @keyframes schoolDotBounce {
-            0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
-            40% { transform: scale(1); opacity: 1; }
-          }
-        `}</style>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 7,
-          height: 24,
-        }}>
-          {[0, 1, 2].map(dot => (
-            <span key={dot} style={{
-              width: 8,
-              height: 8,
-              borderRadius: 999,
-              background: dot === 1 ? T.accent : '#D8DFDD',
-              animation: 'schoolDotBounce 1.05s ease-in-out infinite',
-              animationDelay: `${dot * 0.14}s`,
-              display: 'block',
-            }} />
-          ))}
-        </div>
+      <div style={{ padding: '34px 0' }}>
+        <SchoolConnectLoader />
       </div>
     )
   }
