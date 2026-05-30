@@ -10,7 +10,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FCFCFE',
+  bg: '#FFFFFF',
   soft: '#F7F7F8',
   accent: '#8FA6A1',
   accentSoft: '#EEF3F1',
@@ -70,7 +70,7 @@ function SafeStyle() {
     <style>{`
       html,
       body {
-        background: #FCFCFE !important;
+        background: #FFFFFF !important;
         overflow: hidden;
       }
 

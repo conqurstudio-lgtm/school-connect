@@ -31,7 +31,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FCFCFE',
+  bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
@@ -102,7 +102,7 @@ function SchoolSafeAreaStyle() {
     <style>{`
       html,
       body {
-        background: #FCFCFE !important;
+        background: #FFFFFF !important;
       }
 
       .school-safe-screen {
@@ -215,8 +215,8 @@ function BottomSheet({ children, onClose }: any) {
     <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 5000,
-      background: 'rgba(0,0,0,0.28)',
+      zIndex: 9000,
+      background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',

@@ -26,7 +26,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#9A9CA3',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FCFCFE',
+  bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
   accent: '#8FA6A1',
@@ -940,7 +940,7 @@ function ReportLinkedSafeAreaStyle() {
     <style>{`
       html,
       body {
-        background: #FCFCFE !important;
+        background: #FFFFFF !important;
       }
 
       .report-linked-screen {
@@ -1061,7 +1061,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      background: '#FCFCFE',
+      background: '#FFFFFF',
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
       color: T.ink,
     }}>
@@ -1537,7 +1537,7 @@ function BottomSheet({ children, onClose }: any) {
     <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 300,
+      zIndex: 9000,
       background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
