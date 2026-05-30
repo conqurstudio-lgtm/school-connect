@@ -237,7 +237,7 @@ export function TeachersTab() {
   return (
     <div style={{
       paddingTop: teachers.length ? 4 : 10,
-      background: T.white,
+      background: T.ink,
       overflow: 'visible',
       position: 'relative',
       zIndex: 30,
