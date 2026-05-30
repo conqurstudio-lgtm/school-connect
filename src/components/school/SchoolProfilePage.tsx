@@ -10,7 +10,6 @@ import {
   Settings,
   Users,
   User,
-  CheckCircle,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -579,150 +578,6 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
-function SchoolSetupChecklist({ school, teacherCount, teacherCountLoading }: any) {
-  const profileReady = Boolean(
-    school?.name ||
-    school?.school_name ||
-    school?.schoolName ||
-    school?.profile_complete
-  )
-
-  const logoReady = Boolean(
-    school?.logo_url ||
-    school?.logoUrl ||
-    school?.logo
-  )
-
-  const detailsReady = Boolean(
-    school?.website ||
-    school?.address ||
-    school?.province ||
-    school?.country ||
-    school?.location
-  )
-
-  const teachersReady = Number(teacherCount || 0) > 0
-
-  const steps = [
-    { label: 'School profile', done: profileReady },
-    { label: 'Logo', done: logoReady },
-    { label: 'Location / website', done: detailsReady },
-    {
-      label: 'Teachers',
-      done: teachersReady,
-      detail: teacherCountLoading ? 'Checking...' : `${teacherCount || 0}`,
-    },
-  ]
-
-  const completed = steps.filter(step => step.done).length
-  const total = steps.length
-  const ready = completed === total
-
-  return (
-    <SectionCard style={{
-      padding: 15,
-      marginBottom: 14,
-      background: T.white,
-      border: 'none',
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 12,
-        marginBottom: 13,
-      }}>
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-            School setup
-          </p>
-          <p style={{
-            fontSize: 12.5,
-            color: T.ink3,
-            lineHeight: 1.4,
-            margin: '3px 0 0',
-          }}>
-            {ready ? 'Ready to start using School Connect.' : 'Complete the basics before onboarding parents.'}
-          </p>
-        </div>
-
-        <span style={{
-          minHeight: 26,
-          borderRadius: 999,
-          background: ready ? T.accentSoft : T.soft,
-          color: ready ? T.accent : T.ink3,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0 10px',
-          fontSize: 12,
-          fontWeight: 540,
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}>
-          {completed}/{total}
-        </span>
-      </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 8,
-      }}>
-        {steps.map((step, index) => (
-          <div key={step.label} style={{
-            minHeight: 38,
-            borderRadius: 16,
-            background: step.done ? T.accentSoft : T.soft,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '0 10px',
-          }}>
-            <span style={{
-              width: 18,
-              height: 18,
-              borderRadius: 999,
-              background: step.done ? T.accent : T.white,
-              color: step.done ? T.white : T.ink3,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              border: step.done ? 'none' : `1px solid ${T.border}`,
-            }}>
-              {step.done ? (
-                <CheckCircle size={12} strokeWidth={2.2} />
-              ) : (
-                <span style={{ fontSize: 10, lineHeight: 1 }}>{index + 1}</span>
-              )}
-            </span>
-
-            <span style={{
-              flex: 1,
-              minWidth: 0,
-              fontSize: 12.2,
-              fontWeight: 520,
-              color: step.done ? T.accent : T.ink2,
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}>
-              {step.label}
-            </span>
-
-            {step.detail && (
-              <span style={{ fontSize: 11.5, color: T.ink3, flexShrink: 0 }}>
-                {step.detail}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </SectionCard>
-  )
-}
-
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20 }}>
@@ -886,6 +741,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
   const [teachersOpen, setTeachersOpen] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
+  const [settingsSeen, setSettingsSeen] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.localStorage.getItem('school-connect-settings-seen') === 'yes'
+  })
   const [showEditDetails, setShowEditDetails] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [logoDraft, setLogoDraft] = useState<any>(null)
@@ -980,6 +839,15 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     window.location.href = '/auth/login'
   }
 
+  const openSettings = () => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('school-connect-settings-seen', 'yes')
+    }
+
+    setSettingsSeen(true)
+    setShowSettings(true)
+  }
+
   const triggerAddTeacher = () => {
     setTeachersOpen(true)
 
@@ -1043,7 +911,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         }}>
           <button
             type="button"
-            onClick={() => setShowSettings(true)}
+            onClick={openSettings}
             aria-label="Settings"
             style={{
               width: 34,
@@ -1057,10 +925,27 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
-            }}
+            
+              position: 'relative',}}
           >
             <Settings size={15} strokeWidth={1.8} />
-          </button>
+          
+            {!settingsSeen && (
+              <span
+                className="school-settings-attention-dot"
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  width: 7,
+                  height: 7,
+                  borderRadius: 999,
+                  background: '#D92D20',
+                  border: `1.5px solid ${T.white}`,
+                }}
+              />
+            )}
+</button>
         </header>
 
         <main style={{
@@ -1133,125 +1018,11 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           </SectionCard>
 
           {isAdmin && (
-            <>
-              <SchoolSetupChecklist
-              school={school}
-              teacherCount={teacherCount}
-              teacherCountLoading={teacherCountLoading}              />
-
-              <SectionCard style={{
-                          marginBottom: 14,
-                          padding: 15,
-                        }}>
-                          <button
-                            type="button"
-                            onClick={() => setShowEditDetails(true)}
-                            style={{
-                              width: '100%',
-                              border: 'none',
-                              background: 'transparent',
-                              padding: 0,
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 12,
-                              cursor: 'pointer',
-                              textAlign: 'left',
-                              fontFamily: 'inherit',
-                            }}
-                          >
-                            <div style={{
-                              width: 38,
-                              height: 38,
-                              borderRadius: 14,
-                              background: T.soft,
-                              color: T.ink3,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                            }}>
-                              <Pencil size={17} strokeWidth={1.8} />
-                            </div>
-
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                                School details
-                              </p>
-                              <p style={{
-                                fontSize: 12.5,
-                                color: T.ink3,
-                                margin: '2px 0 0',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis',
-                              }}>
-                                {location || school.email || school.phone || 'Add location, website and contacts.'}
-                              </p>
-                            </div>
-
-                            <span style={{
-                              minHeight: 28,
-                              borderRadius: 999,
-                              background: T.accent,
-                              color: T.white,
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              padding: '0 11px',
-                              fontSize: 12,
-                              fontWeight: 540,
-                              flexShrink: 0,
-                              marginLeft: 'auto',
-                            }}>
-                              Edit
-                            </span>
-              </button>
-
-                          {(href || school.email || school.phone) && (
-                            <div style={{
-                              marginTop: 12,
-                              paddingTop: 12,
-                              borderTop: `1px solid ${T.border}`,
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 6,
-                            }}>
-                              {href && (
-                                <a
-                                  href={href}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  style={{
-                                    fontSize: 12.5,
-                                    color: T.accent,
-                                    textDecoration: 'none',
-                                    wordBreak: 'break-word',
-                                  }}
-                                >
-                                  {school.website}
-                                </a>
-                              )}
-
-                              {school.email && (
-                                <span style={{ fontSize: 12.5, color: T.ink3 }}>
-                                  {school.email}
-                                </span>
-                              )}
-
-                              {school.phone && (
-                                <span style={{ fontSize: 12.5, color: T.ink3 }}>
-                                  {school.phone}
-                                </span>
-                              )}
-                            </div>
-                          )}
-</SectionCard>
-
-              <TeachersAccordion
+            <TeachersAccordion
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}
-              onAddTeacher={triggerAddTeacher}              />
-            </>
+              onAddTeacher={triggerAddTeacher}
+            />
           )}
 
           
