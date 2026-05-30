@@ -110,9 +110,9 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
     return await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob((blob) => {
-        if (!blob) reject(new Error('Could not crop logo'))
+        if (!blob) reject(new Error('Could not crop photo'))
         else resolve(blob)
-      }, 'image/png', 0.94)
+      }, 'image/jpeg', 0.92)
     })
   }
 
@@ -392,6 +392,15 @@ function formatWeek(value?: string | null) {
   }
 }
 
+function blobToDataUrl(blob: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
 function readFileAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
@@ -446,8 +455,17 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     setUploadingPhoto(true)
 
     try {
-      const adjustedFile = new File([blob], 'teacher-profile-photo.jpg', { type: 'image/jpeg' })
-      const dataUrl = await readFileAsDataUrl(adjustedFile)
+      // The teacher profile-photo API expects a valid image data URL.
+      // Send the adjusted canvas blob directly as a JPEG data URL.
+      const jpegBlob = blob.type === 'image/jpeg'
+        ? blob
+        : new Blob([blob], { type: 'image/jpeg' })
+
+      const dataUrl = await blobToDataUrl(jpegBlob)
+
+      if (!dataUrl.startsWith('data:image/')) {
+        throw new Error('Invalid photo file')
+      }
 
       const res = await fetch('/api/teacher/profile-photo', {
         method: 'POST',
