@@ -10,6 +10,7 @@ import {
   Settings,
   Users,
   User,
+  CheckCircle,
   X,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -578,6 +579,152 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
+
+function SchoolSetupChecklist({ school, teacherCount, teacherCountLoading }: any) {
+  const profileReady = Boolean(
+    school?.name ||
+    school?.school_name ||
+    school?.schoolName ||
+    school?.profile_complete
+  )
+
+  const logoReady = Boolean(
+    school?.logo_url ||
+    school?.logoUrl ||
+    school?.logo
+  )
+
+  const detailsReady = Boolean(
+    school?.website ||
+    school?.address ||
+    school?.province ||
+    school?.country ||
+    school?.location
+  )
+
+  const teachersReady = Number(teacherCount || 0) > 0
+
+  const steps = [
+    { label: 'School profile', done: profileReady },
+    { label: 'Logo', done: logoReady },
+    { label: 'Location / website', done: detailsReady },
+    {
+      label: 'Teachers',
+      done: teachersReady,
+      detail: teacherCountLoading ? 'Checking...' : `${teacherCount || 0}`,
+    },
+  ]
+
+  const completed = steps.filter(step => step.done).length
+  const total = steps.length
+  const ready = completed === total
+
+  return (
+    <SectionCard style={{
+      padding: 15,
+      marginBottom: 14,
+      background: T.white,
+      border: 'none',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginBottom: 13,
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+            School setup
+          </p>
+          <p style={{
+            fontSize: 12.5,
+            color: T.ink3,
+            lineHeight: 1.4,
+            margin: '3px 0 0',
+          }}>
+            {ready ? 'Ready to start using School Connect.' : 'Complete the basics before onboarding parents.'}
+          </p>
+        </div>
+
+        <span style={{
+          minHeight: 26,
+          borderRadius: 999,
+          background: ready ? T.accentSoft : T.soft,
+          color: ready ? T.accent : T.ink3,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '0 10px',
+          fontSize: 12,
+          fontWeight: 540,
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}>
+          {completed}/{total}
+        </span>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 8,
+      }}>
+        {steps.map((step, index) => (
+          <div key={step.label} style={{
+            minHeight: 38,
+            borderRadius: 16,
+            background: step.done ? T.accentSoft : T.soft,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '0 10px',
+          }}>
+            <span style={{
+              width: 18,
+              height: 18,
+              borderRadius: 999,
+              background: step.done ? T.accent : T.white,
+              color: step.done ? T.white : T.ink3,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              border: step.done ? 'none' : `1px solid ${T.border}`,
+            }}>
+              {step.done ? (
+                <CheckCircle size={12} strokeWidth={2.2} />
+              ) : (
+                <span style={{ fontSize: 10, lineHeight: 1 }}>{index + 1}</span>
+              )}
+            </span>
+
+            <span style={{
+              flex: 1,
+              minWidth: 0,
+              fontSize: 12.2,
+              fontWeight: 520,
+              color: step.done ? T.accent : T.ink2,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}>
+              {step.label}
+            </span>
+
+            {step.detail && (
+              <span style={{ fontSize: 11.5, color: T.ink3, flexShrink: 0 }}>
+                {step.detail}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  )
+}
+
+
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20 }}>
@@ -988,11 +1135,17 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           </SectionCard>
 
           {isAdmin && (
-            <TeachersAccordion
+            <>
+              <SchoolSetupChecklist
+              school={school}
+              teacherCount={teacherCount}
+              teacherCountLoading={teacherCountLoading}              />
+
+              <TeachersAccordion
               teacherCount={teacherCount}
               teacherCountLoading={teacherCountLoading}
-              onAddTeacher={triggerAddTeacher}
-            />
+              onAddTeacher={triggerAddTeacher}              />
+            </>
           )}
 
           <SectionCard style={{
