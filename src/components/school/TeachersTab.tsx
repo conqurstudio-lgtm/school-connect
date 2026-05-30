@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { Check, Copy, MoreVertical, Plus, RotateCw, Slash, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 
 const T = {
   ink: '#252525',
@@ -237,7 +238,7 @@ export function TeachersTab() {
   return (
     <div style={{
       paddingTop: teachers.length ? 4 : 10,
-      background: T.ink,
+      background: T.white,
       overflow: 'visible',
       position: 'relative',
       zIndex: 30,

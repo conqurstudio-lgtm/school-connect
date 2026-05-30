@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 
 const T = {
   ink: '#252525',

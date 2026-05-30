@@ -85,7 +85,7 @@ const softButton: any = {
   minHeight: 38,
   borderRadius: 999,
   border: 'none',
-  background: T.ink,
+  background: T.white,
   color: T.ink2,
   fontSize: 13,
   fontWeight: 540,
