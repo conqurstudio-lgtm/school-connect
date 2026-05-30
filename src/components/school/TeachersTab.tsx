@@ -288,21 +288,24 @@ export function TeachersTab() {
             onClick={() => setShowAdd(true)}
             aria-label="Add teacher"
             style={{
-              width: 38,
-              height: 38,
+              minHeight: 38,
               borderRadius: 999,
               border: 'none',
-              background: T.ink,
-              color: T.white,
+              background: T.white,
+              color: T.accent,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: 0,
+              gap: 7,
+              padding: '0 13px',
               cursor: 'pointer',
               fontFamily: 'inherit',
+              fontSize: 13,
+              fontWeight: 540,
             }}
           >
-            <Plus size={17} strokeWidth={2.1} />
+            <Plus size={15} strokeWidth={2} />
+            Add
           </button>
         </div>
       ) : (

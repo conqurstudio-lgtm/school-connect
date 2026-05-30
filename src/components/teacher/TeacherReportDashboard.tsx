@@ -63,7 +63,7 @@ const primaryButton: any = {
   minHeight: 42,
   borderRadius: 999,
   border: 'none',
-  background: T.accent,
+  background: T.ink,
   color: T.white,
   fontSize: 13,
   fontWeight: 560,
