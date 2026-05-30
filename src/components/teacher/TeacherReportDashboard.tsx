@@ -36,6 +36,50 @@ const T = {
   green: '#5B8F7F',
 }
 
+function TeacherSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body,
+      #__next,
+      [data-nextjs-root] {
+        background: #FFFFFF !important;
+      }
+
+      body {
+        margin: 0;
+        overscroll-behavior-y: none;
+      }
+
+      .teacher-safe-screen {
+        background: #FFFFFF !important;
+        isolation: isolate;
+      }
+
+      .teacher-safe-screen::before,
+      .teacher-safe-screen::after {
+        content: '';
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .teacher-safe-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .teacher-safe-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+    `}</style>
+  )
+}
+
 const inputStyle: any = {
   width: '100%',
   boxSizing: 'border-box',
@@ -335,28 +379,29 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   }
 
   return (
-    <div style={{
+    <div className="teacher-safe-screen" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      background: T.bg,
+      background: T.white,
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
       color: T.ink,
     }}>
+      <TeacherSafeAreaStyle />
       <div style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        background: T.bg,
+        background: T.white,
       }}>
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           display: 'flex',
           justifyContent: 'flex-end',
-          background: T.bg,
+          background: 'transparent',
         }}>
 <button
             type="button"
@@ -367,7 +412,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               height: 36,
               borderRadius: 999,
               border: 'none',
-              background: T.bg,
+              background: T.white,
               color: T.ink2,
               display: 'flex',
               alignItems: 'center',
@@ -386,14 +431,14 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: T.bg,
+          background: T.white,
         }}>
           <section style={{
             textAlign: 'center',
             minHeight: 260,
             padding: '28px 18px 26px',
             borderRadius: 28,
-            background: T.bg,
+            background: T.white,
             border: 'none',
             marginBottom: 14,
             display: 'flex',
@@ -761,7 +806,6 @@ function EmptyRoster({ onAdd }: any) {
   )
 }
 
-
 function ChecklistGroup({ title, subtitle, items, weekStart, onOpen, onDeleted }: any) {
   if (!items?.length) return null
 
@@ -934,7 +978,6 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   )
 }
 
-
 function ReportLinkedSafeAreaStyle() {
   return (
     <style>{`
@@ -1057,7 +1100,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
   }
 
   return (
-    <div style={{
+    <div className="teacher-safe-screen" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1076,7 +1119,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: T.bg,
+          background: T.white,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <button type="button" onClick={onBack} style={{
@@ -1120,7 +1163,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: T.bg,
+          background: T.white,
         }}>
           <section style={{
             borderRadius: 28,
@@ -1244,7 +1287,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           gridTemplateColumns: '1fr 46px',
           gap: 8,
           alignItems: 'center',
-          background: T.bg,
+          background: T.white,
         }}>
           <button type="button" onClick={submit} disabled={saving} style={{
             ...darkButton,
@@ -1433,7 +1476,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
           justifyContent: 'flex-start',
           height: 44,
           border: 'none',
-          background: T.bg,
+          background: T.white,
           opacity: uploading ? 0.65 : 1,
         }}
       >
@@ -1598,7 +1641,7 @@ function SheetHeader({ title, subtitle, onClose }: any) {
 
 const centerPage: any = {
   minHeight: '100dvh',
-  background: T.bg,
+  background: T.white,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
