@@ -470,7 +470,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       const res = await fetch('/api/teacher/profile-photo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: dataUrl }),
+        body: JSON.stringify({ data_url: dataUrl, content_type: 'image/jpeg' }),
       })
 
       const json = await res.json().catch(() => ({}))
