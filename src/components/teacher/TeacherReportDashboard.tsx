@@ -824,8 +824,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
             <button type="button" onClick={() => setShowAdd(true)} style={{
               ...primaryButton,
-              minHeight: 36,
-              padding: '0 14px',
+              minHeight: 40,
+              padding: '0 15px',
               flexShrink: 0,
             }}>
               Add
@@ -838,7 +838,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             gap: 12,
             padding: '14px 15px',
             borderRadius: 24,
-            background: '#EEF3F1',
+            background: T.white,
             border: 'none',
             marginBottom: 14,
           }}>
@@ -846,7 +846,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               width: 38,
               height: 38,
               borderRadius: 14,
-              background: T.white,
+              background: T.accentSoft,
               color: T.accent,
               display: 'flex',
               alignItems: 'center',
@@ -860,15 +860,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
                 Private Moments
               </p>
-              <p style={{ fontSize: 12.5, color: T.ink2, lineHeight: 1.35, margin: '2px 0 0' }}>
+              <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
                 Share private photo/document updates.
               </p>
             </div>
 
             <button type="button" onClick={() => momentFileRef.current?.click()} style={{
-              ...primaryButton,
-              minHeight: 36,
-              padding: '0 14px',
+              ...softButton,
+              minHeight: 40,
+              padding: '0 15px',
+              color: T.accent,
               flexShrink: 0,
             }}>
               Add
@@ -1015,8 +1016,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             }))
           }}
           onSignOut={signOut}
-                  onPhotoSelected={handleTeacherPhotoSelected}
-/>
+          onPhotoSelected={handleTeacherPhotoSelected}
+        />
       )}
     </div>
   )
@@ -1042,38 +1043,48 @@ function MiniStat({ label, value }: any) {
 
 function LoadingScreen() {
   return (
-    <main style={centerPage}>
+    <main style={{
+      ...centerPage,
+      background: T.white,
+    }}>
       <style>{`
-        @keyframes teacherDotBounce {
-          0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
-          40% { transform: scale(1); opacity: 1; }
+        @keyframes teacherGentleDot {
+          0%, 100% {
+            transform: translateY(0) scale(0.82);
+            opacity: 0.42;
+          }
+          42% {
+            transform: translateY(-4px) scale(1);
+            opacity: 1;
+          }
         }
       `}</style>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{
+
+      <div
+        aria-label="Loading"
+        role="status"
+        style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 7,
           height: 24,
-          margin: '0 auto 14px',
-        }}>
-          {[0, 1, 2].map((dot) => (
-            <span
-              key={dot}
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 999,
-                background: dot === 1 ? T.accent : '#D8DFDD',
-                animation: 'teacherDotBounce 1.05s ease-in-out infinite',
-                animationDelay: `${dot * 0.14}s`,
-                display: 'block',
-              }}
-            />
-          ))}
-        </div>
-        <p style={{ fontSize: 14, color: T.ink3, margin: 0 }}>Opening class space...</p>
+        }}
+      >
+        {[0, 1, 2].map((dot) => (
+          <span
+            key={dot}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: dot === 1 ? T.accent : '#DDE7E4',
+              animation: 'teacherGentleDot 1.25s cubic-bezier(0.33, 1, 0.68, 1) infinite',
+              animationDelay: `${dot * 0.16}s`,
+              display: 'block',
+            }}
+          />
+        ))}
       </div>
     </main>
   )
