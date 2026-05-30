@@ -556,7 +556,7 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
     <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 3000,
+      zIndex: 9000,
       background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
@@ -571,7 +571,7 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
         background: T.white,
         borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 48px rgba(0,0,0,0.10)',
+        boxShadow: '0 -18px 48px rgba(0,0,0,0.12)',
       }}>
         <div style={{
           display: 'flex',
