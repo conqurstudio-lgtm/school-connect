@@ -20,6 +20,7 @@ import {
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
+import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 
 const T = {
   ink: '#252525',
@@ -1047,45 +1048,7 @@ function LoadingScreen() {
       ...centerPage,
       background: T.white,
     }}>
-      <style>{`
-        @keyframes teacherGentleDot {
-          0%, 100% {
-            transform: translateY(0) scale(0.82);
-            opacity: 0.42;
-          }
-          42% {
-            transform: translateY(-4px) scale(1);
-            opacity: 1;
-          }
-        }
-      `}</style>
-
-      <div
-        aria-label="Loading"
-        role="status"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 7,
-          height: 24,
-        }}
-      >
-        {[0, 1, 2].map((dot) => (
-          <span
-            key={dot}
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: 999,
-              background: dot === 1 ? T.accent : '#DDE7E4',
-              animation: 'teacherGentleDot 1.25s cubic-bezier(0.33, 1, 0.68, 1) infinite',
-              animationDelay: `${dot * 0.16}s`,
-              display: 'block',
-            }}
-          />
-        ))}
-      </div>
+      <SchoolConnectLoader size="md" />
     </main>
   )
 }
