@@ -790,156 +790,139 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </div>
           </section>
 
-          <section style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '14px 15px',
-            borderRadius: 24,
-            background: T.white,
-            border: 'none',
-            marginBottom: 14,
-          }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: T.accentSoft,
-              color: T.accent,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
+          {!hasLearners ? (
+            <section style={{
+              padding: '30px 16px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 20,
+              background: 'transparent',
+              marginBottom: 14,
             }}>
-              <Plus size={17} strokeWidth={1.8} />
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                Add learners
+              <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+                No learners yet
               </p>
-              <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                Build your roster once.
+
+              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: '0 0 15px' }}>
+                Add learners to start weekly reports.
               </p>
-            </div>
 
-            <button type="button" onClick={() => setShowAdd(true)} style={{
-              ...primaryButton,
-              minHeight: 40,
-              padding: '0 15px',
-              flexShrink: 0,
-            }}>
-              Add
-            </button>
-          </section>
-
-          <section style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '14px 15px',
-            borderRadius: 24,
-            background: T.white,
-            border: 'none',
-            marginBottom: 14,
-          }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: T.accentSoft,
-              color: T.accent,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Camera size={17} strokeWidth={1.8} />
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                Private Moments
-              </p>
-              <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                Share private photo/document updates.
-              </p>
-            </div>
-
-            <button type="button" onClick={() => momentFileRef.current?.click()} style={{
-              ...softButton,
-              minHeight: 40,
-              padding: '0 15px',
-              color: T.accent,
-              flexShrink: 0,
-            }}>
-              Add
-            </button>
-          </section>
-
-          <section style={{
-            borderRadius: 24,
-            background: T.white,
-            border: 'none',
-            overflow: 'hidden',
-          }}>
-            <button
-              type="button"
-              onClick={() => setRosterOpen(!rosterOpen)}
-              style={{
-                width: '100%',
+              <button type="button" onClick={() => setShowAdd(true)} style={{
+                ...primaryButton,
+                minHeight: 40,
+                padding: '0 16px',
+              }}>
+                Add
+              </button>
+            </section>
+          ) : (
+            <>
+              <section style={{
+                borderRadius: 24,
                 background: T.white,
                 border: 'none',
-                padding: 15,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 11,
-                cursor: 'pointer',
-                textAlign: 'left',
-                fontFamily: 'inherit',
-              }}
-            >
-              <div style={{
-                width: 38,
-                height: 38,
-                borderRadius: 14,
-                background: T.accentSoft,
-                color: T.accent,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
+                overflow: 'hidden',
+                marginBottom: 14,
               }}>
-                <Users size={18} strokeWidth={1.7} />
-              </div>
+                <div style={{
+                  width: '100%',
+                  background: T.white,
+                  border: 'none',
+                  padding: 15,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 11,
+                  textAlign: 'left',
+                  fontFamily: 'inherit',
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 14,
+                      border: 'none',
+                      background: T.accentSoft,
+                      color: T.accent,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Users size={18} strokeWidth={1.7} />
+                  </button>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-                  Weekly checklist
-                </p>
-                <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                  {children.length === 0 ? 'No learners yet' : `${completedCount}/${children.length} reports sent`}
-                </p>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      textAlign: 'left',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+                      Weekly checklist
+                    </p>
+                    <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+                      {completedCount}/{children.length} reports sent
+                    </p>
+                  </button>
 
-              <ChevronDown
-                size={16}
-                strokeWidth={1.9}
-                style={{
-                  color: T.ink3,
-                  transform: rosterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.16s ease',
-                  flexShrink: 0,
-                }}
-              />
-            </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdd(true)}
+                    style={{
+                      ...softButton,
+                      minHeight: 36,
+                      padding: '0 13px',
+                      color: T.accent,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Add
+                  </button>
 
-            {rosterOpen && (
-              <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
-                {!hasLearners ? (
-                  <EmptyRoster onAdd={() => setShowAdd(true)} />
-                ) : (
-                  <>
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 999,
+                      border: 'none',
+                      background: T.white,
+                      color: T.ink3,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ChevronDown
+                      size={16}
+                      strokeWidth={1.9}
+                      style={{
+                        transform: rosterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.16s ease',
+                      }}
+                    />
+                  </button>
+                </div>
+
+                {rosterOpen && (
+                  <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
                     <ChecklistGroup
                       title="Pending reports"
                       subtitle="Still needs this week’s update."
@@ -957,11 +940,55 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       onOpen={openChild}
                       onDeleted={load}
                     />
-                  </>
+                  </div>
                 )}
-              </div>
-            )}
-          </section>
+              </section>
+
+              <section style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '14px 15px',
+                borderRadius: 24,
+                background: T.white,
+                border: 'none',
+                marginBottom: 14,
+              }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 14,
+                  background: T.accentSoft,
+                  color: T.accent,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Camera size={17} strokeWidth={1.8} />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
+                    Private Moments
+                  </p>
+                  <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                    Share private photo/document updates.
+                  </p>
+                </div>
+
+                <button type="button" onClick={() => momentFileRef.current?.click()} style={{
+                  ...softButton,
+                  minHeight: 40,
+                  padding: '0 15px',
+                  color: T.accent,
+                  flexShrink: 0,
+                }}>
+                  Add
+                </button>
+              </section>
+            </>
+          )}
 
           <p style={{
             fontSize: 10.5,
