@@ -1107,7 +1107,7 @@ function TeacherLearnersPage({
       overflow: 'hidden',
       background: T.white,
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-      color: T.ink,
+      color: '#252525',
     }}>
       <TeacherSafeAreaStyle />
 
@@ -1137,7 +1137,7 @@ function TeacherLearnersPage({
               borderRadius: 999,
               border: 'none',
               background: T.white,
-              color: T.ink2,
+              color: '#252525',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1164,9 +1164,9 @@ function TeacherLearnersPage({
               width: 38,
               height: 38,
               borderRadius: 999,
-              border: 'none',
-              background: 'transparent',
-              color: '#252525',
+              border: '1px solid #252525',
+              background: '#252525',
+              color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1174,7 +1174,7 @@ function TeacherLearnersPage({
               flexShrink: 0,
             }}
           >
-            <Plus size={20} strokeWidth={2.05} />
+            <Plus size={18} strokeWidth={2.05} />
           </button>
         </header>
 
