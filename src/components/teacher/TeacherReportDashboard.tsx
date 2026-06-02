@@ -21,7 +21,6 @@ import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
-import { createPortal } from 'react-dom'
 
 const T = {
   ink: '#252525',
@@ -1333,18 +1332,19 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
-  const [menuOpen, setMenuOpen] = useState(false)
 
   const remove = async () => {
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
     const tid = toast.loading('Removing learner...')
+
     try {
       const res = await fetch(`/api/teacher?id=${encodeURIComponent(child.id)}`, { method: 'DELETE' })
       const json = await res.json().catch(() => ({}))
+
       if (!res.ok) throw new Error(json.error || 'Could not remove learner')
+
       toast.success('Learner removed', { id: tid })
-      setMenuOpen(false)
       onDeleted()
     } catch (e: any) {
       toast.error(e.message || 'Could not remove learner', { id: tid })
@@ -1358,7 +1358,6 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       display: 'flex',
       alignItems: 'center',
       gap: 10,
-      position: 'relative',
     }}>
       <button
         type="button"
@@ -1405,6 +1404,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           }}>
             {child.name}
           </p>
+
           <p style={{
             fontSize: 12.2,
             color: done ? T.green : T.ink3,
@@ -1417,140 +1417,31 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           </p>
         </div>
       </button>
-      <button
-        type="button"
-        onClick={(event) => { event.stopPropagation(); setMenuOpen(true) }}
-        aria-label={`Actions for ${child.name}`}
-        style={{
-          width: 34,
-          height: 34,
-          borderRadius: 999,
-          border: 'none',
-          background: T.white,
-          color: T.ink2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-          fontFamily: 'inherit',
-        }}
-      >
-        <span style={{
-          fontSize: 20,
-          lineHeight: 1,
-          letterSpacing: 1,
-          transform: 'translateY(-1px)',
-        }}>
-          ⋯
-        </span>
+
+      <button type="button" onClick={onOpen} style={{
+        ...softButton,
+        minHeight: 32,
+        padding: '0 12px',
+        fontSize: 12.5,
+      }}>
+        Open
       </button>
 
-      {menuOpen && typeof document !== 'undefined' && createPortal(
-        <>
-          <button
-            type="button"
-            aria-label="Close learner actions"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 20000,
-              border: 'none',
-              background: 'rgba(0,0,0,0.10)',
-              padding: 0,
-              cursor: 'default',
-            }}
-          />
-
-          <div
-            onClick={(event) => event.stopPropagation()}
-            style={{
-              position: 'fixed',
-              left: '50%',
-              bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
-              transform: 'translateX(-50%)',
-              zIndex: 20001,
-              width: 'calc(100% - 32px)',
-              maxWidth: 488,
-              padding: 8,
-              borderRadius: 22,
-              background: T.white,
-              border: `1px solid ${T.border}`,
-              boxShadow: '0 18px 48px rgba(15, 23, 42, 0.16)',
-            }}
-          >
-            <div style={{
-              padding: '8px 10px 10px',
-              borderBottom: `1px solid ${T.border}`,
-              marginBottom: 4,
-            }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {child.name}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setMenuOpen(false)
-                onOpen()
-              }}
-              style={{
-                width: '100%',
-                minHeight: 44,
-                borderRadius: 15,
-                border: 'none',
-                background: T.white,
-                color: T.ink,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                padding: '0 12px',
-                fontSize: 13.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              Send report
-            </button>
-
-            <button
-              type="button"
-              onClick={remove}
-              style={{
-                width: '100%',
-                minHeight: 44,
-                borderRadius: 15,
-                border: 'none',
-                background: T.white,
-                color: T.red,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                padding: '0 12px',
-                fontSize: 13.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              Delete learner
-            </button>
-          </div>
-        </>,
-        document.body
-      )}
-
+      <button type="button" onClick={remove} style={{
+        width: 32,
+        height: 32,
+        borderRadius: 999,
+        border: 'none',
+        background: T.white,
+        color: T.red,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        flexShrink: 0,
+      }}>
+        <Trash2 size={13} strokeWidth={1.8} />
+      </button>
     </article>
   )
 }
