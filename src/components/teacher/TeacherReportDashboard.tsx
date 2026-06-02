@@ -1043,12 +1043,21 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </p>
                 </div>
 
-                <button type="button" onClick={() => momentFileRef.current?.click()} style={{
-                  ...softButton,
+                <button type="button" onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
                   minHeight: 38,
-                  padding: '0 15px',
+                  padding: '0 0 0 14px',
+                  border: 'none',
+                  background: 'transparent',
                   color: T.accent,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  fontSize: 12.5,
+                  fontWeight: 560,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
                   flexShrink: 0,
+                  marginLeft: 'auto',
                 }}>
                   Share
                 </button>
