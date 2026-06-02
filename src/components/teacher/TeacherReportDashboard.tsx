@@ -942,7 +942,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       Weekly checklist
                     </p>
                     <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                      {completedCount}/{children.length} reports sent
+                      View learners and send weekly reports.
                     </p>
                   </button>
 
@@ -978,14 +978,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       flexShrink: 0,
                     }}
                   >
-                    <ChevronDown
-                      size={16}
-                      strokeWidth={1.9}
-                      style={{
-                        transform: rosterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.16s ease',
-                      }}
-                    />
+                    <span style={{
+                        fontSize: 12.5,
+                        fontWeight: 560,
+                        color: T.accent,
+                      }}>
+                        View
+                      </span>
                   </button>
                 </div>
 
