@@ -1182,7 +1182,7 @@ function TeacherLearnersPage({
               padding: 0,
             }}
           >
-            <Plus size={20} strokeWidth={2.05} />
+            <Plus size={20} strokeWidth={2.05} style={{ transform: 'translateY(1px)' }} />
           </button>
         </header>
 
@@ -1437,18 +1437,18 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         </div>
       </button>
 
-      <button type="button" onClick={onOpen} style={{
-        minHeight: 34,
-        padding: '0 13px',
+            <button type="button" onClick={onOpen} style={{
+        minHeight: 32,
+        padding: '0 4px 0 10px',
         borderRadius: 999,
         border: 'none',
-        background: T.soft,
-        color: T.ink2,
+        background: 'transparent',
+        color: '#8FA6A1',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 12.5,
-        fontWeight: 540,
+        fontSize: 12.7,
+        fontWeight: 600,
         fontFamily: 'inherit',
         cursor: 'pointer',
         flexShrink: 0,
