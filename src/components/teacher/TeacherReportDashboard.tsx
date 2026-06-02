@@ -1010,7 +1010,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 )}
               </section>
 
-              <section style={{
+              <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -1019,6 +1019,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 background: T.white,
                 border: 'none',
                 marginBottom: 14,
+                cursor: 'pointer',
               }}>
                 <div style={{
                   width: 38,
@@ -1045,12 +1046,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                 <button type="button" onClick={() => momentFileRef.current?.click()} style={{
                   ...softButton,
-                  minHeight: 40,
+                  minHeight: 38,
                   padding: '0 15px',
                   color: T.accent,
                   flexShrink: 0,
                 }}>
-                  Add
+                  Share
                 </button>
               </section>
             </>
