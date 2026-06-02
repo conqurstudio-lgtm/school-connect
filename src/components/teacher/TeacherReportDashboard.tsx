@@ -1164,10 +1164,9 @@ function TeacherLearnersPage({
               width: 38,
               height: 38,
               borderRadius: 999,
-              border: '1px solid rgba(255,255,255,0.9)',
-              background: '#252525',
-              color: '#FFFFFF',
-              boxShadow: '0 6px 16px rgba(37,37,37,0.12)',
+              border: 'none',
+              background: 'transparent',
+              color: '#252525',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1175,7 +1174,7 @@ function TeacherLearnersPage({
               flexShrink: 0,
             }}
           >
-            <Plus size={17} strokeWidth={2.15} />
+            <Plus size={20} strokeWidth={2.05} />
           </button>
         </header>
 
