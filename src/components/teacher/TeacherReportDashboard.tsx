@@ -37,6 +37,35 @@ const T = {
   green: '#5B8F7F',
 }
 
+const DEFAULT_REPORT_SUBJECTS = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
+
+function normalizeReportSubjects(value: any) {
+  const raw = Array.isArray(value) ? value : DEFAULT_REPORT_SUBJECTS
+  const seen = new Set<string>()
+
+  const subjects = raw
+    .map((item: any) => String(item || '').trim())
+    .filter(Boolean)
+    .map((item: string) => item.slice(0, 40))
+    .filter((item: string) => {
+      const key = item.toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+    .slice(0, 12)
+
+  return subjects.length ? subjects : DEFAULT_REPORT_SUBJECTS
+}
+
+function scoresForSubjects(subjects: string[], existing: Record<string, number> = {}) {
+  return subjects.reduce((acc: Record<string, number>, subject: string) => {
+    const current = Number(existing[subject])
+    acc[subject] = Number.isFinite(current) && current >= 1 && current <= 5 ? current : 3
+    return acc
+  }, {})
+}
+
 function SchoolConnectBackButton({ onClick, label = 'Back' }: any) {
   return (
     <button
@@ -679,6 +708,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   if (activeChild) {
     return (
       <TeacherReportWorkspace
+          teacher={teacher}
         child={activeChild}
         children={children}
         weekStart={weekStart}
@@ -1449,7 +1479,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         </div>
       </button>
 
-            <button type="button" onClick={onOpen} style={{
+      <button type="button" onClick={onOpen} style={{
         minHeight: 32,
         padding: '0 2px 0 10px',
         borderRadius: 999,
@@ -1523,15 +1553,11 @@ function ReportLinkedSafeAreaStyle() {
   )
 }
 
-function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, onNext }: any) {
-  const subjects = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
+function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, onSaved, onNext }: any) {
+  const subjects = normalizeReportSubjects(teacher?.report_subjects)
+  const subjectsKey = subjects.join('|')
   const [week, setWeek] = useState(weekStart)
-  const [scores, setScores] = useState<Record<string, number>>({
-    Mathematics: 3,
-    English: 3,
-    'Life Skills': 3,
-    Behaviour: 3,
-  })
+  const [scores, setScores] = useState<Record<string, number>>(() => scoresForSubjects(subjects))
   const [comment, setComment] = useState('')
   const [saving, setSaving] = useState(false)
   const [magicLink, setMagicLink] = useState('')
@@ -1540,7 +1566,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
 
   useEffect(() => {
     setWeek(weekStart)
-    setScores({ Mathematics: 3, English: 3, 'Life Skills': 3, Behaviour: 3 })
+    setScores(scoresForSubjects(subjects))
     setComment('')
     setMagicLink('')
     setHistoryLoading(true)
@@ -1553,7 +1579,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
       })
       .catch(() => setHistory([]))
       .finally(() => setHistoryLoading(false))
-  }, [child.id, weekStart])
+  }, [child.id, weekStart, subjectsKey])
 
   const submit = async () => {
     if (saving) return
@@ -1684,7 +1710,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
                       {subject}
                     </span>
                     <span style={{ fontSize: 13, fontWeight: 540, color: T.ink3 }}>
-                      {scores[subject]}/5
+                      {scores[subject] || 3}/5
                     </span>
                   </div>
 
@@ -1872,6 +1898,53 @@ function HistoryCard({ report }: any) {
 function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut, onPhotoSelected }: any) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
+  const [showReportSubjects, setShowReportSubjects] = useState(false)
+  const [reportSubjects, setReportSubjects] = useState<string[]>(() => normalizeReportSubjects(teacher?.report_subjects))
+  const [savingReportSubjects, setSavingReportSubjects] = useState(false)
+
+  const updateReportSubject = (index: number, value: string) => {
+    setReportSubjects(current => current.map((subject, subjectIndex) => subjectIndex === index ? value : subject))
+  }
+
+  const addReportSubject = () => {
+    setReportSubjects(current => current.length >= 12 ? current : [...current, ''])
+  }
+
+  const removeReportSubject = (index: number) => {
+    setReportSubjects(current => current.filter((_, subjectIndex) => subjectIndex !== index))
+  }
+
+  const resetReportSubjects = () => {
+    setReportSubjects(DEFAULT_REPORT_SUBJECTS)
+  }
+
+  const saveReportSubjects = async () => {
+    if (savingReportSubjects) return
+
+    const subjects = normalizeReportSubjects(reportSubjects)
+
+    setSavingReportSubjects(true)
+    const tid = toast.loading('Saving subjects...')
+
+    try {
+      const res = await fetch('/api/teacher/report-subjects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subjects }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not save subjects')
+
+      setReportSubjects(json.report_subjects || subjects)
+      onUpdated?.(json.teacher || { ...teacher, report_subjects: json.report_subjects || subjects })
+      toast.success('Report subjects saved', { id: tid })
+    } catch (e: any) {
+      toast.error(e.message || 'Could not save subjects', { id: tid })
+    }
+
+    setSavingReportSubjects(false)
+  }
 
   const handlePhoto = async (event: any) => {
     const file = event.target.files?.[0]
