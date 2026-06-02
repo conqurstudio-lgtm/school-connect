@@ -1419,12 +1419,22 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       </button>
 
       <button type="button" onClick={onOpen} style={{
-        ...softButton,
-        minHeight: 32,
-        padding: '0 12px',
+        minHeight: 34,
+        padding: '0 13px',
+        borderRadius: 999,
+        border: 'none',
+        background: T.soft,
+        color: T.ink2,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         fontSize: 12.5,
+        fontWeight: 540,
+        fontFamily: 'inherit',
+        cursor: 'pointer',
+        flexShrink: 0,
       }}>
-        Open
+        Report
       </button>
 
       <button type="button" onClick={remove} style={{
