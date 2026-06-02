@@ -1300,7 +1300,7 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         gap: 10,
         padding: '4px 0 2px',
       }}>
@@ -1314,21 +1314,6 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
             {title}
           </p>
         </div>
-
-        <span style={{
-          minWidth: 26,
-          height: 24,
-          borderRadius: 999,
-          background: T.soft,
-          color: T.ink3,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12,
-          fontWeight: 560,
-        }}>
-          {items.length}
-        </span>
       </div>
 
       {items.map((child: any, index: number) => (
