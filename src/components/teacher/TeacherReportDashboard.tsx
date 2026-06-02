@@ -1408,6 +1408,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            lineHeight: 1.15,
           }}>
             {child.name}
           </p>
@@ -1415,7 +1416,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           <p style={{
             fontSize: 12.2,
             color: done ? T.green : T.ink3,
-            margin: '2px 0 0',
+            margin: '0px 0 0',
+            lineHeight: 1.15,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
