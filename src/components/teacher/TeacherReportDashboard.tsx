@@ -1152,10 +1152,9 @@ function TeacherLearnersPage({
             type="button"
             onClick={onAdd}
             style={{
-              ...softButton,
-              minHeight: 36,
-              padding: '0 13px',
-              color: T.accent,
+              ...primaryButton,
+              minHeight: 38,
+              padding: '0 15px',
               flexShrink: 0,
             }}
           >
@@ -1171,47 +1170,19 @@ function TeacherLearnersPage({
           padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.white,
         }}>
-          <section style={{ padding: '18px 0 14px' }}>
-            <p style={{
-              fontSize: 11.5,
-              color: T.ink3,
-              margin: '0 0 7px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              fontWeight: 560,
-            }}>
-              Weekly checklist
-            </p>
-
+          <section style={{
+            padding: '18px 0 24px',
+          }}>
             <h1 style={{
-              fontSize: 24,
-              lineHeight: 1.08,
+              fontSize: 26,
+              lineHeight: 1.05,
               fontWeight: 560,
-              letterSpacing: '-0.045em',
+              letterSpacing: '-0.05em',
               color: T.ink,
-              margin: '0 0 7px',
-            }}>
-              Reports & learners
-            </h1>
-
-            <p style={{
-              fontSize: 13,
-              color: T.ink3,
-              lineHeight: 1.45,
               margin: 0,
             }}>
-              {school?.name || 'School'} · {classLabel}
-            </p>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 9,
-              marginTop: 16,
-            }}>
-              <MiniStat label="Sent" value={completedCount} />
-              <MiniStat label="Pending" value={pendingCount} />
-            </div>
+              Reports
+            </h1>
           </section>
 
           {!hasLearners ? (
@@ -1221,7 +1192,7 @@ function TeacherLearnersPage({
               border: `1px dashed ${T.border}`,
               borderRadius: 20,
               background: 'transparent',
-              marginTop: 4,
+              marginTop: 0,
             }}>
               <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
                 No learners yet
@@ -1233,8 +1204,8 @@ function TeacherLearnersPage({
 
               <button type="button" onClick={onAdd} style={{
                 ...primaryButton,
-                minHeight: 40,
-                padding: '0 16px',
+                minHeight: 42,
+                padding: '0 18px',
               }}>
                 Add
               </button>
