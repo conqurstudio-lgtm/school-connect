@@ -37,6 +37,40 @@ const T = {
   green: '#5B8F7F',
 }
 
+function SchoolConnectBackButton({ onClick, label = 'Back' }: any) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      style={{
+        width: 38,
+        height: 38,
+        borderRadius: 999,
+        border: 'none',
+        background: 'transparent',
+        color: '#252525',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        flexShrink: 0,
+        padding: 0,
+      }}
+    >
+      <span style={{
+        width: 13,
+        height: 13,
+        borderLeft: '2.6px solid currentColor',
+        borderBottom: '2.6px solid currentColor',
+        borderRadius: 1.5,
+        transform: 'rotate(45deg) translate(1px, -1px)',
+        display: 'block',
+      }} />
+    </button>
+  )
+}
+
 function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   const [zoom, setZoom] = useState(1.18)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -1127,34 +1161,7 @@ function TeacherLearnersPage({
           justifyContent: 'space-between',
           background: 'transparent',
         }}>
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Back"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: 'none',
-              background: T.white,
-              color: '#252525',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <span style={{
-              width: 13,
-              height: 13,
-              borderLeft: '2.6px solid currentColor',
-              borderBottom: '2.6px solid currentColor',
-              borderRadius: 1.5,
-              transform: 'rotate(45deg) translate(1px, -1px)',
-              display: 'block',
-            }} />
-          </button>
+          <SchoolConnectBackButton onClick={onBack} />
 
           <button
             type="button"
@@ -1600,21 +1607,7 @@ function TeacherReportWorkspace({ child, children, weekStart, onBack, onSaved, o
           background: T.white,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button type="button" onClick={onBack} style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: '#FFFFFF',
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}>
-              <ArrowLeft size={16} />
-            </button>
+            <SchoolConnectBackButton onClick={onBack} />
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{
