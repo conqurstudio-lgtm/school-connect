@@ -1036,10 +1036,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                    Private Moments
+                    Broadcast update
                   </p>
                   <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                    Share private photo/document updates.
+                    Share a class update, photo, or document.
                   </p>
                 </div>
 
