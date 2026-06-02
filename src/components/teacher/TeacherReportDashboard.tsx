@@ -1454,26 +1454,46 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
             style={{
               position: 'fixed',
               inset: 0,
-              zIndex: 8998,
+              zIndex: 9997,
               border: 'none',
-              background: 'transparent',
+              background: 'rgba(0,0,0,0.08)',
               padding: 0,
               cursor: 'default',
             }}
           />
 
           <div style={{
-            position: 'absolute',
-            right: 0,
-            top: 42,
-            zIndex: 8999,
-            width: 178,
-            padding: 6,
-            borderRadius: 18,
+            position: 'fixed',
+            left: '50%',
+            bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+            transform: 'translateX(-50%)',
+            zIndex: 9998,
+            width: 'calc(100% - 32px)',
+            maxWidth: 488,
+            padding: 8,
+            borderRadius: 22,
             background: T.white,
             border: `1px solid ${T.border}`,
-            boxShadow: '0 18px 42px rgba(15, 23, 42, 0.12)',
+            boxShadow: '0 18px 48px rgba(15, 23, 42, 0.16)',
           }}>
+            <div style={{
+              padding: '8px 10px 10px',
+              borderBottom: `1px solid ${T.border}`,
+              marginBottom: 4,
+            }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {child.name}
+              </p>
+            </div>
+
             <button
               type="button"
               onClick={() => {
@@ -1482,8 +1502,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
               }}
               style={{
                 width: '100%',
-                minHeight: 40,
-                borderRadius: 14,
+                minHeight: 44,
+                borderRadius: 15,
                 border: 'none',
                 background: T.white,
                 color: T.ink,
@@ -1491,7 +1511,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 padding: '0 12px',
-                fontSize: 13,
+                fontSize: 13.5,
                 fontWeight: 520,
                 fontFamily: 'inherit',
                 cursor: 'pointer',
@@ -1505,8 +1525,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
               onClick={remove}
               style={{
                 width: '100%',
-                minHeight: 40,
-                borderRadius: 14,
+                minHeight: 44,
+                borderRadius: 15,
                 border: 'none',
                 background: T.white,
                 color: T.red,
@@ -1514,7 +1534,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 padding: '0 12px',
-                fontSize: 13,
+                fontSize: 13.5,
                 fontWeight: 520,
                 fontFamily: 'inherit',
                 cursor: 'pointer',
