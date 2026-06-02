@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
+import { createPortal } from 'react-dom'
 
 const T = {
   ink: '#252525',
@@ -1418,7 +1419,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       </button>
       <button
         type="button"
-        onClick={() => setMenuOpen(true)}
+        onClick={(event) => { event.stopPropagation(); setMenuOpen(true) }}
         aria-label={`Actions for ${child.name}`}
         style={{
           width: 34,
@@ -1445,7 +1446,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         </span>
       </button>
 
-      {menuOpen && (
+      {menuOpen && typeof document !== 'undefined' && createPortal(
         <>
           <button
             type="button"
@@ -1454,28 +1455,31 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
             style={{
               position: 'fixed',
               inset: 0,
-              zIndex: 9997,
+              zIndex: 20000,
               border: 'none',
-              background: 'rgba(0,0,0,0.08)',
+              background: 'rgba(0,0,0,0.10)',
               padding: 0,
               cursor: 'default',
             }}
           />
 
-          <div style={{
-            position: 'fixed',
-            left: '50%',
-            bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
-            transform: 'translateX(-50%)',
-            zIndex: 9998,
-            width: 'calc(100% - 32px)',
-            maxWidth: 488,
-            padding: 8,
-            borderRadius: 22,
-            background: T.white,
-            border: `1px solid ${T.border}`,
-            boxShadow: '0 18px 48px rgba(15, 23, 42, 0.16)',
-          }}>
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              position: 'fixed',
+              left: '50%',
+              bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
+              transform: 'translateX(-50%)',
+              zIndex: 20001,
+              width: 'calc(100% - 32px)',
+              maxWidth: 488,
+              padding: 8,
+              borderRadius: 22,
+              background: T.white,
+              border: `1px solid ${T.border}`,
+              boxShadow: '0 18px 48px rgba(15, 23, 42, 0.16)',
+            }}
+          >
             <div style={{
               padding: '8px 10px 10px',
               borderBottom: `1px solid ${T.border}`,
@@ -1543,8 +1547,10 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
               Delete learner
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
+
     </article>
   )
 }
