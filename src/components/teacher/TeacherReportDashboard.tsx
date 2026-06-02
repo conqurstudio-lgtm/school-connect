@@ -1159,24 +1159,14 @@ function TeacherLearnersPage({
           <button
             type="button"
             onClick={onAdd}
-            aria-label="Add learner"
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: '1px solid #252525',
-              background: '#252525',
-              color: '#FFFFFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
+              ...primaryButton,
+              minHeight: 36,
+              padding: '0 15px',
               flexShrink: 0,
-              alignSelf: 'center',
-              lineHeight: 0,
             }}
           >
-            <Plus size={15} strokeWidth={2.05} />
+            Add
           </button>
         </header>
 
