@@ -1160,6 +1160,7 @@ function TeacherLearnersPage({
           alignItems: 'center',
           justifyContent: 'space-between',
           background: 'transparent',
+          minHeight: 42,
         }}>
           <SchoolConnectBackButton onClick={onBack} />
 
@@ -1180,9 +1181,11 @@ function TeacherLearnersPage({
               cursor: 'pointer',
               flexShrink: 0,
               padding: 0,
+              alignSelf: 'center',
+              transform: 'translateY(1px)',
             }}
           >
-            <Plus size={20} strokeWidth={2.05} style={{ transform: 'translateY(1px)' }} />
+            <Plus size={20} strokeWidth={2.05} />
           </button>
         </header>
 
