@@ -429,6 +429,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [photoDraft, setPhotoDraft] = useState<any>(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showTeacherMoments, setShowTeacherMoments] = useState(false)
+  const [showLearnersPage, setShowLearnersPage] = useState(false)
   const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0 })
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement>(null)
@@ -661,6 +662,39 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     )
   }
 
+  if (showLearnersPage) {
+    return (
+      <>
+        <TeacherLearnersPage
+          teacher={teacher}
+          school={school}
+          classLabel={classLabel}
+          children={children}
+          completedCount={completedCount}
+          pendingCount={pendingCount}
+          pendingChildren={pendingChildren}
+          sentChildren={sentChildren}
+          weekStart={weekStart}
+          onBack={() => setShowLearnersPage(false)}
+          onAdd={() => setShowAdd(true)}
+          onOpen={openChild}
+          onDeleted={load}
+        />
+
+        {showAdd && (
+          <AddLearnerSheet
+            onClose={() => setShowAdd(false)}
+            onCreated={() => {
+              setShowAdd(false)
+              setShowLearnersPage(true)
+              load()
+            }}
+          />
+        )}
+      </>
+    )
+  }
+
   return (
     <div className="teacher-safe-screen" style={{
       minHeight: '100dvh',
@@ -837,7 +871,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 }}>
                   <button
                     type="button"
-                    onClick={() => setRosterOpen(!rosterOpen)}
+                    onClick={() => setShowLearnersPage(true)}
                     aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
                     style={{
                       width: 38,
@@ -858,7 +892,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                   <button
                     type="button"
-                    onClick={() => setRosterOpen(!rosterOpen)}
+                    onClick={() => setShowLearnersPage(true)}
                     style={{
                       flex: 1,
                       minWidth: 0,
@@ -894,7 +928,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                   <button
                     type="button"
-                    onClick={() => setRosterOpen(!rosterOpen)}
+                    onClick={() => setShowLearnersPage(true)}
                     aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
                     style={{
                       width: 34,
@@ -921,7 +955,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </button>
                 </div>
 
-                {rosterOpen && (
+                {false && rosterOpen && (
                   <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
                     <ChecklistGroup
                       title="Pending reports"
@@ -1023,7 +1057,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           onClose={() => setShowAdd(false)}
           onCreated={() => {
             setShowAdd(false)
-            setRosterOpen(true)
+            setShowLearnersPage(true)
             load()
           }}
         />
@@ -1045,6 +1079,194 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           onPhotoSelected={handleTeacherPhotoSelected}
         />
       )}
+    </div>
+  )
+}
+
+function TeacherLearnersPage({
+  teacher,
+  school,
+  classLabel,
+  children,
+  completedCount,
+  pendingCount,
+  pendingChildren,
+  sentChildren,
+  weekStart,
+  onBack,
+  onAdd,
+  onOpen,
+  onDeleted,
+}: any) {
+  const hasLearners = children?.length > 0
+
+  return (
+    <div className="teacher-safe-screen" style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.white,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      <TeacherSafeAreaStyle />
+
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.white,
+      }}>
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'transparent',
+        }}>
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Back"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: 'none',
+              background: T.white,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <ArrowLeft size={17} strokeWidth={2.05} />
+          </button>
+
+          <button
+            type="button"
+            onClick={onAdd}
+            style={{
+              ...softButton,
+              minHeight: 36,
+              padding: '0 13px',
+              color: T.accent,
+              flexShrink: 0,
+            }}
+          >
+            Add
+          </button>
+        </header>
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.white,
+        }}>
+          <section style={{ padding: '18px 0 14px' }}>
+            <p style={{
+              fontSize: 11.5,
+              color: T.ink3,
+              margin: '0 0 7px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              fontWeight: 560,
+            }}>
+              Weekly checklist
+            </p>
+
+            <h1 style={{
+              fontSize: 24,
+              lineHeight: 1.08,
+              fontWeight: 560,
+              letterSpacing: '-0.045em',
+              color: T.ink,
+              margin: '0 0 7px',
+            }}>
+              Reports & learners
+            </h1>
+
+            <p style={{
+              fontSize: 13,
+              color: T.ink3,
+              lineHeight: 1.45,
+              margin: 0,
+            }}>
+              {school?.name || 'School'} · {classLabel}
+            </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 9,
+              marginTop: 16,
+            }}>
+              <MiniStat label="Sent" value={completedCount} />
+              <MiniStat label="Pending" value={pendingCount} />
+            </div>
+          </section>
+
+          {!hasLearners ? (
+            <section style={{
+              padding: '30px 16px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 20,
+              background: 'transparent',
+              marginTop: 4,
+            }}>
+              <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+                No learners yet
+              </p>
+
+              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: '0 0 15px' }}>
+                Add learners to start weekly reports.
+              </p>
+
+              <button type="button" onClick={onAdd} style={{
+                ...primaryButton,
+                minHeight: 40,
+                padding: '0 16px',
+              }}>
+                Add
+              </button>
+            </section>
+          ) : (
+            <section style={{
+              borderRadius: 24,
+              background: T.white,
+              border: 'none',
+              overflow: 'hidden',
+            }}>
+              <div style={{ padding: '4px 15px 12px' }}>
+                <ChecklistGroup
+                  title="Pending reports"
+                  items={pendingChildren}
+                  weekStart={weekStart}
+                  onOpen={onOpen}
+                  onDeleted={onDeleted}
+                />
+
+                <ChecklistGroup
+                  title="Sent reports"
+                  items={sentChildren}
+                  weekStart={weekStart}
+                  onOpen={onOpen}
+                  onDeleted={onDeleted}
+                />
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
