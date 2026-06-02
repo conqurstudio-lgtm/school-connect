@@ -1357,6 +1357,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       display: 'flex',
       alignItems: 'center',
       gap: 10,
+      position: 'relative',
     }}>
       <button
         type="button"
@@ -1445,17 +1446,33 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       </button>
 
       {menuOpen && (
-        <BottomSheet onClose={() => setMenuOpen(false)}>
-          <SheetHeader
-            title={child.name}
-            subtitle="Learner actions"
-            onClose={() => setMenuOpen(false)}
+        <>
+          <button
+            type="button"
+            aria-label="Close learner actions"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 8998,
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              cursor: 'default',
+            }}
           />
 
           <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
+            position: 'absolute',
+            right: 0,
+            top: 42,
+            zIndex: 8999,
+            width: 178,
+            padding: 6,
+            borderRadius: 18,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            boxShadow: '0 18px 42px rgba(15, 23, 42, 0.12)',
           }}>
             <button
               type="button"
@@ -1464,13 +1481,20 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
                 onOpen()
               }}
               style={{
-                ...softButton,
                 width: '100%',
-                height: 44,
-                justifyContent: 'flex-start',
+                minHeight: 40,
+                borderRadius: 14,
                 border: 'none',
                 background: T.white,
                 color: T.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                padding: '0 12px',
+                fontSize: 13,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
               }}
             >
               Send report
@@ -1480,19 +1504,26 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
               type="button"
               onClick={remove}
               style={{
-                ...softButton,
                 width: '100%',
-                height: 44,
-                justifyContent: 'flex-start',
+                minHeight: 40,
+                borderRadius: 14,
                 border: 'none',
                 background: T.white,
                 color: T.red,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                padding: '0 12px',
+                fontSize: 13,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
               }}
             >
               Delete learner
             </button>
           </div>
-        </BottomSheet>
+        </>
       )}
     </article>
   )
