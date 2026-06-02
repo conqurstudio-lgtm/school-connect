@@ -1132,12 +1132,12 @@ function TeacherLearnersPage({
             onClick={onBack}
             aria-label="Back"
             style={{
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               borderRadius: 999,
               border: 'none',
               background: T.white,
-              color: T.ink2,
+              color: T.ink,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1145,20 +1145,36 @@ function TeacherLearnersPage({
               flexShrink: 0,
             }}
           >
-            <ArrowLeft size={17} strokeWidth={2.05} />
+            <span style={{
+              width: 15,
+              height: 15,
+              borderLeft: '4px solid currentColor',
+              borderBottom: '4px solid currentColor',
+              borderRadius: 2,
+              transform: 'rotate(45deg) translate(1px, -1px)',
+              display: 'block',
+            }} />
           </button>
 
           <button
             type="button"
             onClick={onAdd}
+            aria-label="Add learner"
             style={{
-              ...primaryButton,
-              minHeight: 38,
-              padding: '0 15px',
+              width: 38,
+              height: 38,
+              borderRadius: 999,
+              border: 'none',
+              background: T.primary,
+              color: T.white,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
               flexShrink: 0,
             }}
           >
-            Add
+            <Plus size={17} strokeWidth={2.15} />
           </button>
         </header>
 
