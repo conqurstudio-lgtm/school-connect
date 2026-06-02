@@ -1439,7 +1439,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
             <button type="button" onClick={onOpen} style={{
         minHeight: 32,
-        padding: '0 4px 0 10px',
+        padding: '0 2px 0 10px',
         borderRadius: 999,
         border: 'none',
         background: 'transparent',
@@ -1447,8 +1447,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: 12.7,
-        fontWeight: 600,
+        fontSize: 12.4,
+        fontWeight: 520,
         fontFamily: 'inherit',
         cursor: 'pointer',
         flexShrink: 0,
