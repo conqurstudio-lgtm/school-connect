@@ -942,7 +942,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       Weekly checklist
                     </p>
                     <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                      View learners and send weekly reports.
+                      Send weekly reports.
                     </p>
                   </button>
 
@@ -1039,7 +1039,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     Broadcast update
                   </p>
                   <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                    Share a class update, photo, or document.
+                    Class updates, photos and documents.
                   </p>
                 </div>
 
