@@ -1303,13 +1303,13 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
   if (!items?.length) return null
 
   return (
-    <div style={{ marginTop: 10 }}>
+    <div style={{ marginTop: 16 }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
         gap: 10,
-        padding: '4px 0 2px',
+        padding: '4px 0 10px',
       }}>
         <div>
           <p style={{
@@ -1360,7 +1360,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
   return (
     <article style={{
-      padding: '12px 0',
+      padding: '13px 0',
+      marginBottom: isLast ? 0 : 7,
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
