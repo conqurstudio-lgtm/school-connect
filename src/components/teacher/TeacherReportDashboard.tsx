@@ -925,7 +925,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
                     <ChecklistGroup
                       title="Pending reports"
-                      subtitle="Still needs this week’s update."
                       items={pendingChildren}
                       weekStart={weekStart}
                       onOpen={openChild}
@@ -934,7 +933,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                     <ChecklistGroup
                       title="Sent reports"
-                      subtitle="Already sent this week."
                       items={sentChildren}
                       weekStart={weekStart}
                       onOpen={openChild}
@@ -1093,7 +1091,7 @@ function EmptyRoster({ onAdd }: any) {
   )
 }
 
-function ChecklistGroup({ title, subtitle, items, weekStart, onOpen, onDeleted }: any) {
+function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
   if (!items?.length) return null
 
   return (
@@ -1113,13 +1111,6 @@ function ChecklistGroup({ title, subtitle, items, weekStart, onOpen, onDeleted }
             margin: 0,
           }}>
             {title}
-          </p>
-          <p style={{
-            fontSize: 11.8,
-            color: T.ink3,
-            margin: '2px 0 0',
-          }}>
-            {subtitle}
           </p>
         </div>
 
