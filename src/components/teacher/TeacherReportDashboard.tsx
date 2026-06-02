@@ -1332,6 +1332,7 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const remove = async () => {
     if (!confirm(`Remove ${child.name} from your roster?`)) return
@@ -1342,6 +1343,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not remove learner')
       toast.success('Learner removed', { id: tid })
+      setMenuOpen(false)
       onDeleted()
     } catch (e: any) {
       toast.error(e.message || 'Could not remove learner', { id: tid })
@@ -1413,31 +1415,85 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           </p>
         </div>
       </button>
-
-      <button type="button" onClick={onOpen} style={{
-        ...softButton,
-        minHeight: 32,
-        padding: '0 12px',
-        fontSize: 12.5,
-      }}>
-        Open
+      <button
+        type="button"
+        onClick={() => setMenuOpen(true)}
+        aria-label={`Actions for ${child.name}`}
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: 999,
+          border: 'none',
+          background: T.white,
+          color: T.ink2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          flexShrink: 0,
+          fontFamily: 'inherit',
+        }}
+      >
+        <span style={{
+          fontSize: 20,
+          lineHeight: 1,
+          letterSpacing: 1,
+          transform: 'translateY(-1px)',
+        }}>
+          ⋯
+        </span>
       </button>
 
-      <button type="button" onClick={remove} style={{
-        width: 32,
-        height: 32,
-        borderRadius: 999,
-        border: 'none',
-        background: T.white,
-        color: T.red,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        flexShrink: 0,
-      }}>
-        <Trash2 size={13} strokeWidth={1.8} />
-      </button>
+      {menuOpen && (
+        <BottomSheet onClose={() => setMenuOpen(false)}>
+          <SheetHeader
+            title={child.name}
+            subtitle="Learner actions"
+            onClose={() => setMenuOpen(false)}
+          />
+
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+          }}>
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false)
+                onOpen()
+              }}
+              style={{
+                ...softButton,
+                width: '100%',
+                height: 44,
+                justifyContent: 'flex-start',
+                border: 'none',
+                background: T.white,
+                color: T.ink,
+              }}
+            >
+              Send report
+            </button>
+
+            <button
+              type="button"
+              onClick={remove}
+              style={{
+                ...softButton,
+                width: '100%',
+                height: 44,
+                justifyContent: 'flex-start',
+                border: 'none',
+                background: T.white,
+                color: T.red,
+              }}
+            >
+              Delete learner
+            </button>
+          </div>
+        </BottomSheet>
+      )}
     </article>
   )
 }
