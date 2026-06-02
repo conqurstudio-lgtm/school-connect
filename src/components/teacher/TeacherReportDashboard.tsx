@@ -1428,7 +1428,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
           <p style={{
             fontSize: 12.2,
-            color: done ? T.green : T.ink3,
+            color: done ? '#8FA6A1' : T.ink3,
             margin: '0px 0 0',
             lineHeight: 1.15,
             whiteSpace: 'nowrap',
