@@ -143,6 +143,984 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         padding: 16,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 14 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: T.ink, margin: 0 }}>
+            Adjust profile photo
+          </p>
+          <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
+            Zoom and drag until it fits the square.
+          </p>
+        </div>
+
+        <div
+          style={{
+            width: cropSize,
+            height: cropSize,
+            borderRadius: 32,
+            overflow: 'hidden',
+            margin: '0 auto',
+            background: T.soft,
+            border: `1px dashed ${T.border}`,
+            position: 'relative',
+            touchAction: 'none',
+            cursor: 'grab',
+          }}
+          onPointerDown={startDrag}
+          onPointerMove={moveDrag}
+          onPointerUp={stopDrag}
+          onPointerCancel={stopDrag}
+        >
+          <img
+            src={draft.previewUrl}
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
+              transformOrigin: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
+            <button type="button" onClick={() => {
+              setZoom(1.18)
+              setOffset({ x: 0, y: 0 })
+            }} style={{
+              minHeight: 44,
+              border: 'none',
+              background: T.soft,
+              color: T.ink2,
+              borderRadius: 999,
+              padding: '6px 10px',
+              fontSize: 12,
+              fontWeight: 540,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}>
+              Reset
+            </button>
+          </div>
+
+          <input
+            type="range"
+            min="1"
+            max="2.8"
+            step="0.01"
+            value={zoom}
+            onChange={(event) => setZoom(Number(event.target.value))}
+            style={{ width: '100%' }}
+          />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 16 }}>
+          <button type="button" onClick={onCancel} disabled={false} style={{
+            ...softButton,
+            minHeight: 44,
+            opacity: uploading ? 0.65 : 1,
+          }}>
+            Cancel
+          </button>
+
+          <button type="button" onClick={apply} disabled={false} style={{
+              minHeight: 44,
+            ...primaryButton,
+            minHeight: 44,
+            opacity: uploading ? 0.65 : 1,
+          }}>
+            {uploading ? 'Saving...' : 'Apply photo'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TeacherSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body,
+      #__next,
+      [data-nextjs-root] {
+        background: #FFFFFF !important;
+      }
+
+      body {
+        margin: 0;
+        overscroll-behavior-y: none;
+      }
+
+      .teacher-safe-screen {
+        background: #FFFFFF !important;
+        isolation: isolate;
+      }
+
+      .teacher-safe-screen::before,
+      .teacher-safe-screen::after {
+        content: '';
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .teacher-safe-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
+
+      .teacher-safe-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
+    `}</style>
+  )
+}
+
+const inputStyle: any = {
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '12px 13px',
+  borderRadius: 14,
+  border: `1px solid ${T.border}`,
+  background: T.white,
+  color: T.ink,
+  fontSize: 16,
+  outline: 'none',
+  fontFamily: 'inherit',
+}
+
+const labelStyle: any = {
+  display: 'block',
+  fontSize: 11,
+  fontWeight: 600,
+  color: T.ink3,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  margin: '0 0 6px',
+}
+
+const primaryButton: any = {
+  minHeight: 42,
+  borderRadius: 999,
+  border: 'none',
+  background: T.ink,
+  color: T.white,
+  fontSize: 13,
+  fontWeight: 560,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  padding: '0 15px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+const darkButton: any = {
+  ...primaryButton,
+  background: T.ink,
+}
+
+const softButton: any = {
+  minHeight: 38,
+  borderRadius: 999,
+  border: 'none',
+  background: T.white,
+  color: T.ink2,
+  fontSize: 13,
+  fontWeight: 540,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 7,
+  padding: '0 13px',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+}
+
+function initials(name?: string) {
+  return String(name || '?')
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+}
+
+function weekStartToday() {
+  const d = new Date()
+  const day = d.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + diff)
+  d.setHours(0, 0, 0, 0)
+  return d.toISOString().slice(0, 10)
+}
+
+function formatShortDate(value?: string | null) {
+  if (!value) return 'No report yet'
+  try {
+    return new Date(value).toLocaleDateString('en-ZA', {
+      month: 'short',
+      day: 'numeric',
+    })
+  } catch {
+    return 'No report yet'
+  }
+}
+
+function formatWeek(value?: string | null) {
+  if (!value) return 'No week'
+  try {
+    return new Date(value).toLocaleDateString('en-ZA', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    })
+  } catch {
+    return String(value)
+  }
+}
+
+function blobToDataUrl(blob: Blob) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result || ''))
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
+function isMarkedThisWeek(child: any, weekStart: string) {
+  return child.latest_week_starting === weekStart
+}
+
+function averageScore(scores: any) {
+  const values = Object.values(scores || {}).map(Number).filter(n => Number.isFinite(n))
+  if (!values.length) return null
+  return values.reduce((sum, n) => sum + n, 0) / values.length
+}
+
+export function TeacherReportDashboard({ initialSession = null, initialToken = '' }: any) {
+  const [session, setSession] = useState(initialSession)
+  const [loading, setLoading] = useState(!initialSession)
+  const [showAdd, setShowAdd] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [photoDraft, setPhotoDraft] = useState<any>(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [showTeacherMoments, setShowTeacherMoments] = useState(false)
+  const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0 })
+  const [momentDraft, setMomentDraft] = useState<any>(null)
+  const momentFileRef = useRef<HTMLInputElement>(null)
+  const [activeChild, setActiveChild] = useState<any>(null)
+  const [rosterOpen, setRosterOpen] = useState(false)
+  const [weekStart, setWeekStart] = useState(weekStartToday())
+
+  const cancelTeacherPhotoAdjust = () => {
+    if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+    setPhotoDraft(null)
+  }
+
+  const handleTeacherPhotoSelected = async (file: File) => {
+    if (!file) return
+
+    setShowSettings(false)
+
+    if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+
+    const previewUrl = URL.createObjectURL(file)
+    setPhotoDraft({ file, previewUrl })
+  }
+
+  const uploadAdjustedTeacherPhoto = async (blob: Blob) => {
+    setUploadingPhoto(true)
+
+    try {
+      // The teacher profile-photo API expects a valid image data URL.
+      // Send the adjusted canvas blob directly as a JPEG data URL.
+      const jpegBlob = blob.type === 'image/jpeg'
+        ? blob
+        : new Blob([blob], { type: 'image/jpeg' })
+
+      const dataUrl = await blobToDataUrl(jpegBlob)
+
+      if (!dataUrl.startsWith('data:image/')) {
+        throw new Error('Invalid photo file')
+      }
+
+      const res = await fetch('/api/teacher/profile-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data_url: dataUrl, content_type: 'image/jpeg' }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+
+      if (!res.ok) throw new Error(json.error || 'Could not update photo')
+
+      setSession((current: any) => {
+        if (!current) return current
+
+        return {
+          ...current,
+          teacher: {
+            ...current.teacher,
+            photo_url: json.photo_url,
+          },
+        }
+      })
+
+      if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
+      setPhotoDraft(null)
+      toast.success('Profile photo updated')
+    } catch (error: any) {
+      toast.error(error.message || 'Could not update photo')
+    } finally {
+      setUploadingPhoto(false)
+    }
+  }
+
+  const loadStatuses = async (children: any[]) => {
+    try {
+      const res = await fetch('/api/teacher/report-status', { cache: 'no-store' })
+      const json = await res.json().catch(() => ({}))
+      const latest = json.latestByChild || {}
+
+      return children.map((child: any) => ({
+        ...child,
+        ...(latest[child.id] || {}),
+      }))
+    } catch {
+      return children
+    }
+  }
+
+  const load = async () => {
+    try {
+      const url = initialToken
+        ? `/api/teacher-session?token=${encodeURIComponent(initialToken)}`
+        : '/api/teacher-session'
+
+      const res = await fetch(url, { cache: 'no-store' })
+      const json = await res.json().catch(() => ({}))
+
+      if (!res.ok || !json.teacher?.id) {
+        setSession(null)
+        return
+      }
+
+      const mergedChildren = await loadStatuses(json.children || [])
+
+      setSession({
+        ...json,
+        children: mergedChildren,
+      })
+
+      loadMomentSummary()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const signOut = async () => {
+    await fetch('/api/teacher-session', { method: 'POST' })
+    window.location.href = '/teacher'
+  }
+
+  const loadMomentSummary = async () => {
+    try {
+      const res = await fetch('/api/teacher/moments/list?summary=1', { cache: 'no-store' })
+      const json = await res.json().catch(() => ({}))
+      if (res.ok && json.summary) {
+        setMomentSummary({
+          moments: Number(json.summary.moments || 0),
+          reactions: Number(json.summary.reactions || 0),
+        })
+      }
+    } catch {
+      // Keep dashboard clean if summary is unavailable.
+    }
+  }
+
+  const handleMomentFileChange = (event: any) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) return
+
+    const allowed =
+      file.type.startsWith('image/') ||
+      file.type === 'application/pdf' ||
+      file.type.includes('word') ||
+      file.type.includes('document')
+
+    if (!allowed) {
+      toast.error('Choose an image or document')
+      return
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('Moment file must be under 8 MB')
+      return
+    }
+
+    setMomentDraft({ file })
+  }
+
+  if (loading) return <SchoolConnectPageLoader size="md" />
+
+  if (!session?.teacher?.id) {
+    return (
+      <main style={centerPage}>
+        <section style={emptyCard}>
+          <GraduationCap size={28} color={T.ink3} />
+          <h1 style={emptyTitle}>Teacher link needed</h1>
+          <p style={emptyText}>Open the private teacher link shared by the school admin.</p>
+        </section>
+      </main>
+    )
+  }
+
+  const { teacher, school, children = [] } = session
+  const classLabel = [teacher.grade, teacher.class_name].filter(Boolean).join(' · ') || 'Your class'
+  const hasLearners = children.length > 0
+  const completedCount = children.filter((child: any) => isMarkedThisWeek(child, weekStart)).length
+  const pendingCount = Math.max(0, children.length - completedCount)
+  const pendingChildren = children.filter((child: any) => !isMarkedThisWeek(child, weekStart))
+  const sentChildren = children.filter((child: any) => isMarkedThisWeek(child, weekStart))
+
+  const openChild = (child: any) => {
+    setActiveChild(child)
+  }
+
+  const nextPendingAfter = (child: any) => {
+    const currentIndex = children.findIndex((c: any) => c.id === child.id)
+    const after = children.slice(currentIndex + 1).find((c: any) => !isMarkedThisWeek(c, weekStart))
+    const before = children.slice(0, currentIndex).find((c: any) => !isMarkedThisWeek(c, weekStart))
+    return after || before || null
+  }
+
+  if (showTeacherMoments) {
+    return (
+      <TeacherMomentsPage
+        teacher={teacher}
+        onBack={() => setShowTeacherMoments(false)}
+        onChanged={(summary: any) => {
+          if (summary) {
+            setMomentSummary({
+              moments: Number(summary.moments || 0),
+              reactions: Number(summary.reactions || 0),
+            })
+          }
+        }}
+      />
+    )
+  }
+
+  if (activeChild) {
+    return (
+      <TeacherReportWorkspace
+        child={activeChild}
+        children={children}
+        weekStart={weekStart}
+        onBack={() => setActiveChild(null)}
+        onSaved={async (updatedChild: any) => {
+          await load()
+          setActiveChild((current: any) => current?.id === updatedChild.id ? { ...current, ...updatedChild } : current)
+        }}
+        onNext={(currentChild: any) => {
+          const next = nextPendingAfter(currentChild)
+          if (next) setActiveChild(next)
+          else setActiveChild(null)
+        }}
+      />
+    )
+  }
+
+  return (
+    <div className="teacher-safe-screen" style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.white,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      <TeacherSafeAreaStyle />
+
+      {photoDraft && (
+        <TeacherPhotoAdjustModal
+          draft={photoDraft}
+          uploading={uploadingPhoto}
+          onCancel={cancelTeacherPhotoAdjust}
+          onApply={uploadAdjustedTeacherPhoto}
+        />
+      )}
+
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.white,
+      }}>
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          background: 'transparent',
+        }}>
+<button
+            type="button"
+            onClick={() => setShowSettings(true)}
+            aria-label="Settings"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: 'none',
+              background: T.white,
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            <Settings size={17} strokeWidth={2.05} />
+          </button>
+        </header>
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.white,
+        }}>
+          <section style={{
+            textAlign: 'center',
+            minHeight: 260,
+            padding: '28px 18px 26px',
+            borderRadius: 28,
+            background: T.white,
+            border: 'none',
+            marginBottom: 14,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <div style={{
+              width: 92,
+              height: 92,
+              borderRadius: 32,
+              background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 18px',
+              color: T.accent,
+              fontSize: 25,
+              fontWeight: 560,
+              overflow: 'hidden',
+            }}>
+              {!teacher.photo_url && initials(teacher.name)}
+            </div>
+
+            <h1 style={{
+              fontSize: 22,
+              lineHeight: 1.08,
+              fontWeight: 560,
+              letterSpacing: '-0.045em',
+              color: T.ink,
+              margin: '0 0 7px',
+            }}>
+              {teacher.name || 'Teacher'}
+            </h1>
+
+            <p style={{
+              fontSize: 12.8,
+              color: T.ink3,
+              lineHeight: 1.35,
+              margin: 0,
+            }}>
+              {school?.name || 'School'} · {classLabel}
+            </p>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 9,
+              width: '100%',
+              maxWidth: 260,
+              marginTop: 20,
+            }}>
+              <MiniStat label="Sent" value={completedCount} />
+              <MiniStat label="Pending" value={pendingCount} />
+            </div>
+          </section>
+
+          {!hasLearners ? (
+            <section style={{
+              padding: '30px 16px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 20,
+              background: 'transparent',
+              marginBottom: 14,
+            }}>
+              <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+                No learners yet
+              </p>
+
+              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: '0 0 15px' }}>
+                Add learners to start weekly reports.
+              </p>
+
+              <button type="button" onClick={() => setShowAdd(true)} style={{
+                ...primaryButton,
+                minHeight: 40,
+                padding: '0 16px',
+              }}>
+                Add
+              </button>
+            </section>
+          ) : (
+            <>
+              <section style={{
+                borderRadius: 24,
+                background: T.white,
+                border: 'none',
+                overflow: 'hidden',
+                marginBottom: 14,
+              }}>
+                <div style={{
+                  width: '100%',
+                  background: T.white,
+                  border: 'none',
+                  padding: 15,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 11,
+                  textAlign: 'left',
+                  fontFamily: 'inherit',
+                }}>
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 14,
+                      border: 'none',
+                      background: T.accentSoft,
+                      color: T.accent,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Users size={18} strokeWidth={1.7} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      background: 'transparent',
+                      border: 'none',
+                      padding: 0,
+                      textAlign: 'left',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+                      Weekly checklist
+                    </p>
+                    <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+                      {completedCount}/{children.length} reports sent
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowAdd(true)}
+                    style={{
+                      ...softButton,
+                      minHeight: 36,
+                      padding: '0 13px',
+                      color: T.accent,
+                      flexShrink: 0,
+                    }}
+                  >
+                    Add
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRosterOpen(!rosterOpen)}
+                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 999,
+                      border: 'none',
+                      background: T.white,
+                      color: T.ink3,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ChevronDown
+                      size={16}
+                      strokeWidth={1.9}
+                      style={{
+                        transform: rosterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.16s ease',
+                      }}
+                    />
+                  </button>
+                </div>
+
+                {rosterOpen && (
+                  <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
+                    <ChecklistGroup
+                      title="Pending reports"
+                      subtitle="Still needs this week’s update."
+                      items={pendingChildren}
+                      weekStart={weekStart}
+                      onOpen={openChild}
+                      onDeleted={load}
+                    />
+
+                    <ChecklistGroup
+                      title="Sent reports"
+                      subtitle="Already sent this week."
+                      items={sentChildren}
+                      weekStart={weekStart}
+                      onOpen={openChild}
+                      onDeleted={load}
+                    />
+                  </div>
+                )}
+              </section>
+
+              <section style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: '14px 15px',
+                borderRadius: 24,
+                background: T.white,
+                border: 'none',
+                marginBottom: 14,
+              }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 14,
+                  background: T.accentSoft,
+                  color: T.accent,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Camera size={17} strokeWidth={1.8} />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
+                    Private Moments
+                  </p>
+                  <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                    Share private photo/document updates.
+                  </p>
+                </div>
+
+                <button type="button" onClick={() => momentFileRef.current?.click()} style={{
+                  ...softButton,
+                  minHeight: 40,
+                  padding: '0 15px',
+                  color: T.accent,
+                  flexShrink: 0,
+                }}>
+                  Add
+                </button>
+              </section>
+            </>
+          )}
+
+          <p style={{
+            fontSize: 10.5,
+            color: '#B8B8BC',
+            textAlign: 'center',
+            margin: '18px 0 0',
+            letterSpacing: '0.04em',
+            fontWeight: 500,
+          }}>
+            Powered by School Connect
+          </p>
+        </main>
+      </div>
+
+      <input
+        ref={momentFileRef}
+        type="file"
+        accept="image/*,application/pdf,.pdf,.doc,.docx"
+        style={{ display: 'none' }}
+        onChange={handleMomentFileChange}
+      />
+
+      {momentDraft && (
+        <TeacherMomentComposer
+          draft={momentDraft}
+          learners={children}
+          onClose={() => setMomentDraft(null)}
+          onCreated={() => setMomentDraft(null)}
+        />
+      )}
+
+      {showAdd && (
+        <AddLearnerSheet
+          onClose={() => setShowAdd(false)}
+          onCreated={() => {
+            setShowAdd(false)
+            setRosterOpen(true)
+            load()
+          }}
+        />
+      )}
+
+      {showSettings && (
+        <SettingsSheet
+          teacher={teacher}
+          school={school}
+          classLabel={classLabel}
+          onClose={() => setShowSettings(false)}
+          onUpdated={(updatedTeacher: any) => {
+            setSession((current: any) => ({
+              ...current,
+              teacher: { ...current.teacher, ...updatedTeacher },
+            }))
+          }}
+          onSignOut={signOut}
+          onPhotoSelected={handleTeacherPhotoSelected}
+        />
+      )}
+    </div>
+  )
+}
+
+function MiniStat({ label, value }: any) {
+  return (
+    <div style={{
+      padding: '10px 8px',
+      borderRadius: 17,
+      background: T.soft,
+      textAlign: 'center',
+    }}>
+      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
+        {value}
+      </p>
+      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
+        {label}
+      </p>
+    </div>
+  )
+}
+
+function LoadingScreen() {
+  return <SchoolConnectPageLoader size="md" />
+}
+
+function EmptyRoster({ onAdd }: any) {
+  return (
+    <div style={{
+      padding: '30px 16px',
+      textAlign: 'center',
+      border: `1px dashed ${T.border}`,
+      borderRadius: 16,
+      background: 'transparent',
+      marginTop: 10,
+    }}>
+      <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+        No learners yet
+      </p>
+      <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
+        Tap Add to create your roster.
+      </p>
+    </div>
+  )
+}
+
+function ChecklistGroup({ title, subtitle, items, weekStart, onOpen, onDeleted }: any) {
+  if (!items?.length) return null
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 10,
+        padding: '4px 0 2px',
+      }}>
+        <div>
+          <p style={{
+            fontSize: 12.5,
+            fontWeight: 560,
+            color: T.ink,
+            margin: 0,
+          }}>
+            {title}
+          </p>
+          <p style={{
+            fontSize: 11.8,
+            color: T.ink3,
+            margin: '2px 0 0',
+          }}>
+            {subtitle}
+          </p>
         </div>
 
         <span style={{
