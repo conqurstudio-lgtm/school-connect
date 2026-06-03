@@ -20,7 +20,16 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export function ReportSwiper({ reports = [], childName }: Props) {
-  const visualReports = useMemo(() => reports || [], [reports])
+  const visualReports = useMemo(() => {
+    return (reports || [])
+      .slice()
+      .sort((a: any, b: any) => {
+        const aDate = new Date(a.week_starting || a.published_at || a.created_at || 0).getTime()
+        const bDate = new Date(b.week_starting || b.published_at || b.created_at || 0).getTime()
+        return bDate - aDate
+      })
+  }, [reports])
+
   const total = visualReports.length
 
   const [index, setIndex] = useState(0)
@@ -77,12 +86,15 @@ export function ReportSwiper({ reports = [], childName }: Props) {
     if (gesture.current === 'horizontal') {
       const threshold = 56
 
-      if (deltaX.current > threshold && index > 0) {
-        moveTo(index - 1)
-      }
-
+      // Natural report history direction:
+      // swipe left from the latest report to view older reports.
       if (deltaX.current < -threshold && index < total - 1) {
         moveTo(index + 1)
+      }
+
+      // swipe right to move back toward the latest report.
+      if (deltaX.current > threshold && index > 0) {
+        moveTo(index - 1)
       }
     }
 
