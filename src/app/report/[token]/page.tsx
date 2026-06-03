@@ -64,29 +64,16 @@ function ParentReportSafeAreaStyle() {
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   return (
     <>
-      <style>{`
-        @keyframes schoolConnectMomentDotPulse {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          50% {
-            transform: scale(1.22);
-            opacity: 0.82;
-          }
-        }
-      `}</style>
-
-      <button
+<button
         type="button"
         onClick={onOpen}
         aria-label="View Moments"
         style={{
           position: 'absolute',
-          top: 'calc(18px + env(safe-area-inset-top, 0px))',
-          right: 16,
-          width: 42,
-          height: 42,
+          top: 'calc(8px + env(safe-area-inset-top, 0px))',
+          right: 13,
+          width: 38,
+          height: 38,
           borderRadius: 999,
           border: 'none',
           background: '#FFFFFF',
@@ -114,16 +101,14 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 
         <span style={{
           position: 'absolute',
-          top: 10,
-          right: 9,
-          width: 9,
-          height: 9,
+          top: 8,
+          right: 8,
+          width: 8,
+          height: 8,
           borderRadius: 999,
           background: '#E5484D',
           border: '1.5px solid #FFFFFF',
           display: 'block',
-          transformOrigin: 'center',
-          animation: 'schoolConnectMomentDotPulse 1.45s ease-in-out infinite',
         }} />
       </button>
     </>
