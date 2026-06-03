@@ -218,7 +218,7 @@ export function ReportSwiper({ reports, childName }: Props) {
                   overflowY: 'auto',
                   WebkitOverflowScrolling: 'touch',
                   overscrollBehaviorY: 'contain',
-                  paddingBottom: '78px',
+                  paddingBottom: '104px',
                   boxSizing: 'border-box',
                 }}>
                   <ReportCard
