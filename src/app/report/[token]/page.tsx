@@ -572,7 +572,7 @@ export default function ParentMagicReportPage() {
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'none',
-          touchAction: 'none',
+          touchAction: 'pan-y',
           padding: '22px 0 calc(58px + env(safe-area-inset-bottom, 0px))',
         }}>
           <ReportSwiper reports={reports} childName={childName} />

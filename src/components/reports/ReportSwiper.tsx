@@ -54,7 +54,7 @@ export function ReportSwiper({ reports, childName }: Props) {
   const lockPageScroll = () => {
     document.documentElement.style.overscrollBehavior = 'none'
     document.body.style.overscrollBehavior = 'none'
-    document.body.style.touchAction = 'none'
+    document.body.style.touchAction = 'pan-y'
   }
 
   const unlockPageScroll = () => {
@@ -138,7 +138,7 @@ export function ReportSwiper({ reports, childName }: Props) {
       overflowY: 'hidden',
       position: 'relative',
       overscrollBehavior: 'none',
-      touchAction: 'none',
+      touchAction: 'pan-y',
       boxSizing: 'border-box',
     }}>
       <div
@@ -151,7 +151,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           maxWidth: '100%',
           overflowX: 'hidden',
           overflowY: 'hidden',
-          touchAction: 'none',
+          touchAction: 'pan-y',
           userSelect: 'none',
           position: 'relative',
           boxSizing: 'border-box',
@@ -212,9 +212,14 @@ export function ReportSwiper({ reports, childName }: Props) {
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
                   maxWidth: 430,
+                  height: '100%',
                   maxHeight: '100%',
                   overflowX: 'hidden',
-                  overflowY: 'hidden',
+                  overflowY: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  overscrollBehaviorY: 'contain',
+                  paddingBottom: '78px',
+                  boxSizing: 'border-box',
                 }}>
                   <ReportCard
                     key={isActive ? `${report.id}-active-${animationRound}` : `${report.id}-idle`}
@@ -233,7 +238,7 @@ export function ReportSwiper({ reports, childName }: Props) {
           position: 'fixed',
           left: 0,
           right: 0,
-          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          bottom: 'calc(26px + env(safe-area-inset-bottom, 0px))',
           zIndex: 50,
           display: 'flex',
           alignItems: 'center',
