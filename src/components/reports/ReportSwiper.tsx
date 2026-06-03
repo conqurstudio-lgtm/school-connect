@@ -230,8 +230,8 @@ export function ReportSwiper({ reports, childName }: Props) {
             bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
             zIndex: 40,
             pointerEvents: 'none',
-          minHeight: 34,
-          padding: '2px 0 10px',
+          minHeight: 24,
+          padding: '2px 0 8px',
         }}>
           {visualReports.map((_, i) => (
             <button
@@ -239,14 +239,16 @@ export function ReportSwiper({ reports, childName }: Props) {
               onClick={() => moveTo(i)}
               aria-label={`Report ${i + 1}`}
               style={{
-                width: i === index ? 18 : 6,
-                height: 36,
+                width: 6,
+                height: 6,
                 borderRadius: 999,
                 background: i === index ? T.ink : T.trackBg,
                 border: 'none',
                 padding: 0,
                 cursor: 'pointer',
-                transition: 'all 0.25s ease',
+                transition: 'background 0.25s ease, opacity 0.25s ease',
+                opacity: i === index ? 1 : 0.75,
+                pointerEvents: 'auto',
               }}
             />
           ))}
