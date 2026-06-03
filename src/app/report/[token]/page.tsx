@@ -21,14 +21,45 @@ const T = {
 }
 
 
+function ParentReportSafeAreaStyle() {
+  return (
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
+      }
 
+      .parent-report-screen {
+        background: #FFFFFF;
+      }
 
+      .parent-report-screen::before,
+      .parent-report-screen::after {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        pointer-events: none;
+        z-index: 0;
+      }
 
+      .parent-report-screen::before {
+        top: 0;
+        height: env(safe-area-inset-top, 0px);
+      }
 
+      .parent-report-screen::after {
+        bottom: 0;
+        height: env(safe-area-inset-bottom, 0px);
+      }
 
-
-
-
+      .parent-report-shell {
+        background: #FFFFFF;
+      }
+    `}</style>
+  )
+}
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
@@ -100,7 +131,6 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 }
 
 
-
 function SchoolQuickView({ school }: { school: any }) {
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -147,6 +177,7 @@ function SchoolQuickView({ school }: { school: any }) {
       width: 'fit-content',
       marginTop: 0,
     }}>
+      <ParentReportSafeAreaStyle />
       <button
         type="button"
         onClick={() => setOpen(current => !current)}
@@ -608,8 +639,8 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main style={{
-      minHeight: '100dvh',
+    <main className="parent-report-screen" style={{
+        minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
       overscrollBehaviorX: 'none',
@@ -617,7 +648,7 @@ export default function ParentMagicReportPage() {
       color: T.ink,
           background: '#FFFFFF',
         }}>
-      <div style={{
+      <div className="parent-report-shell" style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
