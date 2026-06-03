@@ -1969,6 +1969,173 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
     onPhotoSelected?.(file)
   }
 
+  if (showReportSubjects) {
+    return (
+      <BottomSheet onClose={() => setShowReportSubjects(false)}>
+        <SheetHeader
+          title="Report subjects"
+          subtitle="Choose areas for weekly reports"
+          onClose={() => setShowReportSubjects(false)}
+        />
+
+        <div style={{
+          padding: 12,
+          borderRadius: 22,
+          background: T.soft,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 13,
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 8,
+          }}>
+            <button
+              type="button"
+              onClick={() => applyReportSubjectPreset('ECD')}
+              style={{
+                minHeight: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: T.white,
+                color: T.ink2,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+              }}
+            >
+              ECD
+            </button>
+
+            <button
+              type="button"
+              onClick={() => applyReportSubjectPreset('Primary')}
+              style={{
+                minHeight: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: T.white,
+                color: T.ink2,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+              }}
+            >
+              Primary
+            </button>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 10,
+          }}>
+            <p style={{
+              fontSize: 13,
+              fontWeight: 560,
+              color: T.ink,
+              margin: 0,
+            }}>
+              Subjects
+            </p>
+
+            <button
+              type="button"
+              onClick={addReportSubject}
+              aria-label="Add subject"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: 'none',
+                background: T.white,
+                color: T.accent,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <Plus size={16} strokeWidth={2.05} />
+            </button>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 7,
+          }}>
+            {reportSubjects.map((subject, index) => (
+              <div key={index} style={{
+                display: 'grid',
+                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 32px' : '1fr',
+                gap: 7,
+                alignItems: 'center',
+              }}>
+                <input
+                  value={subject}
+                  onChange={event => updateReportSubject(index, event.target.value)}
+                  placeholder="Subject or area"
+                  style={{
+                    ...inputStyle,
+                    minHeight: 42,
+                    fontSize: 15.5,
+                    background: T.white,
+                    border: 'none',
+                  }}
+                />
+
+                {reportSubjects.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeReportSubject(index)}
+                    aria-label="Remove subject"
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 999,
+                      border: 'none',
+                      background: 'transparent',
+                      color: T.ink3,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <X size={14} strokeWidth={1.9} />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={saveReportSubjects}
+            disabled={savingReportSubjects}
+            style={{
+              ...darkButton,
+              width: '100%',
+              minHeight: 44,
+              marginTop: 2,
+              opacity: savingReportSubjects ? 0.65 : 1,
+              cursor: savingReportSubjects ? 'wait' : 'pointer',
+            }}
+          >
+            {savingReportSubjects ? 'Saving...' : 'Save subjects'}
+          </button>
+        </div>
+      </BottomSheet>
+    )
+  }
+
   return (
     <BottomSheet onClose={onClose}>
       <SheetHeader title="Settings" subtitle="Profile and account" onClose={onClose} />
@@ -2038,211 +2205,26 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
       <button
         type="button"
-        onClick={() => setShowReportSubjects(value => !value)}
+        onClick={() => setShowReportSubjects(true)}
         style={{
           ...softButton,
           width: '100%',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           height: 44,
           border: 'none',
           background: T.white,
           marginTop: 8,
         }}
       >
-        Report subjects
-      </button>
-
-      {showReportSubjects && (
-        <div style={{
-          marginTop: 10,
-          padding: 12,
-          borderRadius: 20,
-          background: T.soft,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
+        <span>Report subjects</span>
+        <span style={{
+          fontSize: 12,
+          color: T.ink3,
+          fontWeight: 520,
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
-            <div>
-              <p style={{
-                fontSize: 13,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-              }}>
-                Subjects
-              </p>
-
-              <p style={{
-                fontSize: 12.2,
-                color: T.ink3,
-                margin: '2px 0 0',
-                lineHeight: 1.35,
-              }}>
-                Choose a preset or edit your own.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={addReportSubject}
-              aria-label="Add subject"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.accent,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              <Plus size={16} strokeWidth={2.05} />
-            </button>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
-          }}>
-            <button
-              type="button"
-              onClick={() => applyReportSubjectPreset('ECD')}
-              style={{
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              ECD
-            </button>
-
-            <button
-              type="button"
-              onClick={() => applyReportSubjectPreset('Primary')}
-              style={{
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              Primary
-            </button>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 7,
-          }}>
-            {reportSubjects.map((subject, index) => (
-              <div key={index} style={{
-                display: 'grid',
-                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 32px' : '1fr',
-                gap: 7,
-                alignItems: 'center',
-              }}>
-                <input
-                  value={subject}
-                  onChange={event => updateReportSubject(index, event.target.value)}
-                  placeholder="Subject or area"
-                  style={{
-                    ...inputStyle,
-                    minHeight: 40,
-                    fontSize: 15.5,
-                    background: T.white,
-                    border: 'none',
-                  }}
-                />
-
-                {reportSubjects.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeReportSubject(index)}
-                    aria-label="Remove subject"
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 999,
-                      border: 'none',
-                      background: 'transparent',
-                      color: T.ink3,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    <X size={14} strokeWidth={1.9} />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-          }}>
-            <button
-              type="button"
-              onClick={resetReportSubjects}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                color: T.accent,
-                fontSize: 12.4,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-                padding: '4px 0',
-              }}
-            >
-              Defaults
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={saveReportSubjects}
-            disabled={savingReportSubjects}
-            style={{
-              ...darkButton,
-              width: '100%',
-              minHeight: 44,
-              marginTop: 0,
-              opacity: savingReportSubjects ? 0.65 : 1,
-              cursor: savingReportSubjects ? 'wait' : 'pointer',
-            }}
-          >
-            {savingReportSubjects ? 'Saving...' : 'Save subjects'}
-          </button>
-        </div>
-      )}
+          Edit
+        </span>
+      </button>
 
       <button
         type="button"
