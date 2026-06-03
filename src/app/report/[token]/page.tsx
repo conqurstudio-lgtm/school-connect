@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap, Heart } from 'lucide-react'
+import { GraduationCap } from 'lucide-react'
 import { ReportSwiper } from '@/components/reports/ReportSwiper'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 
@@ -21,122 +21,84 @@ const T = {
 }
 
 
-function ParentReportSafeAreaStyle() {
-  return (
-    <style>{`
-      :root,
-      html,
-      body {
-        background: #FFFFFF !important;
-        background-color: #FFFFFF !important;
-        color-scheme: light;
-      }
 
-      html,
-      body {
-        min-height: 100%;
-        margin: 0;
-        overscroll-behavior-y: none;
-      }
 
-      body > div,
-      main.parent-report-screen,
-      .parent-report-screen,
-      .parent-report-shell {
-        background: #FFFFFF !important;
-        background-color: #FFFFFF !important;
-      }
 
-      .parent-report-screen {
-        min-height: 100dvh;
-        width: 100%;
-        overflow-x: hidden;
-        position: relative;
-        isolation: isolate;
-      }
 
-      .parent-report-shell {
-        min-height: 100dvh;
-        margin-inline: auto;
-      }
 
-      .parent-report-screen::before,
-      .parent-report-screen::after {
-        content: "";
-        position: fixed;
-        left: 0;
-        right: 0;
-        background: #FFFFFF;
-        pointer-events: none;
-        z-index: 0;
-      }
 
-      .parent-report-screen::before {
-        top: 0;
-        height: calc(18px + env(safe-area-inset-top, 0px));
-      }
 
-      .parent-report-screen::after {
-        bottom: 0;
-        height: calc(18px + env(safe-area-inset-bottom, 0px));
-      }
-    `}</style>
-  )
-}
+
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
-  return (
-    <>
-<button
-        type="button"
-        onClick={onOpen}
-        aria-label="View Moments"
-        style={{
-          position: 'absolute',
-          top: 'calc(8px + env(safe-area-inset-top, 0px))',
-          right: 13,
-          width: 38,
-          height: 38,
-          borderRadius: 999,
-          border: 'none',
-          background: '#FFFFFF',
-          color: '#252525',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textDecoration: 'none',
-          flexShrink: 0,
-          overflow: 'visible',
-          zIndex: 30,
-          cursor: 'pointer',
-          padding: 0,
-        }}
-      >
-        <Heart
-          size={21}
-          strokeWidth={1.85}
-          color="#252525"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        />
+  const [hasNew, setHasNew] = useState(false)
 
-        <span style={{
-          position: 'absolute',
-          top: 8,
-          right: 8,
-          width: 8,
-          height: 8,
-          borderRadius: 999,
-          background: '#E5484D',
-          border: '1.5px solid #FFFFFF',
+  useEffect(() => {
+    if (!token) return
+
+    let alive = true
+
+    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(json => {
+        if (!alive) return
+
+        const nextHasNew = Array.isArray(json.moments)
+          ? json.moments.some((moment: any) => !moment?.recipient?.viewed_at)
+          : false
+
+        setHasNew(nextHasNew)
+      })
+      .catch(() => {
+        if (alive) setHasNew(false)
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [token])
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label="View Moments"
+      style={{
+        position: 'absolute',
+        top: 'calc(8px + env(safe-area-inset-top, 0px))',
+        right: 13,
+        width: 38,
+        height: 38,
+        borderRadius: 999,
+        border: 'none',
+        background: '#FFFFFF',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textDecoration: 'none',
+        flexShrink: 0,
+        overflow: 'visible',
+        zIndex: 30,
+        cursor: 'pointer',
+        padding: 0,
+      }}
+    >
+      <iframe
+        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
+        title="Moments"
+        aria-hidden="true"
+        style={{
+          width: 30,
+          height: 30,
+          border: 'none',
           display: 'block',
-        }} />
-      </button>
-    </>
+          pointerEvents: 'none',
+        }}
+      />
+    </button>
   )
 }
+
 
 
 function SchoolQuickView({ school }: { school: any }) {
@@ -185,7 +147,6 @@ function SchoolQuickView({ school }: { school: any }) {
       width: 'fit-content',
       marginTop: 0,
     }}>
-      <ParentReportSafeAreaStyle />
       <button
         type="button"
         onClick={() => setOpen(current => !current)}
@@ -647,9 +608,8 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main className="parent-report-screen" style={{
-        minHeight: '100dvh',
-      background: '#FFFFFF',
+    <main style={{
+      minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
       overscrollBehaviorX: 'none',
@@ -657,7 +617,7 @@ export default function ParentMagicReportPage() {
       color: T.ink,
           background: '#FFFFFF',
         }}>
-      <div className="parent-report-shell" style={{
+      <div style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
@@ -667,13 +627,65 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          minHeight: 'calc(58px + env(safe-area-inset-top, 0px))',
-          padding: 'calc(10px + env(safe-area-inset-top, 0px)) 16px 0',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
         }}>
-          <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            minHeight: 34,
+          }}>
+            <div style={{
+              width: 34,
+              height: 34,
+              borderRadius: 13,
+              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
+              border: `1px solid ${T.border}`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: T.ink3,
+              fontSize: 12,
+              fontWeight: 650,
+              flexShrink: 0,
+            }}>
+              {!school?.logo_url && String(school?.name || 'S').slice(0, 1)}
+            </div>
+
+            <div style={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: 0,
+            }}>
+              <p style={{
+                fontSize: 13,
+                fontWeight: 620,
+                color: T.ink,
+                margin: 0,
+                lineHeight: 1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {school?.name || 'School Connect'}
+              </p>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                marginTop: 3,
+              }}>
+                <SchoolQuickView school={school} />
+                <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
+              </div>
+            </div>
+          </div>
         </header>
 
         <section style={{
@@ -683,16 +695,27 @@ export default function ParentMagicReportPage() {
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'none',
-          padding: '10px 0 calc(86px + env(safe-area-inset-bottom, 0px))',
+          padding: '18px 0 6px',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
 
-        <div style={{
+        <footer style={{
           flexShrink: 0,
-          height: 'env(safe-area-inset-bottom, 0px)',
+          padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
+          textAlign: 'center',
           background: '#FFFFFF',
-        }} />
+        }}>
+          <p style={{
+            fontSize: 10.5,
+            color: '#CCCCCC',
+            margin: 0,
+            letterSpacing: '0.04em',
+            fontWeight: 500,
+          }}>
+            Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
+          </p>
+        </footer>
       </div>
     </main>
   )

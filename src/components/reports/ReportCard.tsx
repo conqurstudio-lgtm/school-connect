@@ -6,21 +6,21 @@ import { ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
-  ink:     '#111827',
+  ink:     '#1A1A1A',
   ink2:    '#4A4A4A',
-  ink3:    '#7C8486',
+  ink3:    '#9A9A9A',
   ink4:    '#D8D8D8',
   divider: 'rgba(0,0,0,0.06)',
   trackBg: '#EFEFF2',
   up:      '#22C55E',
   down:    '#EF4444',
-  same:    '#7C8486',
+  same:    '#9A9A9A',
 }
 
 const SUBJECT_GRAPH = {
-  fill: '#8FA4A0',
+  fill: '#8FA6A1',
   fillSoft: '#EAF0EE',
-  track: '#F2F3F3',
+  track: '#F3F5F4',
   border: 'rgba(143,166,161,0.20)',
   text: '#51615E',
 }
@@ -214,7 +214,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         left: 0, right: 0,
         bottom: -10,
         textAlign: 'center',
-        fontSize: 24, lineHeight: 1,
+        fontSize: 38, lineHeight: 1,
       }}>
         {getScoreEmoji(score)}
       </div>
@@ -237,7 +237,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
       <span style={{
         fontSize: 13,
         fontWeight: 540,
-        color: '#5F686B',
+        color: '#5F6268',
         lineHeight: 1.2,
       }}>
         {name}
@@ -273,18 +273,18 @@ export function ReportCard({ report, childName }: Props) {
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   return (
-    <section style={{ paddingBottom: 42 }}>
+    <section style={{ paddingBottom: 32 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '26px 0 38px' }}>
+      <div style={{ textAlign: 'center', padding: '8px 0 40px' }}>
         <h2 style={{
-          fontSize: 26, fontWeight: 650, color: T.ink,
+          fontSize: 28, fontWeight: 700, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 13, color: T.ink3, margin: '0 0 30px',
+          fontSize: 13, color: T.ink3, margin: '0 0 32px',
           letterSpacing: '0.005em', fontWeight: 500,
         }}>
           {formatWeek(report.week_starting)}
@@ -294,7 +294,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <div style={{ marginTop: 24 }}>
           <p style={{
-            fontSize: 16, fontWeight: 580, color: T.ink,
+            fontSize: 17, fontWeight: 600, color: T.ink,
             letterSpacing: '-0.02em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -314,11 +314,11 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 36px',
+          padding: '0 12px 40px',
           textAlign: 'center',
         }}>
           <p style={{
-            fontSize: 14.5, color: '#5F686B', margin: 0,
+            fontSize: 15, color: T.ink3, margin: 0,
             lineHeight: 1.55, letterSpacing: '-0.005em',
             fontWeight: 400, maxWidth: 380, marginInline: 'auto',
           }}>
@@ -340,7 +340,7 @@ export function ReportCard({ report, childName }: Props) {
         <button
           onClick={() => setExpanded(v => !v)}
           style={{
-            width: '100%', padding: '16px 0',
+            width: '100%', padding: '14px 0',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             background: 'none', border: 'none',
             borderTop: `1px solid ${T.divider}`,
@@ -360,7 +360,7 @@ export function ReportCard({ report, childName }: Props) {
 
         {expanded && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18,
-                        padding: '22px 0 8px',
+                        padding: '20px 0 4px',
                         animation: 'expandIn 0.3s ease' }}>
             {subjects.map(([name, score]) => {
               const pct   = (Number(score) / 5) * 100
@@ -387,12 +387,12 @@ export function ReportCard({ report, childName }: Props) {
                     <div style={{
                       position: 'absolute', inset: 'auto 0',
                       height: 3, width: '100%', borderRadius: 2,
-                      background: '#F2F3F3',
+                      background: '#F3F5F4',
                     }} />
                     <div style={{
                       position: 'absolute', inset: 'auto 0 auto 0',
                       height: 3, width: `${pct}%`, borderRadius: 2,
-                      background: '#8FA4A0',
+                      background: '#8FA6A1',
                       transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
                     }} />
                   </div>
