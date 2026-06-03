@@ -1931,6 +1931,13 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
     setReportSubjects(REPORT_SUBJECT_PRESETS[preset])
   }
 
+  const isReportSubjectPresetActive = (preset: 'ECD' | 'Primary') => {
+    const current = normalizeReportSubjects(reportSubjects).map(subject => subject.toLowerCase())
+    const target = normalizeReportSubjects(REPORT_SUBJECT_PRESETS[preset]).map(subject => subject.toLowerCase())
+
+    return current.length === target.length && current.every((subject, index) => subject === target[index])
+  }
+
   const saveReportSubjects = async () => {
     if (savingReportSubjects) return
 
@@ -1970,6 +1977,9 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
   }
 
   if (showReportSubjects) {
+    const ecdActive = isReportSubjectPresetActive('ECD')
+    const primaryActive = isReportSubjectPresetActive('Primary')
+
     return (
       <BottomSheet onClose={() => setShowReportSubjects(false)}>
         <SheetHeader
@@ -2007,9 +2017,9 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                 style={{
                   minHeight: 38,
                   borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.ink2,
+                  border: ecdActive ? '1px solid #8FA6A1' : `1px solid ${T.border}`,
+                  background: ecdActive ? T.accentSoft : T.white,
+                  color: ecdActive ? T.accent : T.ink2,
                   fontSize: 12.5,
                   fontWeight: 520,
                   fontFamily: 'inherit',
@@ -2025,9 +2035,9 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                 style={{
                   minHeight: 38,
                   borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.ink2,
+                  border: primaryActive ? '1px solid #8FA6A1' : `1px solid ${T.border}`,
+                  background: primaryActive ? T.accentSoft : T.white,
+                  color: primaryActive ? T.accent : T.ink2,
                   fontSize: 12.5,
                   fontWeight: 520,
                   fontFamily: 'inherit',
@@ -2075,8 +2085,8 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                   width: 34,
                   height: 34,
                   borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
+                  border: `1px solid ${T.border}`,
+                  background: T.white,
                   color: T.accent,
                   display: 'flex',
                   alignItems: 'center',
@@ -2109,8 +2119,8 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                       ...inputStyle,
                       minHeight: 42,
                       fontSize: 15.5,
-                      background: T.soft,
-                      border: 'none',
+                      background: T.white,
+                      border: `1px solid ${T.border}`,
                     }}
                   />
 
