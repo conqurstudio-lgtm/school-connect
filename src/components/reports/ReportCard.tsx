@@ -10,7 +10,7 @@ const T = {
   ink2:    '#4A4A4A',
   ink3:    '#9A9A9A',
   ink4:    '#D8D8D8',
-  divider: 'rgba(0,0,0,0.06)',
+  divider: 'rgba(0,0,0,0.04)',
   trackBg: '#EFEFF2',
   up:      '#22C55E',
   down:    '#EF4444',
@@ -20,7 +20,7 @@ const T = {
 const SUBJECT_GRAPH = {
   fill: '#8FA6A1',
   fillSoft: '#EAF0EE',
-  track: '#F3F5F4',
+  track: '#F4F5F5',
   border: 'rgba(143,166,161,0.20)',
   text: '#51615E',
 }
@@ -273,6 +273,10 @@ export function ReportCard({ report, childName }: Props) {
   const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
+  const isLatestReport = report.display_position !== 'previous'
+  const reportStatusLabel = isLatestReport ? 'This week' : 'Previous report'
+  const mutedReportOpacity = isLatestReport ? 1 : 0.82
+
   const teacherName = report.teacher_name || 'Teacher'
   const teacherInitials = String(teacherName || 'T')
     .trim()
@@ -293,9 +297,28 @@ export function ReportCard({ report, childName }: Props) {
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
-    <section style={{ paddingBottom: 96 }}>
+    <section style={{ paddingBottom: 104 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '14px 0 38px' }}>
+      <div style={{ textAlign: 'center', padding: '20px 0 42px', opacity: mutedReportOpacity }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 22,
+          padding: '0 9px',
+          borderRadius: 999,
+          border: '1px solid rgba(0,0,0,0.045)',
+          color: isLatestReport ? '#252525' : '#7C8486',
+          background: 'transparent',
+          fontSize: 10.5,
+          fontWeight: 470,
+          letterSpacing: '0.045em',
+          textTransform: 'uppercase',
+          marginBottom: 12,
+        }}>
+          {reportStatusLabel}
+        </div>
+
         <h2 style={{
           fontSize: 26.5, fontWeight: 650, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
@@ -304,7 +327,7 @@ export function ReportCard({ report, childName }: Props) {
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 12.5, color: '#5F6268', margin: '0 0 30px',
+          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
           letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -314,7 +337,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <div style={{ marginTop: 24 }}>
           <p style={{
-            fontSize: 16, fontWeight: 580, color: T.ink,
+            fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -334,7 +357,7 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 40px',
+          padding: '2px 10px 44px',
         }}>
           <div style={{
             display: 'flex',
@@ -398,7 +421,7 @@ export function ReportCard({ report, childName }: Props) {
               <div style={{
                 position: 'relative',
                 background: 'transparent',
-                border: '1px solid rgba(0,0,0,0.07)',
+                border: '1px solid rgba(0,0,0,0.045)',
                 borderRadius: '18px 18px 18px 8px',
                 padding: '12px 14px',
                 overflow: 'hidden',
@@ -426,7 +449,7 @@ export function ReportCard({ report, childName }: Props) {
           onClick={() => setExpanded(v => !v)}
           style={{
             width: '100%',
-            padding: '14px 0',
+            padding: '16px 0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -464,7 +487,7 @@ export function ReportCard({ report, childName }: Props) {
             display: 'flex',
             flexDirection: 'column',
             gap: 18,
-            padding: '20px 0 4px',
+            padding: '22px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -505,7 +528,7 @@ export function ReportCard({ report, childName }: Props) {
                       height: 2.5,
                       width: '100%',
                       borderRadius: 2,
-                      background: '#F2F3F3',
+                      background: '#F4F5F5',
                     }} />
 
                     <div style={{
