@@ -461,7 +461,7 @@ export function ReportCard({ report, childName }: Props) {
         </button>
       </div>
 
-      {subjectsOpen && (
+      {subjectsOpen && typeof document !== 'undefined' && createPortal(
         <div
           onClick={() => setSubjectsOpen(false)}
           style={{
@@ -473,6 +473,7 @@ export function ReportCard({ report, childName }: Props) {
             alignItems: 'flex-end',
             justifyContent: 'center',
             padding: '0 12px calc(12px + env(safe-area-inset-bottom, 0px))',
+            boxSizing: 'border-box',
           }}
         >
           <div
@@ -551,10 +552,12 @@ export function ReportCard({ report, childName }: Props) {
               flexDirection: 'column',
               gap: 18,
             }}>
-              {subjects.map(([name, score]) => {
-                const pct = (Number(score) / 5) * 100
+              {subjects.length ? subjects.map(([name, score]) => {
+                const numericScore = Number(score)
+                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+                const pct = (safeScore / 5) * 100
                 const prev = report.previous_scores?.[name]
-                const delta = prev !== undefined ? Number(score) - Number(prev) : null
+                const delta = prev !== undefined ? safeScore - Number(prev) : null
 
                 return (
                   <div key={name}>
@@ -575,8 +578,8 @@ export function ReportCard({ report, childName }: Props) {
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
-                      }} title={name}>
-                        {shortenSubject(name)}
+                      }} title={String(name)}>
+                        {shortenSubject(String(name))}
                       </span>
 
                       <div style={{
@@ -594,7 +597,7 @@ export function ReportCard({ report, childName }: Props) {
                           minWidth: 28,
                           textAlign: 'right',
                         }}>
-                          {Number(score).toFixed(1)}
+                          {safeScore.toFixed(1)}
                         </span>
                       </div>
                     </div>
@@ -620,15 +623,24 @@ export function ReportCard({ report, childName }: Props) {
                         width: `${pct}%`,
                         borderRadius: 2,
                         background: '#8FA6A1',
-                        transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
                       }} />
                     </div>
                   </div>
                 )
-              })}
+              }) : (
+                <p style={{
+                  fontSize: 13,
+                  color: '#7C8486',
+                  lineHeight: 1.5,
+                  margin: 0,
+                }}>
+                  No subject details were added to this report.
+                </p>
+              )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
 
