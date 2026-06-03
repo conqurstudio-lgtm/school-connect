@@ -62,80 +62,71 @@ function ParentReportSafeAreaStyle() {
 }
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
-  const [hasNew, setHasNew] = useState(false)
-
-  useEffect(() => {
-    if (!token) return
-
-    let alive = true
-
-    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
-      .then(res => res.json())
-      .then(json => {
-        if (!alive) return
-
-        const nextHasNew = Array.isArray(json.moments)
-          ? json.moments.some((moment: any) => !moment?.recipient?.viewed_at)
-          : false
-
-        setHasNew(nextHasNew)
-      })
-      .catch(() => {
-        if (alive) setHasNew(false)
-      })
-
-    return () => {
-      alive = false
-    }
-  }, [token])
-
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label="View Moments"
-      style={{
-        position: 'absolute',
-        top: 'calc(14px + env(safe-area-inset-top, 0px))',
-        right: 16,
-        width: 42,
-        height: 42,
-        borderRadius: 999,
-        border: 'none',
-        background: '#FFFFFF',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textDecoration: 'none',
-        flexShrink: 0,
-        overflow: 'visible',
-        zIndex: 30,
-        cursor: 'pointer',
-        padding: 0,
-      }}
-    >
-      <Heart
-        size={21}
-        strokeWidth={1.85}
-        color="#252525"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      />
+    <>
+      <style>{`
+        @keyframes schoolConnectMomentDotPulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.22);
+            opacity: 0.82;
+          }
+        }
+      `}</style>
 
-      <span style={{
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        width: 7,
-        height: 7,
-        borderRadius: 999,
-        background: '#E5484D',
-        border: '1.5px solid #FFFFFF',
-        display: 'block',
-      }} />
-    </button>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label="View Moments"
+        style={{
+          position: 'absolute',
+          top: 'calc(18px + env(safe-area-inset-top, 0px))',
+          right: 16,
+          width: 42,
+          height: 42,
+          borderRadius: 999,
+          border: 'none',
+          background: '#FFFFFF',
+          color: '#252525',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textDecoration: 'none',
+          flexShrink: 0,
+          overflow: 'visible',
+          zIndex: 30,
+          cursor: 'pointer',
+          padding: 0,
+        }}
+      >
+        <Heart
+          size={21}
+          strokeWidth={1.85}
+          color="#252525"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        />
+
+        <span style={{
+          position: 'absolute',
+          top: 10,
+          right: 9,
+          width: 9,
+          height: 9,
+          borderRadius: 999,
+          background: '#E5484D',
+          border: '1.5px solid #FFFFFF',
+          display: 'block',
+          transformOrigin: 'center',
+          animation: 'schoolConnectMomentDotPulse 1.45s ease-in-out infinite',
+        }} />
+      </button>
+    </>
   )
 }
 
@@ -721,7 +712,6 @@ export default function ParentMagicReportPage() {
                 gap: 7,
                 marginTop: 3,
               }}>
-                <SchoolQuickView school={school} />
                 <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
               </div>
             </div>

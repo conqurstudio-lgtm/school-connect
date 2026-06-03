@@ -224,6 +224,12 @@ export function ReportSwiper({ reports, childName }: Props) {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 8,
+            position: 'fixed',
+            left: 0,
+            right: 0,
+            bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+            zIndex: 45,
+            pointerEvents: 'auto',
           minHeight: 34,
           padding: '2px 0 10px',
         }}>
@@ -234,7 +240,7 @@ export function ReportSwiper({ reports, childName }: Props) {
               aria-label={`Report ${i + 1}`}
               style={{
                 width: i === index ? 18 : 6,
-                height: 6,
+                height: 36,
                 borderRadius: 999,
                 background: i === index ? T.ink : T.trackBg,
                 border: 'none',

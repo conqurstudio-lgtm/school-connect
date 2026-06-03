@@ -6,15 +6,15 @@ import { ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
-  ink:     '#1A1A1A',
+  ink:     '#111827',
   ink2:    '#4A4A4A',
-  ink3:    '#9A9A9A',
+  ink3:    '#7C8486',
   ink4:    '#D8D8D8',
   divider: 'rgba(0,0,0,0.06)',
   trackBg: '#EFEFF2',
   up:      '#22C55E',
   down:    '#EF4444',
-  same:    '#9A9A9A',
+  same:    '#7C8486',
 }
 
 const SUBJECT_GRAPH = {
@@ -214,7 +214,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         left: 0, right: 0,
         bottom: -10,
         textAlign: 'center',
-        fontSize: 38, lineHeight: 1,
+        fontSize: 24, lineHeight: 1,
       }}>
         {getScoreEmoji(score)}
       </div>
@@ -237,7 +237,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
       <span style={{
         fontSize: 13,
         fontWeight: 540,
-        color: '#5F6268',
+        color: '#5F686B',
         lineHeight: 1.2,
       }}>
         {name}
@@ -294,7 +294,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <div style={{ marginTop: 24 }}>
           <p style={{
-            fontSize: 17, fontWeight: 600, color: T.ink,
+            fontSize: 16, fontWeight: 580, color: T.ink,
             letterSpacing: '-0.02em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -318,7 +318,7 @@ export function ReportCard({ report, childName }: Props) {
           textAlign: 'center',
         }}>
           <p style={{
-            fontSize: 15, color: T.ink3, margin: 0,
+            fontSize: 14.5, color: '#5F686B', margin: 0,
             lineHeight: 1.55, letterSpacing: '-0.005em',
             fontWeight: 400, maxWidth: 380, marginInline: 'auto',
           }}>
