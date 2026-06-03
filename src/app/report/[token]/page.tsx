@@ -24,13 +24,40 @@ const T = {
 function ParentReportSafeAreaStyle() {
   return (
     <style>{`
+      :root,
       html,
       body {
         background: #FFFFFF !important;
+        background-color: #FFFFFF !important;
+        color-scheme: light;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+        overscroll-behavior-y: none;
+      }
+
+      body > div,
+      main.parent-report-screen,
+      .parent-report-screen,
+      .parent-report-shell {
+        background: #FFFFFF !important;
+        background-color: #FFFFFF !important;
       }
 
       .parent-report-screen {
-        background: #FFFFFF;
+        min-height: 100dvh;
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+        isolation: isolate;
+      }
+
+      .parent-report-shell {
+        min-height: 100dvh;
+        margin-inline: auto;
       }
 
       .parent-report-screen::before,
@@ -46,16 +73,12 @@ function ParentReportSafeAreaStyle() {
 
       .parent-report-screen::before {
         top: 0;
-        height: env(safe-area-inset-top, 0px);
+        height: calc(18px + env(safe-area-inset-top, 0px));
       }
 
       .parent-report-screen::after {
         bottom: 0;
-        height: env(safe-area-inset-bottom, 0px);
-      }
-
-      .parent-report-shell {
-        background: #FFFFFF;
+        height: calc(18px + env(safe-area-inset-bottom, 0px));
       }
     `}</style>
   )
@@ -626,6 +649,7 @@ export default function ParentMagicReportPage() {
   return (
     <main className="parent-report-screen" style={{
         minHeight: '100dvh',
+      background: '#FFFFFF',
       height: '100dvh',
       overflow: 'hidden',
       overscrollBehaviorX: 'none',
