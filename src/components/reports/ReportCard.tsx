@@ -431,7 +431,7 @@ export function ReportCard({ report, childName }: Props) {
             fontSize: 10.8, fontWeight: 560, color: '#5F6268',
             letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
-            Subjects · {subjects.length}
+            Subjects
           </span>
           <ChevronDown size={16} strokeWidth={2} color={T.ink3}
             style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s' }} />

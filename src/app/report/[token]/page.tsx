@@ -514,6 +514,12 @@ export default function ParentMagicReportPage() {
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
+  const childInitial = String(childName || 'C').slice(0, 1).toUpperCase()
+  const childPhoto =
+    payload.child?.photo_url ||
+    payload.child?.avatar_url ||
+    payload.child?.image_url ||
+    ''
 
   const reports = (payload.reports?.length ? payload.reports : [payload.report])
     .slice()
@@ -565,24 +571,26 @@ export default function ParentMagicReportPage() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 9,
-            minHeight: 34,
+            gap: 10,
+            minHeight: 44,
+            paddingRight: 48,
           }}>
             <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 13,
-              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
+              width: 42,
+              height: 42,
+              borderRadius: 16,
+              background: childPhoto ? `url(${childPhoto}) center/cover` : T.soft,
               border: `1px solid ${T.border}`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: T.ink3,
-              fontSize: 12,
-              fontWeight: 650,
+              color: T.ink2,
+              fontSize: 14,
+              fontWeight: 620,
               flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              {!school?.logo_url && String(school?.name || 'S').slice(0, 1)}
+              {!childPhoto && childInitial}
             </div>
 
             <div style={{
@@ -591,30 +599,41 @@ export default function ParentMagicReportPage() {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              gap: 0,
             }}>
               <p style={{
-                fontSize: 13,
-                fontWeight: 620,
+                fontSize: 14,
+                fontWeight: 600,
                 color: T.ink,
                 margin: 0,
-                lineHeight: 1,
+                lineHeight: 1.15,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                letterSpacing: '-0.02em',
               }}>
-                {school?.name || 'School Connect'}
+                {childName}
               </p>
+
+              <p style={{
+                fontSize: 12,
+                color: T.ink3,
+                margin: '3px 0 0',
+                lineHeight: 1.2,
+                fontWeight: 400,
+              }}>
+                Latest weekly report
+              </p>
+
               <div style={{
+                marginTop: 6,
                 display: 'inline-flex',
-                alignItems: 'center',
-                gap: 7,
-                marginTop: 3,
+                width: 'fit-content',
               }}>
                 <SchoolQuickView school={school} />
-                <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
               </div>
             </div>
+
+            <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
           </div>
         </header>
 
@@ -630,22 +649,11 @@ export default function ParentMagicReportPage() {
           <ReportSwiper reports={reports} childName={childName} />
         </section>
 
-        <footer style={{
+        <div style={{
           flexShrink: 0,
-          padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
-          textAlign: 'center',
+          height: 'calc(8px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
-        }}>
-          <p style={{
-            fontSize: 10.5,
-            color: '#CCCCCC',
-            margin: 0,
-            letterSpacing: '0.04em',
-            fontWeight: 500,
-          }}>
-            Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
-          </p>
-        </footer>
+        }} />
       </div>
     </main>
   )
