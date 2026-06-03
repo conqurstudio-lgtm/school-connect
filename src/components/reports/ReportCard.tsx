@@ -265,7 +265,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 }
 
 export function ReportCard({ report, childName }: Props) {
-  const [expanded, setExpanded] = useState(false)
+  const [subjectsOpen, setSubjectsOpen] = useState(false)
   const overall  = getOverallScore(report.scores)
   const subjects = Object.entries(report.scores)
 
@@ -418,87 +418,217 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       )}
 
-      {/* ── Subjects (collapsible) ─────────────────── */}
-      <div>
+      {/* ── Subjects popup action ─────────────────── */}
+      <div style={{
+        borderTop: `1px solid ${T.divider}`,
+        padding: '16px 0 0',
+      }}>
         <button
-          onClick={() => setExpanded(v => !v)}
+          type="button"
+          onClick={() => setSubjectsOpen(true)}
           style={{
-            width: '100%', padding: '14px 0',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            background: 'none', border: 'none',
-            borderTop: `1px solid ${T.divider}`,
-            borderBottom: 'none',
-            cursor: 'pointer', fontFamily: 'inherit',
-            transition: 'all 0.2s',
-          }}>
+            width: '100%',
+            minHeight: 42,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            padding: 0,
+          }}
+        >
           <span style={{
-            fontSize: 10.8, fontWeight: 560, color: '#5F6268',
-            letterSpacing: '0.1em', textTransform: 'uppercase',
+            fontSize: 10.8,
+            fontWeight: 560,
+            color: '#5F6268',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
           }}>
             Subjects
           </span>
-          <ChevronDown size={16} strokeWidth={2} color={T.ink3}
-            style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s' }} />
+
+          <span style={{
+            fontSize: 12.5,
+            color: '#8FA6A1',
+            fontWeight: 470,
+          }}>
+            View
+          </span>
         </button>
-
-        {expanded && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18,
-                        padding: '20px 0 4px',
-                        animation: 'expandIn 0.3s ease' }}>
-            {subjects.map(([name, score]) => {
-              const pct   = (Number(score) / 5) * 100
-              const prev  = report.previous_scores?.[name]
-              const delta = prev !== undefined ? Number(score) - Number(prev) : null
-
-              return (
-                <div key={name} style={{
-                  display: 'flex', alignItems: 'center', gap: 14,
-                }}>
-                  <span style={{
-                    flex: '0 0 140px',
-                    fontSize: 13.2, color: T.ink, fontWeight: 470,
-                    letterSpacing: '-0.005em',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                  }} title={name}>
-                    {shortenSubject(name)}
-                  </span>
-
-                  <div style={{
-                    flex: 1, position: 'relative',
-                    height: 10, display: 'flex', alignItems: 'center',
-                  }}>
-                    <div style={{
-                      position: 'absolute', inset: 'auto 0',
-                      height: 3, width: '100%', borderRadius: 2,
-                      background: '#F3F5F4',
-                    }} />
-                    <div style={{
-                      position: 'absolute', inset: 'auto 0 auto 0',
-                      height: 3, width: `${pct}%`, borderRadius: 2,
-                      background: '#8FA6A1',
-                      transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
-                    }} />
-                  </div>
-
-                  <div style={{
-                    flex: '0 0 auto',
-                    display: 'flex', alignItems: 'center', gap: 8,
-                  }}>
-                    {delta !== null && <Delta value={delta} />}
-                    <span style={{
-                      fontSize: 12.8, color: T.ink, fontWeight: 560,
-                      fontVariantNumeric: 'tabular-nums',
-                      minWidth: 28, textAlign: 'right',
-                    }}>
-                      {Number(score).toFixed(1)}
-                    </span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
       </div>
+
+      {subjectsOpen && (
+        <div
+          onClick={() => setSubjectsOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 80,
+            background: 'rgba(0,0,0,0.18)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            padding: '0 12px calc(12px + env(safe-area-inset-bottom, 0px))',
+          }}
+        >
+          <div
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: 430,
+              maxHeight: '72dvh',
+              background: '#FFFFFF',
+              borderRadius: 26,
+              border: '1px solid rgba(0,0,0,0.07)',
+              boxShadow: '0 18px 60px rgba(0,0,0,0.14)',
+              overflow: 'hidden',
+            }}
+          >
+            <div style={{
+              padding: '16px 18px 13px',
+              borderBottom: '1px solid rgba(0,0,0,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 14,
+            }}>
+              <div style={{ minWidth: 0 }}>
+                <p style={{
+                  fontSize: 15,
+                  color: T.ink,
+                  fontWeight: 580,
+                  letterSpacing: '-0.02em',
+                  margin: 0,
+                }}>
+                  Subjects
+                </p>
+
+                <p style={{
+                  fontSize: 12.5,
+                  color: '#7C8486',
+                  fontWeight: 400,
+                  margin: '3px 0 0',
+                }}>
+                  Detailed progress for this report
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSubjectsOpen(false)}
+                aria-label="Close subjects"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: '#F7F8F8',
+                  color: '#5F6268',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: 18,
+                  lineHeight: 1,
+                  fontFamily: 'inherit',
+                  flexShrink: 0,
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{
+              maxHeight: 'calc(72dvh - 74px)',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              padding: '18px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 18,
+            }}>
+              {subjects.map(([name, score]) => {
+                const pct = (Number(score) / 5) * 100
+                const prev = report.previous_scores?.[name]
+                const delta = prev !== undefined ? Number(score) - Number(prev) : null
+
+                return (
+                  <div key={name}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 12,
+                      marginBottom: 9,
+                    }}>
+                      <span style={{
+                        flex: 1,
+                        minWidth: 0,
+                        fontSize: 13.2,
+                        color: T.ink,
+                        fontWeight: 470,
+                        letterSpacing: '-0.005em',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }} title={name}>
+                        {shortenSubject(name)}
+                      </span>
+
+                      <div style={{
+                        flex: '0 0 auto',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}>
+                        {delta !== null && <Delta value={delta} />}
+                        <span style={{
+                          fontSize: 12.8,
+                          color: T.ink,
+                          fontWeight: 560,
+                          fontVariantNumeric: 'tabular-nums',
+                          minWidth: 28,
+                          textAlign: 'right',
+                        }}>
+                          {Number(score).toFixed(1)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{
+                      position: 'relative',
+                      height: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        inset: 'auto 0',
+                        height: 3,
+                        width: '100%',
+                        borderRadius: 2,
+                        background: '#F3F5F4',
+                      }} />
+                      <div style={{
+                        position: 'absolute',
+                        inset: 'auto 0 auto 0',
+                        height: 3,
+                        width: `${pct}%`,
+                        borderRadius: 2,
+                        background: '#8FA6A1',
+                        transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
+                      }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </section>
   )
