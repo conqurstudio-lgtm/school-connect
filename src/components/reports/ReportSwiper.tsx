@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ReportCard } from './ReportCard'
 
 const T = {
@@ -19,20 +19,23 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
 }
 
+function reportTime(report: any) {
+  return new Date(report.week_starting || report.published_at || report.created_at || 0).getTime()
+}
+
 export function ReportSwiper({ reports = [], childName }: Props) {
+  // Previous reports live on the LEFT. Latest report lives on the RIGHT.
+  // User lands on the latest report, then swipes/taps left-side dots to view history.
   const visualReports = useMemo(() => {
     return (reports || [])
       .slice()
-      .sort((a: any, b: any) => {
-        const aDate = new Date(a.week_starting || a.published_at || a.created_at || 0).getTime()
-        const bDate = new Date(b.week_starting || b.published_at || b.created_at || 0).getTime()
-        return bDate - aDate
-      })
+      .sort((a: any, b: any) => reportTime(a) - reportTime(b))
   }, [reports])
 
   const total = visualReports.length
+  const latestIndex = Math.max(0, total - 1)
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(latestIndex)
   const [drag, setDrag] = useState(0)
   const [animationRound, setAnimationRound] = useState(0)
 
@@ -41,6 +44,12 @@ export function ReportSwiper({ reports = [], childName }: Props) {
   const deltaX = useRef(0)
   const deltaY = useRef(0)
   const gesture = useRef<Gesture>('none')
+
+  useEffect(() => {
+    setIndex(latestIndex)
+    setDrag(0)
+    setAnimationRound(round => round + 1)
+  }, [latestIndex])
 
   const moveTo = (nextIndex: number) => {
     const safeIndex = clamp(nextIndex, 0, Math.max(0, total - 1))
@@ -75,25 +84,26 @@ export function ReportSwiper({ reports = [], childName }: Props) {
 
     if (gesture.current !== 'horizontal') return
 
-    const atFirst = index === 0 && dx > 0
-    const atLast = index === total - 1 && dx < 0
-    const resistance = atFirst || atLast ? 0.28 : 1
+    const atOldest = index === 0 && dx > 0
+    const atLatest = index === total - 1 && dx < 0
+    const resistance = atOldest || atLatest ? 0.28 : 1
 
     setDrag(dx * resistance)
   }
 
   const onEnd = () => {
     if (gesture.current === 'horizontal') {
-      const threshold = 56 // report-swipe-direction-inverted-v245
+      const threshold = 56
 
-      // Inverted report history direction:
-      // if the previous direction felt reversed on-device, this flips the gesture decision.
-      if (deltaX.current > threshold && index < total - 1) {
-        moveTo(index + 1)
+      // Previous reports are on the LEFT.
+      // Drag/swipe right from latest to reveal the previous report.
+      if (deltaX.current > threshold && index > 0) {
+        moveTo(index - 1)
       }
 
-      if (deltaX.current < -threshold && index > 0) {
-        moveTo(index - 1)
+      // Drag/swipe left to move back toward the latest report.
+      if (deltaX.current < -threshold && index < total - 1) {
+        moveTo(index + 1)
       }
     }
 
@@ -173,6 +183,7 @@ export function ReportSwiper({ reports = [], childName }: Props) {
         >
           {visualReports.map((report: any, slideIndex: number) => {
             const isActive = slideIndex === index
+            const isLatest = slideIndex === latestIndex
 
             return (
               <div
@@ -211,7 +222,10 @@ export function ReportSwiper({ reports = [], childName }: Props) {
                 >
                   <ReportCard
                     key={isActive ? `${report.id || slideIndex}-active-${animationRound}` : `${report.id || slideIndex}-idle`}
-                    report={report}
+                    report={{
+                      ...report,
+                      display_position: isLatest ? 'latest' : 'previous',
+                    }}
                     childName={childName}
                   />
                 </div>
