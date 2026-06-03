@@ -439,8 +439,8 @@ export function ReportCard({ report, childName }: Props) {
           }}
         >
           <span style={{
-            fontSize: 10.8,
-            fontWeight: 560,
+            fontSize: 10.6,
+            fontWeight: 520,
             color: '#5F6268',
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
@@ -481,9 +481,9 @@ export function ReportCard({ report, childName }: Props) {
                 }}>
                   <span style={{
                     flex: '0 0 140px',
-                    fontSize: 13.2,
-                    color: T.ink,
-                    fontWeight: 470,
+                    fontSize: 13,
+                    color: '#4B5356',
+                    fontWeight: 430,
                     letterSpacing: '-0.005em',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -502,7 +502,7 @@ export function ReportCard({ report, childName }: Props) {
                     <div style={{
                       position: 'absolute',
                       inset: 'auto 0',
-                      height: 3,
+                      height: 2.5,
                       width: '100%',
                       borderRadius: 2,
                       background: '#F2F3F3',
@@ -511,10 +511,10 @@ export function ReportCard({ report, childName }: Props) {
                     <div style={{
                       position: 'absolute',
                       inset: 'auto 0 auto 0',
-                      height: 3,
+                      height: 2.5,
                       width: `${pct}%`,
                       borderRadius: 2,
-                      background: '#4B4B4B',
+                      background: '#7C8486',
                     }} />
                   </div>
 
@@ -527,9 +527,9 @@ export function ReportCard({ report, childName }: Props) {
                     {delta !== null && <Delta value={delta} />}
 
                     <span style={{
-                      fontSize: 12.8,
-                      color: T.ink,
-                      fontWeight: 560,
+                      fontSize: 12.5,
+                      color: '#4B5356',
+                      fontWeight: 500,
                       fontVariantNumeric: 'tabular-nums',
                       minWidth: 28,
                       textAlign: 'right',
