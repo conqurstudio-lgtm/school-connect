@@ -329,13 +329,13 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 38px',
+          padding: '0 10px 40px',
         }}>
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
             gap: 11,
-            maxWidth: 390,
+            maxWidth: 396,
             margin: '0 auto',
           }}>
             <div style={{
@@ -371,7 +371,7 @@ export function ReportCard({ report, childName }: Props) {
                 fontWeight: 560,
                 letterSpacing: '-0.015em',
                 lineHeight: 1.2,
-                margin: '0 0 6px',
+                margin: '0 0 8px',
               }}>
                 <span style={{
                   overflow: 'hidden',
@@ -390,16 +390,36 @@ export function ReportCard({ report, childName }: Props) {
                 </span>
               </p>
 
-              <p style={{
-                fontSize: 14.2,
-                color: '#5F6268',
-                margin: 0,
-                lineHeight: 1.58,
-                letterSpacing: '-0.005em',
-                fontWeight: 400,
+              <div style={{
+                position: 'relative',
+                background: '#F7F8F8',
+                border: '1px solid #ECECEC',
+                borderRadius: '18px 18px 18px 8px',
+                padding: '13px 15px 13px 17px',
+                overflow: 'hidden',
               }}>
-                {report.comment}
-              </p>
+                <span style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 13,
+                  bottom: 13,
+                  width: 3,
+                  borderRadius: 999,
+                  background: '#8FA6A1',
+                  opacity: 0.75,
+                }} />
+
+                <p style={{
+                  fontSize: 14.2,
+                  color: '#4B5356',
+                  margin: 0,
+                  lineHeight: 1.58,
+                  letterSpacing: '-0.005em',
+                  fontWeight: 400,
+                }}>
+                  {report.comment}
+                </p>
+              </div>
             </div>
           </div>
         </div>
