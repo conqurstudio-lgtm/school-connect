@@ -155,14 +155,14 @@ function SchoolQuickView({ school }: { school: any }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: 19,
-          padding: '2px 7px',
-          borderRadius: 999,
+          minHeight: 17,
+          padding: 0,
+          borderRadius: 0,
           background: 'transparent',
-          border: '1px solid rgba(0,0,0,0.10)',
-          color: '#9A9A9A',
-          fontSize: 9.8,
-          fontWeight: 540,
+          border: 'none',
+          color: '#7C8486',
+          fontSize: 10.5,
+          fontWeight: 430,
           lineHeight: 1,
           userSelect: 'none',
           fontFamily: 'inherit',
@@ -563,7 +563,7 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(12px + env(safe-area-inset-top, 0px)) 16px 10px',
+          padding: 'calc(11px + env(safe-area-inset-top, 0px)) 16px 8px',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
@@ -571,8 +571,8 @@ export default function ParentMagicReportPage() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
-            minHeight: 40,
+            gap: 9,
+            minHeight: 38,
             paddingRight: 48,
           }}>
             <div style={{
@@ -601,8 +601,8 @@ export default function ParentMagicReportPage() {
               justifyContent: 'center',
             }}>
               <p style={{
-                fontSize: 14,
-                fontWeight: 600,
+                fontSize: 13.2,
+                fontWeight: 560,
                 color: T.ink,
                 margin: 0,
                 lineHeight: 1.15,
@@ -615,7 +615,7 @@ export default function ParentMagicReportPage() {
               </p>
 
               <div style={{
-                marginTop: 5,
+                marginTop: 2,
                 display: 'inline-flex',
                 width: 'fit-content',
               }}>
