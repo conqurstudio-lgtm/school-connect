@@ -4,6 +4,7 @@
 import { useState, useEffect, useId } from 'react'
 import { ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
+import { createPortal } from 'react-dom'
 
 const T = {
   ink:     '#1A1A1A',
@@ -266,8 +267,9 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 
 export function ReportCard({ report, childName }: Props) {
   const [subjectsOpen, setSubjectsOpen] = useState(false)
-  const overall  = getOverallScore(report.scores)
-  const subjects = Object.entries(report.scores)
+  const scoreSource = report.scores || {}
+  const overall  = getOverallScore(scoreSource)
+  const subjects = Object.entries(scoreSource)
 
   const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
@@ -465,8 +467,8 @@ export function ReportCard({ report, childName }: Props) {
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 80,
-            background: 'rgba(0,0,0,0.18)',
+            zIndex: 999,
+            background: 'rgba(0,0,0,0.20)',
             display: 'flex',
             alignItems: 'flex-end',
             justifyContent: 'center',
