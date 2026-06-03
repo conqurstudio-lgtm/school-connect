@@ -189,8 +189,8 @@ function SchoolQuickView({ school }: { school: any }) {
             gap: 10,
           }}>
             <div style={{
-              width: 42,
-              height: 42,
+              width: 38,
+              height: 38,
               borderRadius: 15,
               background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
               color: '#8FA6A1',
