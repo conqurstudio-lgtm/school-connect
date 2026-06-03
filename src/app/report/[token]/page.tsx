@@ -514,13 +514,6 @@ export default function ParentMagicReportPage() {
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
-  const childInitial = String(childName || 'C').slice(0, 1).toUpperCase()
-  const childPhoto =
-    payload.child?.photo_url ||
-    payload.child?.avatar_url ||
-    payload.child?.image_url ||
-    ''
-
   const reports = (payload.reports?.length ? payload.reports : [payload.report])
     .slice()
     .sort((a: any, b: any) => {
@@ -563,68 +556,13 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(11px + env(safe-area-inset-top, 0px)) 16px 8px',
+          minHeight: 'calc(46px + env(safe-area-inset-top, 0px))',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 0',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 9,
-            minHeight: 38,
-            paddingRight: 48,
-          }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: childPhoto ? `url(${childPhoto}) center/cover` : T.soft,
-              border: `1px solid ${T.border}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: T.ink2,
-              fontSize: 14,
-              fontWeight: 620,
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}>
-              {!childPhoto && childInitial}
-            </div>
-
-            <div style={{
-              flex: 1,
-              minWidth: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-            }}>
-              <p style={{
-                fontSize: 13.2,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-                lineHeight: 1.15,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                letterSpacing: '-0.02em',
-              }}>
-                {childName}
-              </p>
-
-              <div style={{
-                marginTop: 2,
-                display: 'inline-flex',
-                width: 'fit-content',
-              }}>
-                <SchoolQuickView school={school} />
-              </div>
-            </div>
-
-            <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
-          </div>
+          <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
         </header>
 
         <section style={{

@@ -286,6 +286,10 @@ export function ReportCard({ report, childName }: Props) {
     report.teacher_image_url ||
     report.photo_url ||
     ''
+  const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
+  const childTeacherLabel = childFirstName === 'Your child'
+    ? 'Your child’s teacher'
+    : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
     <section style={{ paddingBottom: 38 }}>
@@ -386,7 +390,7 @@ export function ReportCard({ report, childName }: Props) {
                   color: '#5F6268',
                   fontWeight: 400,
                 }}>
-                  · Your teacher
+                  {childTeacherLabel}
                 </span>
               </p>
 
