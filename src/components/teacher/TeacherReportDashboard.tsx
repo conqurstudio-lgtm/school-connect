@@ -1979,142 +1979,167 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
         />
 
         <div style={{
-          padding: 12,
-          borderRadius: 22,
-          background: T.soft,
           display: 'flex',
           flexDirection: 'column',
-          gap: 13,
+          gap: 18,
+          padding: '2px 0 0',
         }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 8,
-          }}>
-            <button
-              type="button"
-              onClick={() => applyReportSubjectPreset('ECD')}
-              style={{
-                minHeight: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              ECD
-            </button>
-
-            <button
-              type="button"
-              onClick={() => applyReportSubjectPreset('Primary')}
-              style={{
-                minHeight: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.ink2,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              Primary
-            </button>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 10,
+          <section style={{
+            padding: '0 0 2px',
           }}>
             <p style={{
-              fontSize: 13,
-              fontWeight: 560,
-              color: T.ink,
-              margin: 0,
+              fontSize: 12,
+              fontWeight: 520,
+              color: T.ink3,
+              margin: '0 0 9px',
             }}>
-              Subjects
+              Presets
             </p>
 
-            <button
-              type="button"
-              onClick={addReportSubject}
-              aria-label="Add subject"
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: 999,
-                border: 'none',
-                background: T.white,
-                color: T.accent,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-            >
-              <Plus size={16} strokeWidth={2.05} />
-            </button>
-          </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 8,
+            }}>
+              <button
+                type="button"
+                onClick={() => applyReportSubjectPreset('ECD')}
+                style={{
+                  minHeight: 38,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.ink2,
+                  fontSize: 12.5,
+                  fontWeight: 520,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
+                }}
+              >
+                ECD
+              </button>
 
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 7,
-          }}>
-            {reportSubjects.map((subject, index) => (
-              <div key={index} style={{
-                display: 'grid',
-                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 32px' : '1fr',
-                gap: 7,
-                alignItems: 'center',
-              }}>
-                <input
-                  value={subject}
-                  onChange={event => updateReportSubject(index, event.target.value)}
-                  placeholder="Subject or area"
-                  style={{
-                    ...inputStyle,
-                    minHeight: 42,
-                    fontSize: 15.5,
-                    background: T.white,
-                    border: 'none',
-                  }}
-                />
+              <button
+                type="button"
+                onClick={() => applyReportSubjectPreset('Primary')}
+                style={{
+                  minHeight: 38,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.ink2,
+                  fontSize: 12.5,
+                  fontWeight: 520,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
+                }}
+              >
+                Primary
+              </button>
+            </div>
+          </section>
 
-                {reportSubjects.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeReportSubject(index)}
-                    aria-label="Remove subject"
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 999,
-                      border: 'none',
-                      background: 'transparent',
-                      color: T.ink3,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                  >
-                    <X size={14} strokeWidth={1.9} />
-                  </button>
-                )}
+          <section>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 10,
+              marginBottom: 10,
+            }}>
+              <div>
+                <p style={{
+                  fontSize: 13.5,
+                  fontWeight: 560,
+                  color: T.ink,
+                  margin: 0,
+                }}>
+                  Subjects
+                </p>
+
+                <p style={{
+                  fontSize: 12.2,
+                  color: T.ink3,
+                  margin: '2px 0 0',
+                  lineHeight: 1.35,
+                }}>
+                  These appear on each learner report.
+                </p>
               </div>
-            ))}
-          </div>
+
+              <button
+                type="button"
+                onClick={addReportSubject}
+                aria-label="Add subject"
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.accent,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <Plus size={16} strokeWidth={2.05} />
+              </button>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 9,
+            }}>
+              {reportSubjects.map((subject, index) => (
+                <div key={index} style={{
+                  display: 'grid',
+                  gridTemplateColumns: reportSubjects.length > 1 ? '1fr 32px' : '1fr',
+                  gap: 7,
+                  alignItems: 'center',
+                }}>
+                  <input
+                    value={subject}
+                    onChange={event => updateReportSubject(index, event.target.value)}
+                    placeholder="Subject or area"
+                    style={{
+                      ...inputStyle,
+                      minHeight: 42,
+                      fontSize: 15.5,
+                      background: T.soft,
+                      border: 'none',
+                    }}
+                  />
+
+                  {reportSubjects.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeReportSubject(index)}
+                      aria-label="Remove subject"
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 999,
+                        border: 'none',
+                        background: 'transparent',
+                        color: T.ink3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      <X size={14} strokeWidth={1.9} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
 
           <button
             type="button"
