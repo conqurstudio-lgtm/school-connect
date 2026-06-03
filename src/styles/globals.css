@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg:      #FFFFFF;
+  --bg:      #FCFCFF;
   --surface: #FFFFFF;
   --ink:     #1A1A1A;
   --ink-2:   #4A4A4A;
@@ -1417,27 +1417,4 @@ html::after {
     margin: 0 !important;
     background: var(--bg) !important;
   }
-}
-
-/* school-connect-global-white-safe-area-v215 */
-:root,
-html,
-body {
-  background: #FFFFFF !important;
-  background-color: #FFFFFF !important;
-  color-scheme: light;
-}
-
-html,
-body {
-  min-height: 100%;
-  margin: 0;
-}
-
-body {
-  overscroll-behavior-y: none;
-}
-
-body > div {
-  background: #FFFFFF;
 }

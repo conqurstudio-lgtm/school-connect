@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor:   '#FFFFFF',
+  themeColor:   '#FCFCFF',
   width:        'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//supabase.co" />
         <link rel="preconnect"   href="https://igynbwratioqnijqpsxm.supabase.co" crossOrigin="anonymous" />
       </head>
-      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif', background: '#FFFFFF' }}>
+      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif', background: '#FCFCFF' }}>
         <PwaPauseCleanup />
         {children}
         <Toaster

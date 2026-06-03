@@ -13,7 +13,7 @@
   --sc-ink-2: #5F6268;
   --sc-ink-3: #9A9CA3;
   --sc-border: rgba(0,0,0,0.06);
-  --sc-soft: #FFFFFF;
+  --sc-soft: #F8F8F9;
   --sc-primary: #2B2B2F;
 
   /*
@@ -559,7 +559,7 @@ body {
   --sc-ink: #262626;
   --sc-ink-2: #5F6268;
   --sc-ink-3: #9A9CA3;
-  --sc-soft: #FFFFFF;
+  --sc-soft: #F8F8F9;
   --sc-soft-2: #FBFBFC;
   --sc-border: rgba(0,0,0,0.06);
   --sc-primary: #2B2B2F;
@@ -822,11 +822,3 @@ button:disabled {
   }
 }
 
-
-
-/* school-connect-mobile-white-safe-area-v215 */
-html,
-body {
-  background: #FFFFFF !important;
-  background-color: #FFFFFF !important;
-}
