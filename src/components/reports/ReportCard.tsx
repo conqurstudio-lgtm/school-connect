@@ -335,218 +335,80 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       )}
 
-      {/* ── Subjects ─────────────────── */}
-      <div style={{
-        marginTop: 2,
-      }}>
+      {/* ── Subjects (collapsible) ─────────────────── */}
+      <div>
         <button
           onClick={() => setExpanded(v => !v)}
           style={{
-            width: '100%',
-            padding: '15px 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'transparent',
-            border: 'none',
-            borderTop: '1px solid #ECECEC',
-            borderBottom: expanded ? '1px solid #ECECEC' : 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          <span style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 8,
-            minWidth: 0,
+            width: '100%', padding: '14px 0',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'none', border: 'none',
+            borderTop: `1px solid ${T.divider}`,
+            borderBottom: expanded ? `1px solid ${T.divider}` : 'none',
+            cursor: 'pointer', fontFamily: 'inherit',
+            transition: 'all 0.2s',
           }}>
-            <span style={{
-              fontSize: 13,
-              fontWeight: 620,
-              color: '#111827',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              lineHeight: 1,
-            }}>
-              Subjects
-            </span>
-
-            <span style={{
-              width: 4,
-              height: 4,
-              borderRadius: 999,
-              background: '#8FA4A0',
-              display: 'inline-block',
-            }} />
-
-            <span style={{
-              fontSize: 12.5,
-              fontWeight: 560,
-              color: '#7C8486',
-              lineHeight: 1,
-            }}>
-              {subjects.length}
-            </span>
+          <span style={{
+            fontSize: 11, fontWeight: 600, color: T.ink3,
+            letterSpacing: '0.1em', textTransform: 'uppercase',
+          }}>
+            Subjects · {subjects.length}
           </span>
-
-          <ChevronDown
-            size={16}
-            strokeWidth={2.05}
-            color="#7C8486"
-            style={{
-              transform: expanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.25s ease',
-              flexShrink: 0,
-            }}
-          />
+          <ChevronDown size={16} strokeWidth={2} color={T.ink3}
+            style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s' }} />
         </button>
 
         {expanded && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            animation: 'expandIn 0.3s ease',
-          }}>
-            {subjects.map(([name, rawScore], index) => {
-              const score = Number(rawScore)
-              const safeScore = Number.isFinite(score) ? Math.max(0, Math.min(5, score)) : 0
-              const pct = (safeScore / 5) * 100
-              const prev = report.previous_scores?.[name]
-              const delta = prev !== undefined ? safeScore - Number(prev) : null
-              const label = getScoreLabel(safeScore)
-              const progressText = safeScore >= 4.5
-                ? 'Excellent progress'
-                : safeScore >= 3
-                  ? 'Good progress'
-                  : safeScore >= 2
-                    ? 'Steady progress'
-                    : 'Needs support'
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18,
+                        padding: '20px 0 4px',
+                        animation: 'expandIn 0.3s ease' }}>
+            {subjects.map(([name, score]) => {
+              const pct   = (Number(score) / 5) * 100
+              const prev  = report.previous_scores?.[name]
+              const delta = prev !== undefined ? Number(score) - Number(prev) : null
 
               return (
                 <div key={name} style={{
-                  padding: '15px 0',
-                  borderBottom: index === subjects.length - 1 ? 'none' : '1px solid #ECECEC',
+                  display: 'flex', alignItems: 'center', gap: 14,
                 }}>
+                  <span style={{
+                    flex: '0 0 140px',
+                    fontSize: 13.5, color: T.ink, fontWeight: 500,
+                    letterSpacing: '-0.005em',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  }} title={name}>
+                    {shortenSubject(name)}
+                  </span>
+
                   <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    marginBottom: 10,
+                    flex: 1, position: 'relative',
+                    height: 10, display: 'flex', alignItems: 'center',
                   }}>
                     <div style={{
-                      flex: 1,
-                      minWidth: 0,
-                    }}>
-                      <p style={{
-                        fontSize: 14,
-                        color: '#111827',
-                        fontWeight: 560,
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.25,
-                        margin: 0,
-                      }} title={name}>
-                        {name}
-                      </p>
-
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 7,
-                        marginTop: 5,
-                        minWidth: 0,
-                      }}>
-                        <span style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: 999,
-                          background: '#8FA4A0',
-                          flexShrink: 0,
-                        }} />
-
-                        <span style={{
-                          fontSize: 11.8,
-                          color: '#7C8486',
-                          fontWeight: 500,
-                          letterSpacing: '-0.005em',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}>
-                          {progressText}
-                        </span>
-                      </div>
-                    </div>
-
+                      position: 'absolute', inset: 'auto 0',
+                      height: 3, width: '100%', borderRadius: 2,
+                      background: '#F3F5F4',
+                    }} />
                     <div style={{
-                      flexShrink: 0,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-end',
-                      gap: 6,
-                      minWidth: 54,
-                    }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                      }}>
-                        {delta !== null && <Delta value={delta} />}
-                        <span style={{
-                          fontSize: 16,
-                          color: '#111827',
-                          fontWeight: 620,
-                          fontVariantNumeric: 'tabular-nums',
-                          letterSpacing: '-0.025em',
-                          lineHeight: 1,
-                        }}>
-                          {safeScore.toFixed(1)}
-                        </span>
-                      </div>
-
-                      <span style={{
-                        minHeight: 21,
-                        padding: '0 8px',
-                        borderRadius: 8,
-                        background: '#F5F6F6',
-                        color: '#6E8882',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 10.5,
-                        fontWeight: 540,
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {label}
-                      </span>
-                    </div>
+                      position: 'absolute', inset: 'auto 0 auto 0',
+                      height: 3, width: `${pct}%`, borderRadius: 2,
+                      background: '#8FA6A1',
+                      transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
+                    }} />
                   </div>
 
                   <div style={{
-                    position: 'relative',
-                    height: 8,
-                    display: 'flex',
-                    alignItems: 'center',
+                    flex: '0 0 auto',
+                    display: 'flex', alignItems: 'center', gap: 8,
                   }}>
-                    <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0',
-                      height: 3,
-                      width: '100%',
-                      borderRadius: 999,
-                      background: '#F2F3F3',
-                    }} />
-                    <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0 auto 0',
-                      height: 3,
-                      width: `${pct}%`,
-                      borderRadius: 999,
-                      background: '#8FA4A0',
-                      transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
-                    }} />
+                    {delta !== null && <Delta value={delta} />}
+                    <span style={{
+                      fontSize: 13, color: T.ink, fontWeight: 600,
+                      fontVariantNumeric: 'tabular-nums',
+                      minWidth: 28, textAlign: 'right',
+                    }}>
+                      {Number(score).toFixed(1)}
+                    </span>
                   </div>
                 </div>
               )
