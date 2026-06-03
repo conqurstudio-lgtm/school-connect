@@ -667,64 +667,13 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 6px',
+          minHeight: 'calc(58px + env(safe-area-inset-top, 0px))',
+          padding: 'calc(10px + env(safe-area-inset-top, 0px)) 16px 0',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 9,
-            minHeight: 34,
-          }}>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 13,
-              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.soft,
-              border: `1px solid ${T.border}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: T.ink3,
-              fontSize: 12,
-              fontWeight: 650,
-              flexShrink: 0,
-            }}>
-              {!school?.logo_url && String(school?.name || 'S').slice(0, 1)}
-            </div>
-
-            <div style={{
-              flex: 1,
-              minWidth: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gap: 0,
-            }}>
-              <p style={{
-                fontSize: 13,
-                fontWeight: 620,
-                color: T.ink,
-                margin: 0,
-                lineHeight: 1,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {school?.name || 'School Connect'}
-              </p>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 7,
-                marginTop: 3,
-              }}>
-                <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
-              </div>
-            </div>
-          </div>
+          <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
         </header>
 
         <section style={{
@@ -734,27 +683,16 @@ export default function ParentMagicReportPage() {
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'none',
-          padding: '18px 0 6px',
+          padding: '10px 0 calc(86px + env(safe-area-inset-bottom, 0px))',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
 
-        <footer style={{
+        <div style={{
           flexShrink: 0,
-          padding: '5px 16px calc(7px + env(safe-area-inset-bottom, 0px))',
-          textAlign: 'center',
+          height: 'env(safe-area-inset-bottom, 0px)',
           background: '#FFFFFF',
-        }}>
-          <p style={{
-            fontSize: 10.5,
-            color: '#CCCCCC',
-            margin: 0,
-            letterSpacing: '0.04em',
-            fontWeight: 500,
-          }}>
-            Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
-          </p>
-        </footer>
+        }} />
       </div>
     </main>
   )
