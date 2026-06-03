@@ -39,6 +39,11 @@ const T = {
 
 const DEFAULT_REPORT_SUBJECTS = ['Mathematics', 'English', 'Life Skills', 'Behaviour']
 
+const REPORT_SUBJECT_PRESETS = {
+  ECD: ['Emotional development', 'Social skills', 'Communication', 'Fine motor skills', 'Participation'],
+  Primary: ['Mathematics', 'English', 'Life Skills', 'Reading', 'Behaviour'],
+}
+
 function normalizeReportSubjects(value: any) {
   const raw = Array.isArray(value) ? value : DEFAULT_REPORT_SUBJECTS
   const seen = new Set<string>()
@@ -1922,6 +1927,10 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
     setReportSubjects(DEFAULT_REPORT_SUBJECTS)
   }
 
+  const applyReportSubjectPreset = (preset: 'ECD' | 'Primary') => {
+    setReportSubjects(REPORT_SUBJECT_PRESETS[preset])
+  }
+
   const saveReportSubjects = async () => {
     if (savingReportSubjects) return
 
@@ -2056,6 +2065,42 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
           <p style={{ fontSize: 13, fontWeight: 560, color: T.ink, margin: 0 }}>
             Subjects shown on weekly reports
           </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 8,
+          }}>
+            <button
+              type="button"
+              onClick={() => applyReportSubjectPreset('ECD')}
+              style={{
+                ...softButton,
+                height: 38,
+                border: 'none',
+                background: T.white,
+                color: T.accent,
+                justifyContent: 'center',
+              }}
+            >
+              ECD preset
+            </button>
+
+            <button
+              type="button"
+              onClick={() => applyReportSubjectPreset('Primary')}
+              style={{
+                ...softButton,
+                height: 38,
+                border: 'none',
+                background: T.white,
+                color: T.accent,
+                justifyContent: 'center',
+              }}
+            >
+              Primary preset
+            </button>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {reportSubjects.map((subject, index) => (
