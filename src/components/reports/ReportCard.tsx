@@ -201,7 +201,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
           {displayScore.toFixed(1)}
         </div>
         <div style={{
-          fontSize: 13, color: T.ink3, fontWeight: 500,
+          fontSize: 13, color: '#5F6268', fontWeight: 500,
           marginTop: 6, letterSpacing: '-0.005em',
         }}>
           out of {max}
@@ -288,19 +288,19 @@ export function ReportCard({ report, childName }: Props) {
     ''
 
   return (
-    <section style={{ paddingBottom: 32 }}>
+    <section style={{ paddingBottom: 38 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '8px 0 40px' }}>
+      <div style={{ textAlign: 'center', padding: '14px 0 38px' }}>
         <h2 style={{
-          fontSize: 28, fontWeight: 700, color: T.ink,
+          fontSize: 26.5, fontWeight: 650, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 13, color: T.ink3, margin: '0 0 32px',
-          letterSpacing: '0.005em', fontWeight: 500,
+          fontSize: 12.5, color: '#5F6268', margin: '0 0 30px',
+          letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
         </p>
@@ -309,7 +309,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <div style={{ marginTop: 24 }}>
           <p style={{
-            fontSize: 17, fontWeight: 600, color: T.ink,
+            fontSize: 16, fontWeight: 580, color: T.ink,
             letterSpacing: '-0.02em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -318,7 +318,7 @@ export function ReportCard({ report, childName }: Props) {
             <div style={{ marginTop: 8,
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <Delta value={overallDelta} size={13} />
-              <span style={{ fontSize: 13, color: T.ink3, fontWeight: 500 }}>
+              <span style={{ fontSize: 12.5, color: '#5F6268', fontWeight: 430 }}>
                 from last week
               </span>
             </div>
@@ -383,7 +383,7 @@ export function ReportCard({ report, childName }: Props) {
                 </span>
 
                 <span style={{
-                  color: T.ink3,
+                  color: '#5F6268',
                   fontWeight: 400,
                 }}>
                   · Your teacher
@@ -428,7 +428,7 @@ export function ReportCard({ report, childName }: Props) {
             transition: 'all 0.2s',
           }}>
           <span style={{
-            fontSize: 11, fontWeight: 600, color: T.ink3,
+            fontSize: 10.8, fontWeight: 560, color: '#5F6268',
             letterSpacing: '0.1em', textTransform: 'uppercase',
           }}>
             Subjects · {subjects.length}
@@ -452,7 +452,7 @@ export function ReportCard({ report, childName }: Props) {
                 }}>
                   <span style={{
                     flex: '0 0 140px',
-                    fontSize: 13.5, color: T.ink, fontWeight: 500,
+                    fontSize: 13.2, color: T.ink, fontWeight: 470,
                     letterSpacing: '-0.005em',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }} title={name}>
@@ -482,7 +482,7 @@ export function ReportCard({ report, childName }: Props) {
                   }}>
                     {delta !== null && <Delta value={delta} />}
                     <span style={{
-                      fontSize: 13, color: T.ink, fontWeight: 600,
+                      fontSize: 12.8, color: T.ink, fontWeight: 560,
                       fontVariantNumeric: 'tabular-nums',
                       minWidth: 28, textAlign: 'right',
                     }}>
