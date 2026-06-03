@@ -143,6 +143,7 @@ export async function GET(req: NextRequest) {
         photo_url: teacher.photo_url,
         grade: teacher.grade,
         class_name: teacher.class_name,
+        report_subjects: teacher.report_subjects,
         status: teacher.status,
       },
       school,
