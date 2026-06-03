@@ -392,28 +392,17 @@ export function ReportCard({ report, childName }: Props) {
 
               <div style={{
                 position: 'relative',
-                background: '#F7F8F8',
-                border: '1px solid #ECECEC',
+                background: 'transparent',
+                border: '1px solid rgba(0,0,0,0.07)',
                 borderRadius: '18px 18px 18px 8px',
-                padding: '13px 15px 13px 17px',
+                padding: '12px 14px',
                 overflow: 'hidden',
               }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 13,
-                  bottom: 13,
-                  width: 3,
-                  borderRadius: 999,
-                  background: '#8FA6A1',
-                  opacity: 0.75,
-                }} />
-
                 <p style={{
-                  fontSize: 14.2,
-                  color: '#4B5356',
+                  fontSize: 13.6,
+                  color: '#5F6268',
                   margin: 0,
-                  lineHeight: 1.58,
+                  lineHeight: 1.56,
                   letterSpacing: '-0.005em',
                   fontWeight: 400,
                 }}>
