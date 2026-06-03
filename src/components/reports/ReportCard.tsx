@@ -272,6 +272,21 @@ export function ReportCard({ report, childName }: Props) {
   const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
+  const teacherName = report.teacher_name || 'Teacher'
+  const teacherInitials = String(teacherName || 'T')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part: string) => part[0]?.toUpperCase())
+    .join('') || 'T'
+  const teacherPhoto =
+    report.teacher_photo_url ||
+    report.teacher_avatar_url ||
+    report.teacher_image_url ||
+    report.photo_url ||
+    ''
+
   return (
     <section style={{ paddingBottom: 32 }}>
       {/* ── Hero ─────────────────── */}
@@ -314,24 +329,90 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 12px 40px',
-          textAlign: 'center',
+          padding: '0 8px 38px',
         }}>
-          <p style={{
-            fontSize: 15, color: T.ink3, margin: 0,
-            lineHeight: 1.55, letterSpacing: '-0.005em',
-            fontWeight: 400, maxWidth: 380, marginInline: 'auto',
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 10,
+            maxWidth: 390,
+            margin: '0 auto',
           }}>
-            {report.comment}
-          </p>
-          {report.teacher_name && (
-            <p style={{
-              fontSize: 12, color: T.ink4, margin: '14px 0 0',
-              fontWeight: 500,
+            <div style={{
+              width: 34,
+              height: 34,
+              borderRadius: 999,
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
+              color: '#8FA6A1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 11,
+              fontWeight: 620,
+              letterSpacing: '-0.01em',
+              flexShrink: 0,
+              overflow: 'hidden',
+              border: '1px solid rgba(143,166,161,0.22)',
             }}>
-              {report.teacher_name ? <TeacherNameTag name={report.teacher_name} /> : null}
-            </p>
-          )}
+              {!teacherPhoto && teacherInitials}
+            </div>
+
+            <div style={{
+              flex: 1,
+              minWidth: 0,
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'baseline',
+                justifyContent: 'space-between',
+                gap: 10,
+                marginBottom: 7,
+              }}>
+                <p style={{
+                  fontSize: 13,
+                  color: T.ink,
+                  fontWeight: 580,
+                  letterSpacing: '-0.015em',
+                  lineHeight: 1.2,
+                  margin: 0,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {teacherName}
+                </p>
+
+                <span style={{
+                  flexShrink: 0,
+                  fontSize: 10.5,
+                  color: T.ink4,
+                  fontWeight: 560,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                }}>
+                  Note
+                </span>
+              </div>
+
+              <div style={{
+                background: '#F7F8F8',
+                border: '1px solid #ECECEC',
+                borderRadius: '6px 18px 18px 18px',
+                padding: '12px 14px',
+              }}>
+                <p style={{
+                  fontSize: 14.2,
+                  color: '#4B5356',
+                  margin: 0,
+                  lineHeight: 1.55,
+                  letterSpacing: '-0.005em',
+                  fontWeight: 430,
+                }}>
+                  {report.comment}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
