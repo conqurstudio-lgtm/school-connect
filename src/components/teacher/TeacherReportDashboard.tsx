@@ -2025,6 +2025,133 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
       <button
         type="button"
+        onClick={() => setShowReportSubjects(value => !value)}
+        style={{
+          ...softButton,
+          width: '100%',
+          justifyContent: 'flex-start',
+          height: 44,
+          border: 'none',
+          background: T.white,
+          marginTop: 8,
+        }}
+      >
+        Report subjects
+      </button>
+
+      {showReportSubjects && (
+        <div style={{
+          marginTop: 10,
+          padding: 12,
+          borderRadius: 18,
+          background: T.soft,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}>
+          <p style={{ fontSize: 13, fontWeight: 560, color: T.ink, margin: 0 }}>
+            Subjects shown on weekly reports
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {reportSubjects.map((subject, index) => (
+              <div key={index} style={{
+                display: 'grid',
+                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 34px' : '1fr',
+                gap: 8,
+                alignItems: 'center',
+              }}>
+                <input
+                  value={subject}
+                  onChange={event => updateReportSubject(index, event.target.value)}
+                  placeholder="Subject or area"
+                  style={{
+                    ...inputStyle,
+                    minHeight: 40,
+                    fontSize: 16,
+                  }}
+                />
+
+                {reportSubjects.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeReportSubject(index)}
+                    aria-label="Remove subject"
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 999,
+                      border: 'none',
+                      background: T.white,
+                      color: T.red,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 8,
+            flexWrap: 'wrap',
+          }}>
+            <button
+              type="button"
+              onClick={addReportSubject}
+              style={{
+                ...softButton,
+                height: 38,
+                border: 'none',
+                background: T.white,
+                color: T.accent,
+              }}
+            >
+              Add subject
+            </button>
+
+            <button
+              type="button"
+              onClick={resetReportSubjects}
+              style={{
+                ...softButton,
+                height: 38,
+                border: 'none',
+                background: T.white,
+                color: T.ink3,
+              }}
+            >
+              Defaults
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={saveReportSubjects}
+            disabled={savingReportSubjects}
+            style={{
+              ...darkButton,
+              width: '100%',
+              marginTop: 2,
+              opacity: savingReportSubjects ? 0.65 : 1,
+              cursor: savingReportSubjects ? 'wait' : 'pointer',
+            }}
+          >
+            {savingReportSubjects ? 'Saving...' : 'Save subjects'}
+          </button>
+        </div>
+      )}
+
+      <button
+        type="button"
         onClick={onSignOut}
         style={{
           ...softButton,
