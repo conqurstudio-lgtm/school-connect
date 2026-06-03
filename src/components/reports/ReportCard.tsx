@@ -505,7 +505,7 @@ export function ReportCard({ report, childName }: Props) {
                       height: 3,
                       width: '100%',
                       borderRadius: 2,
-                      background: '#F3F5F4',
+                      background: '#F2F3F3',
                     }} />
 
                     <div style={{
@@ -514,7 +514,7 @@ export function ReportCard({ report, childName }: Props) {
                       height: 3,
                       width: `${pct}%`,
                       borderRadius: 2,
-                      background: '#8FA6A1',
+                      background: '#4B4B4B',
                     }} />
                   </div>
 

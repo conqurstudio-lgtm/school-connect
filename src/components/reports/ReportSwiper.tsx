@@ -2,7 +2,6 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ReportCard } from './ReportCard'
 
 const T = {
@@ -209,6 +208,9 @@ export function ReportSwiper({ reports, childName }: Props) {
               }}>
                 <div data-report-slide="true" style={{
                   width: '100%',
+                  opacity: isActive ? 1 : 0.48,
+                  filter: isActive ? 'none' : 'grayscale(1)',
+                  transition: 'opacity 0.25s ease, filter 0.25s ease',
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
                   maxWidth: 430,
