@@ -428,7 +428,7 @@ export function ReportCard({ report, childName }: Props) {
           alignItems: 'baseline',
           justifyContent: 'space-between',
           gap: 12,
-          marginBottom: 18,
+          marginBottom: 12,
         }}>
           <p style={{
             fontSize: 10.8,
@@ -452,95 +452,102 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 17,
+          background: 'transparent',
+          border: '1px solid rgba(0,0,0,0.07)',
+          borderRadius: '18px 18px 18px 8px',
+          padding: '14px 14px 15px',
         }}>
-          {subjects.length ? subjects.map(([name, score]) => {
-            const numericScore = Number(score)
-            const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-            const pct = (safeScore / 5) * 100
-            const prev = report.previous_scores?.[name]
-            const delta = prev !== undefined ? safeScore - Number(prev) : null
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 17,
+          }}>
+            {subjects.length ? subjects.map(([name, score]) => {
+              const numericScore = Number(score)
+              const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+              const pct = (safeScore / 5) * 100
+              const prev = report.previous_scores?.[name]
+              const delta = prev !== undefined ? safeScore - Number(prev) : null
 
-            return (
-              <div key={String(name)}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
-                  marginBottom: 8,
-                }}>
-                  <span style={{
-                    flex: 1,
-                    minWidth: 0,
-                    fontSize: 13.2,
-                    color: T.ink,
-                    fontWeight: 470,
-                    letterSpacing: '-0.005em',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }} title={String(name)}>
-                    {shortenSubject(String(name))}
-                  </span>
-
+              return (
+                <div key={String(name)}>
                   <div style={{
-                    flex: '0 0 auto',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8,
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    marginBottom: 8,
                   }}>
-                    {delta !== null && <Delta value={delta} />}
                     <span style={{
-                      fontSize: 12.8,
+                      flex: 1,
+                      minWidth: 0,
+                      fontSize: 13.2,
                       color: T.ink,
-                      fontWeight: 560,
-                      fontVariantNumeric: 'tabular-nums',
-                      minWidth: 28,
-                      textAlign: 'right',
-                    }}>
-                      {safeScore.toFixed(1)}
+                      fontWeight: 470,
+                      letterSpacing: '-0.005em',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }} title={String(name)}>
+                      {shortenSubject(String(name))}
                     </span>
+
+                    <div style={{
+                      flex: '0 0 auto',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                    }}>
+                      {delta !== null && <Delta value={delta} />}
+                      <span style={{
+                        fontSize: 12.8,
+                        color: T.ink,
+                        fontWeight: 560,
+                        fontVariantNumeric: 'tabular-nums',
+                        minWidth: 28,
+                        textAlign: 'right',
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    position: 'relative',
+                    height: 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 'auto 0',
+                      height: 3,
+                      width: '100%',
+                      borderRadius: 2,
+                      background: '#F3F5F4',
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      inset: 'auto 0 auto 0',
+                      height: 3,
+                      width: `${pct}%`,
+                      borderRadius: 2,
+                      background: '#8FA6A1',
+                    }} />
                   </div>
                 </div>
-
-                <div style={{
-                  position: 'relative',
-                  height: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    inset: 'auto 0',
-                    height: 3,
-                    width: '100%',
-                    borderRadius: 2,
-                    background: '#F3F5F4',
-                  }} />
-                  <div style={{
-                    position: 'absolute',
-                    inset: 'auto 0 auto 0',
-                    height: 3,
-                    width: `${pct}%`,
-                    borderRadius: 2,
-                    background: '#8FA6A1',
-                  }} />
-                </div>
-              </div>
-            )
-          }) : (
-            <p style={{
-              fontSize: 13,
-              color: '#7C8486',
-              lineHeight: 1.5,
-              margin: 0,
-            }}>
-              No subject details were added to this report.
-            </p>
-          )}
+              )
+            }) : (
+              <p style={{
+                fontSize: 13,
+                color: '#7C8486',
+                lineHeight: 1.5,
+                margin: 0,
+              }}>
+                No subject details were added to this report.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
