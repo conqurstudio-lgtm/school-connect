@@ -84,16 +84,15 @@ export function ReportSwiper({ reports = [], childName }: Props) {
 
   const onEnd = () => {
     if (gesture.current === 'horizontal') {
-      const threshold = 56
+      const threshold = 56 // report-swipe-direction-inverted-v245
 
-      // Natural report history direction:
-      // swipe left from the latest report to view older reports.
-      if (deltaX.current < -threshold && index < total - 1) {
+      // Inverted report history direction:
+      // if the previous direction felt reversed on-device, this flips the gesture decision.
+      if (deltaX.current > threshold && index < total - 1) {
         moveTo(index + 1)
       }
 
-      // swipe right to move back toward the latest report.
-      if (deltaX.current > threshold && index > 0) {
+      if (deltaX.current < -threshold && index > 0) {
         moveTo(index - 1)
       }
     }
