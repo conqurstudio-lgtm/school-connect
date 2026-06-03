@@ -37,6 +37,39 @@ async function loadOldReportLink(sb: any, token: string) {
   return link || null
 }
 
+async function loadSchoolProfile(sb: any, schoolId: string) {
+  if (!schoolId) return null
+
+  const detailedFields = [
+    'id',
+    'name',
+    'logo_url',
+    'tagline',
+    'address',
+    'province',
+    'country',
+    'website',
+    'phone',
+    'email',
+  ].join(', ')
+
+  const { data, error } = await sb
+    .from('schools')
+    .select(detailedFields)
+    .eq('id', schoolId)
+    .maybeSingle()
+
+  if (!error) return data || null
+
+  const { data: fallback } = await sb
+    .from('schools')
+    .select('id, name, logo_url, tagline')
+    .eq('id', schoolId)
+    .maybeSingle()
+
+  return fallback || null
+}
+
 function attachPreviousScores(reports: any[]) {
   return reports.map((report, index) => ({
     ...report,
@@ -59,9 +92,9 @@ export async function GET(
   const childLink = await loadChildPermanentLink(sb, token)
 
   if (childLink) {
-    const [{ data: child }, { data: school }] = await Promise.all([
+    const [{ data: child }, school] = await Promise.all([
       sb.from('children').select('*').eq('id', childLink.child_id).maybeSingle(),
-      sb.from('schools').select('id, name, logo_url, tagline').eq('id', childLink.school_id).maybeSingle(),
+      loadSchoolProfile(sb, childLink.school_id),
     ])
 
     if (!child) return NextResponse.json({ error: 'Child not found' }, { status: 404 })
@@ -127,7 +160,7 @@ export async function GET(
   const [{ data: child }, { data: teacher }, { data: school }, { data: reports }] = await Promise.all([
     sb.from('children').select('*').eq('id', report.child_id).maybeSingle(),
     sb.from('teachers').select('*').eq('id', report.teacher_id).maybeSingle(),
-    sb.from('schools').select('id, name, logo_url, tagline').eq('id', report.school_id).maybeSingle(),
+    loadSchoolProfile(sb, report.school_id),
     sb
       .from('child_reports')
       .select('*')

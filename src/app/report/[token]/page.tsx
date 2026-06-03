@@ -155,13 +155,13 @@ function SchoolQuickView({ school }: { school: any }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: 20,
-          padding: '2px 8px',
+          minHeight: 19,
+          padding: '2px 7px',
           borderRadius: 999,
           background: 'transparent',
           border: '1px solid rgba(0,0,0,0.10)',
           color: '#9A9A9A',
-          fontSize: 10,
+          fontSize: 9.8,
           fontWeight: 540,
           lineHeight: 1,
           userSelect: 'none',
@@ -186,7 +186,7 @@ function SchoolQuickView({ school }: { school: any }) {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
+            gap: 9,
           }}>
             <div style={{
               width: 38,
@@ -572,13 +572,13 @@ export default function ParentMagicReportPage() {
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            minHeight: 44,
+            minHeight: 40,
             paddingRight: 48,
           }}>
             <div style={{
-              width: 42,
-              height: 42,
-              borderRadius: 16,
+              width: 38,
+              height: 38,
+              borderRadius: 14,
               background: childPhoto ? `url(${childPhoto}) center/cover` : T.soft,
               border: `1px solid ${T.border}`,
               display: 'flex',
@@ -614,18 +614,8 @@ export default function ParentMagicReportPage() {
                 {childName}
               </p>
 
-              <p style={{
-                fontSize: 12,
-                color: T.ink3,
-                margin: '3px 0 0',
-                lineHeight: 1.2,
-                fontWeight: 400,
-              }}>
-                Latest weekly report
-              </p>
-
               <div style={{
-                marginTop: 6,
+                marginTop: 5,
                 display: 'inline-flex',
                 width: 'fit-content',
               }}>
