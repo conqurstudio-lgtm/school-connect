@@ -2056,15 +2056,59 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
         <div style={{
           marginTop: 10,
           padding: 12,
-          borderRadius: 18,
+          borderRadius: 20,
           background: T.soft,
           display: 'flex',
           flexDirection: 'column',
-          gap: 10,
+          gap: 12,
         }}>
-          <p style={{ fontSize: 13, fontWeight: 560, color: T.ink, margin: 0 }}>
-            Subjects shown on weekly reports
-          </p>
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}>
+            <div>
+              <p style={{
+                fontSize: 13,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+              }}>
+                Subjects
+              </p>
+
+              <p style={{
+                fontSize: 12.2,
+                color: T.ink3,
+                margin: '2px 0 0',
+                lineHeight: 1.35,
+              }}>
+                Choose a preset or edit your own.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={addReportSubject}
+              aria-label="Add subject"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: 'none',
+                background: T.white,
+                color: T.accent,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <Plus size={16} strokeWidth={2.05} />
+            </button>
+          </div>
 
           <div style={{
             display: 'grid',
@@ -2075,39 +2119,49 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
               type="button"
               onClick={() => applyReportSubjectPreset('ECD')}
               style={{
-                ...softButton,
-                height: 38,
+                minHeight: 36,
+                borderRadius: 999,
                 border: 'none',
                 background: T.white,
-                color: T.accent,
-                justifyContent: 'center',
+                color: T.ink2,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
               }}
             >
-              ECD preset
+              ECD
             </button>
 
             <button
               type="button"
               onClick={() => applyReportSubjectPreset('Primary')}
               style={{
-                ...softButton,
-                height: 38,
+                minHeight: 36,
+                borderRadius: 999,
                 border: 'none',
                 background: T.white,
-                color: T.accent,
-                justifyContent: 'center',
+                color: T.ink2,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
               }}
             >
-              Primary preset
+              Primary
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 7,
+          }}>
             {reportSubjects.map((subject, index) => (
               <div key={index} style={{
                 display: 'grid',
-                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 34px' : '1fr',
-                gap: 8,
+                gridTemplateColumns: reportSubjects.length > 1 ? '1fr 32px' : '1fr',
+                gap: 7,
                 alignItems: 'center',
               }}>
                 <input
@@ -2117,7 +2171,9 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                   style={{
                     ...inputStyle,
                     minHeight: 40,
-                    fontSize: 16,
+                    fontSize: 15.5,
+                    background: T.white,
+                    border: 'none',
                   }}
                 />
 
@@ -2127,12 +2183,12 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                     onClick={() => removeReportSubject(index)}
                     aria-label="Remove subject"
                     style={{
-                      width: 34,
-                      height: 34,
+                      width: 32,
+                      height: 32,
                       borderRadius: 999,
                       border: 'none',
-                      background: T.white,
-                      color: T.red,
+                      background: 'transparent',
+                      color: T.ink3,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -2140,7 +2196,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                       fontFamily: 'inherit',
                     }}
                   >
-                    ×
+                    <X size={14} strokeWidth={1.9} />
                   </button>
                 )}
               </div>
@@ -2149,33 +2205,21 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
           <div style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            gap: 8,
-            flexWrap: 'wrap',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
           }}>
-            <button
-              type="button"
-              onClick={addReportSubject}
-              style={{
-                ...softButton,
-                height: 38,
-                border: 'none',
-                background: T.white,
-                color: T.accent,
-              }}
-            >
-              Add subject
-            </button>
-
             <button
               type="button"
               onClick={resetReportSubjects}
               style={{
-                ...softButton,
-                height: 38,
                 border: 'none',
-                background: T.white,
-                color: T.ink3,
+                background: 'transparent',
+                color: T.accent,
+                fontSize: 12.4,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                padding: '4px 0',
               }}
             >
               Defaults
@@ -2189,7 +2233,8 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
             style={{
               ...darkButton,
               width: '100%',
-              marginTop: 2,
+              minHeight: 44,
+              marginTop: 0,
               opacity: savingReportSubjects ? 0.65 : 1,
               cursor: savingReportSubjects ? 'wait' : 'pointer',
             }}
