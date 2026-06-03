@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap } from 'lucide-react'
+import { GraduationCap, Heart } from 'lucide-react'
 import { ReportSwiper } from '@/components/reports/ReportSwiper'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 
@@ -114,18 +114,26 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <iframe
-        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
-        title="Moments"
+      <Heart
+        size={20}
+        strokeWidth={1.9}
+        color="#8FA6A1"
         aria-hidden="true"
-        style={{
-          width: 30,
-          height: 30,
-          border: 'none',
-          display: 'block',
-          pointerEvents: 'none',
-        }}
       />
+
+      {hasNew && (
+        <span style={{
+          position: 'absolute',
+          top: 7,
+          right: 7,
+          width: 7,
+          height: 7,
+          borderRadius: 999,
+          background: '#E5484D',
+          border: '1.5px solid #FFFFFF',
+          display: 'block',
+        }} />
+      )}
     </button>
   )
 }
