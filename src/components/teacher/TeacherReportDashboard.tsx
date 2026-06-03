@@ -2254,7 +2254,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
         <span>Report subjects</span>
         <span style={{
           fontSize: 12,
-          color: T.ink3,
+          color: T.accent,
           fontWeight: 520,
         }}>
           Edit
