@@ -332,48 +332,43 @@ export function ReportCard({ report, childName }: Props) {
           padding: '0 8px 38px',
         }}>
           <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 10,
             maxWidth: 390,
             margin: '0 auto',
           }}>
             <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
-              color: '#8FA6A1',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 11,
-              fontWeight: 620,
-              letterSpacing: '-0.01em',
-              flexShrink: 0,
-              overflow: 'hidden',
-              border: '1px solid rgba(143,166,161,0.22)',
-            }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <div style={{
-              flex: 1,
-              minWidth: 0,
+              gap: 10,
+              marginBottom: 10,
             }}>
               <div style={{
+                width: 36,
+                height: 36,
+                borderRadius: 999,
+                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
+                color: '#8FA6A1',
                 display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'space-between',
-                gap: 10,
-                marginBottom: 7,
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 620,
+                letterSpacing: '-0.01em',
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}>
+                {!teacherPhoto && teacherInitials}
+              </div>
+
+              <div style={{
+                flex: 1,
+                minWidth: 0,
               }}>
                 <p style={{
-                  fontSize: 13,
+                  fontSize: 13.5,
                   color: T.ink,
                   fontWeight: 580,
                   letterSpacing: '-0.015em',
-                  lineHeight: 1.2,
+                  lineHeight: 1.15,
                   margin: 0,
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
@@ -382,35 +377,32 @@ export function ReportCard({ report, childName }: Props) {
                   {teacherName}
                 </p>
 
-                <span style={{
-                  flexShrink: 0,
-                  fontSize: 10.5,
-                  color: T.ink4,
-                  fontWeight: 560,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                }}>
-                  Note
-                </span>
-              </div>
-
-              <div style={{
-                background: '#F7F8F8',
-                border: '1px solid #ECECEC',
-                borderRadius: '6px 18px 18px 18px',
-                padding: '12px 14px',
-              }}>
                 <p style={{
-                  fontSize: 14.2,
-                  color: '#4B5356',
-                  margin: 0,
-                  lineHeight: 1.55,
-                  letterSpacing: '-0.005em',
-                  fontWeight: 430,
+                  fontSize: 12,
+                  color: T.ink3,
+                  lineHeight: 1.2,
+                  margin: '3px 0 0',
                 }}>
-                  {report.comment}
+                  · Your teacher
                 </p>
               </div>
+            </div>
+
+            <div style={{
+              background: '#F7F7F8',
+              borderRadius: 18,
+              padding: '13px 15px',
+            }}>
+              <p style={{
+                fontSize: 14.2,
+                color: '#4B5356',
+                margin: 0,
+                lineHeight: 1.56,
+                letterSpacing: '-0.005em',
+                fontWeight: 430,
+              }}>
+                {report.comment}
+              </p>
             </div>
           </div>
         </div>

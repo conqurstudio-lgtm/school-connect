@@ -526,6 +526,14 @@ export default function ParentMagicReportPage() {
       ...report,
       child_name: childName,
       teacher_name: teacherName,
+      teacher_photo_url:
+        payload.teacher?.photo_url ||
+        payload.teacher?.avatar_url ||
+        payload.teacher?.image_url ||
+        report.teacher_photo_url ||
+        report.teacher_avatar_url ||
+        report.teacher_image_url ||
+        '',
       display_position: index === 0 ? 'latest' : 'previous',
     }))
 
