@@ -28,7 +28,7 @@ async function getChildrenSafely(sb: any, teacher: any) {
   // New MVP roster: learners created by the teacher.
   const newer = await sb
     .from('children')
-    .select('id, name, grade, class_name, parent_whatsapp, parent_email, status, report_subjects, created_at, created_by_teacher_id')
+    .select('id, name, grade, class_name, parent_whatsapp, parent_email, status, created_at, created_by_teacher_id')
     .eq('school_id', teacher.school_id)
     .eq('created_by_teacher_id', teacher.id)
     .or('status.is.null,status.eq.active')
@@ -39,7 +39,7 @@ async function getChildrenSafely(sb: any, teacher: any) {
   // Old schema fallback: open the link even before the new migration is applied.
   const older = await sb
     .from('children')
-    .select('id, name, grade, class_name, status, report_subjects, created_at')
+    .select('id, name, grade, class_name, status, created_at')
     .eq('school_id', teacher.school_id)
     .eq('grade', teacher.grade)
     .or('status.is.null,status.eq.active')
@@ -60,7 +60,7 @@ async function getReportSummarySafely(sb: any, childIds: string[], teacherId: st
 
   const { data, error } = await sb
     .from('child_reports')
-    .select('id, child_id, published_at, week_starting, report_subjects')
+    .select('id, child_id, published_at, week_starting')
     .in('child_id', childIds)
     .eq('teacher_id', teacherId)
 
@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
 
     const { data: school } = await sb
       .from('schools')
-      .select('id, name, logo_url, tagline, report_subjects')
+      .select('id, name, logo_url, tagline')
       .eq('id', teacher.school_id)
       .maybeSingle()
 
