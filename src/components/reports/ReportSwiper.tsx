@@ -227,7 +227,7 @@ export function ReportSwiper({ reports, childName }: Props) {
             position: 'fixed',
             left: 0,
             right: 0,
-            bottom: 'calc(14px + env(safe-area-inset-bottom, 0px))',
+            bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
             zIndex: 40,
             pointerEvents: 'none',
           minHeight: 24,
