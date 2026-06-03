@@ -265,6 +265,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 }
 
 export function ReportCard({ report, childName }: Props) {
+  const [expanded, setExpanded] = useState(false)
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
@@ -418,49 +419,52 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       )}
 
-      {/* ── Subjects ─────────────────── */}
-      <div style={{
-        borderTop: `1px solid ${T.divider}`,
-        padding: '18px 0 0',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          gap: 12,
-          marginBottom: 12,
-        }}>
-          <p style={{
+      {/* ── Subjects (collapsible) ─────────────────── */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          style={{
+            width: '100%',
+            padding: '14px 0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'none',
+            border: 'none',
+            borderTop: `1px solid ${T.divider}`,
+            borderBottom: 'none',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          <span style={{
             fontSize: 10.8,
             fontWeight: 560,
             color: '#5F6268',
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
-            margin: 0,
           }}>
             Subjects
-          </p>
+          </span>
 
-          <p style={{
-            fontSize: 12.2,
-            color: '#7C8486',
-            fontWeight: 400,
-            margin: 0,
-          }}>
-            Progress details
-          </p>
-        </div>
+          <ChevronDown
+            size={16}
+            strokeWidth={2}
+            color="#5F6268"
+            style={{
+              transform: expanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.25s ease',
+            }}
+          />
+        </button>
 
-        <div style={{
-          background: 'transparent',
-          border: '1px solid rgba(0,0,0,0.07)',
-          borderRadius: '18px 18px 18px 8px',
-          padding: '14px 14px 15px',
-        }}>
+        {expanded && (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 17,
+            gap: 18,
+            padding: '20px 0 4px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -470,49 +474,26 @@ export function ReportCard({ report, childName }: Props) {
               const delta = prev !== undefined ? safeScore - Number(prev) : null
 
               return (
-                <div key={String(name)}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    marginBottom: 8,
-                  }}>
-                    <span style={{
-                      flex: 1,
-                      minWidth: 0,
-                      fontSize: 13.2,
-                      color: T.ink,
-                      fontWeight: 470,
-                      letterSpacing: '-0.005em',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }} title={String(name)}>
-                      {shortenSubject(String(name))}
-                    </span>
-
-                    <div style={{
-                      flex: '0 0 auto',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                    }}>
-                      {delta !== null && <Delta value={delta} />}
-                      <span style={{
-                        fontSize: 12.8,
-                        color: T.ink,
-                        fontWeight: 560,
-                        fontVariantNumeric: 'tabular-nums',
-                        minWidth: 28,
-                        textAlign: 'right',
-                      }}>
-                        {safeScore.toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
+                <div key={String(name)} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                }}>
+                  <span style={{
+                    flex: '0 0 140px',
+                    fontSize: 13.2,
+                    color: T.ink,
+                    fontWeight: 470,
+                    letterSpacing: '-0.005em',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }} title={String(name)}>
+                    {shortenSubject(String(name))}
+                  </span>
 
                   <div style={{
+                    flex: 1,
                     position: 'relative',
                     height: 10,
                     display: 'flex',
@@ -526,6 +507,7 @@ export function ReportCard({ report, childName }: Props) {
                       borderRadius: 2,
                       background: '#F3F5F4',
                     }} />
+
                     <div style={{
                       position: 'absolute',
                       inset: 'auto 0 auto 0',
@@ -534,6 +516,26 @@ export function ReportCard({ report, childName }: Props) {
                       borderRadius: 2,
                       background: '#8FA6A1',
                     }} />
+                  </div>
+
+                  <div style={{
+                    flex: '0 0 auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}>
+                    {delta !== null && <Delta value={delta} />}
+
+                    <span style={{
+                      fontSize: 12.8,
+                      color: T.ink,
+                      fontWeight: 560,
+                      fontVariantNumeric: 'tabular-nums',
+                      minWidth: 28,
+                      textAlign: 'right',
+                    }}>
+                      {safeScore.toFixed(1)}
+                    </span>
                   </div>
                 </div>
               )
@@ -548,7 +550,7 @@ export function ReportCard({ report, childName }: Props) {
               </p>
             )}
           </div>
-        </div>
+        )}
       </div>
 
 
