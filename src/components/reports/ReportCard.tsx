@@ -335,79 +335,219 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       )}
 
-      {/* ── Subjects (collapsible) ─────────────────── */}
-      <div>
+      {/* ── Subjects ─────────────────── */}
+      <div style={{
+        borderRadius: 28,
+        background: '#FFFFFF',
+        border: '1px solid #ECECEC',
+        boxShadow: '0 18px 55px rgba(17, 24, 39, 0.055)',
+        overflow: 'hidden',
+        marginTop: 4,
+      }}>
         <button
           onClick={() => setExpanded(v => !v)}
           style={{
-            width: '100%', padding: '14px 0',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            background: 'none', border: 'none',
-            borderTop: `1px solid ${T.divider}`,
-            borderBottom: expanded ? `1px solid ${T.divider}` : 'none',
-            cursor: 'pointer', fontFamily: 'inherit',
-            transition: 'all 0.2s',
-          }}>
+            width: '100%',
+            padding: '20px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: '#FFFFFF',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
           <span style={{
-            fontSize: 11, fontWeight: 600, color: T.ink3,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 10,
+            minWidth: 0,
           }}>
-            Subjects · {subjects.length}
+            <span style={{
+              fontSize: 22,
+              fontWeight: 650,
+              color: '#111827',
+              letterSpacing: '-0.035em',
+              lineHeight: 1,
+            }}>
+              Subjects
+            </span>
+
+            <span style={{
+              width: 5,
+              height: 5,
+              borderRadius: 999,
+              background: '#8FA4A0',
+              display: 'inline-block',
+            }} />
+
+            <span style={{
+              fontSize: 20,
+              fontWeight: 600,
+              color: '#7C8486',
+              letterSpacing: '-0.025em',
+              lineHeight: 1,
+            }}>
+              {subjects.length}
+            </span>
           </span>
-          <ChevronDown size={16} strokeWidth={2} color={T.ink3}
-            style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s' }} />
+
+          <ChevronDown
+            size={18}
+            strokeWidth={2.15}
+            color="#7C8486"
+            style={{
+              transform: expanded ? 'rotate(180deg)' : 'none',
+              transition: 'transform 0.25s ease',
+              flexShrink: 0,
+            }}
+          />
         </button>
 
         {expanded && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18,
-                        padding: '20px 0 4px',
-                        animation: 'expandIn 0.3s ease' }}>
-            {subjects.map(([name, score]) => {
-              const pct   = (score / 5) * 100
-              const prev  = report.previous_scores?.[name]
-              const delta = prev !== undefined ? score - prev : null
+          <div style={{
+            margin: '0 12px 12px',
+            borderRadius: 22,
+            border: '1px solid #ECECEC',
+            overflow: 'hidden',
+            background: '#FFFFFF',
+            animation: 'expandIn 0.3s ease',
+          }}>
+            {subjects.map(([name, rawScore], index) => {
+              const score = Number(rawScore)
+              const safeScore = Number.isFinite(score) ? Math.max(0, Math.min(5, score)) : 0
+              const pct = (safeScore / 5) * 100
+              const prev = report.previous_scores?.[name]
+              const delta = prev !== undefined ? safeScore - Number(prev) : null
+              const label = getScoreLabel(safeScore)
+              const progressText = safeScore >= 4.5
+                ? 'Excellent Progress'
+                : safeScore >= 3
+                  ? 'Good Progress'
+                  : safeScore >= 2
+                    ? 'Steady Progress'
+                    : 'Needs Support'
 
               return (
                 <div key={name} style={{
-                  display: 'flex', alignItems: 'center', gap: 14,
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(92px, 1fr) minmax(118px, 1.25fr) minmax(54px, auto)',
+                  gap: 14,
+                  alignItems: 'center',
+                  padding: '22px 16px',
+                  borderTop: index === 0 ? 'none' : '1px solid #ECECEC',
                 }}>
                   <span style={{
-                    flex: '0 0 140px',
-                    fontSize: 13.5, color: T.ink, fontWeight: 500,
-                    letterSpacing: '-0.005em',
-                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    minWidth: 0,
+                    fontSize: 15.5,
+                    color: '#111827',
+                    fontWeight: 620,
+                    letterSpacing: '-0.025em',
+                    lineHeight: 1.2,
                   }} title={name}>
-                    {shortenSubject(name)}
+                    {name}
                   </span>
 
                   <div style={{
-                    flex: 1, position: 'relative',
-                    height: 10, display: 'flex', alignItems: 'center',
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 9,
                   }}>
                     <div style={{
-                      position: 'absolute', inset: 'auto 0',
-                      height: 3, width: '100%', borderRadius: 2,
-                      background: '#F3F5F4',
-                    }} />
+                      position: 'relative',
+                      height: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        inset: 'auto 0',
+                        height: 4,
+                        width: '100%',
+                        borderRadius: 999,
+                        background: '#F2F3F3',
+                      }} />
+                      <div style={{
+                        position: 'absolute',
+                        inset: 'auto 0 auto 0',
+                        height: 4,
+                        width: `${pct}%`,
+                        borderRadius: 999,
+                        background: '#8FA4A0',
+                        transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
+                      }} />
+                    </div>
+
                     <div style={{
-                      position: 'absolute', inset: 'auto 0 auto 0',
-                      height: 3, width: `${pct}%`, borderRadius: 2,
-                      background: '#8FA6A1',
-                      transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
-                    }} />
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      minWidth: 0,
+                    }}>
+                      <span style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: 999,
+                        background: '#8FA4A0',
+                        flexShrink: 0,
+                      }} />
+
+                      <span style={{
+                        fontSize: 12.5,
+                        color: '#7C8486',
+                        fontWeight: 500,
+                        letterSpacing: '-0.01em',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {progressText}
+                      </span>
+                    </div>
                   </div>
 
                   <div style={{
-                    flex: '0 0 auto',
-                    display: 'flex', alignItems: 'center', gap: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: 8,
+                    minWidth: 54,
                   }}>
-                    {delta !== null && <Delta value={delta} />}
-                    <span style={{
-                      fontSize: 13, color: T.ink, fontWeight: 600,
-                      fontVariantNumeric: 'tabular-nums',
-                      minWidth: 28, textAlign: 'right',
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
                     }}>
-                      {score.toFixed(1)}
+                      {delta !== null && <Delta value={delta} />}
+                      <span style={{
+                        fontSize: 19,
+                        color: '#111827',
+                        fontWeight: 650,
+                        fontVariantNumeric: 'tabular-nums',
+                        letterSpacing: '-0.03em',
+                        lineHeight: 1,
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </span>
+                    </div>
+
+                    <span style={{
+                      minHeight: 24,
+                      padding: '0 10px',
+                      borderRadius: 9,
+                      background: '#F5F6F6',
+                      color: '#6E8882',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 11.5,
+                      fontWeight: 560,
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {label}
                     </span>
                   </div>
                 </div>
@@ -416,6 +556,7 @@ export function ReportCard({ report, childName }: Props) {
           </div>
         )}
       </div>
+
     </section>
   )
 }
