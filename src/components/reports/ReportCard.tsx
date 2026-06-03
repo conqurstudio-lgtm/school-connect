@@ -329,77 +329,74 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 8px 38px',
+          padding: '0 10px 38px',
         }}>
           <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 11,
             maxWidth: 390,
             margin: '0 auto',
           }}>
             <div style={{
+              width: 38,
+              height: 38,
+              borderRadius: 15,
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
+              color: '#8FA6A1',
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
-              marginBottom: 10,
+              justifyContent: 'center',
+              fontSize: 11,
+              fontWeight: 560,
+              letterSpacing: '-0.01em',
+              flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              <div style={{
-                width: 36,
-                height: 36,
-                borderRadius: 999,
-                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
-                color: '#8FA6A1',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 11,
-                fontWeight: 620,
-                letterSpacing: '-0.01em',
-                flexShrink: 0,
-                overflow: 'hidden',
-              }}>
-                {!teacherPhoto && teacherInitials}
-              </div>
-
-              <div style={{
-                flex: 1,
-                minWidth: 0,
-              }}>
-                <p style={{
-                  fontSize: 13.5,
-                  color: T.ink,
-                  fontWeight: 580,
-                  letterSpacing: '-0.015em',
-                  lineHeight: 1.15,
-                  margin: 0,
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                }}>
-                  {teacherName}
-                </p>
-
-                <p style={{
-                  fontSize: 12,
-                  color: T.ink3,
-                  lineHeight: 1.2,
-                  margin: '3px 0 0',
-                }}>
-                  · Your teacher
-                </p>
-              </div>
+              {!teacherPhoto && teacherInitials}
             </div>
 
             <div style={{
-              background: '#F7F7F8',
-              borderRadius: 18,
-              padding: '13px 15px',
+              flex: 1,
+              minWidth: 0,
+              paddingTop: 1,
             }}>
               <p style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                flexWrap: 'wrap',
+                fontSize: 13.5,
+                color: T.ink,
+                fontWeight: 560,
+                letterSpacing: '-0.015em',
+                lineHeight: 1.2,
+                margin: '0 0 6px',
+              }}>
+                <span style={{
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 210,
+                }}>
+                  {teacherName}
+                </span>
+
+                <span style={{
+                  color: T.ink3,
+                  fontWeight: 400,
+                }}>
+                  · Your teacher
+                </span>
+              </p>
+
+              <p style={{
                 fontSize: 14.2,
-                color: '#4B5356',
+                color: '#5F6268',
                 margin: 0,
-                lineHeight: 1.56,
+                lineHeight: 1.58,
                 letterSpacing: '-0.005em',
-                fontWeight: 430,
+                fontWeight: 400,
               }}>
                 {report.comment}
               </p>
