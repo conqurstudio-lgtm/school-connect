@@ -568,11 +568,12 @@ export default function ParentMagicReportPage() {
         <section style={{
           flex: 1,
           minHeight: 0,
-          overflowY: 'auto',
+          overflowY: 'hidden',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          overscrollBehaviorX: 'none',
-          padding: '30px 0 10px',
+          overscrollBehavior: 'none',
+          touchAction: 'none',
+          padding: '22px 0 calc(58px + env(safe-area-inset-bottom, 0px))',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>

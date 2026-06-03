@@ -54,11 +54,13 @@ export function ReportSwiper({ reports, childName }: Props) {
   const lockPageScroll = () => {
     document.documentElement.style.overscrollBehavior = 'none'
     document.body.style.overscrollBehavior = 'none'
+    document.body.style.touchAction = 'none'
   }
 
   const unlockPageScroll = () => {
     document.documentElement.style.overscrollBehavior = ''
     document.body.style.overscrollBehavior = ''
+    document.body.style.touchAction = ''
   }
 
   const onStart = (x: number, y: number) => {
@@ -78,8 +80,8 @@ export function ReportSwiper({ reports, childName }: Props) {
     const absX = Math.abs(deltaX.current)
     const absY = Math.abs(deltaY.current)
 
-    if (gesture.current === 'none' && (absX > 6 || absY > 6)) {
-      if (absX >= absY * 0.72) {
+    if (gesture.current === 'none' && (absX > 4 || absY > 4)) {
+      if (absX >= absY * 0.55) {
         gesture.current = 'horizontal'
         lockPageScroll()
       } else {
@@ -127,23 +129,28 @@ export function ReportSwiper({ reports, childName }: Props) {
   return (
     <div style={{
       width: '100%',
+      height: '100%',
+      minHeight: 0,
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
       maxWidth: '100%',
       overflowX: 'hidden',
-      overflowY: 'visible',
+      overflowY: 'hidden',
       position: 'relative',
-      overscrollBehaviorX: 'none',
+      overscrollBehavior: 'none',
+      touchAction: 'none',
       boxSizing: 'border-box',
     }}>
       <div
         style={{
           width: '100%',
+          height: '100%',
+          minHeight: 0,
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
           maxWidth: '100%',
           overflowX: 'hidden',
-          overflowY: 'visible',
+          overflowY: 'hidden',
           touchAction: 'none',
           userSelect: 'none',
           position: 'relative',
@@ -170,6 +177,7 @@ export function ReportSwiper({ reports, childName }: Props) {
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
+          height: '100%',
           transform: `translate3d(calc(${-index * 100}% + ${drag}px), 0, 0)`,
           transition: drag === 0
             ? 'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -186,12 +194,13 @@ export function ReportSwiper({ reports, childName }: Props) {
             return (
               <div key={report.id} style={{
                 flex: '0 0 100%',
+                height: '100%',
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
                 width: '100%',
                 maxWidth: '100%',
                 overflowX: 'hidden',
-                overflowY: 'visible',
+                overflowY: 'hidden',
                 boxSizing: 'border-box',
                 padding: '0 22px 12px',
                 display: 'flex',
@@ -203,8 +212,9 @@ export function ReportSwiper({ reports, childName }: Props) {
               scrollSnapAlign: 'center',
               scrollSnapStop: 'always',
                   maxWidth: 430,
+                  maxHeight: '100%',
                   overflowX: 'hidden',
-                  overflowY: 'visible',
+                  overflowY: 'hidden',
                 }}>
                   <ReportCard
                     key={isActive ? `${report.id}-active-${animationRound}` : `${report.id}-idle`}
@@ -220,12 +230,18 @@ export function ReportSwiper({ reports, childName }: Props) {
 
       {total > 1 && (
         <div style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))',
+          zIndex: 50,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 8,
-          minHeight: 34,
-          padding: '2px 0 10px',
+          minHeight: 18,
+          padding: '0',
+          pointerEvents: 'none',
         }}>
           {visualReports.map((_, i) => (
             <button
@@ -233,14 +249,16 @@ export function ReportSwiper({ reports, childName }: Props) {
               onClick={() => moveTo(i)}
               aria-label={`Report ${i + 1}`}
               style={{
-                width: i === index ? 18 : 6,
+                width: 6,
                 height: 6,
                 borderRadius: 999,
                 background: i === index ? T.ink : T.trackBg,
                 border: 'none',
                 padding: 0,
                 cursor: 'pointer',
-                transition: 'all 0.25s ease',
+                transition: 'background 0.25s ease, opacity 0.25s ease',
+                opacity: i === index ? 1 : 0.72,
+                pointerEvents: 'auto',
               }}
             />
           ))}
