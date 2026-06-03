@@ -96,10 +96,10 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
       aria-label="View Moments"
       style={{
         position: 'absolute',
-        top: 'calc(8px + env(safe-area-inset-top, 0px))',
-        right: 13,
-        width: 38,
-        height: 38,
+        top: 'calc(14px + env(safe-area-inset-top, 0px))',
+        right: 16,
+        width: 42,
+        height: 42,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -115,25 +115,26 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
       }}
     >
       <Heart
-        size={20}
-        strokeWidth={1.9}
-        color="#8FA6A1"
+        size={21}
+        strokeWidth={1.85}
+        color="#252525"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden="true"
       />
 
-      {hasNew && (
-        <span style={{
-          position: 'absolute',
-          top: 7,
-          right: 7,
-          width: 7,
-          height: 7,
-          borderRadius: 999,
-          background: '#E5484D',
-          border: '1.5px solid #FFFFFF',
-          display: 'block',
-        }} />
-      )}
+      <span style={{
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        width: 7,
+        height: 7,
+        borderRadius: 999,
+        background: '#E5484D',
+        border: '1.5px solid #FFFFFF',
+        display: 'block',
+      }} />
     </button>
   )
 }

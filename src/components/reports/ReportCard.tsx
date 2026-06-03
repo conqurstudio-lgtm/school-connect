@@ -18,9 +18,9 @@ const T = {
 }
 
 const SUBJECT_GRAPH = {
-  fill: '#8FA6A1',
+  fill: '#8FA4A0',
   fillSoft: '#EAF0EE',
-  track: '#F3F5F4',
+  track: '#F2F3F3',
   border: 'rgba(143,166,161,0.20)',
   text: '#51615E',
 }
@@ -273,18 +273,18 @@ export function ReportCard({ report, childName }: Props) {
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   return (
-    <section style={{ paddingBottom: 32 }}>
+    <section style={{ paddingBottom: 42 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '8px 0 40px' }}>
+      <div style={{ textAlign: 'center', padding: '26px 0 38px' }}>
         <h2 style={{
-          fontSize: 28, fontWeight: 700, color: T.ink,
+          fontSize: 26, fontWeight: 650, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 13, color: T.ink3, margin: '0 0 32px',
+          fontSize: 13, color: T.ink3, margin: '0 0 30px',
           letterSpacing: '0.005em', fontWeight: 500,
         }}>
           {formatWeek(report.week_starting)}
@@ -314,7 +314,7 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 12px 40px',
+          padding: '0 10px 36px',
           textAlign: 'center',
         }}>
           <p style={{
@@ -340,7 +340,7 @@ export function ReportCard({ report, childName }: Props) {
         <button
           onClick={() => setExpanded(v => !v)}
           style={{
-            width: '100%', padding: '14px 0',
+            width: '100%', padding: '16px 0',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             background: 'none', border: 'none',
             borderTop: `1px solid ${T.divider}`,
@@ -360,7 +360,7 @@ export function ReportCard({ report, childName }: Props) {
 
         {expanded && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18,
-                        padding: '20px 0 4px',
+                        padding: '22px 0 8px',
                         animation: 'expandIn 0.3s ease' }}>
             {subjects.map(([name, score]) => {
               const pct   = (Number(score) / 5) * 100
@@ -387,12 +387,12 @@ export function ReportCard({ report, childName }: Props) {
                     <div style={{
                       position: 'absolute', inset: 'auto 0',
                       height: 3, width: '100%', borderRadius: 2,
-                      background: '#F3F5F4',
+                      background: '#F2F3F3',
                     }} />
                     <div style={{
                       position: 'absolute', inset: 'auto 0 auto 0',
                       height: 3, width: `${pct}%`, borderRadius: 2,
-                      background: '#8FA6A1',
+                      background: '#8FA4A0',
                       transition: 'width 0.6s cubic-bezier(0.4,0,0.2,1)',
                     }} />
                   </div>
