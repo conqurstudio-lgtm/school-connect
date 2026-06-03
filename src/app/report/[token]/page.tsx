@@ -530,7 +530,7 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main style={{
+    <main className="sc-parent-report-page" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -539,7 +539,7 @@ export default function ParentMagicReportPage() {
       color: T.ink,
           background: '#FFFFFF',
         }}>
-      <div style={{
+      <div className="sc-parent-report-shell" style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',

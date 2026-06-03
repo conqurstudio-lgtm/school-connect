@@ -822,3 +822,40 @@ button:disabled {
   }
 }
 
+
+
+/* parent-report-scoped-safe-area-v216 */
+.sc-parent-report-page {
+  min-height: 100dvh !important;
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  overflow-x: hidden !important;
+}
+
+.sc-parent-report-shell {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+/* Scoped white safe-area support for the public parent report page.
+   This avoids inline <style> tags inside React and prevents hydration mismatch. */
+.sc-parent-report-page::before,
+.sc-parent-report-page::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sc-parent-report-page::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+
+.sc-parent-report-page::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
