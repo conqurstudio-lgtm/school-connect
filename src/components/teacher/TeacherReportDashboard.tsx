@@ -1145,7 +1145,11 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           onUpdated={(updatedTeacher: any) => {
             setSession((current: any) => ({
               ...current,
-              teacher: { ...current.teacher, ...updatedTeacher },
+              teacher: {
+                ...current.teacher,
+                ...updatedTeacher,
+                report_subjects: updatedTeacher?.report_subjects || current?.teacher?.report_subjects,
+              },
             }))
           }}
           onSignOut={signOut}
@@ -1566,7 +1570,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
 
   useEffect(() => {
     setWeek(weekStart)
-    setScores(scoresForSubjects(subjects))
+    setScores(current => scoresForSubjects(subjects, current))
     setComment('')
     setMagicLink('')
     setHistoryLoading(true)
