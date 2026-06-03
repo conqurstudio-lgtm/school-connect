@@ -344,7 +344,7 @@ export function ReportCard({ report, childName }: Props) {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             background: 'none', border: 'none',
             borderTop: `1px solid ${T.divider}`,
-            borderBottom: expanded ? `1px solid ${T.divider}` : 'none',
+            borderBottom: 'none',
             cursor: 'pointer', fontFamily: 'inherit',
             transition: 'all 0.2s',
           }}>
