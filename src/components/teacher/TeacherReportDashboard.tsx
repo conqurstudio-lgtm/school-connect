@@ -981,26 +981,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     }}
                   >
                     <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-                      Weekly checklist
+                      Weekly reports
                     </p>
                     <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                      {completedCount} sent · {pendingCount} pending this week
+                      {children.length > 0 && pendingCount === 0
+                        ? 'All sent'
+                        : `${completedCount} sent · ${pendingCount} pending`}
                     </p>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowAdd(true)}
-                    style={{
-                      ...softButton,
-                      minHeight: 36,
-                      padding: '0 13px',
-                      color: T.accent,
-                      flexShrink: 0,
-                    }}
-                  >
-                    Add
-                  </button>
+                  
 
                   <button
                     type="button"
