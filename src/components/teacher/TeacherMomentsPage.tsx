@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus } from 'lucide-react'
+import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
@@ -98,6 +98,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   const [moments, setMoments] = useState<any[]>([])
   const [openImage, setOpenImage] = useState('')
   const [reactionMoment, setReactionMoment] = useState<any>(null)
+  const [editingMoment, setEditingMoment] = useState<any>(null)
+  const [deletingMoment, setDeletingMoment] = useState<any>(null)
+  const [momentActionLoading, setMomentActionLoading] = useState(false)
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement | null>(null)
 
@@ -147,6 +150,66 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
     }
 
     setMomentDraft({ file })
+  }
+
+
+  const saveMomentEdit = async (note: string) => {
+    if (!editingMoment?.id) return
+
+    setMomentActionLoading(true)
+
+    try {
+      const res = await fetch('/api/teacher/moments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          moment_id: editingMoment.id,
+          note,
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not update Moment')
+
+      setMoments(items => items.map(item => (
+        item.id === editingMoment.id ? { ...item, note: json.moment?.note || null } : item
+      )))
+
+      setEditingMoment(null)
+      toast.success('Moment updated')
+    } catch (error: any) {
+      toast.error(error.message || 'Could not update Moment')
+    }
+
+    setMomentActionLoading(false)
+  }
+
+  const deleteTeacherMoment = async () => {
+    if (!deletingMoment?.id) return
+
+    setMomentActionLoading(true)
+
+    try {
+      const res = await fetch('/api/teacher/moments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          moment_id: deletingMoment.id,
+        }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || 'Could not delete Moment')
+
+      setMoments(items => items.filter(item => item.id !== deletingMoment.id))
+      setDeletingMoment(null)
+      toast.success('Moment deleted')
+      load()
+    } catch (error: any) {
+      toast.error(error.message || 'Could not delete Moment')
+    }
+
+    setMomentActionLoading(false)
   }
 
   return (
@@ -279,6 +342,8 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
                   isLast={index === moments.length - 1}
                   onImage={setOpenImage}
                   onReactions={() => setReactionMoment(moment)}
+                  onEdit={() => setEditingMoment(moment)}
+                  onDelete={() => setDeletingMoment(moment)}
                 />
               ))}
             </div>
@@ -345,6 +410,25 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
         </div>
       )}
 
+
+      {editingMoment && (
+        <EditMomentSheet
+          moment={editingMoment}
+          loading={momentActionLoading}
+          onClose={() => setEditingMoment(null)}
+          onSave={saveMomentEdit}
+        />
+      )}
+
+      {deletingMoment && (
+        <DeleteMomentSheet
+          moment={deletingMoment}
+          loading={momentActionLoading}
+          onClose={() => setDeletingMoment(null)}
+          onDelete={deleteTeacherMoment}
+        />
+      )}
+
       <input
         data-teacher-moments-upload-v267="true"
         ref={momentFileRef}
@@ -370,7 +454,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   )
 }
 
-function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReactions }: any) {
+function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReactions, onEdit, onDelete }: any) {
   const teacherName = teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
@@ -431,16 +515,71 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             </span>
           </p>
 
-          <span style={{
-            fontSize: 10.8,
-            color: T.ink3,
-            fontWeight: 520,
-            whiteSpace: 'nowrap',
-            lineHeight: 1.4,
-            marginTop: 1,
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            flexShrink: 0,
           }}>
-            {formatTimeAgo(moment.created_at)}
-          </span>
+            <span style={{
+              fontSize: 10.8,
+              color: T.ink3,
+              fontWeight: 520,
+              whiteSpace: 'nowrap',
+              lineHeight: 1.4,
+              marginTop: 1,
+            }}>
+              {formatTimeAgo(moment.created_at)}
+            </span>
+
+            <button
+              type="button"
+              aria-label="Edit Moment"
+              onClick={(event) => {
+                event.stopPropagation()
+                onEdit?.()
+              }}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 999,
+                border: 'none',
+                background: T.soft,
+                color: T.ink3,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <Pencil size={13} strokeWidth={1.9} />
+            </button>
+
+            <button
+              type="button"
+              aria-label="Delete Moment"
+              onClick={(event) => {
+                event.stopPropagation()
+                onDelete?.()
+              }}
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 999,
+                border: 'none',
+                background: T.soft,
+                color: T.ink3,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <Trash2 size={13} strokeWidth={1.9} />
+            </button>
+          </div>
         </div>
 
         {moment.note && (
@@ -583,7 +722,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             color: T.ink3,
             marginLeft: 2,
           }}>
-            {reactionTotal === 0 ? 'No reactions yet' : `${reactionTotal} reactions`}
+            {reactionTotal > 0 ? `${reactionTotal} reactions` : ''}
           </span>
         </button>
       </div>
@@ -609,10 +748,206 @@ function ReactionCount({ Icon, value, active }: any) {
       fontWeight: 560,
     }}>
       <Icon size={14} strokeWidth={1.9} />
-      {value}
+      {Number(value) > 0 && (
+        <span>{value}</span>
+      )}
     </span>
   )
 }
+
+
+function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
+  const [note, setNote] = useState(moment?.note || '')
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 4700,
+      background: 'rgba(0,0,0,0.30)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      padding: '0 12px 12px',
+      boxSizing: 'border-box',
+    }}>
+      <div onClick={event => event.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        borderRadius: 28,
+        background: T.white,
+        padding: 16,
+        boxSizing: 'border-box',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 12,
+        }}>
+          <p style={{
+            fontSize: 15,
+            fontWeight: 560,
+            color: T.ink,
+            margin: 0,
+          }}>
+            Edit Moment
+          </p>
+
+          <button type="button" onClick={onClose} style={{
+            width: 34,
+            height: 34,
+            borderRadius: 999,
+            border: 'none',
+            background: T.soft,
+            color: T.ink2,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            padding: 0,
+          }}>
+            <X size={16} strokeWidth={2} />
+          </button>
+        </div>
+
+        <textarea
+          value={note}
+          onChange={event => setNote(event.target.value)}
+          placeholder="Write a short caption..."
+          rows={4}
+          style={{
+            width: '100%',
+            minHeight: 104,
+            borderRadius: 20,
+            border: `1px solid ${T.border}`,
+            outline: 'none',
+            resize: 'none',
+            padding: 13,
+            boxSizing: 'border-box',
+            fontFamily: 'inherit',
+            fontSize: 16,
+            color: T.ink,
+            lineHeight: 1.45,
+            background: T.white,
+          }}
+        />
+
+        <button
+          type="button"
+          disabled={loading}
+          onClick={() => onSave(note)}
+          style={{
+            width: '100%',
+            minHeight: 46,
+            borderRadius: 18,
+            border: 'none',
+            background: '#252525',
+            color: '#FFFFFF',
+            fontSize: 13.5,
+            fontWeight: 560,
+            fontFamily: 'inherit',
+            cursor: loading ? 'default' : 'pointer',
+            opacity: loading ? 0.65 : 1,
+            marginTop: 12,
+          }}
+        >
+          {loading ? 'Saving...' : 'Save changes'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function DeleteMomentSheet({ loading, onClose, onDelete }: any) {
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 4700,
+      background: 'rgba(0,0,0,0.30)',
+      display: 'flex',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      padding: '0 12px 12px',
+      boxSizing: 'border-box',
+    }}>
+      <div onClick={event => event.stopPropagation()} style={{
+        width: '100%',
+        maxWidth: 520,
+        borderRadius: 28,
+        background: T.white,
+        padding: 16,
+        boxSizing: 'border-box',
+      }}>
+        <p style={{
+          fontSize: 15,
+          fontWeight: 560,
+          color: T.ink,
+          margin: '0 0 5px',
+        }}>
+          Delete Moment?
+        </p>
+
+        <p style={{
+          fontSize: 13,
+          color: T.ink3,
+          lineHeight: 1.45,
+          margin: 0,
+        }}>
+          This will remove this update from parents’ Moments view.
+        </p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 9,
+          marginTop: 16,
+        }}>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            style={{
+              minHeight: 44,
+              borderRadius: 17,
+              border: `1px solid ${T.border}`,
+              background: T.white,
+              color: T.ink2,
+              fontSize: 13,
+              fontWeight: 540,
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={loading}
+            style={{
+              minHeight: 44,
+              borderRadius: 17,
+              border: 'none',
+              background: '#252525',
+              color: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: 560,
+              fontFamily: 'inherit',
+              cursor: loading ? 'default' : 'pointer',
+              opacity: loading ? 0.65 : 1,
+            }}
+          >
+            {loading ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 function ReactionSheet({ moment, onClose }: any) {
   const reactions = moment.reactions || []
