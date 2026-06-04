@@ -1084,24 +1084,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </p>
                 </div>
 
-                <button type="button" onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
-                  minHeight: 38,
-                  padding: '0 0 0 14px',
-                  border: 'none',
-                  background: 'transparent',
-                  color: T.accent,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  fontSize: 12.5,
-                  fontWeight: 560,
-                  fontFamily: 'inherit',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  marginLeft: 'auto',
-                }}>
-                  Share
-                </button>
+                
               
                 <div
                   data-teacher-broadcast-actions-v255="true"
@@ -1113,45 +1096,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     marginTop: 14,
                   }}
                 >
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      setShowTeacherMoments(true)
-                    }}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: T.accent,
-                      fontSize: 12.5,
-                      fontWeight: 560,
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      padding: 0,
-                    }}
-                  >
-                    View moments
-                  </button>
+                  
 
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      momentFileRef.current?.click()
-                    }}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: T.ink2,
-                      fontSize: 12.5,
-                      fontWeight: 520,
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      padding: 0,
-                    }}
-                  >
-                    Share
-                  </button>
+                  
                 </div>
 
                 <div
@@ -1164,55 +1111,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     paddingTop: 2,
                   }}
                 >
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      setShowTeacherMoments(true)
-                    }}
-                    style={{
-                      minHeight: 42,
-                      borderRadius: 16,
-                      border: '1px solid rgba(0,0,0,0.06)',
-                      background: '#FFFFFF',
-                      color: T.ink2,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12.5,
-                      fontWeight: 520,
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      padding: '0 12px',
-                    }}
-                  >
-                    View moments
-                  </button>
+                  
 
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      momentFileRef.current?.click()
-                    }}
-                    style={{
-                      minHeight: 42,
-                      borderRadius: 16,
-                      border: 'none',
-                      background: '#252525',
-                      color: '#FFFFFF',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12.5,
-                      fontWeight: 540,
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      padding: '0 12px',
-                    }}
-                  >
-                    Share
-                  </button>
+                  
                 </div>
 </section>
             </>
