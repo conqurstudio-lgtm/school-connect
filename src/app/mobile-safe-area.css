@@ -910,3 +910,12 @@ button:disabled {
   position: relative;
   z-index: 1;
 }
+
+
+/* report-compact-bottom-safe-area-v249
+   Keep report safe areas white, but avoid creating a large bottom dock.
+   The real device safe area remains protected by env(safe-area-inset-bottom). */
+.sc-report-token-layout::after,
+.sc-parent-report-screen::after {
+  height: env(safe-area-inset-bottom, 0px);
+}
