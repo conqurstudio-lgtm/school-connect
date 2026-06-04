@@ -1050,7 +1050,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </div>
                 )}
               </section>
-              <section style={{
+              <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
