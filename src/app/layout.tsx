@@ -26,7 +26,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor:   '#FCFCFF',
+  themeColor:   '#FFFFFF',
+  colorScheme:  'light',
   width:        'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -36,8 +37,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning style={{ background: '#FFFFFF' }}>
       <head>
+        <meta name="theme-color" content="#FFFFFF" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon"                   href="/icons/icon-192.png" />
         <link rel="icon"                               href="/favicon.ico" sizes="any" />
         <link rel="icon"                               href="/icons/icon-192.png" type="image/png" />
@@ -45,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="//supabase.co" />
         <link rel="preconnect"   href="https://igynbwratioqnijqpsxm.supabase.co" crossOrigin="anonymous" />
       </head>
-      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif', background: '#FCFCFF' }}>
+      <body style={{ fontFamily: 'var(--font-inter), -apple-system, system-ui, sans-serif', background: '#FFFFFF' }}>
         <PwaPauseCleanup />
         {children}
         <Toaster

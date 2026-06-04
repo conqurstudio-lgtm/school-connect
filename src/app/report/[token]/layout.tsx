@@ -2,6 +2,8 @@ import type { Viewport } from 'next'
 
 export const viewport: Viewport = {
   themeColor: '#FFFFFF',
+  colorScheme: 'light',
+  viewportFit: 'cover',
 }
 
 export default function ReportTokenLayout({

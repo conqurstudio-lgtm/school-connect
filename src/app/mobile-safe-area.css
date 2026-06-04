@@ -1012,3 +1012,42 @@ button:disabled {
 .sc-report-token-layout * {
   -webkit-tap-highlight-color: transparent;
 }
+
+
+/* top-status-white-v252
+   Final white mobile chrome/status-area reinforcement.
+   The report page already has route-scoped white safe areas.
+   The root mobile chrome also needs the app shell/theme behind the iPhone status area to be white. */
+html,
+body {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+.sc-report-token-layout,
+.sc-report-token-layout::before,
+.sc-report-token-layout::after,
+.sc-parent-report-screen,
+.sc-parent-report-screen::before,
+.sc-parent-report-screen::after,
+.parent-report-screen,
+.parent-report-screen::before,
+.parent-report-screen::after {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  html,
+  body,
+  .sc-report-token-layout,
+  .sc-parent-report-screen,
+  .parent-report-screen {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+  }
+}
