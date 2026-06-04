@@ -937,3 +937,78 @@ button:disabled {
 .sc-report-token-layout * {
   -webkit-tap-highlight-color: transparent;
 }
+
+
+/* report-structural-cleanup-v251
+   Single scoped report route shell system.
+   Supports both previous and current report class names so older patches do not fight each other. */
+.sc-report-token-layout,
+.sc-parent-report-screen,
+.parent-report-screen,
+.parent-report-shell {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.sc-report-token-layout,
+.sc-parent-report-screen,
+.parent-report-screen {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  isolation: isolate;
+}
+
+.sc-report-token-layout::before,
+.sc-report-token-layout::after,
+.sc-parent-report-screen::before,
+.sc-parent-report-screen::after,
+.parent-report-screen::before,
+.parent-report-screen::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sc-report-token-layout::before,
+.sc-parent-report-screen::before,
+.parent-report-screen::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+
+.sc-report-token-layout::after,
+.sc-parent-report-screen::after,
+.parent-report-screen::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+.sc-report-token-layout > *,
+.sc-parent-report-screen > *,
+.parent-report-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sc-report-swiper,
+.sc-report-swipe-surface,
+.sc-report-track,
+.sc-report-slide {
+  overscroll-behavior: none !important;
+}
+
+.sc-report-slide-scroll {
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sc-report-token-layout * {
+  -webkit-tap-highlight-color: transparent;
+}

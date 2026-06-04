@@ -24,8 +24,8 @@ function reportTime(report: any) {
 }
 
 export function ReportSwiper({ reports = [], childName }: Props) {
-  // Previous reports live on the LEFT. Latest report lives on the RIGHT.
-  // User lands on the latest report, then swipes/taps left-side dots to view history.
+  // Older reports live on the LEFT, latest report lives on the RIGHT.
+  // The parent lands on the latest report.
   const visualReports = useMemo(() => {
     return (reports || [])
       .slice()
@@ -54,6 +54,7 @@ export function ReportSwiper({ reports = [], childName }: Props) {
   const moveTo = (nextIndex: number) => {
     const safeIndex = clamp(nextIndex, 0, Math.max(0, total - 1))
     setIndex(safeIndex)
+    setDrag(0)
     setAnimationRound(round => round + 1)
   }
 
@@ -78,30 +79,33 @@ export function ReportSwiper({ reports = [], childName }: Props) {
     const absX = Math.abs(dx)
     const absY = Math.abs(dy)
 
-    if (gesture.current === 'none' && (absX > 4 || absY > 4)) {
-      gesture.current = absX >= absY * 0.55 ? 'horizontal' : 'vertical'
+    if (gesture.current === 'none' && (absX > 6 || absY > 6)) {
+      gesture.current = absX >= absY * 0.72 ? 'horizontal' : 'vertical'
     }
 
-    if (gesture.current !== 'horizontal') return
+    if (gesture.current !== 'horizontal') {
+      setDrag(0)
+      return
+    }
 
     const atOldest = index === 0 && dx > 0
     const atLatest = index === total - 1 && dx < 0
-    const resistance = atOldest || atLatest ? 0.28 : 1
+    const resistance = atOldest || atLatest ? 0.24 : 1
 
     setDrag(dx * resistance)
   }
 
   const onEnd = () => {
     if (gesture.current === 'horizontal') {
-      const threshold = 56
+      const threshold = 46
 
       // Previous reports are on the LEFT.
-      // Drag/swipe right from latest to reveal the previous report.
+      // Swipe/drag right from latest to view older reports.
       if (deltaX.current > threshold && index > 0) {
         moveTo(index - 1)
       }
 
-      // Drag/swipe left to move back toward the latest report.
+      // Swipe/drag left to move back toward latest.
       if (deltaX.current < -threshold && index < total - 1) {
         moveTo(index + 1)
       }
@@ -115,19 +119,17 @@ export function ReportSwiper({ reports = [], childName }: Props) {
     setDrag(0)
   }
 
-  if (!total) {
-    return null
-  }
+  if (!total) return null
 
   return (
     <div
+      className="sc-report-swiper"
       style={{
         width: '100%',
         height: '100%',
         minHeight: 0,
         maxWidth: '100%',
-        overflowX: 'hidden',
-        overflowY: 'hidden',
+        overflow: 'hidden',
         position: 'relative',
         overscrollBehavior: 'none',
         touchAction: 'pan-y',
@@ -135,13 +137,13 @@ export function ReportSwiper({ reports = [], childName }: Props) {
       }}
     >
       <div
+        className="sc-report-swipe-surface"
         style={{
           width: '100%',
           height: '100%',
           minHeight: 0,
           maxWidth: '100%',
-          overflowX: 'hidden',
-          overflowY: 'hidden',
+          overflow: 'hidden',
           touchAction: 'pan-y',
           userSelect: 'none',
           position: 'relative',
@@ -160,14 +162,13 @@ export function ReportSwiper({ reports = [], childName }: Props) {
         onTouchCancel={onEnd}
         onMouseDown={event => onStart(event.clientX, event.clientY)}
         onMouseMove={event => {
-          if (startX.current !== null) {
-            onMove(event.clientX, event.clientY)
-          }
+          if (startX.current !== null) onMove(event.clientX, event.clientY)
         }}
         onMouseUp={onEnd}
         onMouseLeave={onEnd}
       >
         <div
+          className="sc-report-track"
           style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -188,13 +189,13 @@ export function ReportSwiper({ reports = [], childName }: Props) {
             return (
               <div
                 key={report.id || slideIndex}
+                className="sc-report-slide"
                 style={{
                   flex: '0 0 100%',
                   height: '100%',
                   width: '100%',
                   maxWidth: '100%',
-                  overflowX: 'hidden',
-                  overflowY: 'hidden',
+                  overflow: 'hidden',
                   boxSizing: 'border-box',
                   padding: '0 22px 2px',
                   display: 'flex',
@@ -204,6 +205,7 @@ export function ReportSwiper({ reports = [], childName }: Props) {
               >
                 <div
                   data-report-slide="true"
+                  className="sc-report-slide-scroll"
                   style={{
                     width: '100%',
                     maxWidth: 430,
@@ -213,7 +215,8 @@ export function ReportSwiper({ reports = [], childName }: Props) {
                     overflowY: 'auto',
                     WebkitOverflowScrolling: 'touch',
                     overscrollBehaviorY: 'contain',
-                    paddingBottom: '34px',
+                    touchAction: 'pan-y',
+                    paddingBottom: '42px',
                     boxSizing: 'border-box',
                     opacity: isActive ? 1 : 0.48,
                     filter: isActive ? 'none' : 'grayscale(1)',
@@ -237,17 +240,18 @@ export function ReportSwiper({ reports = [], childName }: Props) {
 
       {total > 1 && (
         <div
+          className="sc-report-dots"
           style={{
             position: 'fixed',
             left: 0,
             right: 0,
-            bottom: 'calc(4px + env(safe-area-inset-bottom, 0px))',
+            bottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
             zIndex: 50,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 7,
-            minHeight: 8,
+            minHeight: 10,
             padding: 0,
             pointerEvents: 'none',
           }}

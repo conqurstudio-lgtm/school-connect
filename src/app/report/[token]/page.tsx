@@ -366,7 +366,6 @@ function LoadingState() {
       padding: 24,
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
     }}>
-      <ReportSafeAreaStyle />
       <style>{`
         @keyframes reportDotBounce {
           0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
@@ -463,6 +462,43 @@ export default function ParentMagicReportPage() {
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
   const [showMoments, setShowMoments] = useState(false)
+
+  useEffect(() => {
+    // report-route-shell-lock-v251
+    const html = document.documentElement
+    const body = document.body
+
+    const previous = {
+      htmlOverflow: html.style.overflow,
+      htmlOverscroll: html.style.overscrollBehavior,
+      htmlBackground: html.style.background,
+      bodyOverflow: body.style.overflow,
+      bodyOverscroll: body.style.overscrollBehavior,
+      bodyBackground: body.style.background,
+      bodyTouchAction: body.style.touchAction,
+    }
+
+    html.style.overflow = 'hidden'
+    html.style.overscrollBehavior = 'none'
+    html.style.background = '#FFFFFF'
+
+    body.style.overflow = 'hidden'
+    body.style.overscrollBehavior = 'none'
+    body.style.background = '#FFFFFF'
+    body.style.touchAction = 'pan-y'
+
+    return () => {
+      html.style.overflow = previous.htmlOverflow
+      html.style.overscrollBehavior = previous.htmlOverscroll
+      html.style.background = previous.htmlBackground
+
+      body.style.overflow = previous.bodyOverflow
+      body.style.overscrollBehavior = previous.bodyOverscroll
+      body.style.background = previous.bodyBackground
+      body.style.touchAction = previous.bodyTouchAction
+    }
+  }, [])
+
 
   useEffect(() => {
     // report-fixed-touch-lock-v250
@@ -578,7 +614,7 @@ export default function ParentMagicReportPage() {
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
-      overscrollBehaviorX: 'none',
+      overscrollBehavior: 'none',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
           background: '#FFFFFF',
@@ -610,7 +646,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'none',
           touchAction: 'pan-y',
-          padding: '10px 0 calc(8px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 0 calc(10px + env(safe-area-inset-bottom, 0px))',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
