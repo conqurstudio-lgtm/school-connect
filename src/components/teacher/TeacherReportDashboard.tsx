@@ -1040,7 +1040,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </div>
                 )}
               </section>
-                            <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
+                                          <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -1048,7 +1048,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 borderRadius: 24,
                 background: T.white,
                 border: 'none',
-                marginBottom: 12,
+                marginBottom: 14,
                 cursor: 'pointer',
               }}>
                 <div style={{
@@ -1073,68 +1073,35 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     Share updates with parents.
                   </p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setShowTeacherMoments(true)
+                  }}
+                  style={{
+                    minHeight: 34,
+                    borderRadius: 999,
+                    border: 'none',
+                    background: 'transparent',
+                    color: T.accent,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 12.5,
+                    fontWeight: 560,
+                    fontFamily: 'inherit',
+                    cursor: 'pointer',
+                    padding: '0 2px',
+                    flexShrink: 0,
+                  }}
+                >
+                  Open
+                </button>
               </section>
 
-              <section
-                data-teacher-view-moments-card-v264="true"
-                style={{
-                  borderRadius: 24,
-                  background: T.white,
-                  border: 'none',
-                  padding: 15,
-                  marginBottom: 14,
-                }}
-              >
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12,
-                }}>
-                  <div>
-                    <p style={{
-                      fontSize: 13.5,
-                      fontWeight: 540,
-                      color: T.ink,
-                      margin: 0,
-                      letterSpacing: '-0.01em',
-                    }}>
-                      View Moments
-                    </p>
-
-                    <p style={{
-                      fontSize: 12.5,
-                      color: T.ink3,
-                      lineHeight: 1.4,
-                      margin: '3px 0 0',
-                    }}>
-                      See the class updates you have shared.
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowTeacherMoments(true)}
-                    style={{
-                      width: '100%',
-                      minHeight: 42,
-                      borderRadius: 16,
-                      border: 'none',
-                      background: '#252525',
-                      color: '#FFFFFF',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12.5,
-                      fontWeight: 540,
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                      padding: '0 12px',
-                    }}
-                  >
-                    View Moments
-                  </button>
-                </div>
-              </section>
+              
             </>
           )}
 
