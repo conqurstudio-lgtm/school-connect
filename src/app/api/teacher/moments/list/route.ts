@@ -129,10 +129,24 @@ export async function GET(req: NextRequest) {
 
   const rows = await buildMomentRows(sb, moments || [])
 
+  const recipientKeys = new Set<string>()
+  const viewedKeys = new Set<string>()
+
+  for (const row of rows || []) {
+    for (const recipient of row.recipients || []) {
+      const key = recipient.child_id || recipient.parent_whatsapp || recipient.parent_email
+      if (key) recipientKeys.add(String(key))
+      if (recipient.viewed_at && key) viewedKeys.add(String(key))
+    }
+  }
+
   return NextResponse.json({
     summary: {
       moments: rows.length,
       reactions: rows.reduce((sum: number, row: any) => sum + Number(row.reaction_count || 0), 0),
+      recipients: recipientKeys.size,
+      viewed: viewedKeys.size,
+      reacted_moments: rows.filter((row: any) => Number(row.reaction_count || 0) > 0).length,
     },
     moments: summaryOnly ? [] : rows,
   })

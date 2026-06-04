@@ -498,7 +498,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showTeacherMoments, setShowTeacherMoments] = useState(false)
   const [showLearnersPage, setShowLearnersPage] = useState(false)
-  const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0 })
+  const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0, recipients: 0, viewed: 0, reacted_moments: 0 })
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement>(null)
   const [activeChild, setActiveChild] = useState<any>(null)
@@ -628,6 +628,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         setMomentSummary({
           moments: Number(json.summary.moments || 0),
           reactions: Number(json.summary.reactions || 0),
+          recipients: Number(json.summary.recipients || 0),
+          viewed: Number(json.summary.viewed || 0),
+          reacted_moments: Number(json.summary.reacted_moments || 0),
         })
       }
     } catch {
@@ -703,6 +706,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             setMomentSummary({
               moments: Number(summary.moments || 0),
               reactions: Number(summary.reactions || 0),
+              recipients: Number(summary.recipients || 0),
+              viewed: Number(summary.viewed || 0),
+              reacted_moments: Number(summary.reacted_moments || 0),
             })
           }
         }}
@@ -1044,6 +1050,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 )}
               </section>
 
+              <ParentAcknowledgementCard
+                summary={momentSummary}
+                onView={() => setShowTeacherMoments(true)}
+                onShare={() => momentFileRef.current?.click()}
+              />
+
               <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -1126,7 +1138,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           draft={momentDraft}
           learners={children}
           onClose={() => setMomentDraft(null)}
-          onCreated={() => setMomentDraft(null)}
+          onCreated={() => {
+            setMomentDraft(null)
+            loadMomentSummary()
+          }}
         />
       )}
 
@@ -1316,6 +1331,131 @@ function TeacherLearnersPage({
     </div>
   )
 }
+
+
+function ParentAcknowledgementCard({ summary, onView, onShare }: any) {
+  const moments = Number(summary?.moments || 0)
+  const reactions = Number(summary?.reactions || 0)
+  const recipients = Number(summary?.recipients || 0)
+  const viewed = Number(summary?.viewed || 0)
+
+  const hasActivity = moments > 0 || reactions > 0 || recipients > 0
+  const message = reactions > 0
+    ? 'Parents are responding to your updates.'
+    : moments > 0
+      ? 'Your Moments are ready for parents to acknowledge.'
+      : 'Share a small class moment to help parents feel connected.'
+
+  return (
+    <section style={{
+      borderRadius: 24,
+      background: T.white,
+      border: 'none',
+      padding: '15px',
+      marginBottom: 14,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 14,
+        marginBottom: 13,
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.5,
+            fontWeight: 540,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Parent acknowledgement
+          </p>
+
+          <p style={{
+            fontSize: 12.5,
+            color: T.ink3,
+            lineHeight: 1.4,
+            margin: '3px 0 0',
+          }}>
+            {message}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={hasActivity ? onView : onShare}
+          style={{
+            minHeight: 34,
+            border: 'none',
+            background: 'transparent',
+            color: T.accent,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            fontSize: 12.5,
+            fontWeight: 560,
+            fontFamily: 'inherit',
+            cursor: 'pointer',
+            flexShrink: 0,
+            padding: 0,
+          }}
+        >
+          {hasActivity ? 'View' : 'Share'}
+        </button>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 8,
+      }}>
+        <div style={{
+          padding: '10px 8px',
+          borderRadius: 17,
+          background: T.soft,
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0 }}>
+            {moments}
+          </p>
+          <p style={{ fontSize: 11.3, color: T.ink3, margin: '2px 0 0' }}>
+            Moments
+          </p>
+        </div>
+
+        <div style={{
+          padding: '10px 8px',
+          borderRadius: 17,
+          background: T.soft,
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0 }}>
+            {reactions}
+          </p>
+          <p style={{ fontSize: 11.3, color: T.ink3, margin: '2px 0 0' }}>
+            Reactions
+          </p>
+        </div>
+
+        <div style={{
+          padding: '10px 8px',
+          borderRadius: 17,
+          background: T.soft,
+          textAlign: 'center',
+        }}>
+          <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0 }}>
+            {viewed || recipients}
+          </p>
+          <p style={{ fontSize: 11.3, color: T.ink3, margin: '2px 0 0' }}>
+            Reached
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 
 function MiniStat({ label, value }: any) {
   return (
