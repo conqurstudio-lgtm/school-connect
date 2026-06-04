@@ -859,3 +859,54 @@ button:disabled {
   bottom: 0;
   height: env(safe-area-inset-bottom, 0px);
 }
+
+
+/* report-white-safe-area-restore-v248
+   Route-scoped white background and safe-area restoration for /report/[token].
+   Kept in CSS to avoid React hydration mismatches from inline <style> tags. */
+.sc-report-token-layout {
+  position: relative;
+  min-height: 100dvh;
+  height: 100dvh;
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sc-report-token-layout,
+.sc-report-token-layout main,
+.sc-parent-report-screen {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.sc-report-token-layout::before,
+.sc-report-token-layout::after,
+.sc-parent-report-screen::before,
+.sc-parent-report-screen::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sc-report-token-layout::before,
+.sc-parent-report-screen::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+
+.sc-report-token-layout::after,
+.sc-parent-report-screen::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+.sc-report-token-layout > * {
+  position: relative;
+  z-index: 1;
+}

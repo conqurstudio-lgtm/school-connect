@@ -10,13 +10,7 @@ export default function ReportTokenLayout({
   children: React.ReactNode
 }) {
   return (
-    <div
-      className="sc-report-token-layout"
-      style={{
-        minHeight: '100dvh',
-        background: '#FFFFFF',
-      }}
-    >
+    <div className="sc-report-token-layout">
       {children}
     </div>
   )
