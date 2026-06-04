@@ -1,10 +1,11 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useState } from 'react'
-import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
+import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 
 const T = {
   ink: '#252525',
@@ -65,6 +66,32 @@ function reactionIcon(reaction: string) {
 }
 
 function SafeStyle() {
+
+  const handleTeacherMomentFileChange = (event: any) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) return
+
+    const allowed =
+      file.type.startsWith('image/') ||
+      file.type === 'application/pdf' ||
+      file.type.includes('word') ||
+      file.type.includes('document')
+
+    if (!allowed) {
+      toast.error('Choose an image or document')
+      return
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('Moment file must be under 8 MB')
+      return
+    }
+
+    setMomentDraft({ file })
+  }
+
   return (
     <style>{`
       html,
@@ -89,11 +116,13 @@ function LoadingDots() {
   )
 }
 
-export function TeacherMomentsPage({ teacher, onBack, onChanged }: any) {
+export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }: any) {
   const [loading, setLoading] = useState(true)
   const [moments, setMoments] = useState<any[]>([])
   const [openImage, setOpenImage] = useState('')
   const [reactionMoment, setReactionMoment] = useState<any>(null)
+  const [momentDraft, setMomentDraft] = useState<any>(null)
+  const momentFileRef = useRef<HTMLInputElement | null>(null)
 
   const load = async () => {
     setLoading(true)
@@ -142,38 +171,72 @@ export function TeacherMomentsPage({ teacher, onBack, onChanged }: any) {
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
           background: T.bg,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button type="button" onClick={onBack} style={{
-              width: 34,
-              height: 34,
-              borderRadius: 999,
-              border: 'none',
-              background: T.soft,
-              color: T.ink2,
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+          }}>
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
+              gap: 10,
+              minWidth: 0,
             }}>
-              <ArrowLeft size={16} />
-            </button>
+              <button
+                type="button"
+                onClick={onBack}
+                aria-label="Back"
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                <ArrowLeft size={16} strokeWidth={2} />
+              </button>
 
-            <div style={{ minWidth: 0 }}>
-              <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-                Moments preview
-              </p>
               <p style={{
-                fontSize: 12.5,
-                color: T.ink3,
-                margin: '2px 0 0',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
+                fontSize: 15,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+                letterSpacing: '-0.01em',
               }}>
-                Parent view of your shared updates
+                Moments
               </p>
             </div>
+
+            <button
+              type="button"
+              onClick={() => momentFileRef.current?.click()}
+              aria-label="Add Moment"
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 999,
+                border: 'none',
+                background: T.soft,
+                color: T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <Plus size={17} strokeWidth={2} />
+            </button>
           </div>
         </header>
 
@@ -277,6 +340,28 @@ export function TeacherMomentsPage({ teacher, onBack, onChanged }: any) {
             }}
           />
         </div>
+      )}
+
+      <input
+        data-teacher-moments-upload-v267="true"
+        ref={momentFileRef}
+        type="file"
+        accept="image/*,.pdf,.doc,.docx"
+        style={{ display: 'none' }}
+        onChange={handleTeacherMomentFileChange}
+      />
+
+      {momentDraft && (
+        <TeacherMomentComposer
+          draft={momentDraft}
+          learners={learners}
+          onClose={() => setMomentDraft(null)}
+          onCreated={(summary: any) => {
+            setMomentDraft(null)
+            load()
+            onChanged?.(summary)
+          }}
+        />
       )}
     </main>
   )
