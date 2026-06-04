@@ -67,30 +67,7 @@ function reactionIcon(reaction: string) {
 
 function SafeStyle() {
 
-  const handleTeacherMomentFileChange = (event: any) => {
-    const file = event.target.files?.[0]
-    event.target.value = ''
 
-    if (!file) return
-
-    const allowed =
-      file.type.startsWith('image/') ||
-      file.type === 'application/pdf' ||
-      file.type.includes('word') ||
-      file.type.includes('document')
-
-    if (!allowed) {
-      toast.error('Choose an image or document')
-      return
-    }
-
-    if (file.size > 8 * 1024 * 1024) {
-      toast.error('Moment file must be under 8 MB')
-      return
-    }
-
-    setMomentDraft({ file })
-  }
 
   return (
     <style>{`
@@ -145,6 +122,32 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   useEffect(() => {
     load()
   }, [])
+
+
+  const handleTeacherMomentFileChange = (event: any) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+
+    if (!file) return
+
+    const allowed =
+      file.type.startsWith('image/') ||
+      file.type === 'application/pdf' ||
+      file.type.includes('word') ||
+      file.type.includes('document')
+
+    if (!allowed) {
+      toast.error('Choose an image or document')
+      return
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('Moment file must be under 8 MB')
+      return
+    }
+
+    setMomentDraft({ file })
+  }
 
   return (
     <main style={{
