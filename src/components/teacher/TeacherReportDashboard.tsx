@@ -2,21 +2,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Camera,
-  ChevronDown,
-  Copy,
-  GraduationCap,
-  LogOut,
-  Plus,
-  Settings,
-  Eye,
-  Trash2,
-  Users,
-  X,
-} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, Trash2, Users, X, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
@@ -1076,28 +1062,27 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
                 <button
                   type="button"
+                  aria-label="Open Moments"
                   onClick={(event) => {
                     event.stopPropagation()
                     setShowTeacherMoments(true)
                   }}
                   style={{
-                    minHeight: 34,
+                    width: 34,
+                    height: 34,
                     borderRadius: 999,
                     border: 'none',
                     background: 'transparent',
-                    color: T.accent,
+                    color: T.ink3,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 12.5,
-                    fontWeight: 560,
-                    fontFamily: 'inherit',
                     cursor: 'pointer',
-                    padding: '0 2px',
+                    padding: 0,
                     flexShrink: 0,
                   }}
                 >
-                  Open
+                  <ChevronRight size={18} strokeWidth={2} />
                 </button>
               </section>
 
