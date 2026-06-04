@@ -556,8 +556,8 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          minHeight: 'calc(46px + env(safe-area-inset-top, 0px))',
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 0',
+          minHeight: 'calc(34px + env(safe-area-inset-top, 0px))',
+          padding: 'calc(4px + env(safe-area-inset-top, 0px)) 16px 0',
           position: 'relative',
           zIndex: 10,
           background: '#FFFFFF',
@@ -573,7 +573,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'none',
           touchAction: 'pan-y',
-          padding: '22px 0 calc(58px + env(safe-area-inset-bottom, 0px))',
+          padding: '12px 0 calc(26px + env(safe-area-inset-bottom, 0px))',
         }}>
           <ReportSwiper reports={reports} childName={childName} />
         </section>
