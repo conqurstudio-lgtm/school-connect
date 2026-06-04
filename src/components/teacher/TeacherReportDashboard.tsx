@@ -888,14 +888,15 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 9,
+              gridTemplateColumns: '1fr 1fr 1fr',
+              gap: 8,
               width: '100%',
-              maxWidth: 260,
+              maxWidth: 320,
               marginTop: 20,
             }}>
-              <MiniStat label="Sent" value={completedCount} />
-              <MiniStat label="Pending" value={pendingCount} />
+              <MiniStat label="Learners" value={children.length} />
+              <MiniStat label="Moments" value={momentSummary.moments || 0} />
+              <MiniStat label="Reactions" value={momentSummary.reactions || 0} />
             </div>
           </section>
 
@@ -983,7 +984,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       Weekly checklist
                     </p>
                     <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                      Send weekly reports.
+                      {completedCount} sent · {pendingCount} pending this week
                     </p>
                   </button>
 
@@ -1460,15 +1461,15 @@ function ParentAcknowledgementCard({ summary, onView, onShare }: any) {
 function MiniStat({ label, value }: any) {
   return (
     <div style={{
-      padding: '10px 8px',
+      padding: '10px 6px',
       borderRadius: 17,
       background: T.soft,
       textAlign: 'center',
     }}>
-      <p style={{ fontSize: 18, fontWeight: 560, color: T.ink, margin: 0 }}>
+      <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0 }}>
         {value}
       </p>
-      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
+      <p style={{ fontSize: 10.8, color: T.ink3, margin: '2px 0 0', whiteSpace: 'nowrap' }}>
         {label}
       </p>
     </div>
