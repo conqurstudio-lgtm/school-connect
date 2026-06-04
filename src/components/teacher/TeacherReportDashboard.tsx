@@ -1070,7 +1070,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     Broadcast update
                   </p>
                   <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                    Class updates, photos and documents.
+                    Share updates with parents., photos and documents.
                   </p>
                 </div>
 
