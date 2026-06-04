@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2 } from 'lucide-react'
+import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
@@ -459,6 +459,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
   const reactionTotal = Number(moment.reaction_count || 0)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <article style={{
@@ -520,6 +521,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             alignItems: 'center',
             gap: 6,
             flexShrink: 0,
+            position: 'relative',
           }}>
             <span style={{
               fontSize: 10.8,
@@ -534,17 +536,17 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
 
             <button
               type="button"
-              aria-label="Edit Moment"
+              aria-label="Moment options"
               onClick={(event) => {
                 event.stopPropagation()
-                onEdit?.()
+                setMenuOpen(open => !open)
               }}
               style={{
-                width: 28,
-                height: 28,
+                width: 30,
+                height: 30,
                 borderRadius: 999,
                 border: 'none',
-                background: T.soft,
+                background: 'transparent',
                 color: T.ink3,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -553,32 +555,82 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
                 padding: 0,
               }}
             >
-              <Pencil size={13} strokeWidth={1.9} />
+              <MoreHorizontal size={18} strokeWidth={2} />
             </button>
 
-            <button
-              type="button"
-              aria-label="Delete Moment"
-              onClick={(event) => {
-                event.stopPropagation()
-                onDelete?.()
-              }}
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 999,
-                border: 'none',
-                background: T.soft,
-                color: T.ink3,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            >
-              <Trash2 size={13} strokeWidth={1.9} />
-            </button>
+            {menuOpen && (
+              <div
+                onClick={event => event.stopPropagation()}
+                style={{
+                  position: 'absolute',
+                  top: 34,
+                  right: 0,
+                  zIndex: 40,
+                  width: 132,
+                  borderRadius: 18,
+                  background: T.white,
+                  boxShadow: '0 18px 45px rgba(0,0,0,0.14)',
+                  border: `1px solid ${T.border}`,
+                  padding: 6,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    onEdit?.()
+                  }}
+                  style={{
+                    width: '100%',
+                    minHeight: 36,
+                    borderRadius: 13,
+                    border: 'none',
+                    background: 'transparent',
+                    color: T.ink,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 9,
+                    fontFamily: 'inherit',
+                    fontSize: 12.5,
+                    fontWeight: 520,
+                    cursor: 'pointer',
+                    padding: '0 9px',
+                    textAlign: 'left',
+                  }}
+                >
+                  <Pencil size={13} strokeWidth={1.9} />
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false)
+                    onDelete?.()
+                  }}
+                  style={{
+                    width: '100%',
+                    minHeight: 36,
+                    borderRadius: 13,
+                    border: 'none',
+                    background: 'transparent',
+                    color: T.ink,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 9,
+                    fontFamily: 'inherit',
+                    fontSize: 12.5,
+                    fontWeight: 520,
+                    cursor: 'pointer',
+                    padding: '0 9px',
+                    textAlign: 'left',
+                  }}
+                >
+                  <Trash2 size={13} strokeWidth={1.9} />
+                  Delete
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
