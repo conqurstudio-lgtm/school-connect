@@ -919,3 +919,21 @@ button:disabled {
 .sc-parent-report-screen::after {
   height: env(safe-area-inset-bottom, 0px);
 }
+
+
+/* report-fixed-touch-restore-v250
+   Keep the parent report route feeling like a fixed phone screen.
+   The body/html lock is handled in page.tsx; this reinforces the route shell only. */
+.sc-report-token-layout,
+.sc-parent-report-screen {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  background: #FFFFFF !important;
+}
+
+.sc-report-token-layout * {
+  -webkit-tap-highlight-color: transparent;
+}
