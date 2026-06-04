@@ -1050,7 +1050,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </div>
                 )}
               </section>
-              <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
+              <section style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -1148,6 +1148,67 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                       fontFamily: 'inherit',
                       cursor: 'pointer',
                       padding: 0,
+                    }}
+                  >
+                    Share
+                  </button>
+                </div>
+
+                <div
+                  data-teacher-broadcast-actions-v256="true"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 9,
+                    marginTop: 16,
+                    paddingTop: 2,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      setShowTeacherMoments(true)
+                    }}
+                    style={{
+                      minHeight: 42,
+                      borderRadius: 16,
+                      border: '1px solid rgba(0,0,0,0.06)',
+                      background: '#FFFFFF',
+                      color: T.ink2,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 12.5,
+                      fontWeight: 520,
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                      padding: '0 12px',
+                    }}
+                  >
+                    View moments
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      momentFileRef.current?.click()
+                    }}
+                    style={{
+                      minHeight: 42,
+                      borderRadius: 16,
+                      border: 'none',
+                      background: '#252525',
+                      color: '#FFFFFF',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 12.5,
+                      fontWeight: 540,
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                      padding: '0 12px',
                     }}
                   >
                     Share
