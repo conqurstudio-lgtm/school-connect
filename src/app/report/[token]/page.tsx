@@ -213,7 +213,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
 
   return (
     <section style={{
-      margin: '4px 0 2px',
+      margin: '8px 0 4px',
       paddingTop: 2,
     }}>
       <div style={{
@@ -221,7 +221,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
-        marginBottom: 10,
+        marginBottom: 12,
       }}>
         <p style={{
           fontSize: 13,
@@ -253,13 +253,14 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
 
       <div style={{
         display: 'flex',
-        gap: 10,
+        gap: 12,
         overflowX: 'auto',
         overflowY: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        paddingBottom: 4,
+        scrollSnapType: 'x mandatory',
+        paddingBottom: 6,
         marginRight: -16,
-        paddingRight: 16,
+        paddingRight: 48,
         scrollbarWidth: 'none',
       }}>
         {moments.slice(0, 3).map((moment: any) => (
@@ -268,21 +269,24 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             type="button"
             onClick={onOpen}
             style={{
-              width: 136,
-              minWidth: 136,
+              width: 'calc(100% - 54px)',
+              minWidth: 'calc(100% - 54px)',
+              maxWidth: 360,
               border: '1px solid rgba(0,0,0,0.06)',
               background: '#FFFFFF',
-              borderRadius: 22,
-              padding: 8,
+              borderRadius: 26,
+              padding: 9,
               textAlign: 'left',
               fontFamily: 'inherit',
               cursor: 'pointer',
+              scrollSnapAlign: 'start',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
             }}
           >
             <div style={{
               width: '100%',
-              height: 86,
-              borderRadius: 17,
+              height: 168,
+              borderRadius: 21,
               background: moment.file_type === 'image' && moment.file_url
                 ? `url(${moment.file_url}) center/cover`
                 : T.soft,
@@ -294,7 +298,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             }}>
               {moment.file_type !== 'image' && (
                 <span style={{
-                  fontSize: 24,
+                  fontSize: 34,
                   lineHeight: 1,
                 }}>
                   📄
@@ -302,34 +306,39 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
               )}
             </div>
 
-            <p style={{
-              fontSize: 12.2,
-              fontWeight: 540,
-              color: T.ink,
-              lineHeight: 1.25,
-              margin: '8px 0 0',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
+            <div style={{
+              padding: '10px 4px 3px',
             }}>
-              {moment.note || (moment.file_type === 'image' ? 'Photo update' : 'Class update')}
-            </p>
+              <p style={{
+                fontSize: 13.2,
+                fontWeight: 540,
+                color: T.ink,
+                lineHeight: 1.35,
+                margin: 0,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}>
+                {moment.note || (moment.file_type === 'image' ? 'Photo update' : 'Class update')}
+              </p>
 
-            <p style={{
-              fontSize: 11,
-              color: T.ink3,
-              margin: '5px 0 0',
-              lineHeight: 1,
-            }}>
-              {formatMomentPreviewDate(moment.created_at)}
-            </p>
+              <p style={{
+                fontSize: 11.5,
+                color: T.ink3,
+                margin: '6px 0 0',
+                lineHeight: 1,
+              }}>
+                {formatMomentPreviewDate(moment.created_at)}
+              </p>
+            </div>
           </button>
         ))}
       </div>
     </section>
   )
 }
+
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
