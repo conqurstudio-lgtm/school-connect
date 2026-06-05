@@ -1167,3 +1167,19 @@ body {
   display: inline-block;
   transform: rotate(180deg) translateY(1px) !important;
 }
+
+
+/* report-previous-x-open-v279
+   Previous report rows stay clean when closed: no dropdown icon.
+   When a row is open, show a small X to indicate it can be closed. */
+.sc-previous-report-open-x-v279 {
+  display: none !important;
+}
+
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: inline-flex !important;
+}
+
+.sc-previous-report-flat-v278 .sc-previous-report-chevron-v278 {
+  display: none !important;
+}

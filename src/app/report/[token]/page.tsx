@@ -158,13 +158,20 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
             </span>
           </div>
 
-          <span className="sc-previous-report-chevron-v278" aria-hidden="true" style={{
+          <span className="sc-previous-report-open-x-v279" aria-hidden="true" style={{
+            width: 28,
+            height: 28,
+            borderRadius: 999,
+            background: T.soft,
             color: T.ink3,
-            fontSize: 18,
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 16,
             lineHeight: 1,
-            transform: 'translateY(-1px)',
+            fontWeight: 420,
+            flexShrink: 0,
           }}>
-            ⌄
+            ×
           </span>
         </div>
       </summary>
