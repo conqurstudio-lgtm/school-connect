@@ -186,6 +186,151 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 }
 
 
+
+function formatMomentPreviewDate(value?: string) {
+  if (!value) return ''
+
+  const then = new Date(value).getTime()
+  if (!Number.isFinite(then)) return ''
+
+  const diff = Math.max(0, Date.now() - then)
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+
+  if (diff < minute) return 'now'
+  if (diff < hour) return `${Math.floor(diff / minute)}m ago`
+  if (diff < day) return `${Math.floor(diff / hour)}h ago`
+
+  return new Date(value).toLocaleDateString('en-ZA', {
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
+function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () => void }) {
+  if (!moments?.length) return null
+
+  return (
+    <section style={{
+      margin: '4px 0 2px',
+      paddingTop: 2,
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginBottom: 10,
+      }}>
+        <p style={{
+          fontSize: 13,
+          fontWeight: 540,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.01em',
+        }}>
+          Latest Moments
+        </p>
+
+        <button
+          type="button"
+          onClick={onOpen}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            color: T.accent,
+            fontFamily: 'inherit',
+            fontSize: 12.5,
+            fontWeight: 560,
+            padding: 0,
+            cursor: 'pointer',
+          }}
+        >
+          View all
+        </button>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        gap: 10,
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        paddingBottom: 4,
+        marginRight: -16,
+        paddingRight: 16,
+        scrollbarWidth: 'none',
+      }}>
+        {moments.slice(0, 3).map((moment: any) => (
+          <button
+            key={moment.id}
+            type="button"
+            onClick={onOpen}
+            style={{
+              width: 136,
+              minWidth: 136,
+              border: '1px solid rgba(0,0,0,0.06)',
+              background: '#FFFFFF',
+              borderRadius: 22,
+              padding: 8,
+              textAlign: 'left',
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{
+              width: '100%',
+              height: 86,
+              borderRadius: 17,
+              background: moment.file_type === 'image' && moment.file_url
+                ? `url(${moment.file_url}) center/cover`
+                : T.soft,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: T.accent,
+              overflow: 'hidden',
+            }}>
+              {moment.file_type !== 'image' && (
+                <span style={{
+                  fontSize: 24,
+                  lineHeight: 1,
+                }}>
+                  📄
+                </span>
+              )}
+            </div>
+
+            <p style={{
+              fontSize: 12.2,
+              fontWeight: 540,
+              color: T.ink,
+              lineHeight: 1.25,
+              margin: '8px 0 0',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}>
+              {moment.note || (moment.file_type === 'image' ? 'Photo update' : 'Class update')}
+            </p>
+
+            <p style={{
+              fontSize: 11,
+              color: T.ink3,
+              margin: '5px 0 0',
+              lineHeight: 1,
+            }}>
+              {formatMomentPreviewDate(moment.created_at)}
+            </p>
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
 
@@ -618,6 +763,7 @@ export default function ParentMagicReportPage() {
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
   const [showMoments, setShowMoments] = useState(false)
+  const [latestMoments, setLatestMoments] = useState<any[]>([])
 
   useEffect(() => {
     // report-route-shell-lock-v251
@@ -727,6 +873,30 @@ export default function ParentMagicReportPage() {
     }
   }, [token])
 
+
+  useEffect(() => {
+    // report-latest-moments-preview-v280
+    if (!token) return
+
+    let alive = true
+
+    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(json => {
+        if (!alive) return
+
+        const rows = Array.isArray(json.moments) ? json.moments.slice(0, 3) : []
+        setLatestMoments(rows)
+      })
+      .catch(() => {
+        if (alive) setLatestMoments([])
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [token])
+
   if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
@@ -822,6 +992,11 @@ export default function ParentMagicReportPage() {
                 childName={childName}
               />
             )}
+
+            <LatestMomentsPreview
+              moments={latestMoments}
+              onOpen={() => setShowMoments(true)}
+            />
 
             {reports.length > 1 && (
               <section style={{
