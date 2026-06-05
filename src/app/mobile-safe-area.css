@@ -1051,3 +1051,40 @@ body {
     background-color: #FFFFFF !important;
   }
 }
+
+
+/* report-moments-style-clean-v276
+   The public report page now follows the same clean structure as Moments:
+   fixed white shell, normal inner vertical scroll, no slide dock/dots. */
+.sc-report-clean-page-v276,
+.sc-report-clean-shell-v276 {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.sc-report-clean-page-v276 {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+.sc-report-clean-shell-v276 {
+  height: 100dvh !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.sc-report-clean-scroll-v276 {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch;
+  background: #FFFFFF !important;
+}
+
+.sc-report-clean-scroll-v276 .sc-report-swiper,
+.sc-report-clean-scroll-v276 .sc-report-dots {
+  display: none !important;
+}

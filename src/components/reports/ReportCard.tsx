@@ -297,7 +297,7 @@ export function ReportCard({ report, childName }: Props) {
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
-    <section style={{ paddingBottom: 104 }}>
+    <section style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
       <div style={{ textAlign: 'center', padding: '20px 0 42px', opacity: mutedReportOpacity }}>
         <div style={{

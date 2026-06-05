@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
-import { ReportSwiper } from '@/components/reports/ReportSwiper'
+import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 
 const T = {
@@ -64,9 +64,9 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
       onClick={onOpen}
       aria-label="View Moments"
       style={{
-        position: 'absolute',
-        top: 'calc(8px + env(safe-area-inset-top, 0px))',
-        right: 13,
+        position: 'relative',
+        top: 'auto',
+        right: 'auto',
         width: 38,
         height: 38,
         borderRadius: 999,
@@ -610,16 +610,16 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main className="sc-parent-report-page" style={{
+    <main className="sc-parent-report-page sc-report-clean-page-v276" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
       overscrollBehavior: 'none',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
-          background: '#FFFFFF',
-        }}>
-      <div className="sc-parent-report-shell" style={{
+      background: '#FFFFFF',
+    }}>
+      <div className="sc-parent-report-shell sc-report-clean-shell-v276" style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
@@ -629,33 +629,45 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          minHeight: 'calc(34px + env(safe-area-inset-top, 0px))',
-          padding: 'calc(4px + env(safe-area-inset-top, 0px)) 16px 0',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          background: '#FFFFFF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
           position: 'relative',
           zIndex: 10,
-          background: '#FFFFFF',
         }}>
           <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
         </header>
 
-        <section style={{
+        <section className="sc-report-clean-scroll-v276" style={{
           flex: 1,
           minHeight: 0,
-          overflowY: 'hidden',
+          overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'none',
+          overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '8px 0 calc(10px + env(safe-area-inset-bottom, 0px))',
-        }}>
-          <ReportSwiper reports={reports} childName={childName} />
-        </section>
-
-        <div style={{
-          flexShrink: 0,
-          height: 'calc(8px + env(safe-area-inset-bottom, 0px))',
+          padding: '4px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
-        }} />
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: 430,
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: reports.length > 1 ? 28 : 0,
+          }}>
+            {reports.map((report: any, index: number) => (
+              <ReportCard
+                key={report.id || `${report.week_starting || 'report'}-${index}`}
+                report={report}
+                childName={childName}
+              />
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   )
