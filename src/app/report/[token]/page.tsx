@@ -213,7 +213,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
 
   return (
     <section style={{
-      margin: '8px 0 4px',
+      margin: '4px 0 2px',
       paddingTop: 2,
     }}>
       <div style={{
@@ -221,7 +221,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
-        marginBottom: 11,
+        marginBottom: 10,
       }}>
         <p style={{
           fontSize: 13,
@@ -253,13 +253,13 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
 
       <div style={{
         display: 'flex',
-        gap: 12,
+        gap: 10,
         overflowX: 'auto',
         overflowY: 'hidden',
         WebkitOverflowScrolling: 'touch',
-        scrollSnapType: 'x proximity',
         paddingBottom: 4,
-        paddingRight: 2,
+        marginRight: -16,
+        paddingRight: 16,
         scrollbarWidth: 'none',
       }}>
         {moments.slice(0, 3).map((moment: any) => (
@@ -268,22 +268,21 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             type="button"
             onClick={onOpen}
             style={{
-              width: 178,
-              minWidth: 178,
-              border: 'none',
-              background: 'transparent',
-              borderRadius: 0,
-              padding: 0,
+              width: 136,
+              minWidth: 136,
+              border: '1px solid rgba(0,0,0,0.06)',
+              background: '#FFFFFF',
+              borderRadius: 22,
+              padding: 8,
               textAlign: 'left',
               fontFamily: 'inherit',
               cursor: 'pointer',
-              scrollSnapAlign: 'start',
             }}
           >
             <div style={{
               width: '100%',
-              height: 118,
-              borderRadius: 22,
+              height: 86,
+              borderRadius: 17,
               background: moment.file_type === 'image' && moment.file_url
                 ? `url(${moment.file_url}) center/cover`
                 : T.soft,
@@ -295,7 +294,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             }}>
               {moment.file_type !== 'image' && (
                 <span style={{
-                  fontSize: 30,
+                  fontSize: 24,
                   lineHeight: 1,
                 }}>
                   📄
@@ -304,11 +303,11 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             </div>
 
             <p style={{
-              fontSize: 12.5,
+              fontSize: 12.2,
               fontWeight: 540,
               color: T.ink,
-              lineHeight: 1.3,
-              margin: '8px 2px 0',
+              lineHeight: 1.25,
+              margin: '8px 0 0',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -318,9 +317,9 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
             </p>
 
             <p style={{
-              fontSize: 11.2,
+              fontSize: 11,
               color: T.ink3,
-              margin: '5px 2px 0',
+              margin: '5px 0 0',
               lineHeight: 1,
             }}>
               {formatMomentPreviewDate(moment.created_at)}
