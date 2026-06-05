@@ -1088,3 +1088,67 @@ body {
 .sc-report-clean-scroll-v276 .sc-report-dots {
   display: none !important;
 }
+
+
+/* report-collapse-previous-white-safe-v277
+   Final report route white safe-area reinforcement.
+   Keeps the report page aligned with the Moments page: pure white shell, pure white device safe areas. */
+html,
+body {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.sc-report-token-layout,
+.sc-parent-report-page,
+.sc-parent-report-shell,
+.sc-report-clean-page-v276,
+.sc-report-clean-shell-v276,
+.sc-report-clean-scroll-v276 {
+  background: #FFFFFF !important;
+  background-color: #FFFFFF !important;
+}
+
+.sc-report-token-layout::before,
+.sc-report-token-layout::after,
+.sc-parent-report-page::before,
+.sc-parent-report-page::after,
+.sc-report-clean-page-v276::before,
+.sc-report-clean-page-v276::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #FFFFFF !important;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.sc-report-token-layout::before,
+.sc-parent-report-page::before,
+.sc-report-clean-page-v276::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+
+.sc-report-token-layout::after,
+.sc-parent-report-page::after,
+.sc-report-clean-page-v276::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+.sc-report-token-layout > *,
+.sc-parent-report-page > *,
+.sc-report-clean-page-v276 > * {
+  position: relative;
+  z-index: 1;
+}
+
+.sc-report-clean-scroll-v276 details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sc-report-clean-scroll-v276 summary {
+  list-style: none;
+}

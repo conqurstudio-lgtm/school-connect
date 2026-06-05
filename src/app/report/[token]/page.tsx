@@ -30,6 +30,136 @@ const T = {
 
 
 
+
+function getReportScore(report: any) {
+  const values = Object.values(report?.scores || {})
+    .map((value: any) => Number(value))
+    .filter((value: number) => Number.isFinite(value))
+
+  if (!values.length) return 0
+
+  const average = values.reduce((sum: number, value: number) => sum + value, 0) / values.length
+  return Math.max(0, Math.min(5, average))
+}
+
+function getReportPerformance(score: number) {
+  if (score >= 4.5) return 'Excellent progress'
+  if (score >= 4) return 'Very good progress'
+  if (score >= 3) return 'Good progress'
+  if (score >= 2.5) return 'Fair progress'
+  return 'Needs support'
+}
+
+function getReportDateLabel(report: any) {
+  const raw = report?.week_starting || report?.published_at || report?.created_at
+
+  if (!raw) return 'Previous report'
+
+  const start = new Date(raw)
+  if (!Number.isFinite(start.getTime())) return 'Previous report'
+
+  if (report?.week_starting) {
+    const end = new Date(start)
+    end.setDate(start.getDate() + 4)
+
+    const dayMonth = { day: 'numeric', month: 'short' } as Intl.DateTimeFormatOptions
+    const year = start.getFullYear()
+
+    return `${start.toLocaleDateString('en-ZA', dayMonth)} – ${end.toLocaleDateString('en-ZA', dayMonth)} ${year}`
+  }
+
+  return start.toLocaleDateString('en-ZA', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function PreviousReportDropdown({ report, childName }: { report: any, childName: string }) {
+  const score = getReportScore(report)
+  const scoreText = score > 0 ? score.toFixed(1) : '—'
+  const performance = getReportPerformance(score)
+
+  return (
+    <details style={{
+      borderRadius: 24,
+      border: '1px solid rgba(0,0,0,0.06)',
+      background: '#FFFFFF',
+      overflow: 'hidden',
+    }}>
+      <summary style={{
+        listStyle: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 14,
+        padding: '15px',
+      }}>
+        <div style={{ minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.5,
+            fontWeight: 540,
+            color: T.ink,
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            {getReportDateLabel(report)}
+          </p>
+
+          <p style={{
+            fontSize: 12.5,
+            color: T.ink3,
+            lineHeight: 1.35,
+            margin: '3px 0 0',
+          }}>
+            {performance}
+          </p>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          flexShrink: 0,
+        }}>
+          <span style={{
+            minWidth: 48,
+            minHeight: 30,
+            borderRadius: 999,
+            background: T.soft,
+            color: T.ink2,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12.5,
+            fontWeight: 560,
+            padding: '0 10px',
+          }}>
+            {scoreText}/5
+          </span>
+
+          <span aria-hidden="true" style={{
+            color: T.ink3,
+            fontSize: 18,
+            lineHeight: 1,
+            transform: 'translateY(-1px)',
+          }}>
+           ⌄
+          </span>
+        </div>
+      </summary>
+
+      <div style={{
+        borderTop: '1px solid rgba(0,0,0,0.05)',
+        padding: '16px 0 0',
+      }}>
+        <ReportCard report={report} childName={childName} />
+      </div>
+    </details>
+  )
+}
+
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
 
@@ -657,15 +787,41 @@ export default function ParentMagicReportPage() {
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: reports.length > 1 ? 28 : 0,
+            gap: reports.length > 1 ? 18 : 0,
           }}>
-            {reports.map((report: any, index: number) => (
+            {reports[0] && (
               <ReportCard
-                key={report.id || `${report.week_starting || 'report'}-${index}`}
-                report={report}
+                key={reports[0].id || `${reports[0].week_starting || 'latest-report'}-latest`}
+                report={reports[0]}
                 childName={childName}
               />
-            ))}
+            )}
+
+            {reports.length > 1 && (
+              <section style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+                marginTop: 4,
+              }}>
+                <p style={{
+                  fontSize: 12.5,
+                  fontWeight: 540,
+                  color: T.ink3,
+                  margin: '0 2px 2px',
+                }}>
+                  Previous reports
+                </p>
+
+                {reports.slice(1).map((report: any, index: number) => (
+                  <PreviousReportDropdown
+                    key={report.id || `${report.week_starting || 'previous-report'}-${index}`}
+                    report={report}
+                    childName={childName}
+                  />
+                ))}
+              </section>
+            )}
           </div>
         </section>
       </div>
