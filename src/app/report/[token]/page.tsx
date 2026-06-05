@@ -79,13 +79,12 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
   const score = getReportScore(report)
   const scoreText = score > 0 ? score.toFixed(1) : '—'
   const performance = getReportPerformance(score)
+  const scorePercent = score > 0 ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0
 
   return (
-    <details style={{
-      borderRadius: 24,
-      border: '1px solid rgba(0,0,0,0.06)',
-      background: '#FFFFFF',
-      overflow: 'hidden',
+    <details className="sc-previous-report-flat-v278" style={{
+      borderTop: '1px solid rgba(0,0,0,0.06)',
+      background: 'transparent',
     }}>
       <summary style={{
         listStyle: 'none',
@@ -94,9 +93,12 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 14,
-        padding: '15px',
+        padding: '14px 2px',
       }}>
-        <div style={{ minWidth: 0 }}>
+        <div style={{
+          minWidth: 0,
+          flex: 1,
+        }}>
           <p style={{
             fontSize: 13.5,
             fontWeight: 540,
@@ -120,45 +122,62 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 9,
           flexShrink: 0,
         }}>
-          <span style={{
-            minWidth: 48,
-            minHeight: 30,
-            borderRadius: 999,
-            background: T.soft,
-            color: T.ink2,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12.5,
-            fontWeight: 560,
-            padding: '0 10px',
-          }}>
-            {scoreText}/5
-          </span>
+          <div
+            aria-label={`Score ${scoreText} out of 5`}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 999,
+              padding: 2,
+              boxSizing: 'border-box',
+              background: score > 0
+                ? `conic-gradient(${T.accent} ${scorePercent}%, rgba(0,0,0,0.06) 0)`
+                : 'rgba(0,0,0,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <span style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: 999,
+              background: '#FFFFFF',
+              color: T.ink2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 560,
+              letterSpacing: '-0.02em',
+            }}>
+              {scoreText}
+            </span>
+          </div>
 
-          <span aria-hidden="true" style={{
+          <span className="sc-previous-report-chevron-v278" aria-hidden="true" style={{
             color: T.ink3,
             fontSize: 18,
             lineHeight: 1,
             transform: 'translateY(-1px)',
           }}>
-           ⌄
+            ⌄
           </span>
         </div>
       </summary>
 
       <div style={{
-        borderTop: '1px solid rgba(0,0,0,0.05)',
-        padding: '16px 0 0',
+        padding: '0 0 18px',
       }}>
         <ReportCard report={report} childName={childName} />
       </div>
     </details>
   )
 }
+
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
@@ -801,14 +820,14 @@ export default function ParentMagicReportPage() {
               <section style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 10,
-                marginTop: 4,
+                gap: 0,
+                marginTop: 8,
               }}>
                 <p style={{
                   fontSize: 12.5,
                   fontWeight: 540,
                   color: T.ink3,
-                  margin: '0 2px 2px',
+                  margin: '0 2px 6px',
                 }}>
                   Previous reports
                 </p>

@@ -1152,3 +1152,18 @@ body {
 .sc-report-clean-scroll-v276 summary {
   list-style: none;
 }
+
+
+/* report-flat-previous-score-v278 */
+.sc-previous-report-flat-v278 > summary::-webkit-details-marker {
+  display: none;
+}
+
+.sc-previous-report-flat-v278 > summary {
+  list-style: none;
+}
+
+.sc-previous-report-flat-v278[open] .sc-previous-report-chevron-v278 {
+  display: inline-block;
+  transform: rotate(180deg) translateY(1px) !important;
+}
