@@ -208,15 +208,66 @@ export async function GET(req: NextRequest) {
     .eq('child_id', child.id)
     .in('moment_id', momentIds)
 
+  // reaction-counts-v273
+  // Parent UI needs total reaction counts so the number appears after tapping
+  // and remains visible after page reload.
+  const { data: allReactions } = await sb
+    .from('moment_reactions')
+    .select('moment_id,child_id,reaction,created_at')
+    .in('moment_id', momentIds)
+
   const reactionMap = Object.fromEntries((reactions || []).map((row: any) => [row.moment_id, row.reaction]))
   const recipientMap = Object.fromEntries((recipients || []).map((row: any) => [row.moment_id, row]))
 
-  const rows = (moments || []).map((moment: any) => ({
-    ...moment,
-    teacher: moment.teacher_id ? teacherMap[moment.teacher_id] || null : null,
-    recipient: recipientMap[moment.id] || null,
-    reaction: reactionMap[moment.id] || null,
-  }))
+  // reaction-switch-fix-v274
+  // Count only one reaction per child per Moment. This protects the UI from
+  // older duplicate rows that may exist before the delete-then-insert fix.
+  const latestReactionByChildMoment: any = {}
+
+  for (const row of allReactions || []) {
+    const key = `${row.moment_id}:${row.child_id || 'unknown'}`
+    const existing = latestReactionByChildMoment[key]
+
+    if (!existing) {
+      latestReactionByChildMoment[key] = row
+      continue
+    }
+
+    const existingTime = new Date(existing.created_at || 0).getTime()
+    const rowTime = new Date(row.created_at || 0).getTime()
+
+    if (rowTime >= existingTime) {
+      latestReactionByChildMoment[key] = row
+    }
+  }
+
+  const reactionCountMap: any = {}
+
+  for (const row of Object.values(latestReactionByChildMoment) as any[]) {
+    if (!reactionCountMap[row.moment_id]) {
+      reactionCountMap[row.moment_id] = { heart: 0, like: 0, smile: 0 }
+    }
+
+    if (row.reaction && reactionCountMap[row.moment_id][row.reaction] !== undefined) {
+      reactionCountMap[row.moment_id][row.reaction] += 1
+    }
+  }
+
+  const rows = (moments || []).map((moment: any) => {
+    const reactionCounts = reactionCountMap[moment.id] || { heart: 0, like: 0, smile: 0 }
+    const reactionTotal = Number(reactionCounts.heart || 0) +
+      Number(reactionCounts.like || 0) +
+      Number(reactionCounts.smile || 0)
+
+    return {
+      ...moment,
+      teacher: moment.teacher_id ? teacherMap[moment.teacher_id] || null : null,
+      recipient: recipientMap[moment.id] || null,
+      reaction: reactionMap[moment.id] || null,
+      reaction_counts: reactionCounts,
+      reaction_count: reactionTotal,
+    }
+  })
 
   // Important: do this after building rows so the first page load can still show the new-dot state correctly.
   if (!peek && (recipients || []).some((row: any) => !row.viewed_at)) {
