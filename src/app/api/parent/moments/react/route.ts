@@ -15,16 +15,123 @@ function adminClient() {
   )
 }
 
+async function firstWorking<T>(tasks: Array<() => Promise<T | null>>) {
+  for (const task of tasks) {
+    try {
+      const result = await task()
+      if (result) return result
+    } catch {
+      // Try next lookup path.
+    }
+  }
+
+  return null
+}
+
+async function resolveChildFromToken(sb: any, token: string) {
+  if (!token) return null
+
+  return await firstWorking([
+    async () => {
+      const { data } = await sb
+        .from('child_parent_links')
+        .select('id, child_id, is_active')
+        .eq('token', token)
+        .eq('is_active', true)
+        .maybeSingle()
+
+      if (!data?.child_id) return null
+
+      const { data: child } = await sb
+        .from('children')
+        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .eq('id', data.child_id)
+        .maybeSingle()
+
+      return child || null
+    },
+
+    async () => {
+      const { data } = await sb
+        .from('children')
+        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .eq('parent_token', token)
+        .maybeSingle()
+
+      return data || null
+    },
+
+    async () => {
+      const { data } = await sb
+        .from('children')
+        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .eq('magic_token', token)
+        .maybeSingle()
+
+      return data || null
+    },
+
+    async () => {
+      const { data: report } = await sb
+        .from('child_reports')
+        .select('child_id')
+        .eq('magic_token', token)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (!report?.child_id) return null
+
+      const { data: child } = await sb
+        .from('children')
+        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .eq('id', report.child_id)
+        .maybeSingle()
+
+      return child || null
+    },
+
+    async () => {
+      const { data: report } = await sb
+        .from('reports')
+        .select('child_id')
+        .eq('magic_token', token)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (!report?.child_id) return null
+
+      const { data: child } = await sb
+        .from('children')
+        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .eq('id', report.child_id)
+        .maybeSingle()
+
+      return child || null
+    },
+  ])
+}
+
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
-  const childId = String(body.child_id || '').trim()
+  let childId = String(body.child_id || '').trim()
+  const token = String(body.token || '').trim()
   const momentId = String(body.moment_id || '').trim()
   const reaction = String(body.reaction || '').trim()
 
-  if (!childId || !momentId) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
+  if (!momentId) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
   if (!allowed.includes(reaction)) return NextResponse.json({ error: 'invalid reaction' }, { status: 400 })
 
   const sb = adminClient()
+
+  if (!childId && token) {
+    const child = await resolveChildFromToken(sb, token)
+    childId = child?.id || ''
+  }
+
+  if (!childId) return NextResponse.json({ error: 'missing child' }, { status: 400 })
 
   const { data: recipient } = await sb
     .from('moment_recipients')

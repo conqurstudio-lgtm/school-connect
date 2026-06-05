@@ -127,7 +127,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
       const res = await fetch('/api/parent/moments/react', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, moment_id: moment.id, reaction }),
+        body: JSON.stringify({ token, child_id: child?.id, moment_id: moment.id, reaction }),
       })
 
       const json = await res.json().catch(() => ({}))
@@ -168,11 +168,16 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
           background: T.bg,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}>
             {embedded ? (
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Back"
                 style={{
                   width: 34,
                   height: 34,
@@ -185,48 +190,43 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
                   justifyContent: 'center',
                   flexShrink: 0,
                   cursor: 'pointer',
+                  padding: 0,
                 }}
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={16} strokeWidth={2} />
               </button>
             ) : (
-              <a href={`/report/${token}`} style={{
-                width: 34,
-                height: 34,
-                borderRadius: 999,
-                border: 'none',
-                background: T.soft,
-                color: T.ink2,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textDecoration: 'none',
-                flexShrink: 0,
-              }}>
-                <ArrowLeft size={16} />
+              <a
+                href={`/report/${token}`}
+                aria-label="Back to report"
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: T.soft,
+                  color: T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textDecoration: 'none',
+                  flexShrink: 0,
+                  padding: 0,
+                }}
+              >
+                <ArrowLeft size={16} strokeWidth={2} />
               </a>
             )}
 
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                fontSize: 14,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-              }}>
-                Moments
-              </p>
-              <p style={{
-                fontSize: 12.5,
-                color: T.ink3,
-                margin: '2px 0 0',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                {child?.name ? `Private updates for ${child.name}` : 'Private updates'}
-              </p>
-            </div>
+            <p style={{
+              fontSize: 15,
+              fontWeight: 560,
+              color: T.ink,
+              margin: 0,
+              letterSpacing: '-0.01em',
+            }}>
+              Moments
+            </p>
           </div>
         </header>
 
@@ -236,7 +236,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '34px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+          padding: '20px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
           {loading ? (
