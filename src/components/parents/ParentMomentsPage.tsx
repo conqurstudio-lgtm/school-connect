@@ -79,6 +79,25 @@ function SafeStyle() {
         0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
         40% { transform: scale(1); opacity: 1; }
       }
+
+      @keyframes parentMomentReactionFly {
+        0% {
+          transform: translate(-50%, 16px) scale(0.65) rotate(-8deg);
+          opacity: 0;
+        }
+        14% {
+          transform: translate(-50%, 0) scale(1.12) rotate(5deg);
+          opacity: 1;
+        }
+        58% {
+          transform: translate(-50%, -46px) scale(1.22) rotate(-3deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -78px) scale(0.92) rotate(3deg);
+          opacity: 0;
+        }
+      }
     `}</style>
   )
 }
@@ -91,12 +110,53 @@ function LoadingDots() {
   )
 }
 
+
+function reactionEmoji(reaction: string) {
+  if (reaction === 'heart') return '❤️'
+  if (reaction === 'like') return '👍'
+  if (reaction === 'smile') return '😊'
+  return '✨'
+}
+
+function ReactionBurstLayer({ bursts = [] }: any) {
+  if (!bursts.length) return null
+
+  return (
+    <div style={{
+      position: 'absolute',
+      inset: 0,
+      pointerEvents: 'none',
+      zIndex: 6,
+      overflow: 'hidden',
+      borderRadius: 22,
+    }}>
+      {bursts.map((burst: any, index: number) => (
+        <span
+          key={burst.id}
+          style={{
+            position: 'absolute',
+            left: `${50 + ((index % 3) - 1) * 9}%`,
+            top: '58%',
+            fontSize: 34,
+            lineHeight: 1,
+            filter: 'drop-shadow(0 10px 18px rgba(0,0,0,0.16))',
+            animation: 'parentMomentReactionFly 820ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          }}
+        >
+          {reactionEmoji(burst.reaction)}
+        </span>
+      ))}
+    </div>
+  )
+}
+
 export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [child, setChild] = useState<any>(null)
   const [moments, setMoments] = useState<any[]>([])
   const [openImage, setOpenImage] = useState('')
   const [reacting, setReacting] = useState('')
+  const [reactionBursts, setReactionBursts] = useState<any[]>([])
 
   const load = async () => {
     setLoading(true)
@@ -120,7 +180,55 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
     load()
   }, [token])
 
+
+  const addReactionBurst = (momentId: string, reaction: string) => {
+    const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
+
+    setReactionBursts(current => [
+      ...current,
+      { id, momentId, reaction },
+    ])
+
+    window.setTimeout(() => {
+      setReactionBursts(current => current.filter(item => item.id !== id))
+    }, 900)
+  }
+
   const react = async (moment: any, reaction: string) => {
+    const previousMomentsSnapshot = moments
+
+    addReactionBurst(moment.id, reaction)
+
+    setMoments(current => current.map(item => {
+      if (item.id !== moment.id) return item
+
+      const previousReaction = item.reaction || null
+      const nextCounts: any = {
+        heart: Number(item.reaction_counts?.heart || 0),
+        like: Number(item.reaction_counts?.like || 0),
+        smile: Number(item.reaction_counts?.smile || 0),
+      }
+
+      if (previousReaction && previousReaction !== reaction && nextCounts[previousReaction] !== undefined) {
+        nextCounts[previousReaction] = Math.max(0, Number(nextCounts[previousReaction] || 0) - 1)
+      }
+
+      if (!previousReaction || previousReaction !== reaction) {
+        nextCounts[reaction] = Number(nextCounts[reaction] || 0) + 1
+      }
+
+      const reactionTotal = Number(nextCounts.heart || 0) +
+        Number(nextCounts.like || 0) +
+        Number(nextCounts.smile || 0)
+
+      return {
+        ...item,
+        reaction,
+        reaction_counts: nextCounts,
+        reaction_count: reactionTotal,
+      }
+    }))
+
     setReacting(moment.id)
 
     try {
@@ -132,11 +240,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not react')
-
-      setMoments(current => current.map(item =>
-        item.id === moment.id ? { ...item, reaction } : item
-      ))
     } catch (error: any) {
+      setMoments(previousMomentsSnapshot)
       toast.error(error.message || 'Could not react')
     }
 
@@ -266,6 +371,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
                   onImage={setOpenImage}
                   onReact={react}
                   reacting={reacting === moment.id}
+                  bursts={reactionBursts.filter(item => item.momentId === moment.id)}
                 />
               ))}
             </div>
@@ -328,7 +434,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   )
 }
 
-function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
+function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }: any) {
   const teacherName = moment.teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
@@ -427,7 +533,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
           {isPrivate ? 'Shared only to you' : 'Shared with class'}
         </span>
 
-        <div style={{ marginTop: 12 }}>
+        <div style={{ marginTop: 12, position: 'relative' }}>
           {isImage ? (
             <button
               type="button"
@@ -513,6 +619,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
               </div>
             </a>
           )}
+          <ReactionBurstLayer bursts={bursts} />
         </div>
 
         <div style={{
@@ -527,15 +634,15 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
             ['smile', Smile],
           ].map(([key, Icon]: any) => {
             const active = moment.reaction === key
+            const count = Number(moment.reaction_counts?.[key] || 0)
 
             return (
               <button
                 key={key}
                 type="button"
-                disabled={reacting}
                 onClick={() => onReact(moment, key)}
                 style={{
-                  width: 34,
+                  minWidth: count > 0 ? 44 : 34,
                   height: 34,
                   borderRadius: 999,
                   border: 'none',
@@ -544,11 +651,23 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting }: any) {
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  cursor: reacting ? 'wait' : 'pointer',
-                  opacity: reacting ? 0.65 : 1,
+                  gap: 5,
+                  cursor: 'pointer',
+                  opacity: 1,
+                  padding: count > 0 ? '0 10px' : 0,
+                  fontFamily: 'inherit',
                 }}
               >
                 <Icon size={15} strokeWidth={1.9} />
+                {count > 0 && (
+                  <span style={{
+                    fontSize: 11.5,
+                    fontWeight: 560,
+                    lineHeight: 1,
+                  }}>
+                    {count}
+                  </span>
+                )}
               </button>
             )
           })}

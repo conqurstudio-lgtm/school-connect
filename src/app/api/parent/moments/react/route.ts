@@ -142,14 +142,23 @@ export async function POST(req: NextRequest) {
 
   if (!recipient) return NextResponse.json({ error: 'not allowed' }, { status: 403 })
 
+  // reaction-animation-v275
+  // Keep one reaction per child per Moment, even if the DB unique constraint
+  // is missing or duplicate rows already exist.
+  await sb
+    .from('moment_reactions')
+    .delete()
+    .eq('moment_id', momentId)
+    .eq('child_id', childId)
+
   const { data, error } = await sb
     .from('moment_reactions')
-    .upsert({
+    .insert({
       moment_id: momentId,
       child_id: childId,
       reaction,
       created_at: new Date().toISOString(),
-    }, { onConflict: 'moment_id,child_id' })
+    })
     .select('*')
     .single()
 
