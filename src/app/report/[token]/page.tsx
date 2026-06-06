@@ -268,7 +268,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
       >
         <div style={{
           width: '100%',
-          height: 156,
+          height: 210,
           borderRadius: 19,
           background: moment.file_type === 'image' && moment.file_url
             ? `url(${moment.file_url}) center/cover`
