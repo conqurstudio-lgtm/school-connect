@@ -214,7 +214,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
 
   return (
     <section style={{
-      margin: '6px 0 4px',
+      margin: '8px 0 4px',
       paddingTop: 2,
     }}>
       <div style={{
@@ -257,10 +257,10 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
         onClick={onOpen}
         style={{
           width: '100%',
-          border: '1px solid rgba(0,0,0,0.06)',
-          background: '#FFFFFF',
-          borderRadius: 24,
-          padding: 9,
+          border: 'none',
+          background: 'transparent',
+          borderRadius: 0,
+          padding: 0,
           textAlign: 'left',
           fontFamily: 'inherit',
           cursor: 'pointer',
@@ -268,8 +268,8 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
       >
         <div style={{
           width: '100%',
-          height: 210,
-          borderRadius: 19,
+          height: 220,
+          borderRadius: 24,
           background: moment.file_type === 'image' && moment.file_url
             ? `url(${moment.file_url}) center/cover`
             : T.soft,
@@ -281,7 +281,7 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
         }}>
           {moment.file_type !== 'image' && (
             <span style={{
-              fontSize: 34,
+              fontSize: 36,
               lineHeight: 1,
             }}>
               📄
@@ -290,26 +290,26 @@ function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () 
         </div>
 
         <div style={{
-          padding: '10px 3px 2px',
+          padding: '9px 2px 0',
         }}>
           <p style={{
-            fontSize: 13.2,
-            fontWeight: 540,
-            color: T.ink,
-            lineHeight: 1.35,
+            fontSize: 12.7,
+            fontWeight: 450,
+            color: T.ink2,
+            lineHeight: 1.4,
             margin: 0,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
           }}>
-            {moment.note || (moment.file_type === 'image' ? 'Photo update' : 'Class update')}
+            {moment.note || (moment.file_type === 'image' ? 'Teacher shared a moment.' : 'Teacher shared an update.')}
           </p>
 
           <p style={{
-            fontSize: 11.5,
+            fontSize: 11.2,
             color: T.ink3,
-            margin: '6px 0 0',
+            margin: '5px 0 0',
             lineHeight: 1,
           }}>
             {formatMomentPreviewDate(moment.created_at)}
