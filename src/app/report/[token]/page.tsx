@@ -162,7 +162,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 
       <div className="sc-previous-report-open-body-v288" style={{
         padding: '14px 10px 18px',
-        background: '#F8F8F7',
+        background: '#FFFFFF',
         borderRadius: 20,
         margin: '0 0 14px',
       }}>
@@ -345,6 +345,7 @@ function SchoolQuickView({ school }: { school: any }) {
               fontWeight: 560,
               flexShrink: 0,
               overflow: 'hidden',
+                boxShadow: '0 18px 45px rgba(0,0,0,0.055)',
             }}>
               {!school?.logo_url && schoolInitial}
             </div>
@@ -804,10 +805,10 @@ if (loading) return <LoadingState />
           }}>
             {reports[0] && (
               <div className="sc-main-report-card-v292" style={{
-                background: '#F8F8F7',
+                background: '#FFFFFF',
                 borderRadius: 28,
                 padding: '14px 10px 16px',
-                border: '1px solid rgba(0,0,0,0.045)',
+                border: 'none',
                 overflow: 'hidden',
               }}>
                 <ReportCard
