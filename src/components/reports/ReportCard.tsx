@@ -460,28 +460,79 @@ export function ReportCard({ report, childName }: Props) {
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
+          aria-expanded={expanded}
+          className="sc-report-subjects-row-trigger-v301"
           style={{
-            width: 'fit-content',
-            minHeight: 34,
-            padding: '0 13px',
-            display: 'inline-flex',
+            width: '100%',
+            padding: '14px 2px',
+            display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
+            gap: 14,
             background: 'transparent',
             border: 'none',
-            borderRadius: 999,
+            borderTop: '1px solid rgba(0,0,0,0.06)',
             cursor: 'pointer',
             fontFamily: 'inherit',
-            marginBottom: expanded ? 10 : 0,
+            textAlign: 'left',
           }}
         >
-          <span style={{
-            fontSize: 12.5,
-            fontWeight: 520,
-            color: '#252525',
-            letterSpacing: '-0.005em',
-            textTransform: 'none',
-          }}> <span className="sc-report-subjects-button-label-v287">Subjects</span></span>
+          <div style={{
+            minWidth: 0,
+            flex: 1,
+          }}>
+            <p style={{
+              fontSize: 13.5,
+              fontWeight: 540,
+              color: '#252525',
+              margin: 0,
+              letterSpacing: '-0.01em',
+            }}>
+              Subjects
+            </p>
+
+            <p style={{
+              fontSize: 12.5,
+              color: '#7C8486',
+              lineHeight: 1.35,
+              margin: '3px 0 0',
+            }}>
+              View subject progress
+            </p>
+          </div>
+
+          <div
+            aria-label={`Overall subject score ${Number(overall || 0).toFixed(1)} out of 5`}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 999,
+              padding: 2,
+              boxSizing: 'border-box',
+              background: `conic-gradient(#252525 ${Math.max(0, Math.min(100, (Number(overall || 0) / 5) * 100))}%, rgba(0,0,0,0.06) 0)`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{
+              width: '100%',
+              height: '100%',
+              borderRadius: 999,
+              background: '#FFFFFF',
+              color: '#252525',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 560,
+              letterSpacing: '-0.02em',
+              fontVariantNumeric: 'tabular-nums',
+            }}>
+              {Number(overall || 0).toFixed(1)}
+            </span>
+          </div>
         </button>
 
         {expanded && (

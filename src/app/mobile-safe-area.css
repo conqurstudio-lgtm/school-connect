@@ -1775,3 +1775,33 @@ body {
   display: flex !important;
   align-items: center !important;
 }
+
+
+/* report-subjects-row-circle-v301
+   Makes the Subjects dropdown header match the previous-report closed row:
+   flat row, left text, score circle on the right. */
+.sc-report-subjects-row-trigger-v301 {
+  border-bottom: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.sc-report-subjects-row-trigger-v301:focus,
+.sc-report-subjects-row-trigger-v301:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subjects-section-v292 {
+  max-width: 396px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-report-subjects-button-label-v287,
+.sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}
