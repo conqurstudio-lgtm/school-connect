@@ -157,22 +157,6 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
               {scoreText}
             </span>
           </div>
-
-          <span className="sc-previous-report-open-x-v279" aria-hidden="true" style={{
-            width: 28,
-            height: 28,
-            borderRadius: 999,
-            background: T.soft,
-            color: T.ink3,
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 16,
-            lineHeight: 1,
-            fontWeight: 420,
-            flexShrink: 0,
-          }}>
-            ×
-          </span>
         </div>
       </summary>
 

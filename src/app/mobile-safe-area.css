@@ -1351,3 +1351,46 @@ body {
 .sc-previous-report-open-body-v288 > section {
   padding-bottom: 10px !important;
 }
+
+
+/* report-align-subjects-remove-x-v289
+   Aligns the Subjects button with the report content rhythm
+   and removes the previous-report X indicator entirely. */
+.sc-report-subjects-dropdown-v287 {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287 > summary,
+.sc-report-subjects-trigger-v287 {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  width: fit-content !important;
+  transform: none !important;
+}
+
+.sc-report-subjects-button-label-v287 {
+  margin-left: 0 !important;
+  transform: none !important;
+}
+
+.sc-report-subjects-dropdown-v287:not([open]) > summary,
+.sc-report-subjects-dropdown-v287:not([open]) .sc-report-subjects-trigger-v287 {
+  margin-bottom: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287[open] > summary,
+.sc-report-subjects-dropdown-v287[open] .sc-report-subjects-trigger-v287 {
+  margin-bottom: 10px !important;
+}
+
+.sc-previous-report-open-x-v279 {
+  display: none !important;
+}
+
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: none !important;
+}
