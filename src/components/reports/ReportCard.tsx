@@ -459,7 +459,7 @@ export function ReportCard({ report, childName }: Props) {
             alignItems: 'center',
             justifyContent: 'center',
             background: 'transparent',
-            border: '1px solid rgba(0,0,0,0.12)',
+            border: 'none',
             borderRadius: 999,
             cursor: 'pointer',
             fontFamily: 'inherit',

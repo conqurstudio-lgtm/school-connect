@@ -1436,3 +1436,19 @@ body {
 .sc-report-subjects-dropdown-v287 .sc-report-subjects-button-icon-v287 {
   display: none !important;
 }
+
+
+/* fix-subjects-double-border-v291
+   Prevents the Subjects control from showing a double border.
+   The visible outline should come from the inner label only. */
+.sc-report-subjects-trigger-v287,
+.sc-report-subjects-dropdown-v287 > summary {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.sc-report-subjects-button-label-v287 {
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  box-shadow: none !important;
+}
