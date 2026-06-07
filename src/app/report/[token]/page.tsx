@@ -187,140 +187,6 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 
 
 
-function formatMomentPreviewDate(value?: string) {
-  if (!value) return ''
-
-  const then = new Date(value).getTime()
-  if (!Number.isFinite(then)) return ''
-
-  const diff = Math.max(0, Date.now() - then)
-  const minute = 60 * 1000
-  const hour = 60 * minute
-  const day = 24 * hour
-
-  if (diff < minute) return 'now'
-  if (diff < hour) return `${Math.floor(diff / minute)}m ago`
-  if (diff < day) return `${Math.floor(diff / hour)}h ago`
-
-  return new Date(value).toLocaleDateString('en-ZA', {
-    day: 'numeric',
-    month: 'short',
-  })
-}
-
-function LatestMomentsPreview({ moments, onOpen }: { moments: any[], onOpen: () => void }) {
-  const moment = moments?.[0]
-  if (!moment) return null
-
-  return (
-    <section style={{
-      margin: '8px 0 4px',
-      paddingTop: 2,
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-        marginBottom: 10,
-      }}>
-        <p style={{
-          fontSize: 13,
-          fontWeight: 540,
-          color: T.ink,
-          margin: 0,
-          letterSpacing: '-0.01em',
-        }}>
-          Latest Moments
-        </p>
-
-        <button
-          type="button"
-          onClick={onOpen}
-          style={{
-            border: 'none',
-            background: 'transparent',
-            color: T.accent,
-            fontFamily: 'inherit',
-            fontSize: 12.5,
-            fontWeight: 560,
-            padding: 0,
-            cursor: 'pointer',
-          }}
-        >
-          View all
-        </button>
-      </div>
-
-      <button
-        type="button"
-        onClick={onOpen}
-        style={{
-          width: '100%',
-          border: 'none',
-          background: 'transparent',
-          borderRadius: 0,
-          padding: 0,
-          textAlign: 'left',
-          fontFamily: 'inherit',
-          cursor: 'pointer',
-        }}
-      >
-        <div style={{
-          width: '100%',
-          height: 220,
-          borderRadius: 24,
-          background: moment.file_type === 'image' && moment.file_url
-            ? `url(${moment.file_url}) center/cover`
-            : T.soft,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: T.accent,
-          overflow: 'hidden',
-        }}>
-          {moment.file_type !== 'image' && (
-            <span style={{
-              fontSize: 36,
-              lineHeight: 1,
-            }}>
-              📄
-            </span>
-          )}
-        </div>
-
-        <div style={{
-          padding: '9px 2px 0',
-        }}>
-          <p style={{
-            fontSize: 12.7,
-            fontWeight: 450,
-            color: T.ink2,
-            lineHeight: 1.4,
-            margin: 0,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}>
-            {moment.note || (moment.file_type === 'image' ? 'Teacher shared a moment.' : 'Teacher shared an update.')}
-          </p>
-
-          <p style={{
-            fontSize: 11.2,
-            color: T.ink3,
-            margin: '5px 0 0',
-            lineHeight: 1,
-          }}>
-            {formatMomentPreviewDate(moment.created_at)}
-          </p>
-        </div>
-      </button>
-    </section>
-  )
-}
-
-
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
 
@@ -753,7 +619,6 @@ export default function ParentMagicReportPage() {
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
   const [showMoments, setShowMoments] = useState(false)
-  const [latestMoments, setLatestMoments] = useState<any[]>([])
 
   useEffect(() => {
     // report-route-shell-lock-v251
@@ -862,32 +727,7 @@ export default function ParentMagicReportPage() {
       alive = false
     }
   }, [token])
-
-
-  useEffect(() => {
-    // report-latest-moments-preview-v280
-    if (!token) return
-
-    let alive = true
-
-    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
-      .then(res => res.json())
-      .then(json => {
-        if (!alive) return
-
-        const rows = Array.isArray(json.moments) ? json.moments.slice(0, 3) : []
-        setLatestMoments(rows)
-      })
-      .catch(() => {
-        if (alive) setLatestMoments([])
-      })
-
-    return () => {
-      alive = false
-    }
-  }, [token])
-
-  if (loading) return <LoadingState />
+if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
   if (showMoments) {
@@ -982,13 +822,7 @@ export default function ParentMagicReportPage() {
                 childName={childName}
               />
             )}
-
-            <LatestMomentsPreview
-              moments={latestMoments}
-              onOpen={() => setShowMoments(true)}
-            />
-
-            {reports.length > 1 && (
+{reports.length > 1 && (
               <section style={{
                 display: 'flex',
                 flexDirection: 'column',
