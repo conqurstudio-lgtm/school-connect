@@ -443,7 +443,7 @@ export function ReportCard({ report, childName }: Props) {
       )}
 
       {/* ── Subjects (collapsible) ─────────────────── */}
-      <div style={{
+      <div className="sc-report-subjects-section-v292" style={{
         maxWidth: 396,
         margin: '0 auto',
         padding: '0 10px',
@@ -464,8 +464,6 @@ export function ReportCard({ report, childName }: Props) {
             cursor: 'pointer',
             fontFamily: 'inherit',
             marginBottom: expanded ? 10 : 0,
-            marginBottom: expanded ? 10 : 0,
-            marginBottom: expanded ? 10 : 0,
           }}
         >
           <span style={{
@@ -478,6 +476,7 @@ export function ReportCard({ report, childName }: Props) {
         </button>
 
         {expanded && (
+          <div className="sc-report-subjects-body-v292">
           <div style={{
             display: 'inline-flex',
             flexDirection: 'column',
@@ -566,7 +565,8 @@ export function ReportCard({ report, childName }: Props) {
               }}>
                 No subject details were added to this report.
               </p>
-            )}
+          )}
+          </div>
           </div>
         )}
       </div>
