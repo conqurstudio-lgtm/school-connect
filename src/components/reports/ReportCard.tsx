@@ -467,7 +467,7 @@ export function ReportCard({ report, childName }: Props) {
             color: '#5F6268',
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
-          }}> <span className="sc-report-subjects-button-label-v287">Subjects <span className="sc-report-subjects-button-icon-v287">⌄</span></span></span>
+          }}> <span className="sc-report-subjects-button-label-v287">Subjects</span></span>
 
           <ChevronDown
             size={16}

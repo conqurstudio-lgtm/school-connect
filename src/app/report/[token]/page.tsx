@@ -176,8 +176,11 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
         </div>
       </summary>
 
-      <div style={{
-        padding: '0 0 18px',
+      <div className="sc-previous-report-open-body-v288" style={{
+        padding: '14px 10px 18px',
+        background: '#F8F8F7',
+        borderRadius: 20,
+        margin: '0 0 14px',
       }}>
         <ReportCard report={report} childName={childName} />
       </div>

@@ -1239,3 +1239,115 @@ body {
 .sc-report-subjects-dropdown-v287[open] .sc-report-subjects-button-icon-v287 {
   transform: rotate(180deg) translateY(1px) !important;
 }
+
+
+/* report-subject-outline-open-bg-v288
+   Refines report Subjects + Previous reports:
+   - Subjects is an outline button, not filled
+   - no dropdown arrow
+   - no extra closed spacing
+   - opened previous report body gets a soft tint without becoming a card */
+.sc-report-subjects-dropdown-v287 > summary,
+.sc-report-subjects-trigger-v287 {
+  margin: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287:not([open]) > summary,
+.sc-report-subjects-dropdown-v287:not([open]) .sc-report-subjects-trigger-v287 {
+  margin-bottom: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287[open] > summary,
+.sc-report-subjects-dropdown-v287[open] .sc-report-subjects-trigger-v287 {
+  margin-bottom: 10px !important;
+}
+
+.sc-report-subjects-button-label-v287 {
+  min-height: 34px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: #252525 !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 520 !important;
+  line-height: 1 !important;
+  padding: 0 13px !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+}
+
+.sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}
+
+.sc-previous-report-flat-v278[open] {
+  background: transparent !important;
+}
+
+.sc-previous-report-open-body-v288 {
+  background: #F8F8F7 !important;
+}
+
+.sc-previous-report-open-body-v288 > section {
+  padding-bottom: 10px !important;
+}
+
+
+/* report-subject-outline-open-bg-v288
+   Refines report Subjects + Previous reports:
+   - Subjects is an outline button, not filled
+   - no dropdown arrow
+   - no extra closed spacing
+   - opened previous report body gets a soft tint without becoming a card */
+.sc-report-subjects-dropdown-v287 > summary,
+.sc-report-subjects-trigger-v287 {
+  margin: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287:not([open]) > summary,
+.sc-report-subjects-dropdown-v287:not([open]) .sc-report-subjects-trigger-v287 {
+  margin-bottom: 0 !important;
+}
+
+.sc-report-subjects-dropdown-v287[open] > summary,
+.sc-report-subjects-dropdown-v287[open] .sc-report-subjects-trigger-v287 {
+  margin-bottom: 10px !important;
+}
+
+.sc-report-subjects-button-label-v287 {
+  min-height: 34px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  color: #252525 !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 520 !important;
+  line-height: 1 !important;
+  padding: 0 13px !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+}
+
+.sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}
+
+.sc-previous-report-flat-v278[open] {
+  background: transparent !important;
+}
+
+.sc-previous-report-open-body-v288 {
+  background: #F8F8F7 !important;
+}
+
+.sc-previous-report-open-body-v288 > section {
+  padding-bottom: 10px !important;
+}
