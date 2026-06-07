@@ -552,101 +552,73 @@ export function ReportCard({ report, childName }: Props) {
               const delta = prev !== undefined ? safeScore - Number(prev) : null
 
               return (
-                <div key={String(name)} style={{
+                <div key={String(name)} className="sc-report-subject-row-circle-v302" style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 10,
+                  justifyContent: 'space-between',
+                  gap: 14,
                   width: '100%',
+                  padding: '14px 2px',
+                  borderTop: '1px solid rgba(0,0,0,0.06)',
                 }}>
-                  <span style={{
-                    flex: '1 1 auto',
+                  <div style={{
                     minWidth: 0,
-                    fontSize: 13,
-                    color: '#4B5356',
-                    fontWeight: 430,
-                    letterSpacing: '-0.005em',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }} title={String(name)}>
-                    {shortenSubject(String(name))}
-                  </span>
-
-                  <div style={{
-                    flex: '0 0 76px',
-                    width: 76,
-                    minWidth: 76,
-                    position: 'relative',
-                    height: 10,
-                    display: 'flex',
-                    alignItems: 'center',
+                    flex: 1,
                   }}>
-                    <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0',
-                      height: 2.5,
-                      width: '100%',
-                      borderRadius: 2,
-                      background: '#ECEEED',
-                    }} />
-
-                    <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0 auto 0',
-                      height: 2.5,
-                      width: `${pct}%`,
-                      borderRadius: 2,
-                      background: '#5F6668',
-                    }} />
-                  </div>
-
-                  <div style={{
-                    flex: '0 0 auto',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}>
-                    {delta !== null && <Delta value={delta} />}
-
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-end',
-                      gap: 3,
-                      minWidth: 76,
-                    }}>
-                      <span style={{
-                        fontSize: 12.5,
-                        color: '#4B5356',
-                        fontWeight: 500,
-                        fontVariantNumeric: 'tabular-nums',
-                        textAlign: 'right',
-                        lineHeight: 1,
-                      }}>
-                        {safeScore.toFixed(1)}
-                      </span>
-
-                    <span className="sc-report-subject-visible-comment-v299" style={{
-                      fontSize: 10.8,
-                      color: '#7C8486',
-                      fontWeight: 400,
-                      lineHeight: 1.15,
+                    <p style={{
+                      fontSize: 13.5,
+                      fontWeight: 540,
+                      color: '#252525',
+                      margin: 0,
+                      letterSpacing: '-0.01em',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                    }} title={String(name)}>
+                      {shortenSubject(String(name))}
+                    </p>
+
+                    <p style={{
+                      fontSize: 12.5,
+                      color: '#7C8486',
+                      lineHeight: 1.35,
+                      margin: '3px 0 0',
                     }}>
                       {scoreComment}
-                    </span>
+                    </p>
+                  </div>
 
-                      <span className="sc-report-subject-warm-comment-v298" style={{
-                        fontSize: 10.8,
-                        color: '#7C8486',
-                        fontWeight: 400,
-                        lineHeight: 1.15,
-                        textAlign: 'right',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {scoreComment}
-                      </span>
-                    </div>
+                  <div
+                    aria-label={`Subject score ${safeScore.toFixed(1)} out of 5`}
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 999,
+                      padding: 2,
+                      boxSizing: 'border-box',
+                      background: `conic-gradient(#252525 ${pct}%, rgba(0,0,0,0.06) 0)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 999,
+                      background: '#FFFFFF',
+                      color: '#252525',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 12,
+                      fontWeight: 560,
+                      letterSpacing: '-0.02em',
+                      fontVariantNumeric: 'tabular-nums',
+                    }}>
+                      {safeScore.toFixed(1)}
+                    </span>
                   </div>
                 </div>
               )

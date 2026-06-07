@@ -1805,3 +1805,19 @@ body {
 .sc-report-subjects-button-icon-v287 {
   display: none !important;
 }
+
+
+/* report-subject-rows-circle-v302
+   Applies previous-report-row styling to the subject rows inside the opened dropdown only.
+   Does not touch the Subjects button/header. */
+.sc-report-subject-row-circle-v302:first-child {
+  border-top: none !important;
+}
+
+.sc-report-subject-row-circle-v302 {
+  background: transparent !important;
+}
+
+.sc-report-subjects-body-v292 > div {
+  width: 100% !important;
+}
