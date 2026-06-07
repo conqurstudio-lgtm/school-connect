@@ -453,7 +453,7 @@ export function ReportCard({ report, childName }: Props) {
       )}
 
       {/* Subjects (collapsible) */}
-      <div className="sc-report-subjects-clean-v306" style={{
+      <div className="sc-report-subjects-clean-v306 sc-report-subjects-clean-v307" style={{
         maxWidth: 396,
         margin: '0 auto',
         padding: '0 10px',
@@ -489,10 +489,10 @@ export function ReportCard({ report, childName }: Props) {
         </button>
 
         {expanded && (
-          <div className="sc-report-subjects-list-v306" style={{
+          <div className="sc-report-subjects-list-v306 sc-report-subjects-list-v307" style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 0,
+            gap: 12,
             padding: '2px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
@@ -504,9 +504,9 @@ export function ReportCard({ report, childName }: Props) {
               const detailComment = getSubjectDetailComment(safeScore)
 
               return (
-                <div key={String(name)} className="sc-report-subject-detail-row-v306" style={{
-                  padding: '13px 0',
-                  borderTop: '1px solid rgba(0,0,0,0.055)',
+                <div key={String(name)} className="sc-report-subject-detail-row-v306 sc-report-subject-detail-row-v307" style={{
+                  padding: '8px 0',
+                  borderTop: 'none',
                 }}>
                   <div style={{
                     display: 'flex',
@@ -528,11 +528,28 @@ export function ReportCard({ report, childName }: Props) {
                         {shortenSubject(String(name))}
                       </p>
 
+                      <div style={{
+                        height: 3,
+                        width: '100%',
+                        maxWidth: 180,
+                        borderRadius: 999,
+                        background: 'rgba(37,37,37,0.08)',
+                        overflow: 'hidden',
+                        marginTop: 8,
+                      }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${pct}%`,
+                          borderRadius: 999,
+                          background: '#8FA6A1',
+                        }} />
+                      </div>
+
                       <p style={{
                         fontSize: 12.3,
-                        color: '#7C8486',
+                        color: '#6F7476',
                         lineHeight: 1.35,
-                        margin: '3px 0 0',
+                        margin: '6px 0 0',
                         fontWeight: 400,
                       }}>
                         {detailComment}
@@ -551,7 +568,7 @@ export function ReportCard({ report, childName }: Props) {
                         minWidth: 34,
                         height: 28,
                         borderRadius: 999,
-                        background: '#F3F5F4',
+                        background: 'rgba(255,255,255,0.72)',
                         color: '#252525',
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -564,22 +581,6 @@ export function ReportCard({ report, childName }: Props) {
                         {safeScore.toFixed(1)}
                       </span>
                     </div>
-                  </div>
-
-                  <div style={{
-                    height: 3,
-                    width: '100%',
-                    borderRadius: 999,
-                    background: '#ECEEED',
-                    overflow: 'hidden',
-                    marginTop: 10,
-                  }}>
-                    <div style={{
-                      height: '100%',
-                      width: `${pct}%`,
-                      borderRadius: 999,
-                      background: '#8FA6A1',
-                    }} />
                   </div>
                 </div>
               )

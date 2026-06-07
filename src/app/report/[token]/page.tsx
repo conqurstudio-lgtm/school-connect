@@ -145,7 +145,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
               width: '100%',
               height: '100%',
               borderRadius: 999,
-              background: '#FFFFFF',
+              background: '#dbdae7',
               color: T.ink2,
               display: 'flex',
               alignItems: 'center',
@@ -325,7 +325,6 @@ function SchoolQuickView({ school }: { school: any }) {
           padding: 12,
           borderRadius: 20,
           background: '#FFFFFF',
-          boxShadow: '0 18px 45px rgba(0,0,0,0.10)',
         }}>
           <div style={{
             display: 'flex',

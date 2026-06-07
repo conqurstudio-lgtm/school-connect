@@ -1765,3 +1765,21 @@ body {
 .sc-report-subject-detail-row-v306 {
   background: transparent !important;
 }
+
+
+/* subjects-clean-bars-main-flat-v307
+   Main report card is flat #dbdae7. Subject rows have no dividers and progress sits above comment. */
+.sc-main-report-card-v292 {
+  background: #dbdae7 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subject-detail-row-v307,
+.sc-report-subject-detail-row-v307:first-child {
+  border-top: none !important;
+}
+
+.sc-report-subjects-list-v307 {
+  gap: 12px !important;
+}
