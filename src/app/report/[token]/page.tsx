@@ -803,11 +803,19 @@ if (loading) return <LoadingState />
             gap: reports.length > 1 ? 18 : 0,
           }}>
             {reports[0] && (
-              <ReportCard
-                key={reports[0].id || `${reports[0].week_starting || 'latest-report'}-latest`}
-                report={reports[0]}
-                childName={childName}
-              />
+              <div className="sc-main-report-card-v292" style={{
+                background: '#fcfcfe',
+                borderRadius: 28,
+                padding: '14px 10px 16px',
+                border: '1px solid rgba(0,0,0,0.045)',
+                overflow: 'hidden',
+              }}>
+                <ReportCard
+                  key={reports[0].id || `${reports[0].week_starting || 'latest-report'}-latest`}
+                  report={reports[0]}
+                  childName={childName}
+                />
+              </div>
             )}
 {reports.length > 1 && (
               <section style={{

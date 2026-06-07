@@ -1452,3 +1452,168 @@ body {
   border: 1px solid rgba(0,0,0,0.12) !important;
   box-shadow: none !important;
 }
+
+
+/* main-report-card-subjects-simple-v292
+   Current report gets a soft #fcfcfe card.
+   Subjects dropdown content becomes simpler with fewer divider/middle lines. */
+.sc-main-report-card-v292 {
+  background: #fcfcfe !important;
+}
+
+.sc-main-report-card-v292 > section {
+  padding-bottom: 18px !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
+  max-width: 396px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-report-subjects-body-v292 {
+  background: transparent !important;
+  padding-top: 8px !important;
+}
+
+.sc-report-subjects-body-v292 > * {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subjects-body-v292 [style*="border-top"],
+.sc-report-subjects-body-v292 [style*="borderTop"],
+.sc-report-subjects-body-v292 [style*="border-bottom"],
+.sc-report-subjects-body-v292 [style*="borderBottom"] {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.sc-report-subjects-body-v292 [style*="height: 1"],
+.sc-report-subjects-body-v292 [style*="height:1"] {
+  display: none !important;
+}
+
+.sc-report-subjects-body-v292 > div,
+.sc-report-subjects-body-v292 article,
+.sc-report-subjects-body-v292 li {
+  margin-bottom: 10px !important;
+}
+
+.sc-report-subjects-body-v292 > div:last-child,
+.sc-report-subjects-body-v292 article:last-child,
+.sc-report-subjects-body-v292 li:last-child {
+  margin-bottom: 0 !important;
+}
+
+
+/* main-report-card-subjects-simple-v292
+   Current report gets a soft #fcfcfe card.
+   Subjects dropdown content becomes simpler with fewer divider/middle lines. */
+.sc-main-report-card-v292 {
+  background: #fcfcfe !important;
+}
+
+.sc-main-report-card-v292 > section {
+  padding-bottom: 18px !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
+  max-width: 396px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-report-subjects-body-v292 {
+  background: transparent !important;
+  padding-top: 8px !important;
+}
+
+.sc-report-subjects-body-v292 > * {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subjects-body-v292 [style*="border-top"],
+.sc-report-subjects-body-v292 [style*="borderTop"],
+.sc-report-subjects-body-v292 [style*="border-bottom"],
+.sc-report-subjects-body-v292 [style*="borderBottom"] {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.sc-report-subjects-body-v292 [style*="height: 1"],
+.sc-report-subjects-body-v292 [style*="height:1"] {
+  display: none !important;
+}
+
+.sc-report-subjects-body-v292 > div,
+.sc-report-subjects-body-v292 article,
+.sc-report-subjects-body-v292 li {
+  margin-bottom: 10px !important;
+}
+
+.sc-report-subjects-body-v292 > div:last-child,
+.sc-report-subjects-body-v292 article:last-child,
+.sc-report-subjects-body-v292 li:last-child {
+  margin-bottom: 0 !important;
+}
+
+
+/* fix-reportcard-subjects-jsx-v293
+   Repairs the v292 Subjects simplification without adding extra JSX wrappers.
+   Keeps the subject area simpler and removes heavy middle line styling where possible. */
+.sc-main-report-card-v292 {
+  background: #fcfcfe !important;
+}
+
+.sc-main-report-card-v292 > section {
+  padding-bottom: 18px !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
+  max-width: 396px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="borderTop"],
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="border-top"],
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="borderBottom"],
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="border-bottom"] {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="height: 1"],
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="height:1"] {
+  display: none !important;
+}
+
+
+/* restore-reportcard-after-v292-v294
+   Safe CSS after restoring ReportCard from the pre-v292 backup.
+   Keeps the main report soft card support without changing JSX. */
+.sc-main-report-card-v292 {
+  background: #fcfcfe !important;
+}
+
+.sc-main-report-card-v292 > section {
+  padding-bottom: 18px !important;
+}
+
+.sc-previous-report-open-x-v279,
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: none !important;
+}
