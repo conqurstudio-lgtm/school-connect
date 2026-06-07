@@ -1783,3 +1783,21 @@ body {
 .sc-report-subjects-list-v307 {
   gap: 12px !important;
 }
+
+
+/* main-report-card-white-v308
+   Main/current report card stays flat but returns to white. */
+.sc-main-report-card-v292 {
+  background: #FFFFFF !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* main-report-card-white-v308
+   Main/current report card stays flat but returns to white. */
+.sc-main-report-card-v292 {
+  background: #FFFFFF !important;
+  border: none !important;
+  box-shadow: none !important;
+}

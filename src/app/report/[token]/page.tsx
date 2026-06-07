@@ -145,7 +145,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
               width: '100%',
               height: '100%',
               borderRadius: 999,
-              background: '#dbdae7',
+              background: '#FFFFFF',
               color: T.ink2,
               display: 'flex',
               alignItems: 'center',
