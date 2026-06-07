@@ -265,6 +265,15 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 }
 
 
+
+function getSubjectDetailComment(score: number) {
+  if (score >= 4.5) return 'Excellent progress'
+  if (score >= 4) return 'Doing very well'
+  if (score >= 3) return 'Good progress'
+  if (score >= 2) return 'Needs gentle support'
+  return 'Seeking extra help'
+}
+
 export function ReportCard({ report, childName }: Props) {
   const [expanded, setExpanded] = useState(false)
   const scoreSource = report.scores || {}
@@ -443,8 +452,8 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       )}
 
-      {/* ── Subjects (collapsible) ─────────────────── */}
-      <div className="sc-report-subjects-section-v292" style={{
+      {/* Subjects (collapsible) */}
+      <div className="sc-report-subjects-clean-v306" style={{
         maxWidth: 396,
         margin: '0 auto',
         padding: '0 10px',
@@ -452,6 +461,7 @@ export function ReportCard({ report, childName }: Props) {
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
+          aria-expanded={expanded}
           style={{
             width: 'fit-content',
             minHeight: 34,
@@ -459,30 +469,31 @@ export function ReportCard({ report, childName }: Props) {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'transparent',
+            background: '#252525',
             border: 'none',
             borderRadius: 999,
             cursor: 'pointer',
             fontFamily: 'inherit',
-            marginBottom: expanded ? 10 : 0,
+            marginBottom: expanded ? 12 : 0,
           }}
         >
           <span style={{
             fontSize: 12.5,
             fontWeight: 520,
-            color: '#252525',
+            color: '#FFFFFF',
             letterSpacing: '-0.005em',
-            textTransform: 'none',
-          }}> <span className="sc-report-subjects-button-label-v287">Subjects</span></span>
+            lineHeight: 1,
+          }}>
+            Subjects
+          </span>
         </button>
 
         {expanded && (
-          <div className="sc-report-subjects-body-v292">
-          <div style={{
-            display: 'inline-flex',
+          <div className="sc-report-subjects-list-v306" style={{
+            display: 'flex',
             flexDirection: 'column',
-            gap: 18,
-            padding: '12px 0 8px',
+            gap: 0,
+            padding: '2px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -490,70 +501,85 @@ export function ReportCard({ report, childName }: Props) {
               const pct = (safeScore / 5) * 100
               const prev = report.previous_scores?.[name]
               const delta = prev !== undefined ? safeScore - Number(prev) : null
+              const detailComment = getSubjectDetailComment(safeScore)
 
               return (
-                <div key={String(name)} style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 14,
+                <div key={String(name)} className="sc-report-subject-detail-row-v306" style={{
+                  padding: '13px 0',
+                  borderTop: '1px solid rgba(0,0,0,0.055)',
                 }}>
-                  <span style={{
-                    flex: '0 0 140px',
-                    fontSize: 13,
-                    color: '#4B5356',
-                    fontWeight: 430,
-                    letterSpacing: '-0.005em',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }} title={String(name)}>
-                    {shortenSubject(String(name))}
-                  </span>
-
                   <div style={{
-                    flex: 1,
-                    position: 'relative',
-                    height: 10,
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: 14,
                   }}>
-                    <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0',
-                      height: 2.5,
-                      width: 'fit-content',
-                      borderRadius: 2,
-                      background: '#F4F5F5',
-                    }} />
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{
+                        fontSize: 13.5,
+                        color: '#252525',
+                        fontWeight: 540,
+                        letterSpacing: '-0.01em',
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }} title={String(name)}>
+                        {shortenSubject(String(name))}
+                      </p>
+
+                      <p style={{
+                        fontSize: 12.3,
+                        color: '#7C8486',
+                        lineHeight: 1.35,
+                        margin: '3px 0 0',
+                        fontWeight: 400,
+                      }}>
+                        {detailComment}
+                      </p>
+                    </div>
 
                     <div style={{
-                      position: 'absolute',
-                      inset: 'auto 0 auto 0',
-                      height: 2.5,
-                      width: `${pct}%`,
-                      borderRadius: 2,
-                      background: '#7C8486',
-                    }} />
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      flexShrink: 0,
+                    }}>
+                      {delta !== null && <Delta value={delta} />}
+
+                      <span style={{
+                        minWidth: 34,
+                        height: 28,
+                        borderRadius: 999,
+                        background: '#F3F5F4',
+                        color: '#252525',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 560,
+                        fontVariantNumeric: 'tabular-nums',
+                        padding: '0 8px',
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </span>
+                    </div>
                   </div>
 
                   <div style={{
-                    flex: '0 0 auto',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
+                    height: 3,
+                    width: '100%',
+                    borderRadius: 999,
+                    background: '#ECEEED',
+                    overflow: 'hidden',
+                    marginTop: 10,
                   }}>
-                    {delta !== null && <Delta value={delta} />}
-
-                    <span style={{
-                      fontSize: 12.5,
-                      color: '#4B5356',
-                      fontWeight: 500,
-                      fontVariantNumeric: 'tabular-nums',
-                      minWidth: 28,
-                      textAlign: 'right',
-                    }}>
-                      {safeScore.toFixed(1)}
-                    </span>
+                    <div style={{
+                      height: '100%',
+                      width: `${pct}%`,
+                      borderRadius: 999,
+                      background: '#8FA6A1',
+                    }} />
                   </div>
                 </div>
               )
@@ -566,12 +592,10 @@ export function ReportCard({ report, childName }: Props) {
               }}>
                 No subject details were added to this report.
               </p>
-          )}
-          </div>
+            )}
           </div>
         )}
       </div>
-
 
     </section>
   )

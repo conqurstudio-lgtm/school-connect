@@ -1748,3 +1748,20 @@ body {
 
 
 
+
+
+/* fix-subjects-list-comments-v306
+   Clean subject details list with visible parent-friendly comments. */
+.sc-report-subjects-clean-v306 button:focus,
+.sc-report-subjects-clean-v306 button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subject-detail-row-v306:first-child {
+  border-top: none !important;
+}
+
+.sc-report-subject-detail-row-v306 {
+  background: transparent !important;
+}
