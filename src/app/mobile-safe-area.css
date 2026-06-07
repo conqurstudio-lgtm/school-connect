@@ -1617,3 +1617,18 @@ body {
 .sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
   display: none !important;
 }
+
+
+/* report-main-card-short-subject-bars-v297
+   Softens the main/current report card and keeps subject progress bars short/simple. */
+.sc-main-report-card-v292 {
+  background: #F8F8F7 !important;
+  border-color: rgba(0,0,0,0.04) !important;
+}
+
+.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
+  max-width: 396px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}

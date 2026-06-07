@@ -478,9 +478,9 @@ export function ReportCard({ report, childName }: Props) {
         {expanded && (
           <div className="sc-report-subjects-body-v292">
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             flexDirection: 'column',
-            gap: 18,
+            gap: 12,
             padding: '12px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
@@ -492,12 +492,14 @@ export function ReportCard({ report, childName }: Props) {
 
               return (
                 <div key={String(name)} style={{
-                  display: 'inline-flex',
+                  display: 'flex',
                   alignItems: 'center',
-                  gap: 14,
+                  gap: 10,
+                  width: '100%',
                 }}>
                   <span style={{
-                    flex: '0 0 140px',
+                    flex: '1 1 auto',
+                    minWidth: 0,
                     fontSize: 13,
                     color: '#4B5356',
                     fontWeight: 430,
@@ -510,7 +512,9 @@ export function ReportCard({ report, childName }: Props) {
                   </span>
 
                   <div style={{
-                    flex: 1,
+                    flex: '0 0 76px',
+                    width: 76,
+                    minWidth: 76,
                     position: 'relative',
                     height: 10,
                     display: 'flex',
@@ -520,9 +524,9 @@ export function ReportCard({ report, childName }: Props) {
                       position: 'absolute',
                       inset: 'auto 0',
                       height: 2.5,
-                      width: 'fit-content',
+                      width: '100%',
                       borderRadius: 2,
-                      background: '#F4F5F5',
+                      background: '#ECEEED',
                     }} />
 
                     <div style={{
@@ -531,7 +535,7 @@ export function ReportCard({ report, childName }: Props) {
                       height: 2.5,
                       width: `${pct}%`,
                       borderRadius: 2,
-                      background: '#7C8486',
+                      background: '#5F6668',
                     }} />
                   </div>
 
@@ -548,7 +552,7 @@ export function ReportCard({ report, childName }: Props) {
                       color: '#4B5356',
                       fontWeight: 500,
                       fontVariantNumeric: 'tabular-nums',
-                      minWidth: 28,
+                      minWidth: 26,
                       textAlign: 'right',
                     }}>
                       {safeScore.toFixed(1)}

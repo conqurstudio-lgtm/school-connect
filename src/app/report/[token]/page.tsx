@@ -804,7 +804,7 @@ if (loading) return <LoadingState />
           }}>
             {reports[0] && (
               <div className="sc-main-report-card-v292" style={{
-                background: '#fcfcfe',
+                background: '#F8F8F7',
                 borderRadius: 28,
                 padding: '14px 10px 16px',
                 border: '1px solid rgba(0,0,0,0.045)',
