@@ -1394,3 +1394,45 @@ body {
 .sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
   display: none !important;
 }
+
+
+/* report-align-real-subject-button-v290
+   Actual Subjects dropdown is a button in ReportCard, not details.
+   This keeps it aligned with report content and removes old icon leftovers. */
+.sc-previous-report-open-x-v279,
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: none !important;
+}
+
+.sc-report-subjects-button-icon-v287,
+.sc-report-subjects-dropdown-v287 .sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}
+
+
+/* report-align-real-subject-button-v290
+   Actual Subjects dropdown is a button in ReportCard, not details.
+   This keeps it aligned with report content and removes old icon leftovers. */
+.sc-previous-report-open-x-v279,
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: none !important;
+}
+
+.sc-report-subjects-button-icon-v287,
+.sc-report-subjects-dropdown-v287 .sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}
+
+
+/* report-align-real-subject-button-v290
+   Actual Subjects dropdown is a button in ReportCard, not details.
+   This keeps it aligned with report content and removes old icon leftovers. */
+.sc-previous-report-open-x-v279,
+.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
+  display: none !important;
+}
+
+.sc-report-subjects-button-icon-v287,
+.sc-report-subjects-dropdown-v287 .sc-report-subjects-button-icon-v287 {
+  display: none !important;
+}

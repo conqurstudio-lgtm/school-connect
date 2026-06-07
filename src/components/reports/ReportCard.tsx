@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect, useId } from 'react'
-import { ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
@@ -443,49 +443,46 @@ export function ReportCard({ report, childName }: Props) {
       )}
 
       {/* ── Subjects (collapsible) ─────────────────── */}
-      <div>
+      <div style={{
+        maxWidth: 396,
+        margin: '0 auto',
+        padding: '0 10px',
+      }}>
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
           style={{
-            width: '100%',
-            padding: '16px 0',
-            display: 'flex',
+            width: 'fit-content',
+            minHeight: 34,
+            padding: '0 13px',
+            display: 'inline-flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'none',
-            border: 'none',
-            borderTop: `1px solid ${T.divider}`,
-            borderBottom: 'none',
+            justifyContent: 'center',
+            background: 'transparent',
+            border: '1px solid rgba(0,0,0,0.12)',
+            borderRadius: 999,
             cursor: 'pointer',
             fontFamily: 'inherit',
+            marginBottom: expanded ? 10 : 0,
+            marginBottom: expanded ? 10 : 0,
+            marginBottom: expanded ? 10 : 0,
           }}
         >
           <span style={{
-            fontSize: 10.6,
+            fontSize: 12.5,
             fontWeight: 520,
-            color: '#5F6268',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
+            color: '#252525',
+            letterSpacing: '-0.005em',
+            textTransform: 'none',
           }}> <span className="sc-report-subjects-button-label-v287">Subjects</span></span>
-
-          <ChevronDown
-            size={16}
-            strokeWidth={2}
-            color="#5F6268"
-            style={{
-              transform: expanded ? 'rotate(180deg)' : 'none',
-              transition: 'transform 0.25s ease',
-            }}
-          />
         </button>
 
         {expanded && (
           <div style={{
-            display: 'flex',
+            display: 'inline-flex',
             flexDirection: 'column',
             gap: 18,
-            padding: '22px 0 8px',
+            padding: '12px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -496,7 +493,7 @@ export function ReportCard({ report, childName }: Props) {
 
               return (
                 <div key={String(name)} style={{
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: 14,
                 }}>
@@ -524,7 +521,7 @@ export function ReportCard({ report, childName }: Props) {
                       position: 'absolute',
                       inset: 'auto 0',
                       height: 2.5,
-                      width: '100%',
+                      width: 'fit-content',
                       borderRadius: 2,
                       background: '#F4F5F5',
                     }} />
