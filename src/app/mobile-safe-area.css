@@ -1801,3 +1801,30 @@ body {
   border: none !important;
   box-shadow: none !important;
 }
+
+
+/* report-subject-button-comment-polish-v309
+   Slightly larger Subjects button and soft teacher comment card. */
+.sc-report-subjects-clean-v306 button,
+.sc-report-subjects-side-button-v303,
+.sc-report-subjects-trigger-v287 {
+  min-height: 38px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+.sc-report-subjects-clean-v306 button span,
+.sc-report-subjects-side-button-v303 span,
+.sc-report-subjects-trigger-v287 span {
+  font-size: 13px !important;
+}
+
+.sc-teacher-comment-card-v309 {
+  background: #F8F8F7 !important;
+  border: none !important;
+  box-shadow: 0 12px 28px rgba(37,37,37,0.055) !important;
+}
+
+.sc-teacher-comment-card-v309 p {
+  color: #5F6268 !important;
+}

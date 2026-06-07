@@ -464,8 +464,8 @@ export function ReportCard({ report, childName }: Props) {
           aria-expanded={expanded}
           style={{
             width: 'fit-content',
-            minHeight: 34,
-            padding: '0 13px',
+            minHeight: 38,
+            padding: '0 18px',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -478,7 +478,7 @@ export function ReportCard({ report, childName }: Props) {
           }}
         >
           <span style={{
-            fontSize: 12.5,
+            fontSize: 13,
             fontWeight: 520,
             color: '#FFFFFF',
             letterSpacing: '-0.005em',
