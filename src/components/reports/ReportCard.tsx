@@ -265,14 +265,6 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 }
 
 
-function getSubjectWarmComment(score: number) {
-  if (score >= 4.5) return 'Excellent progress'
-  if (score >= 4) return 'Doing very well'
-  if (score >= 3) return 'Good progress'
-  if (score >= 2) return 'Needs gentle support'
-  return 'Seeking extra help'
-}
-
 export function ReportCard({ report, childName }: Props) {
   const [expanded, setExpanded] = useState(false)
   const scoreSource = report.scores || {}
@@ -460,8 +452,6 @@ export function ReportCard({ report, childName }: Props) {
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
-          aria-expanded={expanded}
-          className="sc-report-subjects-side-button-v303"
           style={{
             width: 'fit-content',
             minHeight: 34,
@@ -469,7 +459,7 @@ export function ReportCard({ report, childName }: Props) {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#252525',
+            background: 'transparent',
             border: 'none',
             borderRadius: 999,
             cursor: 'pointer',
@@ -480,98 +470,87 @@ export function ReportCard({ report, childName }: Props) {
           <span style={{
             fontSize: 12.5,
             fontWeight: 520,
-            color: '#FFFFFF',
+            color: '#252525',
             letterSpacing: '-0.005em',
-            lineHeight: 1,
-          }}>
-            Subjects
-          </span>
+            textTransform: 'none',
+          }}> <span className="sc-report-subjects-button-label-v287">Subjects</span></span>
         </button>
 
         {expanded && (
           <div className="sc-report-subjects-body-v292">
           <div style={{
-            display: 'flex',
+            display: 'inline-flex',
             flexDirection: 'column',
-            gap: 12,
+            gap: 18,
             padding: '12px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const pct = (safeScore / 5) * 100
-              const scoreComment = getSubjectWarmComment(safeScore)
               const prev = report.previous_scores?.[name]
               const delta = prev !== undefined ? safeScore - Number(prev) : null
 
               return (
-                <div key={String(name)} className="sc-report-subject-ring-row-v303" style={{
-                  display: 'flex',
+                <div key={String(name)} style={{
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
                   gap: 14,
-                  width: '100%',
-                  padding: '13px 0',
-                  borderTop: '1px solid rgba(0,0,0,0.055)',
                 }}>
-                  <div style={{
-                    minWidth: 0,
-                    flex: 1,
-                  }}>
-                    <p style={{
-                      fontSize: 13.5,
-                      fontWeight: 540,
-                      color: '#252525',
-                      margin: 0,
-                      letterSpacing: '-0.01em',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }} title={String(name)}>
-                      {shortenSubject(String(name))}
-                    </p>
+                  <span style={{
+                    flex: '0 0 140px',
+                    fontSize: 13,
+                    color: '#4B5356',
+                    fontWeight: 430,
+                    letterSpacing: '-0.005em',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }} title={String(name)}>
+                    {shortenSubject(String(name))}
+                  </span>
 
-                    <p style={{
-                      fontSize: 12.3,
-                      color: '#7C8486',
-                      lineHeight: 1.35,
-                      margin: '3px 0 0',
-                      fontWeight: 400,
-                    }}>
-                      {scoreComment}
-                    </p>
+                  <div style={{
+                    flex: 1,
+                    position: 'relative',
+                    height: 10,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}>
+                    <div style={{
+                      position: 'absolute',
+                      inset: 'auto 0',
+                      height: 2.5,
+                      width: 'fit-content',
+                      borderRadius: 2,
+                      background: '#F4F5F5',
+                    }} />
+
+                    <div style={{
+                      position: 'absolute',
+                      inset: 'auto 0 auto 0',
+                      height: 2.5,
+                      width: `${pct}%`,
+                      borderRadius: 2,
+                      background: '#7C8486',
+                    }} />
                   </div>
 
-                  {delta !== null && <Delta value={delta} />}
+                  <div style={{
+                    flex: '0 0 auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}>
+                    {delta !== null && <Delta value={delta} />}
 
-                  <div
-                    aria-label={`Subject score ${safeScore.toFixed(1)} out of 5`}
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 999,
-                      padding: 2,
-                      boxSizing: 'border-box',
-                      background: `conic-gradient(#252525 ${pct}%, #ECEEED 0)`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
                     <span style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 999,
-                      background: '#FFFFFF',
-                      color: '#252525',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12,
-                      fontWeight: 560,
-                      letterSpacing: '-0.02em',
+                      fontSize: 12.5,
+                      color: '#4B5356',
+                      fontWeight: 500,
                       fontVariantNumeric: 'tabular-nums',
+                      minWidth: 28,
+                      textAlign: 'right',
                     }}>
                       {safeScore.toFixed(1)}
                     </span>

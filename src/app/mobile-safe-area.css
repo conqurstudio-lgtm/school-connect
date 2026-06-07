@@ -1619,38 +1619,7 @@ body {
 }
 
 
-/* report-main-card-short-subject-bars-v297
-   Softens the main/current report card and keeps subject progress bars short/simple. */
-.sc-main-report-card-v292 {
-  background: #F8F8F7 !important;
-  border-color: rgba(0,0,0,0.04) !important;
-}
 
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
-  max-width: 396px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-sizing: border-box !important;
-}
-
-
-/* report-subject-warm-comments-v298
-   Small parent-friendly meaning text below each subject score. */
-.sc-report-subject-warm-comment-v298 {
-  color: #7C8486 !important;
-  font-weight: 400 !important;
-}
-
-
-/* force-subject-warm-comments-v299
-   Ensures the warm subject comment is visible beside the score. */
-.sc-report-subject-visible-comment-v299 {
-  display: inline-flex !important;
-  align-items: center !important;
-  color: #7C8486 !important;
-  font-weight: 400 !important;
-  opacity: 1 !important;
-}
 
 
 /* report-white-card-charcoal-subjects-v300
@@ -1777,84 +1746,5 @@ body {
 }
 
 
-/* report-subjects-row-circle-v301
-   Makes the Subjects dropdown header match the previous-report closed row:
-   flat row, left text, score circle on the right. */
-.sc-report-subjects-row-trigger-v301 {
-  border-bottom: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-}
-
-.sc-report-subjects-row-trigger-v301:focus,
-.sc-report-subjects-row-trigger-v301:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subjects-section-v292 {
-  max-width: 396px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  box-sizing: border-box !important;
-}
-
-.sc-report-subjects-button-label-v287,
-.sc-report-subjects-button-icon-v287 {
-  display: none !important;
-}
 
 
-/* report-subject-rows-circle-v302
-   Applies previous-report-row styling to the subject rows inside the opened dropdown only.
-   Does not touch the Subjects button/header. */
-.sc-report-subject-row-circle-v302:first-child {
-  border-top: none !important;
-}
-
-.sc-report-subject-row-circle-v302 {
-  background: transparent !important;
-}
-
-.sc-report-subjects-body-v292 > div {
-  width: 100% !important;
-}
-
-
-/* subject-dropdown-rings-v303
-   Subjects button stays as a small side button.
-   Opened subject rows use warm comments and a score progress ring. */
-.sc-report-subjects-side-button-v303 {
-  background: #252525 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subjects-side-button-v303:focus,
-.sc-report-subjects-side-button-v303:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subject-ring-row-v303:first-child {
-  border-top: none !important;
-}
-
-.sc-report-subject-ring-row-v303 {
-  background: transparent !important;
-}
-
-.sc-report-subjects-body-v292 > div {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-}
-
-.sc-report-subject-ring-row-v303 [style*="height: 2.5"],
-.sc-report-subject-ring-row-v303 [style*="height:2.5"] {
-  display: none !important;
-}
