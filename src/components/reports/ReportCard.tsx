@@ -264,6 +264,15 @@ function TeacherNameTag({ name }: { name?: string | null }) {
   )
 }
 
+
+function getSubjectWarmComment(score: number) {
+  if (score >= 4.5) return 'Excellent progress'
+  if (score >= 4) return 'Doing very well'
+  if (score >= 3) return 'Good progress'
+  if (score >= 2) return 'Needs gentle support'
+  return 'Seeking extra help'
+}
+
 export function ReportCard({ report, childName }: Props) {
   const [expanded, setExpanded] = useState(false)
   const scoreSource = report.scores || {}
@@ -487,6 +496,7 @@ export function ReportCard({ report, childName }: Props) {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const pct = (safeScore / 5) * 100
+              const scoreComment = getSubjectWarmComment(safeScore)
               const prev = report.previous_scores?.[name]
               const delta = prev !== undefined ? safeScore - Number(prev) : null
 
@@ -547,16 +557,35 @@ export function ReportCard({ report, childName }: Props) {
                   }}>
                     {delta !== null && <Delta value={delta} />}
 
-                    <span style={{
-                      fontSize: 12.5,
-                      color: '#4B5356',
-                      fontWeight: 500,
-                      fontVariantNumeric: 'tabular-nums',
-                      minWidth: 26,
-                      textAlign: 'right',
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-end',
+                      gap: 3,
+                      minWidth: 76,
                     }}>
-                      {safeScore.toFixed(1)}
-                    </span>
+                      <span style={{
+                        fontSize: 12.5,
+                        color: '#4B5356',
+                        fontWeight: 500,
+                        fontVariantNumeric: 'tabular-nums',
+                        textAlign: 'right',
+                        lineHeight: 1,
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </span>
+
+                      <span className="sc-report-subject-warm-comment-v298" style={{
+                        fontSize: 10.8,
+                        color: '#7C8486',
+                        fontWeight: 400,
+                        lineHeight: 1.15,
+                        textAlign: 'right',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {scoreComment}
+                      </span>
+                    </div>
                   </div>
                 </div>
               )

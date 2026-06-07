@@ -1632,3 +1632,11 @@ body {
   margin-right: auto !important;
   box-sizing: border-box !important;
 }
+
+
+/* report-subject-warm-comments-v298
+   Small parent-friendly meaning text below each subject score. */
+.sc-report-subject-warm-comment-v298 {
+  color: #7C8486 !important;
+  font-weight: 400 !important;
+}
