@@ -575,6 +575,16 @@ export function ReportCard({ report, childName }: Props) {
                         {safeScore.toFixed(1)}
                       </span>
 
+                    <span className="sc-report-subject-visible-comment-v299" style={{
+                      fontSize: 10.8,
+                      color: '#7C8486',
+                      fontWeight: 400,
+                      lineHeight: 1.15,
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {scoreComment}
+                    </span>
+
                       <span className="sc-report-subject-warm-comment-v298" style={{
                         fontSize: 10.8,
                         color: '#7C8486',

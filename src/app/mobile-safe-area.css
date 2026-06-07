@@ -1640,3 +1640,14 @@ body {
   color: #7C8486 !important;
   font-weight: 400 !important;
 }
+
+
+/* force-subject-warm-comments-v299
+   Ensures the warm subject comment is visible beside the score. */
+.sc-report-subject-visible-comment-v299 {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: #7C8486 !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
