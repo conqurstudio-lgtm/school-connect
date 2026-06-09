@@ -4,7 +4,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 
 const T = {
@@ -86,9 +85,64 @@ function SafeStyle() {
 }
 
 function LoadingDots() {
+  const ghost = (width: string | number, height = 12, radius = 999) => (
+    <span
+      style={{
+        width,
+        height,
+        borderRadius: radius,
+        display: 'block',
+        background: 'linear-gradient(90deg, #F1F2F3 0%, #FAFAFA 48%, #F1F2F3 100%)',
+        backgroundSize: '220% 100%',
+        animation: 'scMomentGhost 1.35s ease-in-out infinite',
+      }}
+    />
+  )
+
   return (
-    <div style={{ padding: '34px 0' }}>
-      <SchoolConnectLoader />
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 28,
+      padding: '4px 0 10px',
+    }}>
+      <style>{`
+        @keyframes scMomentGhost {
+          0% { background-position: 120% 0; }
+          100% { background-position: -120% 0; }
+        }
+      `}</style>
+
+      {[0, 1, 2].map((item) => (
+        <div key={item} style={{ width: '100%' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            marginBottom: 12,
+          }}>
+            {ghost(38, 38, 999)}
+            <div style={{ flex: 1 }}>
+              {ghost('44%', 12)}
+              <div style={{ height: 7 }} />
+              {ghost('28%', 9)}
+            </div>
+          </div>
+
+          {ghost('100%', 220, 22)}
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            marginTop: 12,
+          }}>
+            {ghost(28, 28, 999)}
+            {ghost(28, 28, 999)}
+            {ghost(28, 28, 999)}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

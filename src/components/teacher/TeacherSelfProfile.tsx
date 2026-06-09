@@ -3769,40 +3769,12 @@ function SoftNotificationLoader() {
 function SoftConversationLoader() {
   return (
     <div style={{
-      padding: '58px 24px 34px',
-      textAlign: 'center',
+      padding: '22px 4px 28px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 14,
     }}>
-      <div style={{
-        width: 44,
-        height: 44,
-        borderRadius: 16,
-        background: '#F4F4F6',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '0 auto 12px',
-      }}>
-        <MessageCircle size={19} color={T.ink3} strokeWidth={1.7} />
-      </div>
-
-      <p style={{
-        fontSize: 13.8,
-        fontWeight: 750,
-        color: T.ink,
-        margin: 0,
-      }}>
-        Opening conversation
-        <SoftLoaderDots />
-      </p>
-
-      <p style={{
-        fontSize: 13.8,
-        color: T.ink3,
-        margin: '6px 0 0',
-        lineHeight: 1.45,
-      }}>
-        Messages will appear here in a moment.
-      </p>
+      <TeacherMessageGhostRows />
     </div>
   )
 }
