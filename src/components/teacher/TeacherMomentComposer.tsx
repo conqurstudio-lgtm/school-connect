@@ -179,6 +179,17 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
           </button>
 
           <div style={{ maxHeight: 230, overflowY: 'auto' }}>
+            {!learners.length && (
+              <div style={{
+                padding: '16px 14px',
+                fontSize: 13,
+                color: T.ink3,
+                lineHeight: 1.45,
+              }}>
+                No learners found yet. Add learners before sharing a Moment.
+              </div>
+            )}
+
             {learners.map((child: any, index: number) => {
               const selected = shareMode === 'child' && selectedIds.includes(child.id)
               return (

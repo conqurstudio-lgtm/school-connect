@@ -686,6 +686,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     return (
       <TeacherMomentsPage
         teacher={teacher}
+        learners={children}
         onBack={() => setShowTeacherMoments(false)}
         onChanged={(summary: any) => {
           if (summary) {
