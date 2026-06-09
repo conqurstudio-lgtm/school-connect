@@ -428,13 +428,14 @@ export function ReportCard({ report, childName }: Props) {
                 </span>
               </p>
 
-              <div style={{
+              <div className="sc-teacher-comment-card-v310" style={{
                 position: 'relative',
-                background: 'transparent',
-                border: '1px solid rgba(0,0,0,0.045)',
+                background: '#F8F8F7',
+                border: 'none',
                 borderRadius: '18px 18px 18px 8px',
                 padding: '12px 14px',
                 overflow: 'hidden',
+                boxShadow: '0 12px 28px rgba(37,37,37,0.055)',
               }}>
                 <p style={{
                   fontSize: 13.6,

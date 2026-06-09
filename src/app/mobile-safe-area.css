@@ -1568,184 +1568,6 @@ body {
 }
 
 
-/* fix-reportcard-subjects-jsx-v293
-   Repairs the v292 Subjects simplification without adding extra JSX wrappers.
-   Keeps the subject area simpler and removes heavy middle line styling where possible. */
-.sc-main-report-card-v292 {
-  background: #fcfcfe !important;
-}
-
-.sc-main-report-card-v292 > section {
-  padding-bottom: 18px !important;
-}
-
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 {
-  max-width: 396px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  box-sizing: border-box !important;
-}
-
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="borderTop"],
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="border-top"],
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="borderBottom"],
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="border-bottom"] {
-  border-top: none !important;
-  border-bottom: none !important;
-}
-
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="height: 1"],
-.sc-main-report-card-v292 .sc-report-subjects-section-v292 [style*="height:1"] {
-  display: none !important;
-}
-
-
-/* restore-reportcard-after-v292-v294
-   Safe CSS after restoring ReportCard from the pre-v292 backup.
-   Keeps the main report soft card support without changing JSX. */
-.sc-main-report-card-v292 {
-  background: #fcfcfe !important;
-}
-
-.sc-main-report-card-v292 > section {
-  padding-bottom: 18px !important;
-}
-
-.sc-previous-report-open-x-v279,
-.sc-previous-report-flat-v278[open] .sc-previous-report-open-x-v279 {
-  display: none !important;
-}
-
-
-
-
-
-/* report-white-card-charcoal-subjects-v300
-   Final visual pass:
-   - main report is a white card with soft shadow and no border
-   - Subjects button is charcoal
-   - subject rows align under the same content rhythm as the button */
-.sc-main-report-card-v292 {
-  background: #FFFFFF !important;
-  border: none !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.055) !important;
-}
-
-.sc-main-report-card-v292 > section {
-  padding-bottom: 18px !important;
-}
-
-.sc-report-subjects-button-label-v287 {
-  min-height: 34px !important;
-  border-radius: 999px !important;
-  background: #252525 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0 !important;
-  font-size: 12.5px !important;
-  font-weight: 520 !important;
-  line-height: 1 !important;
-  padding: 0 13px !important;
-  width: fit-content !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subjects-section-v292 {
-  max-width: 396px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  box-sizing: border-box !important;
-}
-
-.sc-report-subjects-body-v292 {
-  width: 100% !important;
-  padding-top: 8px !important;
-}
-
-.sc-report-subjects-body-v292 > div {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-}
-
-.sc-report-subjects-body-v292 > div > div {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-
-/* report-white-card-charcoal-subjects-v300
-   Final visual pass:
-   - main report is a white card with soft shadow and no border
-   - Subjects button is charcoal
-   - subject rows align under the same content rhythm as the button */
-.sc-main-report-card-v292 {
-  background: #FFFFFF !important;
-  border: none !important;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.055) !important;
-}
-
-.sc-main-report-card-v292 > section {
-  padding-bottom: 18px !important;
-}
-
-.sc-report-subjects-button-label-v287 {
-  min-height: 34px !important;
-  border-radius: 999px !important;
-  background: #252525 !important;
-  color: #FFFFFF !important;
-  border: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 0 !important;
-  font-size: 12.5px !important;
-  font-weight: 520 !important;
-  line-height: 1 !important;
-  padding: 0 13px !important;
-  width: fit-content !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subjects-section-v292 {
-  max-width: 396px !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  box-sizing: border-box !important;
-}
-
-.sc-report-subjects-body-v292 {
-  width: 100% !important;
-  padding-top: 8px !important;
-}
-
-.sc-report-subjects-body-v292 > div {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: stretch !important;
-}
-
-.sc-report-subjects-body-v292 > div > div {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-
 
 
 
@@ -1766,51 +1588,27 @@ body {
   background: transparent !important;
 }
 
-
-/* subjects-clean-bars-main-flat-v307
-   Main report card is flat #dbdae7. Subject rows have no dividers and progress sits above comment. */
-.sc-main-report-card-v292 {
-  background: #dbdae7 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.sc-report-subject-detail-row-v307,
-.sc-report-subject-detail-row-v307:first-child {
-  border-top: none !important;
-}
-
-.sc-report-subjects-list-v307 {
-  gap: 12px !important;
-}
-
-
-/* main-report-card-white-v308
-   Main/current report card stays flat but returns to white. */
+/* stability-cleanup-v310
+   Final stable report overrides after the parent report review.
+   Keeps the main report card flat white, keeps Subjects clean, and applies the teacher comment soft card. */
 .sc-main-report-card-v292 {
   background: #FFFFFF !important;
   border: none !important;
   box-shadow: none !important;
 }
 
-
-/* main-report-card-white-v308
-   Main/current report card stays flat but returns to white. */
-.sc-main-report-card-v292 {
-  background: #FFFFFF !important;
-  border: none !important;
-  box-shadow: none !important;
+.sc-main-report-card-v292 > section {
+  padding-bottom: 18px !important;
 }
 
-
-/* report-subject-button-comment-polish-v309
-   Slightly larger Subjects button and soft teacher comment card. */
 .sc-report-subjects-clean-v306 button,
 .sc-report-subjects-side-button-v303,
 .sc-report-subjects-trigger-v287 {
   min-height: 38px !important;
   padding-left: 18px !important;
   padding-right: 18px !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .sc-report-subjects-clean-v306 button span,
@@ -1819,12 +1617,25 @@ body {
   font-size: 13px !important;
 }
 
-.sc-teacher-comment-card-v309 {
+.sc-report-subject-detail-row-v306,
+.sc-report-subject-detail-row-v307,
+.sc-report-subject-detail-row-v306:first-child,
+.sc-report-subject-detail-row-v307:first-child {
+  border-top: none !important;
+  background: transparent !important;
+}
+
+.sc-report-subjects-list-v307 {
+  gap: 12px !important;
+}
+
+.sc-teacher-comment-card-v310 {
   background: #F8F8F7 !important;
   border: none !important;
   box-shadow: 0 12px 28px rgba(37,37,37,0.055) !important;
 }
 
-.sc-teacher-comment-card-v309 p {
+.sc-teacher-comment-card-v310 p {
   color: #5F6268 !important;
 }
+

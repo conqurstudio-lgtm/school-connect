@@ -116,7 +116,7 @@ async function resolveChildFromToken(sb: any, token: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
-  let childId = String(body.child_id || '').trim()
+  let childId = ''
   const token = String(body.token || '').trim()
   const momentId = String(body.moment_id || '').trim()
   const reaction = String(body.reaction || '').trim()
@@ -126,10 +126,10 @@ export async function POST(req: NextRequest) {
 
   const sb = adminClient()
 
-  if (!childId && token) {
-    const child = await resolveChildFromToken(sb, token)
-    childId = child?.id || ''
-  }
+  if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 })
+
+  const child = await resolveChildFromToken(sb, token)
+  childId = child?.id || ''
 
   if (!childId) return NextResponse.json({ error: 'missing child' }, { status: 400 })
 
