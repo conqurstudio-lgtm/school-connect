@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
+import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const T = {
   ink: '#1A1A1A',
@@ -498,62 +499,7 @@ function ReportSafeAreaStyle() {
 }
 
 function LoadingState() {
-  return (
-    <main className="parent-report-safe-screen" style={{
-      minHeight: '100dvh',
-      height: '100dvh',
-      overflow: 'hidden',
-      background: '#FFFFFF',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 24,
-      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-    }}>
-      <style>{`
-        @keyframes reportDotBounce {
-          0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
-          40% { transform: scale(1); opacity: 1; }
-        }
-      `}</style>
-
-      <div style={{
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 7,
-          height: 24,
-          margin: '0 auto 14px',
-        }}>
-          {[0, 1, 2].map((dot) => (
-            <span
-              key={dot}
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 999,
-                background: dot === 1 ? '#8FA6A1' : '#D8DFDD',
-                animation: 'reportDotBounce 1.05s ease-in-out infinite',
-                animationDelay: `${dot * 0.14}s`,
-                display: 'block',
-              }}
-            />
-          ))}
-        </div>
-
-        <p style={{ fontSize: 14, color: '#9A9CA3', margin: 0 }}>
-          Opening weekly report...
-        </p>
-      </div>
-    </main>
-  )
+  return <PageGhostLoader />
 }
 
 function ErrorState({ message }: { message: string }) {

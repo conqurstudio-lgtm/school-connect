@@ -155,15 +155,6 @@ export function ReportsClient() {
 
         {reports.length > 0 && (
           <div style={{ textAlign: 'center', padding: '24px 20px 40px' }}>
-            <p style={{
-              fontSize: 11,
-              color: '#CCCCCC',
-              margin: 0,
-              letterSpacing: '0.04em',
-              fontWeight: 500,
-            }}>
-              Powered by <span style={{ fontWeight: 600, color: '#AAAAAA' }}>School Connect</span>
-            </p>
           </div>
         )}
       </div>

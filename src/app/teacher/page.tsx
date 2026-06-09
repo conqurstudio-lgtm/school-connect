@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
+import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const T = {
   ink: '#1A1A1A',
@@ -41,6 +42,10 @@ function TeacherLinkBridgeInner() {
 
     return () => { cancelled = true }
   }, [token, router])
+
+  const isOpeningTeacher = Boolean(token) && message.toLowerCase().startsWith('opening')
+
+  if (isOpeningTeacher) return <PageGhostLoader />
 
   return (
     <main style={{

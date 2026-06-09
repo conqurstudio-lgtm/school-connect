@@ -1044,16 +1044,6 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
           
 
-          <p style={{
-            fontSize: 10.5,
-            color: '#B8B8BC',
-            textAlign: 'center',
-            margin: '18px 0 0',
-            letterSpacing: '0.04em',
-            fontWeight: 500,
-          }}>
-            Powered by School Connect
-          </p>
         </main>
       </div>
 

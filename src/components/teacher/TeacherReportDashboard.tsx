@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
+import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const T = {
   ink: '#252525',
@@ -649,7 +650,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     setMomentDraft({ file })
   }
 
-  if (loading) return <SchoolConnectPageLoader size="md" />
+  if (loading) return <PageGhostLoader />
 
   if (!session?.teacher?.id) {
     return (
@@ -1091,16 +1092,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </>
           )}
 
-          <p style={{
-            fontSize: 10.5,
-            color: '#B8B8BC',
-            textAlign: 'center',
-            margin: '18px 0 0',
-            letterSpacing: '0.04em',
-            fontWeight: 500,
-          }}>
-            Powered by School Connect
-          </p>
         </main>
       </div>
 
@@ -1332,7 +1323,7 @@ function MiniStat({ label, value }: any) {
 }
 
 function LoadingScreen() {
-  return <SchoolConnectPageLoader size="md" />
+  return <PageGhostLoader />
 }
 
 function EmptyRoster({ onAdd }: any) {

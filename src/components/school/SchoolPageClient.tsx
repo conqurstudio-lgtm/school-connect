@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { SchoolProfilePage } from '@/components/school/SchoolProfilePage'
+import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const supabase = createClient()
 
@@ -129,57 +130,7 @@ export function SchoolPageClient() {
     }
   }, [router])
 
-  if (loading) {
-    return (
-      <div style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: T.bg,
-        padding: 24,
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}>
-        <div style={{
-          width: '100%',
-          maxWidth: 360,
-          padding: 18,
-          borderRadius: 22,
-          background: T.white,
-          border: `1px solid ${T.border}`,
-          boxShadow: '0 12px 32px rgba(0,0,0,0.045)',
-          textAlign: 'center',
-        }}>
-          <div style={{
-            width: 28,
-            height: 28,
-            borderRadius: '50%',
-            border: '2.5px solid #E8E8E8',
-            borderTopColor: T.ink,
-            animation: 'spin 0.7s linear infinite',
-            margin: '0 auto 12px',
-          }} />
-          <p style={{
-            fontSize: 14,
-            fontWeight: 900,
-            color: T.ink,
-            margin: 0,
-            letterSpacing: '-0.02em',
-          }}>
-            Opening school command centre
-          </p>
-          <p style={{
-            fontSize: 12.8,
-            color: T.ink3,
-            margin: '4px 0 0',
-            lineHeight: 1.45,
-          }}>
-            Confirming your school profile…
-          </p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <PageGhostLoader />
 
   if (errorMessage) {
     return (
