@@ -1639,3 +1639,13 @@ body {
   color: #5F6268 !important;
 }
 
+/* final-loader-powered-sweep-v315
+   Respect reduced motion for ghost loaders. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+

@@ -163,8 +163,7 @@ export default function SignupPage() {
             Already have an account?{' '}
             <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
               Sign in
-            </Link>
-          </p>
+            </Link>&nbsp;</p>
         </div>
       </div>
     </main>

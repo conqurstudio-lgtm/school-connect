@@ -187,8 +187,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           No school account yet?{' '}
           <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 650, textDecoration: 'none' }}>
             Create one
-          </Link>
-        </p>
+          </Link>&nbsp;</p>
       </section>
     </main>
   )

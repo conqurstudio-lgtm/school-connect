@@ -1520,18 +1520,7 @@ function ClassLifeSkeleton() {
 }
 
 function PoweredByBar() {
-  return (
-    <p style={{
-      fontSize: 13.8,
-      color: T.ink3,
-      textAlign: 'center',
-      margin: '14px 0 0',
-      paddingBottom: 0,
-      opacity: 0.7,
-    }}>
-      Powered by School Connect
-    </p>
-  )
+  return null
 }
 
 const classSpaceActionBtn: any = {

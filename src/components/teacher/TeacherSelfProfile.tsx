@@ -3744,8 +3744,7 @@ function SoftNotificationLoader() {
         margin: 0,
       }}>
         Checking notifications
-        <SoftLoaderDots />
-      </p>
+        <SoftLoaderDots />&nbsp;</p>
 
       <p style={{
         fontSize: 13.8,

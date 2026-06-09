@@ -567,8 +567,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
               marginLeft: 5,
             }}>
               · Your teacher
-            </span>
-          </p>
+            </span>&nbsp;</p>
 
           <div style={{
             display: 'flex',

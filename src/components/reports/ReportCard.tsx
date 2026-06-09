@@ -425,8 +425,7 @@ export function ReportCard({ report, childName }: Props) {
                   fontWeight: 400,
                 }}>
                   {childTeacherLabel}
-                </span>
-              </p>
+                </span>&nbsp;</p>
 
               <div className="sc-teacher-comment-card-v310" style={{
                 position: 'relative',

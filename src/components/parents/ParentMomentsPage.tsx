@@ -545,8 +545,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
               marginLeft: 5,
             }}>
               · Your teacher
-            </span>
-          </p>
+            </span>&nbsp;</p>
 
           <span style={{
             fontSize: 10.8,
