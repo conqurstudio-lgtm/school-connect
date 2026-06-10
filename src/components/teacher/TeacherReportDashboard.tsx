@@ -1356,15 +1356,66 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null)
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  const closeMenu = () => {
+    setMenuOpen(false)
+    setMenuPosition(null)
+  }
 
   const openMenu = (event: any) => {
     event.stopPropagation()
+
+    const rect = event.currentTarget.getBoundingClientRect()
+    const menuWidth = 142
+    const gap = 8
+
+    setMenuPosition({
+      top: rect.top + rect.height / 2,
+      left: Math.max(12, rect.left - menuWidth - gap),
+    })
+
     setMenuOpen((value) => !value)
   }
 
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null
+      if (!target) return
+
+      if (menuRef.current?.contains(target)) return
+      if (menuButtonRef.current?.contains(target)) return
+
+      closeMenu()
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeMenu()
+    }
+
+    const handleWindowChange = () => closeMenu()
+
+    document.addEventListener('mousedown', handlePointerDown, true)
+    document.addEventListener('touchstart', handlePointerDown, true)
+    document.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('resize', handleWindowChange)
+    window.addEventListener('scroll', handleWindowChange, true)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown, true)
+      document.removeEventListener('touchstart', handlePointerDown, true)
+      document.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('resize', handleWindowChange)
+      window.removeEventListener('scroll', handleWindowChange, true)
+    }
+  }, [menuOpen])
+
   const remove = async () => {
-    setMenuOpen(false)
+    closeMenu()
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
     const tid = toast.loading('Removing learner...')
@@ -1494,70 +1545,51 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         <MoreHorizontal size={16} strokeWidth={1.9} />
       </button>
 
-      {menuOpen && (
-        <>
+      {menuOpen && menuPosition && (
+        <div
+          ref={menuRef}
+          role="menu"
+          aria-label={`Options for ${child.name}`}
+          style={{
+            position: 'fixed',
+            left: menuPosition.left,
+            top: menuPosition.top,
+            transform: 'translateY(-50%)',
+            zIndex: 120,
+            minWidth: 142,
+            padding: 5,
+            borderRadius: 15,
+            background: T.white,
+            border: '1px solid rgba(0,0,0,0.045)',
+            boxShadow: '0 10px 22px rgba(0,0,0,0.065)',
+          }}
+          onClick={(event) => event.stopPropagation()}
+        >
           <button
             type="button"
-            aria-label="Close learner menu"
-            onClick={(event) => {
-              event.stopPropagation()
-              setMenuOpen(false)
-            }}
+            role="menuitem"
+            onClick={remove}
             style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 80,
+              width: '100%',
+              minHeight: 36,
               border: 'none',
+              borderRadius: 11,
               background: 'transparent',
-              padding: 0,
-              cursor: 'default',
+              color: T.red,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              padding: '0 10px',
+              fontFamily: 'inherit',
+              fontSize: 12.3,
+              fontWeight: 520,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
             }}
-          />
-
-          <div
-            role="menu"
-            aria-label={`Options for ${child.name}`}
-            style={{
-              position: 'absolute',
-              right: 34,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 90,
-              minWidth: 142,
-              padding: 5,
-              borderRadius: 15,
-              background: T.white,
-              border: '1px solid rgba(0,0,0,0.055)',
-              boxShadow: '0 14px 32px rgba(0,0,0,0.105)',
-            }}
-            onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              role="menuitem"
-              onClick={remove}
-              style={{
-                width: '100%',
-                minHeight: 36,
-                border: 'none',
-                borderRadius: 11,
-                background: 'transparent',
-                color: T.red,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                padding: '0 10px',
-                fontFamily: 'inherit',
-                fontSize: 12.3,
-                fontWeight: 520,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Remove learner
-            </button>
-          </div>
-        </>
+            Remove learner
+          </button>
+        </div>
       )}
     </article>
   )
