@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap } from 'lucide-react'
+import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -245,6 +245,183 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 }
 
 
+
+
+function FamilyShareButton({ token }: { token: string }) {
+  const [open, setOpen] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [shareUrl, setShareUrl] = useState('')
+
+  async function createShareLink() {
+    if (!token || creating) return
+
+    setCreating(true)
+    setCopied(false)
+
+    try {
+      const res = await fetch(`/api/report/${encodeURIComponent(token)}/family-share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ expires_in_days: 14 }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        throw new Error(json.error || 'Could not create family link')
+      }
+
+      setShareUrl(json.share_url || '')
+      setOpen(true)
+    } catch (err: any) {
+      alert(err?.message || 'Could not create family link')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  async function copyShareLink() {
+    if (!shareUrl) return
+
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1600)
+    } catch {
+      alert('Could not copy link')
+    }
+  }
+
+  async function nativeShare() {
+    if (!shareUrl) return copyShareLink()
+
+    const shareData = {
+      title: 'School report',
+      text: 'I am sharing a read-only school report with you.',
+      url: shareUrl,
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+        return
+      } catch {}
+    }
+
+    await copyShareLink()
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
+        disabled={creating}
+        aria-label="Share report with family"
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 999,
+          border: 'none',
+          background: '#FFFFFF',
+          color: '#252525',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: creating ? 'default' : 'pointer',
+          opacity: creating ? 0.55 : 1,
+          padding: 0,
+        }}
+      >
+        <Share2 size={18} strokeWidth={2} />
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: 44,
+          right: 0,
+          width: 260,
+          borderRadius: 22,
+          background: '#FFFFFF',
+          boxShadow: '0 18px 50px rgba(37,37,37,0.10)',
+          padding: 14,
+          zIndex: 100,
+        }}>
+          <p style={{
+            fontSize: 13.5,
+            fontWeight: 560,
+            color: '#252525',
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Share with family
+          </p>
+
+          <p style={{
+            fontSize: 12.4,
+            color: '#7C8486',
+            lineHeight: 1.4,
+            margin: '5px 0 12px',
+          }}>
+            This creates a read-only link for the current report only.
+          </p>
+
+          <div style={{
+            display: 'flex',
+            gap: 8,
+          }}>
+            <button
+              type="button"
+              onClick={copyShareLink}
+              style={{
+                flex: 1,
+                minHeight: 36,
+                borderRadius: 999,
+                border: 'none',
+                background: '#F5F5F4',
+                color: '#252525',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+              }}
+            >
+              {copied ? <Check size={15} /> : <Copy size={15} />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+
+            <button
+              type="button"
+              onClick={nativeShare}
+              style={{
+                flex: 1,
+                minHeight: 36,
+                borderRadius: 999,
+                border: 'none',
+                background: '#252525',
+                color: '#FFFFFF',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+              }}
+            >
+              Share
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 function SchoolQuickView({ school }: { school: any }) {
   const [open, setOpen] = useState(false)
@@ -639,6 +816,7 @@ export default function ParentMagicReportPage() {
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
+  const isFamilyShare = payload?.link_type === 'family_share'
   const reports = (payload.reports?.length ? payload.reports : [payload.report])
     .slice()
     .sort((a: any, b: any) => {
@@ -689,7 +867,14 @@ export default function ParentMagicReportPage() {
           position: 'relative',
           zIndex: 10,
         }}>
-          <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}>
+            {!isFamilyShare && <FamilyShareButton token={token || ''} />}
+            {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
+          </div>
         </header>
 
         <section className="sc-report-clean-scroll-v276" style={{

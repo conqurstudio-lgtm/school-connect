@@ -37,6 +37,17 @@ async function loadOldReportLink(sb: any, token: string) {
   return link || null
 }
 
+async function loadFamilyShare(sb: any, token: string) {
+  const { data: share } = await sb
+    .from('family_report_shares')
+    .select('*')
+    .eq('token', token)
+    .eq('is_active', true)
+    .maybeSingle()
+
+  return share || null
+}
+
 async function loadSchoolProfile(sb: any, schoolId: string) {
   if (!schoolId) return null
 
@@ -88,6 +99,81 @@ export async function GET(
   }
 
   const sb = adminClient()
+
+  const familyShare = await loadFamilyShare(sb, token)
+
+  if (familyShare) {
+    if (familyShare.expires_at && new Date(familyShare.expires_at).getTime() < Date.now()) {
+      return NextResponse.json({ error: 'This family share link has expired' }, { status: 410 })
+    }
+
+    const reportQuery = sb
+      .from('child_reports')
+      .select('*')
+      .eq('child_id', familyShare.child_id)
+      .eq('status', 'published')
+
+    const { data: report, error: reportError } = familyShare.report_id
+      ? await reportQuery.eq('id', familyShare.report_id).maybeSingle()
+      : await reportQuery
+          .order('week_starting', { ascending: false })
+          .order('published_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+    if (reportError) {
+      return NextResponse.json({ error: reportError.message }, { status: 500 })
+    }
+
+    if (!report) return NextResponse.json({ error: 'Report not found' }, { status: 404 })
+
+    const [{ data: child }, { data: teacher }, school] = await Promise.all([
+      sb.from('children').select('*').eq('id', familyShare.child_id).maybeSingle(),
+      familyShare.teacher_id
+        ? sb.from('teachers').select('*').eq('id', familyShare.teacher_id).maybeSingle()
+        : { data: null },
+      loadSchoolProfile(sb, familyShare.school_id || report.school_id),
+    ])
+
+    await sb
+      .from('family_report_shares')
+      .update({
+        last_viewed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        view_count: Number(familyShare.view_count || 0) + 1,
+      })
+      .eq('id', familyShare.id)
+
+    const safeChild = child ? {
+      id: child.id,
+      name: child.name,
+      first_name: child.first_name,
+      last_name: child.last_name,
+      grade: child.grade,
+      class_name: child.class_name,
+    } : null
+
+    const safeTeacher = teacher ? {
+      id: teacher.id,
+      name: teacher.name,
+      photo_url: teacher.photo_url,
+      avatar_url: teacher.avatar_url,
+      image_url: teacher.image_url,
+    } : null
+
+    return NextResponse.json({
+      link_type: 'family_share',
+      report,
+      reports: [report],
+      child: safeChild,
+      teacher: safeTeacher,
+      school,
+      family_share: {
+        expires_at: familyShare.expires_at,
+        include_moments: false,
+      },
+    })
+  }
 
   const childLink = await loadChildPermanentLink(sb, token)
 
