@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, Trash2, Users, X, ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
@@ -1140,6 +1140,11 @@ function TeacherLearnersPage({
   onDeleted,
 }: any) {
   const hasLearners = children?.length > 0
+  const pendingTotal = pendingChildren?.length || 0
+  const sentTotal = sentChildren?.length || 0
+  const reportsSummary = hasLearners
+    ? `${pendingTotal} pending · ${sentTotal} sent this week`
+    : 'Weekly learner reports'
 
   return (
     <div className="teacher-safe-screen sc-screen-enter" style={{
@@ -1205,18 +1210,27 @@ function TeacherLearnersPage({
           background: T.white,
         }}>
           <section style={{
-            padding: '18px 0 24px',
+            padding: '20px 0 24px',
           }}>
             <h1 style={{
-              fontSize: 26,
+              fontSize: 25,
               lineHeight: 1.05,
               fontWeight: 560,
-              letterSpacing: '-0.05em',
+              letterSpacing: '-0.052em',
               color: T.ink,
               margin: 0,
             }}>
               Reports
             </h1>
+            <p style={{
+              fontSize: 12.8,
+              lineHeight: 1.45,
+              fontWeight: 430,
+              color: T.ink3,
+              margin: '8px 0 0',
+            }}>
+              {reportsSummary}
+            </p>
           </section>
 
           {!hasLearners ? (
@@ -1249,9 +1263,9 @@ function TeacherLearnersPage({
               borderRadius: 24,
               background: T.white,
               border: 'none',
-              overflow: 'hidden',
+              overflow: 'visible',
             }}>
-              <div style={{ padding: '4px 15px 12px' }}>
+              <div style={{ padding: '0 10px 12px' }}>
                 <ChecklistGroup
                   title="Pending reports"
                   items={pendingChildren}
@@ -1323,25 +1337,34 @@ function EmptyRoster({ onAdd }: any) {
 function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
   if (!items?.length) return null
 
+  const isSentGroup = String(title || '').toLowerCase().includes('sent')
+
   return (
-    <div style={{ marginTop: 16 }}>
+    <div style={{ marginTop: isSentGroup ? 28 : 2 }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         gap: 10,
-        padding: '4px 0 10px',
+        padding: '4px 0 11px',
       }}>
-        <div>
-          <p style={{
-            fontSize: 12.5,
-            fontWeight: 560,
-            color: T.ink,
-            margin: 0,
-          }}>
-            {title}
-          </p>
-        </div>
+        <p style={{
+          fontSize: 12.4,
+          fontWeight: 560,
+          color: T.ink,
+          margin: 0,
+        }}>
+          {title}
+        </p>
+
+        <span style={{
+          fontSize: 11.4,
+          fontWeight: 520,
+          color: T.ink3,
+          lineHeight: 1,
+        }}>
+          {items.length}
+        </span>
       </div>
 
       {items.map((child: any, index: number) => (
@@ -1360,8 +1383,10 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const remove = async () => {
+    setMenuOpen(false)
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
     const tid = toast.loading('Removing learner...')
@@ -1381,9 +1406,10 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
   return (
     <article style={{
-      padding: '13px 0',
-      marginBottom: isLast ? 0 : 7,
-      borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
+      position: 'relative',
+      padding: '14px 0',
+      marginBottom: 0,
+      borderBottom: isLast ? 'none' : `1px solid rgba(0,0,0,0.035)`,
       display: 'flex',
       alignItems: 'center',
       gap: 10,
@@ -1399,16 +1425,16 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           padding: 0,
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 12,
           textAlign: 'left',
           cursor: 'pointer',
           fontFamily: 'inherit',
         }}
       >
         <div style={{
-          width: 36,
-          height: 36,
-          borderRadius: 14,
+          width: 39,
+          height: 39,
+          borderRadius: 15,
           background: done ? T.accentSoft : T.soft,
           display: 'flex',
           alignItems: 'center',
@@ -1451,7 +1477,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
       <button type="button" onClick={onOpen} style={{
         minHeight: 32,
-        padding: '0 2px 0 10px',
+        padding: '0 4px 0 10px',
         borderRadius: 999,
         border: 'none',
         background: 'transparent',
@@ -1465,24 +1491,70 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         cursor: 'pointer',
         flexShrink: 0,
       }}>
-        Report
+        {done ? 'View' : 'Write'}
       </button>
 
-      <button type="button" onClick={remove} style={{
-        width: 32,
-        height: 32,
-        borderRadius: 999,
-        border: 'none',
-        background: T.white,
-        color: T.red,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        flexShrink: 0,
-      }}>
-        <Trash2 size={13} strokeWidth={1.8} />
+      <button
+        type="button"
+        aria-label={`More options for ${child.name}`}
+        onClick={(event) => {
+          event.stopPropagation()
+          setMenuOpen((value) => !value)
+        }}
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: 999,
+          border: 'none',
+          background: 'transparent',
+          color: T.ink3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          flexShrink: 0,
+        }}
+      >
+        <MoreHorizontal size={16} strokeWidth={1.9} />
       </button>
+
+      {menuOpen && (
+        <div style={{
+          position: 'absolute',
+          right: 0,
+          top: 48,
+          zIndex: 20,
+          minWidth: 148,
+          padding: 6,
+          borderRadius: 16,
+          background: T.white,
+          border: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 14px 35px rgba(0,0,0,0.10)',
+        }}>
+          <button
+            type="button"
+            onClick={remove}
+            style={{
+              width: '100%',
+              minHeight: 36,
+              border: 'none',
+              borderRadius: 12,
+              background: 'transparent',
+              color: T.red,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              padding: '0 10px',
+              fontFamily: 'inherit',
+              fontSize: 12.5,
+              fontWeight: 520,
+              cursor: 'pointer',
+            }}
+          >
+            Remove learner
+          </button>
+        </div>
+      )}
     </article>
   )
 }
