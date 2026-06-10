@@ -965,17 +965,17 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </span>
 
                   <span style={{
-                    width: 34,
+                    width: 24,
                     height: 34,
-                    borderRadius: 999,
-                    background: T.soft,
-                    color: T.ink3,
+                    borderRadius: 0,
+                    background: 'transparent',
+                    color: T.green,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <ChevronRight size={16} strokeWidth={2} />
+                    <ChevronRight size={17} strokeWidth={2.2} />
                   </span>
                 </button>
 
@@ -1019,17 +1019,17 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </span>
 
                   <span style={{
-                    width: 34,
+                    width: 24,
                     height: 34,
-                    borderRadius: 999,
-                    background: T.soft,
-                    color: T.ink3,
+                    borderRadius: 0,
+                    background: 'transparent',
+                    color: T.green,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <ChevronRight size={16} strokeWidth={2} />
+                    <ChevronRight size={17} strokeWidth={2.2} />
                   </span>
                 </button>
               </section>
