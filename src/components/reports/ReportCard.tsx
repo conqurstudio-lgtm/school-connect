@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect, useId } from 'react'
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { BookOpen, ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
@@ -10,7 +10,7 @@ const T = {
   ink2:    '#4A4A4A',
   ink3:    '#9A9A9A',
   ink4:    '#D8D8D8',
-  divider: 'rgba(0,0,0,0.04)',
+  divider: 'rgba(0,0,0,0.035)',
   trackBg: '#EFEFF2',
   up:      '#22C55E',
   down:    '#EF4444',
@@ -266,6 +266,11 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 
 
 
+function getSubjectCountLabel(count: number) {
+  if (count === 1) return '1 subject'
+  return `${count} subjects`
+}
+
 function getSubjectDetailComment(score: number) {
   if (score >= 4.5) return 'Excellent progress'
   if (score >= 4) return 'Doing very well'
@@ -307,9 +312,9 @@ export function ReportCard({ report, childName }: Props) {
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
-    <section style={{ paddingBottom: 28 }}>
+    <section style={{ paddingBottom: 24 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '20px 0 42px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '14px 0 36px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -330,14 +335,14 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <h2 style={{
-          fontSize: 26.5, fontWeight: 650, color: T.ink,
+          fontSize: 25.5, fontWeight: 640, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
+          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 28px',
           letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -345,7 +350,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <ScoreRing score={overall} />
 
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: 22 }}>
           <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
@@ -367,8 +372,24 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '2px 10px 44px',
+          padding: '0 10px 38px',
         }}>
+          <div style={{
+            maxWidth: 396,
+            margin: '0 auto 10px',
+          }}>
+            <p style={{
+              fontSize: 11.5,
+              fontWeight: 560,
+              color: '#8FA6A1',
+              letterSpacing: '0.03em',
+              textTransform: 'uppercase',
+              margin: 0,
+            }}>
+              Teacher note
+            </p>
+          </div>
+
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -425,7 +446,8 @@ export function ReportCard({ report, childName }: Props) {
                   fontWeight: 400,
                 }}>
                   {childTeacherLabel}
-                </span>&nbsp;</p>
+                </span>
+              </p>
 
               <div className="sc-teacher-comment-card-v310" style={{
                 position: 'relative',
@@ -434,7 +456,7 @@ export function ReportCard({ report, childName }: Props) {
                 borderRadius: '18px 18px 18px 8px',
                 padding: '12px 14px',
                 overflow: 'hidden',
-                boxShadow: '0 12px 28px rgba(37,37,37,0.055)',
+                boxShadow: 'none',
               }}>
                 <p style={{
                   fontSize: 13.6,
@@ -463,37 +485,81 @@ export function ReportCard({ report, childName }: Props) {
           onClick={() => setExpanded(v => !v)}
           aria-expanded={expanded}
           style={{
-            width: 'fit-content',
-            minHeight: 38,
-            padding: '0 18px',
-            display: 'inline-flex',
+            width: '100%',
+            minHeight: 58,
+            padding: '0 2px',
+            display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            background: '#252525',
+            justifyContent: 'space-between',
+            gap: 14,
+            background: 'transparent',
             border: 'none',
-            borderRadius: 999,
+            borderTop: '1px solid rgba(0,0,0,0.035)',
             cursor: 'pointer',
             fontFamily: 'inherit',
-            marginBottom: expanded ? 12 : 0,
+            marginBottom: expanded ? 10 : 0,
           }}
         >
           <span style={{
-            fontSize: 13,
-            fontWeight: 520,
-            color: '#FFFFFF',
-            letterSpacing: '-0.005em',
-            lineHeight: 1,
+            width: 36,
+            height: 36,
+            borderRadius: 14,
+            background: '#EEF3F1',
+            color: '#8FA6A1',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
           }}>
-            Subjects
+            <BookOpen size={16} strokeWidth={1.8} />
           </span>
+
+          <span style={{
+            flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            textAlign: 'left',
+          }}>
+            <span style={{
+              fontSize: 13.5,
+              fontWeight: 560,
+              color: '#252525',
+              letterSpacing: '-0.01em',
+              lineHeight: 1.2,
+            }}>
+              Subjects
+            </span>
+            <span style={{
+              fontSize: 12.3,
+              color: '#8FA6A1',
+              lineHeight: 1.28,
+              marginTop: 3,
+              fontWeight: 430,
+            }}>
+              {expanded ? 'Hide subject progress' : `View ${getSubjectCountLabel(subjects.length).toLowerCase()}`}
+            </span>
+          </span>
+
+          <ChevronDown
+            size={18}
+            strokeWidth={2}
+            color="#8FA6A1"
+            style={{
+              flexShrink: 0,
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 180ms ease',
+            }}
+          />
         </button>
 
         {expanded && (
           <div className="sc-report-subjects-list-v306 sc-report-subjects-list-v307" style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 12,
-            padding: '2px 0 8px',
+            gap: 0,
+            padding: '0 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -505,8 +571,8 @@ export function ReportCard({ report, childName }: Props) {
 
               return (
                 <div key={String(name)} className="sc-report-subject-detail-row-v306 sc-report-subject-detail-row-v307" style={{
-                  padding: '8px 0',
-                  borderTop: 'none',
+                  padding: '11px 0',
+                  borderTop: '1px solid rgba(0,0,0,0.035)',
                 }}>
                   <div style={{
                     display: 'flex',

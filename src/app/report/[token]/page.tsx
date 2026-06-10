@@ -248,6 +248,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 
 
 function FamilyShareButton({ token }: { token: string }) {
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const [open, setOpen] = useState(false)
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -312,13 +313,35 @@ function FamilyShareButton({ token }: { token: string }) {
     await copyShareLink()
   }
 
+  useEffect(() => {
+    if (!open) return
+
+    const closeOnOutside = (event: PointerEvent) => {
+      if (!wrapRef.current) return
+      if (!wrapRef.current.contains(event.target as Node)) setOpen(false)
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    document.addEventListener('pointerdown', closeOnOutside)
+    document.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutside)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open])
+
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={wrapRef} style={{ position: 'relative' }}>
       <button
         type="button"
         onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
         disabled={creating}
         aria-label="Share report with family"
+        aria-expanded={open}
         style={{
           width: 38,
           height: 38,
@@ -346,6 +369,7 @@ function FamilyShareButton({ token }: { token: string }) {
           borderRadius: 22,
           background: '#FFFFFF',
           boxShadow: '0 18px 50px rgba(37,37,37,0.10)',
+          border: '1px solid rgba(0,0,0,0.045)',
           padding: 14,
           zIndex: 100,
         }}>
@@ -885,7 +909,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '4px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '2px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
           <div style={{
@@ -894,13 +918,13 @@ export default function ParentMagicReportPage() {
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: reports.length > 1 ? 18 : 0,
+            gap: reports.length > 1 ? 16 : 0,
           }}>
             {reports[0] && (
               <div className="sc-main-report-card-v292" style={{
                 background: '#FFFFFF',
                 borderRadius: 28,
-                padding: '14px 10px 16px',
+                padding: '10px 10px 16px',
                 border: 'none',
                 overflow: 'hidden',
               }}>
