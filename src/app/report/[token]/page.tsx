@@ -12,7 +12,7 @@ const T = {
   ink: '#1A1A1A',
   ink2: '#5F6268',
   ink3: '#9A9A9A',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F5F5F7',
   soft2: '#F8F8F9',
@@ -84,7 +84,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 
   return (
     <details className="sc-previous-report-flat-v278" style={{
-      borderTop: '1px solid rgba(0,0,0,0.06)',
+      borderTop: '1px solid rgba(0,0,0,0.045)',
       background: 'transparent',
     }}>
       <summary style={{
@@ -556,7 +556,7 @@ function SchoolQuickView({ school }: { school: any }) {
           <div style={{
             marginTop: 11,
             paddingTop: 10,
-            borderTop: '1px solid rgba(0,0,0,0.07)',
+            borderTop: '1px solid rgba(0,0,0,0.045)',
             display: 'flex',
             flexDirection: 'column',
             gap: 9,
@@ -840,7 +840,7 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main className="sc-parent-report-page sc-report-clean-page-v276" style={{
+    <main className="sc-parent-report-page sc-report-clean-page-v276 sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',

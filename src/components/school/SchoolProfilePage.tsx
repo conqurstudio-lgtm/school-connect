@@ -30,7 +30,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.035)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
@@ -169,13 +169,17 @@ function websiteHref(value?: string | null) {
   return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`
 }
 
+function teacherCountText(count: number) {
+  return `${count || 0} ${count === 1 ? 'teacher' : 'teachers'}`
+}
+
 function SectionCard({ children, style = {} }: any) {
   return (
     <section style={{
       borderRadius: 28,
-      background: T.white,
+      background: 'transparent',
       border: 'none',
-      padding: 16,
+      padding: 0,
       ...style,
     }}>
       {children}
@@ -186,14 +190,15 @@ function SectionCard({ children, style = {} }: any) {
 function MiniStat({ label, value }: any) {
   return (
     <div style={{
-      padding: '10px 8px',
-      borderRadius: 17,
+      padding: '12px 10px',
+      borderRadius: 24,
       background: T.soft,
       textAlign: 'center',
+      border: `1px solid ${T.border}`,
     }}>
       <p style={{
         fontSize: 18,
-        fontWeight: 560,
+        fontWeight: 550,
         color: T.ink,
         margin: 0,
         minHeight: 22,
@@ -203,7 +208,7 @@ function MiniStat({ label, value }: any) {
       }}>
         {value}
       </p>
-      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
+      <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0' }}>
         {label}
       </p>
     </div>
@@ -212,7 +217,7 @@ function MiniStat({ label, value }: any) {
 
 function BottomSheet({ children, onClose }: any) {
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 9000,
@@ -222,13 +227,13 @@ function BottomSheet({ children, onClose }: any) {
       justifyContent: 'center',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '90dvh',
         overflowY: 'auto',
         background: T.white,
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '28px 28px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
       }}>
         {children}
@@ -592,12 +597,12 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
-    <SectionCard style={{ padding: '0 14px', overflow: 'visible', position: 'relative', zIndex: 20 }}>
+    <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20, marginTop: 10 }}>
       <div style={{
         width: '100%',
         background: T.white,
         border: 'none',
-        padding: 15,
+        padding: '16px 0 15px',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
@@ -605,9 +610,9 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         fontFamily: 'inherit',
       }}>
         <div style={{
-          width: 38,
-          height: 38,
-          borderRadius: 14,
+          width: 40,
+          height: 40,
+          borderRadius: 16,
           background: T.accentSoft,
           color: T.accent,
           display: 'flex',
@@ -619,11 +624,11 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: 0 }}>
             Teachers & classes
           </p>
-          <p style={{ fontSize: 12.5, color: T.accent, margin: '2px 0 0' }}>
-            {teacherCountLoading ? 'Loading teachers...' : `${teacherCount || 0} teachers`}
+          <p style={{ fontSize: 12.8, color: T.accent, margin: '3px 0 0' }}>
+            {teacherCountLoading ? 'Loading teachers...' : teacherCountText(teacherCount)}
           </p>
         </div>
 
@@ -631,8 +636,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           type="button"
           onClick={onAddTeacher}
           style={{
-            minWidth: 54,
-            minHeight: 44,
+            minWidth: 50,
+            minHeight: 40,
             borderRadius: 999,
             border: 'none',
             background: T.white,
@@ -640,8 +645,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12.5,
-            fontWeight: 540,
+            fontSize: 13,
+            fontWeight: 560,
             cursor: 'pointer',
             fontFamily: 'inherit',
             flexShrink: 0,
@@ -653,7 +658,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
 
       <div style={{
         borderTop: `1px solid ${T.border}`,
-        padding: '0 14px 12px',
+        padding: '0 0 10px',
         background: T.white,
       }}>
         <TeachersTab />
@@ -884,7 +889,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const href = websiteHref(school.website)
 
   return (
-    <div className="school-safe-screen" style={{
+    <div className="school-safe-screen sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'visible',
@@ -921,7 +926,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          padding: 'calc(7px + env(safe-area-inset-top, 0px)) 16px 0',
           background: 'transparent',
           display: 'flex',
           justifyContent: 'flex-end',
@@ -970,23 +975,23 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '0 20px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
           <SectionCard style={{
-            minHeight: 260,
+            minHeight: 236,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            marginBottom: 14,
-            padding: '28px 18px 26px',
+            marginBottom: 18,
+            padding: '20px 0 24px',
           }}>
             <div style={{
-              width: 92,
-              height: 92,
-              borderRadius: 32,
+              width: 88,
+              height: 88,
+              borderRadius: 30,
               background: school.logo_url ? `url(${school.logo_url}) center/cover` : T.accentSoft,
               color: T.accent,
               display: 'flex',
@@ -995,7 +1000,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               fontSize: 25,
               fontWeight: 560,
               overflow: 'hidden',
-              marginBottom: 18,
+              marginBottom: 16,
             }}>
               {!school.logo_url && initialsFrom(school.name)}
             </div>
@@ -1003,8 +1008,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             <h1 style={{
               fontSize: 22,
               lineHeight: 1.08,
-              fontWeight: 560,
-              letterSpacing: '-0.045em',
+              fontWeight: 580,
+              letterSpacing: '-0.04em',
               color: T.ink,
               margin: '0 0 7px',
             }}>
@@ -1013,9 +1018,9 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
             <p style={{
               maxWidth: 310,
-              fontSize: 13,
+              fontSize: 13.5,
               color: T.ink3,
-              lineHeight: 1.5,
+              lineHeight: 1.48,
               margin: 0,
             }}>
               {school.tagline || 'School Connect keeps your school structure simple and organized.'}
@@ -1026,8 +1031,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               gridTemplateColumns: '1fr 1fr',
               gap: 9,
               width: '100%',
-              maxWidth: 260,
-              marginTop: 20,
+              maxWidth: 288,
+              marginTop: 22,
             }}>
               <MiniStat label="Teachers" value={teacherCountLoading ? '...' : teacherCount} />
               <MiniStat label="Admin" value={<User size={18} strokeWidth={2.25} />} />

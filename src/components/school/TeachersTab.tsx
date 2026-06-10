@@ -11,7 +11,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.035)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
@@ -250,7 +250,7 @@ export function TeachersTab() {
 
   return (
     <div style={{
-      paddingTop: teachers.length ? 4 : 10,
+      paddingTop: teachers.length ? 0 : 10,
       background: T.white,
       overflow: 'visible',
       position: 'relative',
@@ -258,9 +258,9 @@ export function TeachersTab() {
     }}>
       {teachers.length === 0 ? (
         <div style={{
-          padding: '30px 16px',
+          padding: '28px 16px',
           textAlign: 'center',
-          border: `1px dashed ${T.border}`,
+          border: `1px dashed rgba(0,0,0,0.055)`,
           borderRadius: 16,
           background: 'transparent',
           marginTop: 10,
@@ -358,19 +358,19 @@ function TeacherRow({
 
   return (
     <article style={{
-      padding: '12px 0',
+      padding: '14px 0',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
-      gap: 10,
+      gap: 12,
       position: 'relative',
       overflow: 'visible',
       opacity: isActive ? 1 : 0.62,
     }}>
       <div style={{
-        width: 36,
-        height: 36,
-        borderRadius: 14,
+        width: 40,
+        height: 40,
+        borderRadius: 15,
         background: t.photo_url ? `url(${t.photo_url}) center/cover` : T.accentSoft,
         display: 'flex',
         alignItems: 'center',
@@ -386,8 +386,8 @@ function TeacherRow({
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          fontSize: 13.8,
-          fontWeight: 540,
+          fontSize: 14.2,
+          fontWeight: 560,
           color: T.ink,
           margin: 0,
           whiteSpace: 'nowrap',
@@ -398,7 +398,7 @@ function TeacherRow({
         </p>
 
         <p style={{
-          fontSize: 12.2,
+          fontSize: 12.7,
           color: T.ink3,
           margin: '2px 0 0',
           whiteSpace: 'nowrap',
@@ -415,8 +415,8 @@ function TeacherRow({
           onClick={() => onCopy(t)}
           aria-label="Copy teacher link"
           style={{
-            width: 34,
-            height: 34,
+            width: 36,
+            height: 36,
             borderRadius: 999,
             border: 'none',
             background: isCopied ? T.accentSoft : T.white,
@@ -437,8 +437,8 @@ function TeacherRow({
         onClick={(event) => onMenu(event, t)}
         aria-label="Teacher options"
         style={{
-          width: 34,
-          height: 34,
+          width: 36,
+          height: 36,
           borderRadius: 999,
           border: 'none',
           background: T.white,
@@ -480,7 +480,7 @@ function FloatingTeacherMenu({ menu, onClose, onRotate, onRevoke, onReactivate, 
         background: T.white,
         borderRadius: 16,
         border: `1px solid ${T.border}`,
-        boxShadow: '0 18px 48px rgba(0,0,0,0.16)',
+        boxShadow: '0 18px 42px rgba(0,0,0,0.11)',
         padding: 6,
         minWidth: 184,
       }}>

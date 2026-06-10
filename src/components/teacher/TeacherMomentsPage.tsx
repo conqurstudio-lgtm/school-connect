@@ -10,7 +10,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   accent: '#8FA6A1',
@@ -267,7 +267,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   }
 
   return (
-    <main style={{
+    <main className="sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -865,7 +865,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
   const [note, setNote] = useState(moment?.note || '')
 
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 4700,
@@ -876,7 +876,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
       padding: '0 12px 12px',
       boxSizing: 'border-box',
     }}>
-      <div onClick={event => event.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         borderRadius: 28,
@@ -966,7 +966,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
 
 function DeleteMomentSheet({ loading, onClose, onDelete }: any) {
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 4700,
@@ -977,7 +977,7 @@ function DeleteMomentSheet({ loading, onClose, onDelete }: any) {
       padding: '0 12px 12px',
       boxSizing: 'border-box',
     }}>
-      <div onClick={event => event.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         borderRadius: 28,
@@ -1058,7 +1058,7 @@ function ReactionSheet({ moment, onClose }: any) {
   const reactions = moment.reactions || []
 
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 4500,
@@ -1068,13 +1068,13 @@ function ReactionSheet({ moment, onClose }: any) {
       justifyContent: 'center',
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
     }}>
-      <div onClick={event => event.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '82dvh',
         overflowY: 'auto',
         background: T.white,
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '28px 28px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
       }}>
         <div style={{

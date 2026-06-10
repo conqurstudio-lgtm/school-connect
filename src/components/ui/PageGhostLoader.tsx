@@ -15,6 +15,7 @@ export function PageGhostLoader() {
 
   return (
     <main
+      className="sc-screen-enter"
       aria-label="Loading"
       style={{
         minHeight: '100dvh',
@@ -58,7 +59,7 @@ export function PageGhostLoader() {
           borderRadius: 24,
           background: '#FFFFFF',
           padding: 18,
-          border: '1px solid rgba(0,0,0,0.04)',
+          border: '1px solid rgba(0,0,0,0.035)',
         }}>
           {row('70%', 16)}
           <div style={{ height: 14 }} />

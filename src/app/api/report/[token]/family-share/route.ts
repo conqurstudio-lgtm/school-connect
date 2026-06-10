@@ -23,13 +23,130 @@ function addDays(days: number) {
   return date.toISOString()
 }
 
+function publicOrigin(req: NextRequest) {
+  return (
+    req.headers.get('origin') ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    req.nextUrl.origin ||
+    ''
+  ).replace(/\/$/, '')
+}
+
+async function loadPermanentParentLink(sb: any, token: string) {
+  const { data, error } = await sb
+    .from('child_parent_links')
+    .select('*')
+    .eq('token', token)
+    .eq('is_active', true)
+    .maybeSingle()
+
+  if (error) throw error
+  return data || null
+}
+
+async function loadLegacyReportLink(sb: any, token: string) {
+  const { data, error } = await sb
+    .from('child_report_links')
+    .select('*')
+    .eq('token', token)
+    .maybeSingle()
+
+  if (error) throw error
+  return data || null
+}
+
+async function loadLatestPublishedReport(sb: any, childId: string) {
+  const { data, error } = await sb
+    .from('child_reports')
+    .select('*')
+    .eq('child_id', childId)
+    .eq('status', 'published')
+    .order('week_starting', { ascending: false })
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error) throw error
+  return data || null
+}
+
+async function loadReportById(sb: any, reportId: string) {
+  const { data, error } = await sb
+    .from('child_reports')
+    .select('*')
+    .eq('id', reportId)
+    .eq('status', 'published')
+    .maybeSingle()
+
+  if (error) throw error
+  return data || null
+}
+
+async function resolveReportToShare(sb: any, token: string) {
+  const parentLink = await loadPermanentParentLink(sb, token)
+
+  if (parentLink) {
+    const report = await loadLatestPublishedReport(sb, parentLink.child_id)
+
+    if (!report) {
+      return {
+        error: 'No published report found to share',
+        status: 404,
+      }
+    }
+
+    return {
+      parentLink,
+      report,
+      childId: parentLink.child_id,
+      schoolId: parentLink.school_id || report.school_id || null,
+      teacherId: report.teacher_id || parentLink.teacher_id || null,
+    }
+  }
+
+  const legacyLink = await loadLegacyReportLink(sb, token)
+
+  if (legacyLink) {
+    if (legacyLink.expires_at && new Date(legacyLink.expires_at).getTime() < Date.now()) {
+      return {
+        error: 'This report link has expired',
+        status: 410,
+      }
+    }
+
+    const report = await loadReportById(sb, legacyLink.report_id)
+
+    if (!report) {
+      return {
+        error: 'Report not found',
+        status: 404,
+      }
+    }
+
+    return {
+      parentLink: null,
+      report,
+      childId: legacyLink.child_id || report.child_id,
+      schoolId: legacyLink.school_id || report.school_id || null,
+      teacherId: report.teacher_id || null,
+    }
+  }
+
+  return {
+    error: 'Parent report link not found',
+    status: 404,
+  }
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { token: string } }
 ) {
-  const parentToken = String(params.token || '').trim()
-  if (!parentToken) {
-    return NextResponse.json({ error: 'missing token' }, { status: 400 })
+  const sourceToken = String(params.token || '').trim()
+
+  if (!sourceToken) {
+    return NextResponse.json({ error: 'Missing report token' }, { status: 400 })
   }
 
   const body = await req.json().catch(() => ({}))
@@ -37,68 +154,67 @@ export async function POST(
 
   const sb = adminClient()
 
-  const { data: parentLink, error: linkError } = await sb
-    .from('child_parent_links')
-    .select('*')
-    .eq('token', parentToken)
-    .eq('is_active', true)
-    .maybeSingle()
+  try {
+    const resolved: any = await resolveReportToShare(sb, sourceToken)
 
-  if (linkError) {
-    return NextResponse.json({ error: linkError.message }, { status: 500 })
-  }
+    if (resolved?.error) {
+      return NextResponse.json(
+        { error: resolved.error },
+        { status: resolved.status || 400 }
+      )
+    }
 
-  if (!parentLink) {
-    return NextResponse.json({ error: 'Parent report link not found' }, { status: 404 })
-  }
+    const shareToken = makeToken()
+    const expiresAt = addDays(expiresInDays)
 
-  const { data: latestReport, error: reportError } = await sb
-    .from('child_reports')
-    .select('*')
-    .eq('child_id', parentLink.child_id)
-    .eq('status', 'published')
-    .order('week_starting', { ascending: false })
-    .order('published_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+    const { data: share, error: shareError } = await sb
+      .from('family_report_shares')
+      .insert({
+        token: shareToken,
+        parent_link_id: resolved.parentLink?.id || null,
+        child_id: resolved.childId,
+        school_id: resolved.schoolId,
+        teacher_id: resolved.teacherId,
+        report_id: resolved.report.id,
+        include_moments: false,
+        is_active: true,
+        expires_at: expiresAt,
+      })
+      .select('*')
+      .single()
 
-  if (reportError) {
-    return NextResponse.json({ error: reportError.message }, { status: 500 })
-  }
+    if (shareError) {
+      const message = String(shareError.message || '')
 
-  if (!latestReport) {
-    return NextResponse.json({ error: 'No published report found to share' }, { status: 404 })
-  }
+      if (
+        message.includes('family_report_shares') ||
+        message.includes('schema cache') ||
+        message.includes('Could not find')
+      ) {
+        return NextResponse.json(
+          { error: 'Family sharing needs the Supabase SQL migration to be applied first.' },
+          { status: 500 }
+        )
+      }
 
-  const shareToken = makeToken()
-  const expiresAt = addDays(expiresInDays)
+      return NextResponse.json({ error: shareError.message }, { status: 500 })
+    }
 
-  const { data: share, error: shareError } = await sb
-    .from('family_report_shares')
-    .insert({
-      token: shareToken,
-      parent_link_id: parentLink.id,
-      child_id: parentLink.child_id,
-      school_id: parentLink.school_id || latestReport.school_id || null,
-      teacher_id: latestReport.teacher_id || parentLink.teacher_id || null,
-      report_id: latestReport.id,
-      include_moments: false,
-      is_active: true,
-      expires_at: expiresAt,
+    const origin = publicOrigin(req)
+    const shareUrl = origin
+      ? `${origin}/report/${encodeURIComponent(share.token)}`
+      : `/report/${encodeURIComponent(share.token)}`
+
+    return NextResponse.json({
+      ok: true,
+      token: share.token,
+      share_url: shareUrl,
+      expires_at: share.expires_at,
     })
-    .select('*')
-    .single()
-
-  if (shareError) {
-    return NextResponse.json({ error: shareError.message }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error?.message || 'Could not create family share link' },
+      { status: 500 }
+    )
   }
-
-  const shareUrl = `${req.nextUrl.origin}/report/${encodeURIComponent(share.token)}`
-
-  return NextResponse.json({
-    ok: true,
-    token: share.token,
-    share_url: shareUrl,
-    expires_at: share.expires_at,
-  })
 }

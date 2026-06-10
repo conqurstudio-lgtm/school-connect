@@ -9,7 +9,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   accent: '#8FA6A1',
@@ -115,7 +115,7 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
   }
 
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 3500,
@@ -125,13 +125,13 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
       justifyContent: 'center',
       fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '92dvh',
         overflowY: 'auto',
         background: T.white,
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '28px 28px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
       }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>

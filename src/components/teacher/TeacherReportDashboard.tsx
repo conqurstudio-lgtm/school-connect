@@ -13,7 +13,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
@@ -759,7 +759,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   }
 
   return (
-    <div className="teacher-safe-screen" style={{
+    <div className="teacher-safe-screen sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1028,17 +1028,20 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </div>
                 )}
               </section>
-                                          <section onClick={(event) => { event.stopPropagation(); momentFileRef.current?.click() }} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '14px 15px',
-                borderRadius: 24,
-                background: T.white,
-                border: 'none',
-                marginBottom: 14,
-                cursor: 'pointer',
-              }}>
+              <section
+                onClick={() => setShowTeacherMoments(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '14px 15px',
+                  borderRadius: 24,
+                  background: T.white,
+                  border: 'none',
+                  marginBottom: 14,
+                  cursor: 'pointer',
+                }}
+              >
                 <div style={{
                   width: 38,
                   height: 38,
@@ -1058,24 +1061,24 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     Moments
                   </p>
                   <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                    Share updates with parents.
+                    View and share private updates with parents.
                   </p>
                 </div>
 
                 <button
                   type="button"
-                  aria-label="Open Moments"
+                  aria-label="Add Moment"
                   onClick={(event) => {
                     event.stopPropagation()
-                    setShowTeacherMoments(true)
+                    momentFileRef.current?.click()
                   }}
                   style={{
                     width: 34,
                     height: 34,
                     borderRadius: 999,
                     border: 'none',
-                    background: 'transparent',
-                    color: T.ink3,
+                    background: T.soft,
+                    color: T.ink,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1084,8 +1087,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     flexShrink: 0,
                   }}
                 >
-                  <ChevronRight size={18} strokeWidth={2} />
+                  <Plus size={17} strokeWidth={2} />
                 </button>
+
+                <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
               </section>
 
               
@@ -1168,7 +1173,7 @@ function TeacherLearnersPage({
   const hasLearners = children?.length > 0
 
   return (
-    <div className="teacher-safe-screen" style={{
+    <div className="teacher-safe-screen sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1631,7 +1636,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
   }
 
   return (
-    <div className="teacher-safe-screen" style={{
+    <div className="teacher-safe-screen sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -2341,7 +2346,7 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
 
 function BottomSheet({ children, onClose }: any) {
   return (
-    <div onClick={onClose} style={{
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
       zIndex: 9000,
@@ -2350,13 +2355,13 @@ function BottomSheet({ children, onClose }: any) {
       alignItems: 'flex-end',
       justifyContent: 'center',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '90dvh',
         overflowY: 'auto',
         background: T.white,
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '28px 28px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
       }}>
         {children}
