@@ -134,6 +134,82 @@ function SchoolSafeAreaStyle() {
         0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
         40% { transform: scale(1); opacity: 1; }
       }
+
+      /* School logo intro loader v339 */
+      @keyframes schoolLogoIntroIn {
+        from { opacity: 0; transform: translateY(8px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      @keyframes schoolLogoIntroOut {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(-6px) scale(0.985); }
+      }
+
+      @keyframes schoolLoaderBackdropOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+      }
+
+      .school-page-shell {
+        opacity: 0;
+        transform: translateY(7px);
+        transition: opacity 280ms cubic-bezier(.2,.8,.2,1), transform 280ms cubic-bezier(.2,.8,.2,1);
+        will-change: opacity, transform;
+      }
+
+      .school-page-shell.is-ready {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .school-logo-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 8500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.96);
+        pointer-events: none;
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+      }
+
+      .school-logo-loader.is-leaving {
+        animation: schoolLoaderBackdropOut 280ms cubic-bezier(.2,.8,.2,1) forwards;
+      }
+
+      .school-logo-loader-mark {
+        width: 92px;
+        height: 92px;
+        border-radius: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        animation: schoolLogoIntroIn 260ms cubic-bezier(.2,.8,.2,1) both;
+        will-change: opacity, transform;
+      }
+
+      .school-logo-loader.is-leaving .school-logo-loader-mark {
+        animation: schoolLogoIntroOut 240ms cubic-bezier(.2,.8,.2,1) forwards;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .school-page-shell {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+
+        .school-logo-loader,
+        .school-logo-loader-mark,
+        .school-logo-loader.is-leaving,
+        .school-logo-loader.is-leaving .school-logo-loader-mark {
+          animation: none;
+        }
+      }
     `}</style>
   )
 }
@@ -595,6 +671,26 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
   )
 }
 
+
+function SchoolLogoIntroOverlay({ school, leaving }: any) {
+  return (
+    <div className={`school-logo-loader ${leaving ? 'is-leaving' : ''}`} aria-hidden="true">
+      <div
+        className="school-logo-loader-mark"
+        style={{
+          background: school?.logo_url ? `url(${school.logo_url}) center/cover` : T.accentSoft,
+          color: T.accent,
+          fontSize: 25,
+          fontWeight: 560,
+          boxShadow: '0 14px 34px rgba(15, 23, 42, 0.08)',
+        }}
+      >
+        {!school?.logo_url && initialsFrom(school?.name)}
+      </div>
+    </div>
+  )
+}
+
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
     <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20, marginTop: 10 }}>
@@ -765,7 +861,20 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [showEditDetails, setShowEditDetails] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [logoDraft, setLogoDraft] = useState<any>(null)
+  const [showSchoolLogoLoader, setShowSchoolLogoLoader] = useState(true)
+  const [schoolLogoLoaderLeaving, setSchoolLogoLoaderLeaving] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    // school-logo-loader-timer-v339
+    const startLeaving = window.setTimeout(() => setSchoolLogoLoaderLeaving(true), 560)
+    const finish = window.setTimeout(() => setShowSchoolLogoLoader(false), 860)
+
+    return () => {
+      window.clearTimeout(startLeaving)
+      window.clearTimeout(finish)
+    }
+  }, [])
 
   useEffect(() => {
     let alive = true
@@ -899,6 +1008,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     }}>
       <SchoolSafeAreaStyle />
 
+      {showSchoolLogoLoader && (
+        <SchoolLogoIntroOverlay school={school} leaving={schoolLogoLoaderLeaving} />
+      )}
+
       {logoDraft && (
         <LogoAdjustModal
           draft={logoDraft}
@@ -916,7 +1029,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         onChange={handleLogoChange}
       />
 
-      <div style={{
+      <div className={`school-page-shell ${showSchoolLogoLoader ? 'is-loading' : 'is-ready'}`} style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
