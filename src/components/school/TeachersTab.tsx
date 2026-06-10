@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, Copy, MoreVertical, Plus, RotateCw, Slash, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SchoolConnectLoader } from '@/components/ui/SchoolConnectLoader'
 
 const T = {
   ink: '#252525',
@@ -241,11 +240,7 @@ export function TeachersTab() {
   }
 
   if (loading) {
-    return (
-      <div style={{ padding: '34px 0' }}>
-        <SchoolConnectLoader />
-      </div>
-    )
+    return <div aria-hidden="true" style={{ height: 1 }} />
   }
 
   return (

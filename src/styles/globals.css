@@ -1490,3 +1490,57 @@ a:active {
   }
 }
 
+
+/* School Connect no-colour motion polish v338 */
+:root {
+  --sc-motion-fast: 140ms;
+  --sc-motion-page: 220ms;
+  --sc-motion-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+@keyframes scPageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    scroll-behavior: smooth;
+  }
+
+  main,
+  .sc-page,
+  .page,
+  [data-sc-page] {
+    animation: scPageEnter var(--sc-motion-page) var(--sc-motion-ease) both;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role="button"] {
+    transition:
+      transform var(--sc-motion-fast) var(--sc-motion-ease),
+      opacity var(--sc-motion-fast) var(--sc-motion-ease),
+      border-color var(--sc-motion-fast) var(--sc-motion-ease),
+      background-color var(--sc-motion-fast) var(--sc-motion-ease),
+      box-shadow var(--sc-motion-fast) var(--sc-motion-ease);
+  }
+
+  button:active,
+  [role="button"]:active {
+    transform: scale(.985);
+  }
+}
+/* End School Connect no-colour motion polish v338 */
+
