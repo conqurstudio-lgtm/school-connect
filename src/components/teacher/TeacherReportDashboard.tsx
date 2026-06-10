@@ -956,21 +956,12 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     <span style={{ display: 'block', fontSize: 14.2, fontWeight: 560, color: T.ink, margin: 0 }}>
                       Weekly reports
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.7, color: T.ink3, margin: '3px 0 0' }}>
-                      {children.length > 0 && pendingCount === 0
-                        ? 'All sent'
-                        : `${completedCount} sent · ${pendingCount} pending`}
+                    <span style={{ display: 'block', fontSize: 12.7, color: T.ink3, lineHeight: 1.38, margin: '3px 0 0' }}>
+                      Write and review weekly learner reports.
                     </span>
                   </span>
 
-                  <span style={{
-                    fontSize: 12.8,
-                    fontWeight: 560,
-                    color: T.accent,
-                    paddingRight: 2,
-                  }}>
-                    View
-                  </span>
+                  <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
                 </button>
 
                 {false && rosterOpen && (
@@ -1384,6 +1375,21 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 })
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+
+  const openMenu = (event: any) => {
+    event.stopPropagation()
+
+    const rect = menuButtonRef.current?.getBoundingClientRect()
+    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 420
+
+    setMenuPosition({
+      top: rect ? rect.bottom + 8 : 0,
+      right: rect ? Math.max(12, viewportWidth - rect.right) : 16,
+    })
+    setMenuOpen((value) => !value)
+  }
 
   const remove = async () => {
     setMenuOpen(false)
@@ -1464,8 +1470,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           <p style={{
             fontSize: 12.2,
             color: done ? '#8FA6A1' : T.ink3,
-            margin: '0px 0 0',
-            lineHeight: 1.15,
+            margin: '2px 0 0',
+            lineHeight: 1.18,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -1495,12 +1501,10 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       </button>
 
       <button
+        ref={menuButtonRef}
         type="button"
         aria-label={`More options for ${child.name}`}
-        onClick={(event) => {
-          event.stopPropagation()
-          setMenuOpen((value) => !value)
-        }}
+        onClick={openMenu}
         style={{
           width: 32,
           height: 32,
@@ -1519,41 +1523,58 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
       </button>
 
       {menuOpen && (
-        <div style={{
-          position: 'absolute',
-          right: 0,
-          top: 48,
-          zIndex: 20,
-          minWidth: 148,
-          padding: 6,
-          borderRadius: 16,
-          background: T.white,
-          border: '1px solid rgba(0,0,0,0.06)',
-          boxShadow: '0 14px 35px rgba(0,0,0,0.10)',
-        }}>
+        <>
           <button
             type="button"
-            onClick={remove}
+            aria-label="Close learner menu"
+            onClick={() => setMenuOpen(false)}
             style={{
-              width: '100%',
-              minHeight: 36,
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9998,
               border: 'none',
-              borderRadius: 12,
               background: 'transparent',
-              color: T.red,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: '0 10px',
-              fontFamily: 'inherit',
-              fontSize: 12.5,
-              fontWeight: 520,
-              cursor: 'pointer',
+              padding: 0,
+              cursor: 'default',
             }}
-          >
-            Remove learner
-          </button>
-        </div>
+          />
+
+          <div style={{
+            position: 'fixed',
+            right: menuPosition.right,
+            top: menuPosition.top,
+            zIndex: 9999,
+            minWidth: 154,
+            padding: 6,
+            borderRadius: 16,
+            background: T.white,
+            border: '1px solid rgba(0,0,0,0.055)',
+            boxShadow: '0 16px 36px rgba(0,0,0,0.12)',
+          }}>
+            <button
+              type="button"
+              onClick={remove}
+              style={{
+                width: '100%',
+                minHeight: 38,
+                border: 'none',
+                borderRadius: 12,
+                background: 'transparent',
+                color: T.red,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                padding: '0 10px',
+                fontFamily: 'inherit',
+                fontSize: 12.5,
+                fontWeight: 520,
+                cursor: 'pointer',
+              }}
+            >
+              Remove learner
+            </button>
+          </div>
+        </>
       )}
     </article>
   )
