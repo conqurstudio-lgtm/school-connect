@@ -9,7 +9,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
+  border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   accent: '#8FA6A1',
@@ -303,7 +303,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   }
 
   return (
-    <main style={{
+    <main className="sc-screen-enter" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -377,15 +377,29 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               </a>
             )}
 
-            <p style={{
-              fontSize: 15,
-              fontWeight: 560,
-              color: T.ink,
-              margin: 0,
-              letterSpacing: '-0.01em',
-            }}>
-              Moments
-            </p>
+            <div style={{ minWidth: 0 }}>
+              <p style={{
+                fontSize: 15,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.15,
+              }}>
+                Moments
+              </p>
+              <p style={{
+                fontSize: 11.8,
+                color: T.ink3,
+                margin: '2px 0 0',
+                lineHeight: 1.25,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}>
+                {child?.name ? `${child.name}'s private updates` : 'Private teacher updates'}
+              </p>
+            </div>
           </div>
         </header>
 
@@ -395,7 +409,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '20px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '18px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
           {loading ? (
@@ -416,7 +430,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {moments.map((moment, index) => (
                 <MomentPost
                   key={moment.id}
@@ -498,7 +512,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,
-      padding: '0 0 24px',
+      padding: '0 0 22px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
@@ -616,7 +630,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
                   objectFit: 'contain',
                   objectPosition: 'left center',
                   display: 'block',
-                  borderRadius: 22,
+                  borderRadius: 18,
                   background: 'transparent',
                 }}
               />

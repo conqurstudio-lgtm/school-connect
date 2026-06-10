@@ -325,15 +325,29 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
                 <ArrowLeft size={16} strokeWidth={2} />
               </button>
 
-              <p style={{
-                fontSize: 15,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-                letterSpacing: '-0.01em',
-              }}>
-                Moments
-              </p>
+              <div style={{ minWidth: 0 }}>
+                <p style={{
+                  fontSize: 15,
+                  fontWeight: 560,
+                  color: T.ink,
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.15,
+                }}>
+                  Moments
+                </p>
+                <p style={{
+                  fontSize: 11.8,
+                  color: T.ink3,
+                  margin: '2px 0 0',
+                  lineHeight: 1.25,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                  Private updates for parents
+                </p>
+              </div>
             </div>
 
             <button
@@ -341,21 +355,25 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
               onClick={() => momentFileRef.current?.click()}
               aria-label="Add Moment"
               style={{
-                width: 34,
-                height: 34,
+                minHeight: 34,
                 borderRadius: 999,
                 border: 'none',
                 background: T.soft,
                 color: T.ink2,
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                gap: 6,
                 flexShrink: 0,
                 cursor: 'pointer',
-                padding: 0,
+                padding: '0 11px',
+                fontFamily: 'inherit',
+                fontSize: 12.5,
+                fontWeight: 540,
               }}
             >
-              <Plus size={17} strokeWidth={2} />
+              <Plus size={15} strokeWidth={2} />
+              New
             </button>
           </div>
         </header>
@@ -366,7 +384,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '34px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+          padding: '18px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
           {loading ? (
@@ -387,7 +405,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
               </p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {moments.map((moment, index) => (
                 <TeacherPreviewMomentPost
                   key={moment.id}
@@ -515,12 +533,33 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
   const reactionTotal = Number(moment.reaction_count || 0)
   const [menuOpen, setMenuOpen] = useState(false)
 
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const close = () => setMenuOpen(false)
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close()
+    }
+
+    window.addEventListener('click', close)
+    window.addEventListener('scroll', close, true)
+    window.addEventListener('resize', close)
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      window.removeEventListener('click', close)
+      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('resize', close)
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [menuOpen])
+
   return (
     <article style={{
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,
-      padding: '0 0 24px',
+      padding: '0 0 22px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
@@ -622,7 +661,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
                   width: 132,
                   borderRadius: 18,
                   background: T.white,
-                  boxShadow: '0 18px 45px rgba(0,0,0,0.14)',
+                  boxShadow: '0 14px 35px rgba(0,0,0,0.085)',
                   border: `1px solid ${T.border}`,
                   padding: 6,
                 }}
@@ -744,7 +783,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
                   objectFit: 'contain',
                   objectPosition: 'left center',
                   display: 'block',
-                  borderRadius: 22,
+                  borderRadius: 18,
                   background: 'transparent',
                 }}
               />
