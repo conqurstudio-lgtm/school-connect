@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Camera,
   LogOut,
@@ -117,7 +118,7 @@ function SchoolSafeAreaStyle() {
         right: 0;
         background: #FFFFFF;
         pointer-events: none;
-        z-index: 0;
+        z-index: -1;
       }
 
       .school-safe-screen::before {
@@ -292,29 +293,50 @@ function MiniStat({ label, value }: any) {
 }
 
 function BottomSheet({ children, onClose }: any) {
-  return (
-    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose?.()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [mounted, onClose])
+
+  if (!mounted || typeof document === 'undefined') return null
+
+  return createPortal(
+    <div onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 9000,
+      zIndex: 10000,
       background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
     }}>
-      <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
+      <div onClick={e => e.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '90dvh',
         overflowY: 'auto',
         background: T.white,
-        borderRadius: '28px 28px 0 0',
+        borderRadius: '24px 24px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+        boxShadow: '0 -18px 48px rgba(0,0,0,0.12)',
       }}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
