@@ -788,7 +788,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          padding: 'calc(6px + env(safe-area-inset-top, 0px)) 16px 0',
           display: 'flex',
           justifyContent: 'flex-end',
           background: 'transparent',
@@ -820,13 +820,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '2px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.white,
         }}>
           <section style={{
             textAlign: 'center',
-            minHeight: 260,
-            padding: '28px 18px 26px',
+            minHeight: 238,
+            padding: '18px 18px 22px',
             borderRadius: 28,
             background: T.white,
             border: 'none',
@@ -837,15 +837,15 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             justifyContent: 'center',
           }}>
             <div style={{
-              width: 92,
-              height: 92,
-              borderRadius: 32,
+              width: 88,
+              height: 88,
+              borderRadius: 30,
               background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
               border: 'none',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 18px',
+              margin: '0 auto 16px',
               color: T.accent,
               fontSize: 25,
               fontWeight: 560,
@@ -880,7 +880,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               gap: 8,
               width: '100%',
               maxWidth: 320,
-              marginTop: 20,
+              marginTop: 18,
             }}>
               <MiniStat label="Learners" value={children.length} />
               <MiniStat label="Moments" value={momentSummary.moments || 0} />
@@ -916,97 +916,62 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
           ) : (
             <>
               <section style={{
-                borderRadius: 24,
                 background: T.white,
                 border: 'none',
-                overflow: 'hidden',
-                marginBottom: 14,
+                margin: '4px 0 14px',
               }}>
-                <div style={{
-                  width: '100%',
-                  background: T.white,
-                  border: 'none',
-                  padding: 15,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 11,
-                  textAlign: 'left',
-                  fontFamily: 'inherit',
-                }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowLearnersPage(true)}
-                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 14,
-                      border: 'none',
-                      background: T.accentSoft,
-                      color: T.accent,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      cursor: 'pointer',
-                    }}
-                  >
+                <button
+                  type="button"
+                  onClick={() => setShowLearnersPage(true)}
+                  style={{
+                    width: '100%',
+                    background: T.white,
+                    border: 'none',
+                    borderBottom: '1px solid rgba(0,0,0,0.04)',
+                    padding: '15px 0 17px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 14,
+                    border: 'none',
+                    background: T.accentSoft,
+                    color: T.accent,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
                     <Users size={18} strokeWidth={1.7} />
-                  </button>
+                  </span>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowLearnersPage(true)}
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      background: 'transparent',
-                      border: 'none',
-                      padding: 0,
-                      textAlign: 'left',
-                      fontFamily: 'inherit',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'block', fontSize: 14.2, fontWeight: 560, color: T.ink, margin: 0 }}>
                       Weekly reports
-                    </p>
-                    <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+                    </span>
+                    <span style={{ display: 'block', fontSize: 12.7, color: T.ink3, margin: '3px 0 0' }}>
                       {children.length > 0 && pendingCount === 0
                         ? 'All sent'
                         : `${completedCount} sent · ${pendingCount} pending`}
-                    </p>
-                  </button>
+                    </span>
+                  </span>
 
-                  
-
-                  <button
-                    type="button"
-                    onClick={() => setShowLearnersPage(true)}
-                    aria-label={rosterOpen ? 'Hide checklist' : 'Show checklist'}
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 999,
-                      border: 'none',
-                      background: T.white,
-                      color: T.ink3,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span style={{
-                        fontSize: 12.5,
-                        fontWeight: 560,
-                        color: T.accent,
-                      }}>
-                        View
-                      </span>
-                  </button>
-                </div>
+                  <span style={{
+                    fontSize: 12.8,
+                    fontWeight: 560,
+                    color: T.accent,
+                    paddingRight: 2,
+                  }}>
+                    View
+                  </span>
+                </button>
 
                 {false && rosterOpen && (
                   <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
@@ -1027,70 +992,74 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     />
                   </div>
                 )}
-              </section>
-              <section
-                onClick={() => setShowTeacherMoments(true)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '14px 15px',
-                  borderRadius: 24,
-                  background: T.white,
-                  border: 'none',
-                  marginBottom: 14,
-                  cursor: 'pointer',
-                }}
-              >
-                <div style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 14,
-                  background: T.accentSoft,
-                  color: T.accent,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Camera size={17} strokeWidth={1.8} />
-                </div>
 
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, margin: 0 }}>
-                    Moments
-                  </p>
-                  <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
-                    View and share private updates with parents.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  aria-label="Add Moment"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    momentFileRef.current?.click()
+                <div
+                  onClick={() => setShowTeacherMoments(true)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') setShowTeacherMoments(true)
                   }}
                   style={{
-                    width: 34,
-                    height: 34,
-                    borderRadius: 999,
-                    border: 'none',
-                    background: T.soft,
-                    color: T.ink,
-                    display: 'inline-flex',
+                    display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    gap: 12,
+                    padding: '17px 0 0',
+                    background: T.white,
+                    border: 'none',
                     cursor: 'pointer',
-                    padding: 0,
-                    flexShrink: 0,
                   }}
                 >
-                  <Plus size={17} strokeWidth={2} />
-                </button>
+                  <div style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 14,
+                    background: T.accentSoft,
+                    color: T.accent,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <Camera size={17} strokeWidth={1.8} />
+                  </div>
 
-                <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 14.2, fontWeight: 560, color: T.ink, margin: 0 }}>
+                      Moments
+                    </p>
+                    <p style={{ fontSize: 12.7, color: T.ink3, lineHeight: 1.38, margin: '3px 0 0' }}>
+                      View and share private updates with parents.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-label="Add Moment"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      momentFileRef.current?.click()
+                    }}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 999,
+                      border: 'none',
+                      background: T.soft,
+                      color: T.ink,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      padding: 0,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Plus size={17} strokeWidth={2} />
+                  </button>
+
+                  <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
+                </div>
               </section>
 
               
@@ -1312,15 +1281,15 @@ function TeacherLearnersPage({
 function MiniStat({ label, value }: any) {
   return (
     <div style={{
-      padding: '10px 6px',
+      padding: '9px 6px 10px',
       borderRadius: 17,
       background: T.soft,
       textAlign: 'center',
     }}>
-      <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0 }}>
+      <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0, lineHeight: 1.1 }}>
         {value}
       </p>
-      <p style={{ fontSize: 10.8, color: T.ink3, margin: '2px 0 0', whiteSpace: 'nowrap' }}>
+      <p style={{ fontSize: 10.8, color: T.ink3, margin: '4px 0 0', whiteSpace: 'nowrap' }}>
         {label}
       </p>
     </div>
