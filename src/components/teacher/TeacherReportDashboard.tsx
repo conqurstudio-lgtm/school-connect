@@ -919,6 +919,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                 background: T.white,
                 border: 'none',
                 margin: '4px 0 14px',
+                padding: '0 14px',
+                borderRadius: 24,
+                overflow: 'hidden',
               }}>
                 <button
                   type="button"
@@ -927,8 +930,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     width: '100%',
                     background: T.white,
                     border: 'none',
-                    borderBottom: '1px solid rgba(0,0,0,0.04)',
-                    padding: '15px 0 17px',
+                    borderBottom: '1px solid rgba(0,0,0,0.035)',
+                    padding: '15px 0',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 12,
@@ -953,55 +956,46 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                   </span>
 
                   <span style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ display: 'block', fontSize: 14.2, fontWeight: 560, color: T.ink, margin: 0 }}>
+                    <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
                       Weekly reports
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.7, color: T.ink3, lineHeight: 1.38, margin: '3px 0 0' }}>
-                      Write and review weekly learner reports.
+                    <span style={{ display: 'block', fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                      Write learner updates.
                     </span>
                   </span>
 
-                  <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
+                  <span style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 999,
+                    background: T.soft,
+                    color: T.ink3,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <ChevronRight size={16} strokeWidth={2} />
+                  </span>
                 </button>
 
-                {false && rosterOpen && (
-                  <div style={{ borderTop: `1px solid ${T.border}`, padding: '4px 15px 12px' }}>
-                    <ChecklistGroup
-                      title="Pending reports"
-                      items={pendingChildren}
-                      weekStart={weekStart}
-                      onOpen={openChild}
-                      onDeleted={load}
-                    />
-
-                    <ChecklistGroup
-                      title="Sent reports"
-                      items={sentChildren}
-                      weekStart={weekStart}
-                      onOpen={openChild}
-                      onDeleted={load}
-                    />
-                  </div>
-                )}
-
-                <div
+                <button
+                  type="button"
                   onClick={() => setShowTeacherMoments(true)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') setShowTeacherMoments(true)
-                  }}
                   style={{
+                    width: '100%',
+                    background: T.white,
+                    border: 'none',
+                    padding: '15px 0',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 12,
-                    padding: '17px 0 0',
-                    background: T.white,
-                    border: 'none',
+                    textAlign: 'left',
+                    fontFamily: 'inherit',
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{
+                  <span style={{
                     width: 38,
                     height: 38,
                     borderRadius: 14,
@@ -1013,44 +1007,31 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     flexShrink: 0,
                   }}>
                     <Camera size={17} strokeWidth={1.8} />
-                  </div>
+                  </span>
 
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14.2, fontWeight: 560, color: T.ink, margin: 0 }}>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
                       Moments
-                    </p>
-                    <p style={{ fontSize: 12.7, color: T.ink3, lineHeight: 1.38, margin: '3px 0 0' }}>
-                      View and share private updates with parents.
-                    </p>
-                  </div>
+                    </span>
+                    <span style={{ display: 'block', fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                      Share private class moments.
+                    </span>
+                  </span>
 
-                  <button
-                    type="button"
-                    aria-label="Add Moment"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      momentFileRef.current?.click()
-                    }}
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 999,
-                      border: 'none',
-                      background: T.soft,
-                      color: T.ink,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      padding: 0,
-                      flexShrink: 0,
-                    }}
-                  >
-                    <Plus size={17} strokeWidth={2} />
-                  </button>
-
-                  <ChevronRight size={18} strokeWidth={2} color={T.ink3} />
-                </div>
+                  <span style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: 999,
+                    background: T.soft,
+                    color: T.ink3,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <ChevronRight size={16} strokeWidth={2} />
+                  </span>
+                </button>
               </section>
 
               
