@@ -959,7 +959,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
                       Weekly reports
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                    <span style={{ display: 'block', fontSize: 12.5, color: T.accent, lineHeight: 1.35, margin: '2px 0 0' }}>
                       Write learner updates.
                     </span>
                   </span>
@@ -969,13 +969,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     height: 34,
                     borderRadius: 0,
                     background: 'transparent',
-                    color: T.green,
+                    color: T.accent,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <ChevronRight size={17} strokeWidth={2.2} />
+                    <ChevronRight size={17} strokeWidth={2} />
                   </span>
                 </button>
 
@@ -1013,7 +1013,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
                       Moments
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: T.ink3, lineHeight: 1.35, margin: '2px 0 0' }}>
+                    <span style={{ display: 'block', fontSize: 12.5, color: T.accent, lineHeight: 1.35, margin: '2px 0 0' }}>
                       Share private class moments.
                     </span>
                   </span>
@@ -1023,13 +1023,13 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
                     height: 34,
                     borderRadius: 0,
                     background: 'transparent',
-                    color: T.green,
+                    color: T.accent,
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
                   }}>
-                    <ChevronRight size={17} strokeWidth={2.2} />
+                    <ChevronRight size={17} strokeWidth={2} />
                   </span>
                 </button>
               </section>
@@ -1356,19 +1356,10 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0 })
   const menuButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const openMenu = (event: any) => {
     event.stopPropagation()
-
-    const rect = menuButtonRef.current?.getBoundingClientRect()
-    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 420
-
-    setMenuPosition({
-      top: rect ? rect.bottom + 8 : 0,
-      right: rect ? Math.max(12, viewportWidth - rect.right) : 16,
-    })
     setMenuOpen((value) => !value)
   }
 
@@ -1508,11 +1499,14 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
           <button
             type="button"
             aria-label="Close learner menu"
-            onClick={() => setMenuOpen(false)}
+            onClick={(event) => {
+              event.stopPropagation()
+              setMenuOpen(false)
+            }}
             style={{
               position: 'fixed',
               inset: 0,
-              zIndex: 9998,
+              zIndex: 80,
               border: 'none',
               background: 'transparent',
               padding: 0,
@@ -1520,26 +1514,33 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
             }}
           />
 
-          <div style={{
-            position: 'fixed',
-            right: menuPosition.right,
-            top: menuPosition.top,
-            zIndex: 9999,
-            minWidth: 154,
-            padding: 6,
-            borderRadius: 16,
-            background: T.white,
-            border: '1px solid rgba(0,0,0,0.055)',
-            boxShadow: '0 16px 36px rgba(0,0,0,0.12)',
-          }}>
+          <div
+            role="menu"
+            aria-label={`Options for ${child.name}`}
+            style={{
+              position: 'absolute',
+              right: 34,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 90,
+              minWidth: 142,
+              padding: 5,
+              borderRadius: 15,
+              background: T.white,
+              border: '1px solid rgba(0,0,0,0.055)',
+              boxShadow: '0 14px 32px rgba(0,0,0,0.105)',
+            }}
+            onClick={(event) => event.stopPropagation()}
+          >
             <button
               type="button"
+              role="menuitem"
               onClick={remove}
               style={{
                 width: '100%',
-                minHeight: 38,
+                minHeight: 36,
                 border: 'none',
-                borderRadius: 12,
+                borderRadius: 11,
                 background: 'transparent',
                 color: T.red,
                 display: 'flex',
@@ -1547,9 +1548,10 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
                 justifyContent: 'flex-start',
                 padding: '0 10px',
                 fontFamily: 'inherit',
-                fontSize: 12.5,
+                fontSize: 12.3,
                 fontWeight: 520,
                 cursor: 'pointer',
+                whiteSpace: 'nowrap',
               }}
             >
               Remove learner
