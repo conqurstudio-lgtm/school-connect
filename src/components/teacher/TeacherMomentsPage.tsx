@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
+import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -401,20 +402,10 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
-            <div style={{
-              padding: '38px 18px',
-              textAlign: 'center',
-              borderRadius: 22,
-              border: `1px dashed ${T.border}`,
-              background: 'transparent',
-            }}>
-              <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
-                No Moments shared yet
-              </p>
-              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-                Share a Moment from the teacher page to preview it here.
-              </p>
-            </div>
+            <SCEmptyState
+              title="No Moments shared yet"
+              text="Create a Moment from the plus button when there is something worth sharing."
+            />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {moments.map((moment, index) => (
@@ -911,341 +902,201 @@ function ReactionCount({ Icon, value, active }: any) {
 }
 
 
+
 function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
   const [note, setNote] = useState(moment?.note || '')
 
   return (
-    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 4700,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      padding: '0 12px 12px',
-      boxSizing: 'border-box',
-    }}>
-      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        borderRadius: 28,
-        background: T.white,
-        padding: 16,
-        boxSizing: 'border-box',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 12,
-        }}>
-          <p style={{
-            fontSize: 15,
-            fontWeight: 560,
-            color: T.ink,
-            margin: 0,
-          }}>
+    <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+        <div>
+          <p style={{ fontSize: 15, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
             Edit Moment
           </p>
+          <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', lineHeight: 1.45, margin: '3px 0 0' }}>
+            Update the caption parents see.
+          </p>
+        </div>
 
-          <button type="button" onClick={onClose} style={{
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="sc-icon-button"
+          style={{
             width: 34,
             height: 34,
             borderRadius: 999,
             border: 'none',
-            background: T.soft,
-            color: T.ink2,
+            background: 'var(--sc-soft)',
+            color: 'var(--sc-ink-3)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
             padding: 0,
-          }}>
-            <X size={16} strokeWidth={2} />
-          </button>
-        </div>
-
-        <textarea
-          value={note}
-          onChange={event => setNote(event.target.value)}
-          placeholder="Write a short caption..."
-          rows={4}
-          style={{
-            width: '100%',
-            minHeight: 104,
-            borderRadius: 20,
-            border: `1px solid ${T.border}`,
-            outline: 'none',
-            resize: 'none',
-            padding: 13,
-            boxSizing: 'border-box',
-            fontFamily: 'inherit',
-            fontSize: 16,
-            color: T.ink,
-            lineHeight: 1.45,
-            background: T.white,
-          }}
-        />
-
-        <button
-          type="button"
-          disabled={loading}
-          onClick={() => onSave(note)}
-          style={{
-            width: '100%',
-            minHeight: 46,
-            borderRadius: 18,
-            border: 'none',
-            background: '#252525',
-            color: '#FFFFFF',
-            fontSize: 13.5,
-            fontWeight: 560,
-            fontFamily: 'inherit',
-            cursor: loading ? 'default' : 'pointer',
-            opacity: loading ? 0.65 : 1,
-            marginTop: 12,
+            flexShrink: 0,
           }}
         >
-          {loading ? 'Saving...' : 'Save changes'}
+          <X size={16} strokeWidth={2} />
         </button>
       </div>
-    </div>
+
+      <SCTextArea
+        value={note}
+        onChange={setNote}
+        placeholder="Write a short caption..."
+        rows={4}
+      />
+
+      <SCButton
+        fullWidth
+        disabled={loading}
+        onClick={() => onSave(note)}
+        style={{ marginTop: 12 }}
+      >
+        {loading ? 'Saving...' : 'Save changes'}
+      </SCButton>
+    </SCBottomSheet>
   )
 }
 
 function DeleteMomentSheet({ loading, onClose, onDelete }: any) {
   return (
-    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 4700,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      padding: '0 12px 12px',
-      boxSizing: 'border-box',
-    }}>
-      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        borderRadius: 28,
-        background: T.white,
-        padding: 16,
-        boxSizing: 'border-box',
-      }}>
-        <p style={{
-          fontSize: 15,
-          fontWeight: 560,
-          color: T.ink,
-          margin: '0 0 5px',
-        }}>
-          Delete Moment?
-        </p>
+    <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
+      <p style={{ fontSize: 15, fontWeight: 620, color: 'var(--sc-ink)', margin: '0 0 5px' }}>
+        Delete Moment?
+      </p>
 
-        <p style={{
-          fontSize: 13,
-          color: T.ink3,
-          lineHeight: 1.45,
-          margin: 0,
-        }}>
-          This will remove this update from parents’ Moments view.
-        </p>
+      <p style={{ fontSize: 13, color: 'var(--sc-ink-3)', lineHeight: 1.45, margin: 0 }}>
+        This will remove this update from parents’ Moments view.
+      </p>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 9,
-          marginTop: 16,
-        }}>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            style={{
-              minHeight: 44,
-              borderRadius: 17,
-              border: `1px solid ${T.border}`,
-              background: T.white,
-              color: T.ink2,
-              fontSize: 13,
-              fontWeight: 540,
-              fontFamily: 'inherit',
-              cursor: 'pointer',
-            }}
-          >
-            Cancel
-          </button>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9, marginTop: 16 }}>
+        <SCButton tone="secondary" disabled={loading} onClick={onClose} fullWidth>
+          Cancel
+        </SCButton>
 
-          <button
-            type="button"
-            onClick={onDelete}
-            disabled={loading}
-            style={{
-              minHeight: 44,
-              borderRadius: 17,
-              border: 'none',
-              background: '#252525',
-              color: '#FFFFFF',
-              fontSize: 13,
-              fontWeight: 560,
-              fontFamily: 'inherit',
-              cursor: loading ? 'default' : 'pointer',
-              opacity: loading ? 0.65 : 1,
-            }}
-          >
-            {loading ? 'Deleting...' : 'Delete'}
-          </button>
-        </div>
+        <SCButton disabled={loading} onClick={onDelete} fullWidth>
+          {loading ? 'Deleting...' : 'Delete'}
+        </SCButton>
       </div>
-    </div>
+    </SCBottomSheet>
   )
 }
+
 
 
 function ReactionSheet({ moment, onClose }: any) {
   const reactions = moment.reactions || []
 
   return (
-    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 4500,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-    }}>
-      <div className="sc-bottom-sheet" onClick={event => event.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        maxHeight: '82dvh',
-        overflowY: 'auto',
-        background: T.white,
-        borderRadius: '28px 28px 0 0',
-        padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 12,
-          marginBottom: 16,
-        }}>
-          <div>
-            <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
-              Reactions
-            </h2>
-            <p style={{ fontSize: 13, color: T.ink3, margin: '3px 0 0' }}>
-              Parents who reacted to this Moment.
-            </p>
-          </div>
-
-          <button type="button" onClick={onClose} style={{
-            width: 34,
-            height: 34,
-            borderRadius: 999,
-            border: 'none',
-            background: T.soft,
-            color: T.ink3,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}>
-            <X size={16} />
-          </button>
+    <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
+            Reactions
+          </h2>
+          <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', margin: '3px 0 0' }}>
+            Parents who reacted to this Moment.
+          </p>
         </div>
 
-        {reactions.length === 0 ? (
-          <div style={{
-            padding: '30px 16px',
-            textAlign: 'center',
-            border: `1px dashed ${T.border}`,
-            borderRadius: 18,
-          }}>
-            <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
-              No reactions yet
-            </p>
-            <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-              Parent reactions will appear here.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {reactions.map((item: any, index: number) => (
-              <div key={`${item.child_id}-${item.reaction}-${index}`} style={{
-                padding: '12px 0',
-                borderBottom: index === reactions.length - 1 ? 'none' : `1px solid ${T.border}`,
+        <button type="button" onClick={onClose} aria-label="Close" className="sc-icon-button" style={{
+          width: 34,
+          height: 34,
+          borderRadius: 999,
+          border: 'none',
+          background: 'var(--sc-soft)',
+          color: 'var(--sc-ink-3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          padding: 0,
+          flexShrink: 0,
+        }}>
+          <X size={16} />
+        </button>
+      </div>
+
+      {reactions.length === 0 ? (
+        <SCEmptyState
+          title="No reactions yet"
+          text="Parent reactions will appear here."
+        />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {reactions.map((item: any, index: number) => (
+            <div key={`${item.child_id}-${item.reaction}-${index}`} style={{
+              padding: '12px 0',
+              borderBottom: index === reactions.length - 1 ? 'none' : '1px solid var(--sc-border)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}>
+              <div style={{
+                width: 36,
+                height: 36,
+                borderRadius: 14,
+                background: 'var(--sc-soft-2)',
+                color: 'var(--sc-ink-2)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 560,
+                flexShrink: 0,
               }}>
-                <div style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 14,
-                  background: T.accentSoft,
-                  color: T.accent,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  fontWeight: 560,
-                  flexShrink: 0,
-                }}>
-                  {initials(item.child?.name)}
-                </div>
-
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{
-                    fontSize: 13.8,
-                    fontWeight: 540,
-                    color: T.ink,
-                    margin: 0,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {item.child?.name || 'Parent'}
-                  </p>
-
-                  <p style={{
-                    fontSize: 12.2,
-                    color: T.ink3,
-                    margin: '2px 0 0',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {item.parent_whatsapp || item.parent_email || 'Parent contact hidden'}
-                  </p>
-                </div>
-
-                <span style={{
-                  minHeight: 30,
-                  borderRadius: 999,
-                  background: T.accentSoft,
-                  color: T.accent,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 5,
-                  padding: '0 10px',
-                  fontSize: 12.2,
-                  fontWeight: 540,
-                  flexShrink: 0,
-                }}>
-                  <span>{reactionIcon(item.reaction)}</span>
-                  {reactionLabel(item.reaction)}
-                </span>
+                {initials(item.child?.name)}
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{
+                  fontSize: 13.8,
+                  fontWeight: 540,
+                  color: 'var(--sc-ink)',
+                  margin: 0,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {item.child?.name || 'Parent'}
+                </p>
+
+                <p style={{
+                  fontSize: 12.2,
+                  color: 'var(--sc-ink-3)',
+                  margin: '2px 0 0',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {item.parent_whatsapp || item.parent_email || 'Parent contact hidden'}
+                </p>
+              </div>
+
+              <span style={{
+                minHeight: 30,
+                borderRadius: 999,
+                background: 'var(--sc-soft)',
+                color: 'var(--sc-ink-2)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 5,
+                padding: '0 10px',
+                fontSize: 12.2,
+                fontWeight: 540,
+                flexShrink: 0,
+              }}>
+                <span>{reactionIcon(item.reaction)}</span>
+                {reactionLabel(item.reaction)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </SCBottomSheet>
   )
 }

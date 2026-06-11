@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { SCEmptyState } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -438,20 +439,10 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
-            <div style={{
-              padding: '38px 18px',
-              textAlign: 'center',
-              borderRadius: 22,
-              border: `1px dashed ${T.border}`,
-              background: 'transparent',
-            }}>
-              <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
-                No Moments yet
-              </p>
-              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-                Teacher Moments will appear here.
-              </p>
-            </div>
+            <SCEmptyState
+              title="No Moments yet"
+              text="Teacher Moments will appear here."
+            />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {moments.map((moment, index) => (
