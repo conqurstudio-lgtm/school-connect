@@ -378,8 +378,9 @@ function BottomSheet({ children, onClose }: any) {
         className="sc-school-sheet-panel"
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%',
-          maxWidth: 520,
+          width: 'min(520px, 100%)',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
           maxHeight: '90dvh',
           overflowY: 'auto',
           background: T.white,
@@ -1239,16 +1240,18 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               {!school.logo_url && initialsFrom(school.name)}
             </div>
 
-            <h1 style={{
-              fontSize: 22,
-              lineHeight: 1.08,
-              fontWeight: 580,
-              letterSpacing: '-0.04em',
-              color: T.ink,
-              margin: '0 0 7px',
-            }}>
-              {school.name || 'School'}
-            </h1>
+            {school.name ? (
+              <h1 style={{
+                fontSize: 22,
+                lineHeight: 1.08,
+                fontWeight: 580,
+                letterSpacing: '-0.04em',
+                color: T.ink,
+                margin: '0 0 7px',
+              }}>
+                {school.name}
+              </h1>
+            ) : null}
 
             <p style={{
               maxWidth: 310,

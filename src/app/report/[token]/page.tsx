@@ -296,7 +296,7 @@ function FamilyShareButton({ token }: { token: string }) {
     if (!shareUrl) return copyShareLink()
 
     const shareData = {
-      title: 'School report',
+      title: 'Learner update',
       text: 'I am sharing a read-only school report with you.',
       url: shareUrl,
     }

@@ -355,7 +355,7 @@ export function ReportCard({ report, childName }: Props) {
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 7px',
         }}>
-          {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
+          {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly update'}
         </h2>
         <p style={{
           fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 24px',
@@ -388,104 +388,51 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 38px',
+          maxWidth: 396,
+          margin: '0 auto 34px',
+          padding: '0 10px',
         }}>
-          <div style={{
-            maxWidth: 396,
-            margin: '0 auto 10px',
+          <p style={{
+            fontSize: 11.5,
+            fontWeight: 560,
+            color: '#717171',
+            letterSpacing: '0.03em',
+            textTransform: 'uppercase',
+            margin: '0 0 9px',
           }}>
-            <p style={{
-              fontSize: 11.5,
-              fontWeight: 560,
-              color: '#717171',
-              letterSpacing: '0.03em',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}>
-              Teacher note
-            </p>
-          </div>
+            Teacher note
+          </p>
 
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 11,
-            maxWidth: 396,
-            margin: '0 auto',
+          <div className="sc-teacher-note-soft" style={{
+            background: '#F6F3EA',
+            border: '1px solid rgba(17,17,17,0.045)',
+            borderRadius: 22,
+            padding: '14px 15px',
+            boxShadow: 'none',
           }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 15,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F5F5F5',
-              color: '#717171',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 11,
-              fontWeight: 560,
-              letterSpacing: '-0.01em',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <div style={{
-              flex: 1,
-              minWidth: 0,
-              paddingTop: 1,
-            }}>
+            {teacherName ? (
               <p style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 5,
-                flexWrap: 'wrap',
-                fontSize: 13.5,
-                color: T.ink,
-                fontWeight: 560,
-                letterSpacing: '-0.015em',
-                lineHeight: 1.2,
-                margin: '0 0 8px',
+                fontSize: 12.6,
+                color: '#5F6268',
+                margin: '0 0 6px',
+                lineHeight: 1.25,
+                fontWeight: 520,
+                letterSpacing: '-0.005em',
               }}>
-                <span style={{
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 210,
-                }}>
-                  {teacherName}
-                </span>
-
-                <span style={{
-                  color: '#5F6268',
-                  fontWeight: 400,
-                }}>
-                  {childTeacherLabel}
-                </span>
+                {teacherName}
               </p>
+            ) : null}
 
-              <div className="sc-teacher-comment-card" style={{
-                position: 'relative',
-                background: '#F3F4F6',
-                border: '1px solid rgba(17,17,17,0.045)',
-                borderRadius: '18px 18px 18px 8px',
-                padding: '12px 14px',
-                overflow: 'hidden',
-                boxShadow: 'none',
-              }}>
-                <p style={{
-                  fontSize: 13.6,
-                  color: '#5F6268',
-                  margin: 0,
-                  lineHeight: 1.52,
-                  letterSpacing: '-0.005em',
-                  fontWeight: 400,
-                }}>
-                  {report.comment}
-                </p>
-              </div>
-            </div>
+            <p style={{
+              fontSize: 13.8,
+              color: '#4A4A4A',
+              margin: 0,
+              lineHeight: 1.55,
+              letterSpacing: '-0.005em',
+              fontWeight: 400,
+            }}>
+              {report.comment}
+            </p>
           </div>
         </div>
       )}

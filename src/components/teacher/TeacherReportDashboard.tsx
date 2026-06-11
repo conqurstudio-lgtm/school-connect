@@ -930,16 +930,18 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               {!teacher.photo_url && initials(teacher.name)}
             </div>
 
-            <h1 style={{
-              fontSize: 22,
-              lineHeight: 1.08,
-              fontWeight: 560,
-              letterSpacing: '-0.045em',
-              color: T.ink,
-              margin: '0 0 7px',
-            }}>
-              {teacher.name || 'Teacher'}
-            </h1>
+            {teacher.name ? (
+              <h1 style={{
+                fontSize: 22,
+                lineHeight: 1.08,
+                fontWeight: 560,
+                letterSpacing: '-0.045em',
+                color: T.ink,
+                margin: '0 0 7px',
+              }}>
+                {teacher.name}
+              </h1>
+            ) : null}
 
             <p style={{
               fontSize: 12.8,
@@ -947,7 +949,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               lineHeight: 1.35,
               margin: 0,
             }}>
-              {school?.name || 'School'} · {classLabel}
+              {[school?.name, classLabel].filter(Boolean).join(' · ')}
             </p>
 
             <div style={{
@@ -2536,7 +2538,7 @@ function BottomSheet({ children, onClose }: any) {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 12000,
+        zIndex: 10000,
         background: 'rgba(0,0,0,0.22)',
         display: 'flex',
         alignItems: 'flex-end',
@@ -2549,8 +2551,9 @@ function BottomSheet({ children, onClose }: any) {
         className="sc-teacher-sheet-panel"
         onClick={e => e.stopPropagation()}
         style={{
-          width: '100%',
-          maxWidth: 520,
+          width: 'min(520px, 100%)',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
           maxHeight: '90dvh',
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
