@@ -363,33 +363,33 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div style={{
-          padding: '2px 10px 44px',
+        <div className="sc-parent-report-teacher-note-v410" style={{
+          maxWidth: 396,
+          margin: '44px auto 46px',
+          padding: '0 10px',
         }}>
           <div style={{
             display: 'flex',
-            alignItems: 'flex-start',
+            alignItems: 'flex-end',
             gap: 11,
-            maxWidth: 396,
-            margin: '0 auto',
           }}>
             <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 15,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
-              color: '#8FA6A1',
+              width: 34,
+              height: 34,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E5E5E5',
+              color: '#777777',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: 560,
               letterSpacing: '-0.01em',
               flexShrink: 0,
               overflow: 'hidden',
+              marginBottom: 4,
             }}>
               {!teacherPhoto && teacherInitials}
             </div>
@@ -397,56 +397,22 @@ export function ReportCard({ report, childName }: Props) {
             <div style={{
               flex: 1,
               minWidth: 0,
-              paddingTop: 1,
+              background: '#F4F4F5',
+              border: 'none',
+              borderRadius: '22px 22px 22px 4px',
+              padding: '13px 16px 14px',
+              boxShadow: 'none',
             }}>
               <p style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 5,
-                flexWrap: 'wrap',
-                fontSize: 13.5,
-                color: T.ink,
-                fontWeight: 560,
-                letterSpacing: '-0.015em',
-                lineHeight: 1.2,
-                margin: '0 0 8px',
+                fontSize: 12.8,
+                color: '#3F4247',
+                margin: 0,
+                lineHeight: 1.58,
+                letterSpacing: '-0.006em',
+                fontWeight: 400,
               }}>
-                <span style={{
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 210,
-                }}>
-                  {teacherName}
-                </span>
-
-                <span style={{
-                  color: '#5F6268',
-                  fontWeight: 400,
-                }}>
-                  {childTeacherLabel}
-                </span>&nbsp;</p>
-
-              <div className="sc-teacher-comment-card-v310" style={{
-                position: 'relative',
-                background: '#F8F8F7',
-                border: 'none',
-                borderRadius: '18px 18px 18px 8px',
-                padding: '12px 14px',
-                overflow: 'hidden',
-                boxShadow: '0 12px 28px rgba(37,37,37,0.055)',
-              }}>
-                <p style={{
-                  fontSize: 13.6,
-                  color: '#5F6268',
-                  margin: 0,
-                  lineHeight: 1.56,
-                  letterSpacing: '-0.005em',
-                  fontWeight: 400,
-                }}>
-                  {report.comment}
-                </p>
-              </div>
+                {report.comment}
+              </p>
             </div>
           </div>
         </div>
