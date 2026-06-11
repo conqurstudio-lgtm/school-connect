@@ -7,7 +7,7 @@ import { GraduationCap, Share2, Copy, Check, ImageIcon } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
-import { SCButton, SCIconButton } from '@/components/ui'
+import { SCButton, SCIconButton, SCTopBar } from '@/components/ui'
 import { readLastState, writeLastState } from '@/lib/scLastState'
 
 const T = {
@@ -885,65 +885,41 @@ export default function ParentMagicReportPage() {
         flexDirection: 'column',
         background: '#FFFFFF',
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 18px 8px',
-          background: '#FFFFFF',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 14,
-          position: 'relative',
-          zIndex: 10,
-        }}>
-          <div style={{
-            minWidth: 0,
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-          }}>
-            <p style={{
-              fontSize: 14.5,
-              fontWeight: 610,
-              color: '#252525',
-              letterSpacing: '-0.015em',
-              lineHeight: 1.1,
-              margin: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '100%',
+        <SCTopBar
+          title={reportHeaderLabel}
+          align="left"
+          leftWidth={0}
+          rightWidth={isFamilyShare ? 0 : 92}
+          subtitleNode={school ? (
+            <SchoolQuickView school={school} />
+          ) : (
+            <span style={{
+              fontSize: 10.5,
+              color: '#9A9A9A',
+              fontWeight: 430,
+              lineHeight: 1,
             }}>
-              {reportHeaderLabel}
-            </p>
-
-            {school ? (
-              <SchoolQuickView school={school} />
-            ) : (
-              <span style={{
-                fontSize: 10.5,
-                color: '#9A9A9A',
-                fontWeight: 430,
-                lineHeight: 1,
-                marginTop: 4,
-              }}>
-                Private report
-              </span>
-            )}
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            flexShrink: 0,
-          }}>
-            {!isFamilyShare && <FamilyShareButton token={token || ''} />}
-            {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
-          </div>
-        </header>
+              Private report
+            </span>
+          )}
+          right={!isFamilyShare ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 8,
+              flexShrink: 0,
+            }}>
+              <FamilyShareButton token={token || ''} />
+              <MomentBellLink token={token || ''} onOpen={() => setShowMoments(true)} />
+            </div>
+          ) : null}
+          style={{
+            paddingLeft: 18,
+            paddingRight: 18,
+            zIndex: 10,
+          }}
+        />
 
         <section className="sc-report-clean-scroll-v276" style={{
           flex: 1,

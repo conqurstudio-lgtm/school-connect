@@ -5,9 +5,12 @@ import type { CSSProperties, ReactNode } from 'react'
 type Props = {
   title?: string
   subtitle?: string
+  subtitleNode?: ReactNode
   left?: ReactNode
   right?: ReactNode
   compact?: boolean
+  leftWidth?: number
+  rightWidth?: number
   align?: 'center' | 'left'
   sticky?: boolean
   style?: CSSProperties
@@ -16,15 +19,20 @@ type Props = {
 export default function SCTopBar({
   title,
   subtitle,
+  subtitleNode,
   left,
   right,
   compact = false,
+  leftWidth,
+  rightWidth,
   align = 'center',
   sticky = false,
   style,
 }: Props) {
-  const height = subtitle ? 64 : compact ? 50 : 56
-  const sideWidth = align === 'left' ? 38 : 44
+  const hasSubtitle = Boolean(subtitle || subtitleNode)
+  const height = hasSubtitle ? 64 : compact ? 50 : 56
+  const sideWidth = leftWidth ?? (align === 'left' ? 38 : 44)
+  const endWidth = rightWidth ?? 44
 
   return (
     <header
@@ -88,7 +96,20 @@ export default function SCTopBar({
           </div>
         ) : null}
 
-        {subtitle ? (
+        {subtitleNode ? (
+          <div
+            className="sc-top-bar-subtitle-node"
+            style={{
+              width: '100%',
+              marginTop: 4,
+              minHeight: 13,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {subtitleNode}
+          </div>
+        ) : subtitle ? (
           <div
             className="sc-top-bar-subtitle"
             style={{
@@ -111,8 +132,8 @@ export default function SCTopBar({
       <div
         className="sc-top-bar-right"
         style={{
-          width: 44,
-          minWidth: 44,
+          width: endWidth,
+          minWidth: endWidth,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
