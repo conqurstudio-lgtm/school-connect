@@ -308,14 +308,14 @@ export function ReportCard({ report, childName }: Props) {
   const reportStatusLabel = isLatestReport ? 'This week' : 'Previous report'
   const mutedReportOpacity = isLatestReport ? 1 : 0.82
 
-  const teacherName = report.teacher_name || 'Teacher'
+  const teacherName = String(report.teacher_name || '').trim()
   const teacherInitials = String(teacherName || 'T')
     .trim()
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((part: string) => part[0]?.toUpperCase())
-    .join('') || 'T'
+    .join('') || ''
   const teacherPhoto =
     report.teacher_photo_url ||
     report.teacher_avatar_url ||

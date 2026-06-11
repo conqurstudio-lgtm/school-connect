@@ -885,7 +885,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-            {school.name || 'School'}
+            {school.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : 'School details'}
           </p>
           <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0', overflow: 'visible', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {schoolLocation(school) || ''}
@@ -1171,39 +1171,43 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         flexDirection: 'column',
         background: T.bg,
       }}>
-        <SCTopBar
-          title=""
-          align="left"
-          leftWidth={0}
-          rightWidth={40}
-          style={{ background: T.bg }}
-          right={
-            <SCIconButton
-              label="Settings"
-              onClick={openSettings}
-              size={36}
-              tone="quiet"
-              style={{ color: T.ink2, position: 'relative' }}
-            >
-              <Settings size={17} strokeWidth={2.05} />
-              {!settingsSeen && (
-                <span
-                  className="school-settings-attention-dot"
-                  style={{
-                    position: 'absolute',
-                    top: 6,
-                    right: 6,
-                    width: 7,
-                    height: 7,
-                    borderRadius: 999,
-                    background: '#D92D20',
-                    border: `1.5px solid ${T.white}`,
-                  }}
-                />
-              )}
-            </SCIconButton>
-          }
-        />
+        <div
+          className="sc-main-action-bar"
+          style={{
+            minHeight: 56,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: 'calc(6px + env(safe-area-inset-top, 0px)) 16px 4px',
+            background: T.bg,
+          }}
+        >
+          <SCIconButton
+            label="Settings"
+            onClick={openSettings}
+            size={36}
+            tone="quiet"
+            style={{ color: T.ink2, position: 'relative' }}
+          >
+            <Settings size={17} strokeWidth={2.05} />
+            {!settingsSeen && (
+              <span
+                className="school-settings-attention-dot"
+                style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  width: 7,
+                  height: 7,
+                  borderRadius: 999,
+                  background: '#D92D20',
+                  border: `1.5px solid ${T.white}`,
+                }}
+              />
+            )}
+          </SCIconButton>
+        </div>
 
         <main style={{
           flex: 1,

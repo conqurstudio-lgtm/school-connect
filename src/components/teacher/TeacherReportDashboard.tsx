@@ -896,24 +896,28 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         flexDirection: 'column',
         background: T.white,
       }}>
-        <SCTopBar
-          title=""
-          align="left"
-          leftWidth={0}
-          rightWidth={40}
-          style={{ background: T.white }}
-          right={
-            <SCIconButton
-              label="Settings"
-              onClick={() => setShowSettings(true)}
-              size={36}
-              tone="quiet"
-              style={{ color: T.ink2 }}
-            >
-              <Settings size={17} strokeWidth={2.05} />
-            </SCIconButton>
-          }
-        />
+        <div
+          className="sc-main-action-bar"
+          style={{
+            minHeight: 56,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: 'calc(6px + env(safe-area-inset-top, 0px)) 16px 4px',
+            background: T.white,
+          }}
+        >
+          <SCIconButton
+            label="Settings"
+            onClick={() => setShowSettings(true)}
+            size={36}
+            tone="quiet"
+            style={{ color: T.ink2 }}
+          >
+            <Settings size={17} strokeWidth={2.05} />
+          </SCIconButton>
+        </div>
 
         <main style={{
           flex: 1,
@@ -2386,7 +2390,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-            {teacher.name || 'Teacher'}
+            {teacher.name && String(teacher.name).trim().toLowerCase() !== 'teacher' ? teacher.name : 'Profile details'}
           </p>
           <p style={{
             fontSize: 12.5,

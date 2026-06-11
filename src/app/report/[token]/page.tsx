@@ -841,7 +841,8 @@ export default function ParentMagicReportPage() {
   }
 
   const childName = payload.child?.name || 'Your child'
-  const teacherName = payload.teacher?.name || 'Teacher'
+  const rawTeacherName = String(payload.teacher?.name || '').trim()
+  const teacherName = rawTeacherName && rawTeacherName.toLowerCase() !== 'teacher' ? rawTeacherName : ''
   const school = payload.school || null
   const isFamilyShare = payload?.link_type === 'family_share'
   const reportHeaderLabel = getChildReportHeader(childName)
@@ -885,12 +886,20 @@ export default function ParentMagicReportPage() {
         flexDirection: 'column',
         background: '#FFFFFF',
       }}>
-        <SCTopBar
-          title=""
-          align="left"
-          leftWidth={0}
-          rightWidth={isFamilyShare ? 0 : 92}
-          right={!isFamilyShare ? (
+        <div
+          className="sc-main-action-bar"
+          style={{
+            minHeight: 56,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: 'calc(6px + env(safe-area-inset-top, 0px)) 18px 4px',
+            background: '#FFFFFF',
+            zIndex: 10,
+          }}
+        >
+          {!isFamilyShare ? (
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -902,12 +911,7 @@ export default function ParentMagicReportPage() {
               <MomentBellLink token={token || ''} onOpen={() => setShowMoments(true)} />
             </div>
           ) : null}
-          style={{
-            paddingLeft: 18,
-            paddingRight: 18,
-            zIndex: 10,
-          }}
-        />
+        </div>
 
         <section className="sc-report-clean-scroll-v276" style={{
           flex: 1,
