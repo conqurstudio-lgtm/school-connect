@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SCEmptyState } from '@/components/ui'
+import SCStartupLoader from '@/components/ui/SCStartupLoader'
 
 const T = {
   ink: '#252525',
@@ -345,6 +346,11 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
     }}>
       <SafeStyle />
 
+      <SCStartupLoader
+        show={loading && moments.length === 0}
+        initials={initials(child?.name || child?.full_name || 'SC')}
+      />
+
       <div style={{
         maxWidth: 520,
         height: '100dvh',
@@ -436,12 +442,10 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           padding: '16px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
-          {loading ? (
-            <LoadingDots />
-          ) : moments.length === 0 ? (
+          {moments.length === 0 ? (
             <SCEmptyState
-              title="No Moments yet"
-              text="Teacher Moments will appear here."
+              title={loading ? 'Loading Moments' : 'No Moments yet'}
+              text={loading ? 'Getting the latest updates.' : 'Teacher Moments will appear here.'}
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>

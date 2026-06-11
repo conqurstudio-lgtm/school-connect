@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
+import { GraduationCap, Share2, Copy, Check, ImageIcon } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
@@ -230,18 +230,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <iframe
-        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
-        title="Moments"
-        aria-hidden="true"
-        style={{
-          width: 30,
-          height: 30,
-          border: 'none',
-          display: 'block',
-          pointerEvents: 'none',
-        }}
-      />
+      <ImageIcon size={18} strokeWidth={2} color={T.ink} />
     </button>
   )
 }
