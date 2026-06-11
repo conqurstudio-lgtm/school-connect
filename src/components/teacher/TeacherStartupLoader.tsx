@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react'
 const T = {
   ink: '#252525',
   bg: '#FFFFFF',
-  accent: '#8FA6A1',
-  accentSoft: '#EEF3F1',
+  accent: '#717171',
+  accentSoft: '#F5F5F5',
 }
 
 const TEACHER_DASHBOARD_CACHE_PREFIX = 'school-connect:teacher-dashboard-cache:v2:'

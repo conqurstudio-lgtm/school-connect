@@ -19,10 +19,10 @@ const T = {
 
 const SUBJECT_GRAPH = {
   fill: '#717171',
-  fillSoft: '#EAF0EE',
-  track: '#F4F5F5',
-  border: 'rgba(143,166,161,0.20)',
-  text: '#51615E',
+  fillSoft: '#F5F5F5',
+  track: '#F4F4F4',
+  border: 'rgba(17,17,17,0.075)',
+  text: '#5F5F5F',
 }
 
 function subjectGraphOpacity(score: number): number {
@@ -33,7 +33,7 @@ function subjectGraphOpacity(score: number): number {
 
 function subjectGraphColor(score: number): string {
   const opacity = subjectGraphOpacity(score)
-  return `rgba(143, 166, 161, ${opacity})`
+  return `rgba(113, 113, 113, ${opacity})`
 }
 
 interface Props {
@@ -248,7 +248,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
         padding: '0 9px',
         borderRadius: 999,
         background: '#F5F5F5',
-        color: '#78918C',
+        color: '#717171',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
