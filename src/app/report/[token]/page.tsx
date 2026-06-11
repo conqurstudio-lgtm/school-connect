@@ -6,7 +6,8 @@ import { useParams } from 'next/navigation'
 import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
-import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
+import SCStartupLoader from '@/components/ui/SCStartupLoader'
+import { readLastState, writeLastState } from '@/lib/scLastState'
 
 const T = {
   ink: '#1A1A1A',
@@ -715,7 +716,7 @@ function ReportSafeAreaStyle() {
 }
 
 function LoadingState() {
-  return <PageGhostLoader />
+  return <SCStartupLoader show={true} initials="SC" />
 }
 
 function ErrorState({ message }: { message: string }) {
@@ -814,6 +815,15 @@ export default function ParentMagicReportPage() {
     }
 
     let alive = true
+    const cacheKey = `sc-parent-report:${token}`
+    const cached = readLastState<any>(cacheKey, null)
+
+    if (cached?.payload?.report) {
+      setPayload(cached.payload)
+      setError('')
+    }
+
+    setLoading(true)
 
     fetch(`/api/report/${encodeURIComponent(token)}`, { cache: 'no-store' })
       .then(async res => {
@@ -822,14 +832,23 @@ export default function ParentMagicReportPage() {
         if (!alive) return
 
         if (!res.ok) {
-          setError(json.error || 'This report link is invalid or has expired.')
+          if (!cached?.payload?.report) {
+            setError(json.error || 'This report link is invalid or has expired.')
+          }
           return
         }
 
         setPayload(json)
+        setError('')
+        writeLastState(cacheKey, {
+          payload: json,
+          savedAt: Date.now(),
+        })
       })
       .catch(() => {
-        if (alive) setError('Could not open this report right now.')
+        if (alive && !cached?.payload?.report) {
+          setError('Could not open this report right now.')
+        }
       })
       .finally(() => {
         if (alive) setLoading(false)
@@ -839,7 +858,8 @@ export default function ParentMagicReportPage() {
       alive = false
     }
   }, [token])
-  if (loading) return <LoadingState />
+
+  if (loading && !payload?.report) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
   if (showMoments) {
