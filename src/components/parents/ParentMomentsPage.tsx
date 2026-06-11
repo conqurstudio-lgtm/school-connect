@@ -178,6 +178,13 @@ function reactionEmoji(reaction: string) {
   return '✨'
 }
 
+function reactionTone(reaction: string) {
+  if (reaction === 'heart') return '#E25563'
+  if (reaction === 'like') return '#3B82F6'
+  if (reaction === 'smile') return '#F59E0B'
+  return T.ink
+}
+
 function ReactionBurstLayer({ bursts = [] }: any) {
   if (!bursts.length) return null
 
@@ -409,7 +416,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               text={loading ? 'Getting the latest updates.' : 'Teacher Moments will appear here.'}
             />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 34 }}>
               {moments.map((moment, index) => (
                 <MomentPost
                   key={moment.id}
@@ -487,32 +494,48 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
   const isImage = moment.file_type === 'image'
 
   return (
-    <article style={{
+    <article className="sc-parent-moment-post-v412" style={{
       display: 'grid',
-      gridTemplateColumns: '38px 1fr',
-      gap: 10,
-      padding: '0 0 22px',
+      gridTemplateColumns: '42px 1fr',
+      gap: 14,
+      padding: '0 0 28px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
       <div style={{
-        width: 38,
-        height: 38,
-        borderRadius: 14,
-        background: moment.teacher?.photo_url ? `url(${moment.teacher.photo_url}) center/cover` : T.accentSoft,
-        color: T.accent,
+        width: 42,
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-        fontWeight: 560,
-        overflow: 'hidden',
         flexShrink: 0,
       }}>
-        {!moment.teacher?.photo_url && initials(teacherName)}
+        <div style={{
+          width: 42,
+          height: 42,
+          borderRadius: 15,
+          background: moment.teacher?.photo_url ? `url(${moment.teacher.photo_url}) center/cover` : T.accentSoft,
+          color: T.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          fontWeight: 560,
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}>
+          {!moment.teacher?.photo_url && initials(teacherName)}
+        </div>
+
+        <div style={{
+          width: 1,
+          flex: 1,
+          minHeight: 28,
+          marginTop: 8,
+          background: 'rgba(17,17,17,0.08)',
+        }} />
       </div>
 
-      <div style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0, paddingTop: 2 }}>
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -522,7 +545,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
           <p style={{
             flex: 1,
             minWidth: 0,
-            fontSize: 13.8,
+            fontSize: 14.4,
             fontWeight: 560,
             color: T.ink,
             margin: 0,
@@ -533,7 +556,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
             {teacherName}
             <span style={{
               color: T.ink3,
-              fontSize: 11.5,
+              fontSize: 12.2,
               fontWeight: 520,
               marginLeft: 5,
             }}>
@@ -554,10 +577,10 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
 
         {moment.note && (
           <p style={{
-            fontSize: 13.6,
+            fontSize: 14.1,
             color: T.ink2,
-            lineHeight: 1.5,
-            margin: '10px 0 0',
+            lineHeight: 1.52,
+            margin: '14px 0 0',
             whiteSpace: 'pre-wrap',
           }}>
             {moment.note}
@@ -574,12 +597,12 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
           color: isPrivate ? T.accent : T.ink3,
           fontSize: 11.5,
           fontWeight: 560,
-          marginTop: 10,
+          marginTop: 12,
         }}>
           {isPrivate ? 'Shared only to you' : 'Shared with class'}
         </span>
 
-        <div style={{ marginTop: 12, position: 'relative' }}>
+        <div style={{ marginTop: 16, position: 'relative' }}>
           {isImage ? (
             <button
               type="button"
@@ -671,8 +694,8 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          marginTop: 13,
+          gap: 16,
+          marginTop: 15,
         }}>
           {[
             ['heart', Heart],
@@ -688,26 +711,28 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
                 type="button"
                 onClick={() => onReact(moment, key)}
                 style={{
-                  minWidth: count > 0 ? 44 : 34,
-                  height: 34,
+                  minWidth: count > 0 ? 40 : 28,
+                  height: 30,
                   borderRadius: 999,
                   border: 'none',
-                  background: active ? T.accentSoft : T.soft,
-                  color: active ? T.accent : T.ink3,
+                  background: 'transparent',
+                  color: active ? reactionTone(key) : T.ink3,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 5,
                   cursor: 'pointer',
-                  opacity: 1,
-                  padding: count > 0 ? '0 10px' : 0,
+                  opacity: reacting ? 0.72 : 1,
+                  padding: count > 0 ? '0 6px' : 0,
                   fontFamily: 'inherit',
+                  transition: 'color 160ms ease, transform 160ms ease, opacity 160ms ease',
+                  transform: active ? 'translateY(-1px)' : 'none',
                 }}
               >
-                <Icon size={15} strokeWidth={1.9} />
+                <Icon size={16} strokeWidth={active ? 2.25 : 1.85} />
                 {count > 0 && (
                   <span style={{
-                    fontSize: 11.5,
+                    fontSize: 12,
                     fontWeight: 560,
                     lineHeight: 1,
                   }}>
