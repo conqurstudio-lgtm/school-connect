@@ -41,6 +41,10 @@ function formatShortDate(value?: string) {
   }
 }
 
+function parentMomentsCacheKey(token: string) {
+  return `school-connect:parent-moments:${token}:v1`
+}
+
 function formatTimeAgo(value?: string) {
   if (!value) return ''
 
@@ -212,8 +216,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   const [reacting, setReacting] = useState('')
   const [reactionBursts, setReactionBursts] = useState<any[]>([])
 
-  const load = async () => {
-    setLoading(true)
+  const load = async (quiet = false) => {
+    if (!quiet) setLoading(true)
 
     try {
       const res = await fetch(`/api/parent/moments?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
@@ -221,17 +225,43 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
       if (!res.ok) throw new Error(json.error || 'Could not load Moments')
 
-      setChild(json.child)
-      setMoments(json.moments || [])
+      const nextChild = json.child
+      const nextMoments = json.moments || []
+
+      setChild(nextChild)
+      setMoments(nextMoments)
+
+      try {
+        window.localStorage.setItem(parentMomentsCacheKey(token), JSON.stringify({
+          child: nextChild,
+          moments: nextMoments,
+          saved_at: new Date().toISOString(),
+        }))
+      } catch {}
     } catch (error: any) {
-      toast.error(error.message || 'Could not load Moments')
+      if (!quiet) toast.error(error.message || 'Could not load Moments')
     }
 
     setLoading(false)
   }
 
   useEffect(() => {
-    load()
+    let usedCache = false
+
+    try {
+      const raw = window.localStorage.getItem(parentMomentsCacheKey(token))
+      if (raw) {
+        const cached = JSON.parse(raw)
+        if (cached?.moments) {
+          setChild(cached.child || null)
+          setMoments(cached.moments || [])
+          setLoading(false)
+          usedCache = true
+        }
+      }
+    } catch {}
+
+    load(usedCache)
   }, [token])
 
 

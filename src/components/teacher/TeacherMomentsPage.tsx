@@ -18,6 +18,11 @@ const T = {
   white: '#FFFFFF',
 }
 
+function teacherMomentsCacheKey(teacher: any) {
+  const key = teacher?.id || teacher?.teacher_id || teacher?.email || 'teacher'
+  return `school-connect:teacher-moments:${key}:v1`
+}
+
 function initials(name?: string) {
   return String(name || '?')
     .split(' ')
@@ -158,8 +163,8 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement | null>(null)
 
-  const load = async () => {
-    setLoading(true)
+  const load = async (quiet = false) => {
+    if (!quiet) setLoading(true)
 
     try {
       const res = await fetch('/api/teacher/moments/list', { cache: 'no-store' })
@@ -167,18 +172,43 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
 
       if (!res.ok) throw new Error(json.error || 'Could not load Moments')
 
-      setMoments(json.moments || [])
+      const nextMoments = json.moments || []
+
+      setMoments(nextMoments)
       onChanged?.(json.summary)
+
+      try {
+        window.localStorage.setItem(teacherMomentsCacheKey(teacher), JSON.stringify({
+          moments: nextMoments,
+          summary: json.summary || null,
+          saved_at: new Date().toISOString(),
+        }))
+      } catch {}
     } catch (error: any) {
-      toast.error(error.message || 'Could not load Moments')
+      if (!quiet) toast.error(error.message || 'Could not load Moments')
     }
 
     setLoading(false)
   }
 
   useEffect(() => {
-    load()
-  }, [])
+    let usedCache = false
+
+    try {
+      const raw = window.localStorage.getItem(teacherMomentsCacheKey(teacher))
+      if (raw) {
+        const cached = JSON.parse(raw)
+        if (cached?.moments) {
+          setMoments(cached.moments || [])
+          if (cached.summary) onChanged?.(cached.summary)
+          setLoading(false)
+          usedCache = true
+        }
+      }
+    } catch {}
+
+    load(usedCache)
+  }, [teacher?.id, teacher?.teacher_id, teacher?.email])
 
 
   const handleTeacherMomentFileChange = (event: any) => {
