@@ -325,11 +325,11 @@ function FamilyShareButton({ token }: { token: string }) {
       if (event.key === 'Escape') setOpen(false)
     }
 
-    document.addEventListener('pointerdown', closeOnOutside)
+    document.addEventListener('pointerdown', closeOnOutside, true)
     document.addEventListener('keydown', closeOnEscape)
 
     return () => {
-      document.removeEventListener('pointerdown', closeOnOutside)
+      document.removeEventListener('pointerdown', closeOnOutside, true)
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [open])
@@ -361,7 +361,21 @@ function FamilyShareButton({ token }: { token: string }) {
       </button>
 
       {open && (
-        <div style={{
+        <>
+          <div
+            aria-hidden="true"
+            onPointerDown={() => setOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'transparent',
+              zIndex: 90,
+            }}
+          />
+
+          <div
+            onPointerDown={(event) => event.stopPropagation()}
+            style={{
           position: 'absolute',
           top: 44,
           right: 0,
@@ -441,7 +455,8 @@ function FamilyShareButton({ token }: { token: string }) {
               Share
             </button>
           </div>
-        </div>
+          </div>
+        </>
       )}
     </div>
   )
@@ -478,11 +493,11 @@ function SchoolQuickView({ school }: { school: any }) {
       if (event.key === 'Escape') setOpen(false)
     }
 
-    document.addEventListener('pointerdown', closeOnOutside)
+    document.addEventListener('pointerdown', closeOnOutside, true)
     document.addEventListener('keydown', closeOnEscape)
 
     return () => {
-      document.removeEventListener('pointerdown', closeOnOutside)
+      document.removeEventListener('pointerdown', closeOnOutside, true)
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [open])

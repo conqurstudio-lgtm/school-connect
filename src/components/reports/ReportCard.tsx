@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect, useId } from 'react'
-import { BookOpen, ChevronDown, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
@@ -485,81 +485,37 @@ export function ReportCard({ report, childName }: Props) {
           onClick={() => setExpanded(v => !v)}
           aria-expanded={expanded}
           style={{
-            width: '100%',
-            minHeight: 58,
-            padding: '0 2px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 14,
-            background: 'transparent',
-            border: 'none',
-            borderTop: '1px solid rgba(0,0,0,0.035)',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            marginBottom: expanded ? 10 : 0,
-          }}
-        >
-          <span style={{
-            width: 36,
-            height: 36,
-            borderRadius: 14,
-            background: '#EEF3F1',
-            color: '#8FA6A1',
+            width: 'fit-content',
+            minHeight: 38,
+            padding: '0 18px',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <BookOpen size={16} strokeWidth={1.8} />
-          </span>
-
+            background: '#252525',
+            border: 'none',
+            borderRadius: 999,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            marginBottom: expanded ? 12 : 0,
+          }}
+        >
           <span style={{
-            flex: 1,
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            textAlign: 'left',
+            fontSize: 13,
+            fontWeight: 520,
+            color: '#FFFFFF',
+            letterSpacing: '-0.005em',
+            lineHeight: 1,
           }}>
-            <span style={{
-              fontSize: 13.5,
-              fontWeight: 560,
-              color: '#252525',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.2,
-            }}>
-              Subjects
-            </span>
-            <span style={{
-              fontSize: 12.3,
-              color: '#8FA6A1',
-              lineHeight: 1.28,
-              marginTop: 3,
-              fontWeight: 430,
-            }}>
-              {expanded ? 'Hide subject progress' : `View ${getSubjectCountLabel(subjects.length).toLowerCase()}`}
-            </span>
+            Subjects
           </span>
-
-          <ChevronDown
-            size={18}
-            strokeWidth={2}
-            color="#8FA6A1"
-            style={{
-              flexShrink: 0,
-              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 180ms ease',
-            }}
-          />
         </button>
 
         {expanded && (
           <div className="sc-report-subjects-list-v306 sc-report-subjects-list-v307" style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 0,
-            padding: '0 0 8px',
+            gap: 12,
+            padding: '2px 0 8px',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -571,8 +527,8 @@ export function ReportCard({ report, childName }: Props) {
 
               return (
                 <div key={String(name)} className="sc-report-subject-detail-row-v306 sc-report-subject-detail-row-v307" style={{
-                  padding: '11px 0',
-                  borderTop: '1px solid rgba(0,0,0,0.035)',
+                  padding: '8px 0',
+                  borderTop: 'none',
                 }}>
                   <div style={{
                     display: 'flex',
