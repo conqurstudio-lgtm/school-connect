@@ -154,6 +154,18 @@ function SchoolSafeAreaStyle() {
         to { opacity: 0; }
       }
 
+
+
+      @keyframes scSheetBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes scSheetPanelIn {
+        from { transform: translateY(18px); opacity: 0.92; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
       .school-page-shell {
         opacity: 0;
         transform: translateY(7px);
@@ -345,26 +357,44 @@ function BottomSheet({ children, onClose }: any) {
   if (!mounted || typeof document === 'undefined') return null
 
   return createPortal(
-    <div onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 10000,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        maxHeight: '90dvh',
-        overflowY: 'auto',
-        background: T.white,
-        borderRadius: '24px 24px 0 0',
-        padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 48px rgba(0,0,0,0.12)',
-      }}>
+    <div
+      className="sc-school-sheet-backdrop"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 10000,
+        background: 'rgba(0,0,0,0.22)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        animation: 'scSheetBackdropIn 180ms cubic-bezier(.2,.8,.2,1) both',
+      }}
+    >
+      <div
+        className="sc-school-sheet-panel"
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          maxHeight: '90dvh',
+          overflowY: 'auto',
+          background: T.white,
+          borderRadius: '28px 28px 0 0',
+          padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+          boxShadow: '0 -10px 34px rgba(0,0,0,0.08)',
+          borderTop: '1px solid rgba(0,0,0,0.04)',
+          animation: 'scSheetPanelIn 240ms cubic-bezier(.2,.8,.2,1) both',
+        }}
+      >
+        <div style={{
+          width: 38,
+          height: 4,
+          borderRadius: 999,
+          background: 'rgba(0,0,0,0.10)',
+          margin: '0 auto 14px',
+        }} />
         {children}
       </div>
     </div>,
@@ -376,35 +406,36 @@ function SheetHeader({ title, subtitle, onClose }: any) {
   return (
     <div style={{
       display: 'flex',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       justifyContent: 'space-between',
       gap: 12,
       marginBottom: 16,
     }}>
-      <div>
-        <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
+      <div style={{ minWidth: 0 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 580, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
           {title}
         </h2>
         {subtitle && (
-          <p style={{ fontSize: 13, color: T.ink3, margin: '3px 0 0' }}>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '3px 0 0', lineHeight: 1.35 }}>
             {subtitle}
           </p>
         )}
       </div>
 
-      <button type="button" onClick={onClose} style={{
+      <button type="button" onClick={onClose} aria-label="Close" style={{
         width: 34,
         height: 34,
         borderRadius: 999,
         border: 'none',
-        background: T.soft,
+        background: 'transparent',
         color: T.ink3,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
+        padding: 0,
       }}>
-        <X size={16} />
+        <X size={17} strokeWidth={1.9} />
       </button>
     </div>
   )
@@ -790,8 +821,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             minHeight: 40,
             borderRadius: 999,
             border: 'none',
-            background: T.white,
-            color: T.accent,
+            background: T.soft,
+            color: T.ink2,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -820,7 +851,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
 function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, uploading, onSignOut }: any) {
   return (
     <BottomSheet onClose={onClose}>
-      <SheetHeader title="Settings" subtitle="School profile and account" onClose={onClose} />
+      <SheetHeader title="Settings" subtitle="Profile and account" onClose={onClose} />
 
       <div style={{
         display: 'flex',
