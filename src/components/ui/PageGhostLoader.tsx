@@ -27,13 +27,6 @@ export function PageGhostLoader() {
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
-      <style>{`
-        @keyframes scGhostMove {
-          0% { background-position: 120% 0; }
-          100% { background-position: -120% 0; }
-        }
-      `}</style>
-
       <section
         style={{
           width: '100%',

@@ -1649,3 +1649,10 @@ body {
   }
 }
 
+
+
+/* Page ghost loader shimmer. Kept globally to avoid inline <style> tags inside React render trees. */
+@keyframes scGhostMove {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
