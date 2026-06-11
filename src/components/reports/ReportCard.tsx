@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useId } from 'react'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
+import { getOverallScore, getScoreLabel } from '@/lib/reports'
 
 const T = {
   ink:     '#1A1A1A',
@@ -95,14 +95,6 @@ function shortenSubject(name: string): string {
   return map[name] ?? name
 }
 
-// Pick a powerful and encouraging emoji based on the score
-function getScoreEmoji(score: number): string {
-  if (score >= 4.5) return '🏆'   // excellent
-  if (score >= 4)   return '✨'   // very good
-  if (score >= 3.5) return '⭐'   // good
-  return '🌱'                    // needs work / growing
-}
-
 function formatWeek(date: string): string {
   const d = new Date(date)
   const end = new Date(d); end.setDate(d.getDate() + 4)
@@ -127,8 +119,8 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
-  const size   = 200
-  const stroke = 8
+  const size   = 184
+  const stroke = 7
   const radius = (size - stroke) / 2
   const circ   = 2 * Math.PI * radius
   const targetPct = score / max
@@ -194,7 +186,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         alignItems: 'center', justifyContent: 'center',
       }}>
         <div style={{
-          fontSize: 48, fontWeight: 600, color: T.ink,
+          fontSize: 45, fontWeight: 600, color: T.ink,
           letterSpacing: '-0.04em', lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>
@@ -208,16 +200,6 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         </div>
       </div>
 
-      {/* Emoji — sits below the ring, near the bottom edge */}
-      <div style={{
-        position: 'absolute',
-        left: 0, right: 0,
-        bottom: -10,
-        textAlign: 'center',
-        fontSize: 38, lineHeight: 1,
-      }}>
-        {getScoreEmoji(score)}
-      </div>
     </div>
   )
 }
@@ -314,7 +296,7 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section style={{ paddingBottom: 24 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '14px 0 36px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '12px 0 30px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -335,14 +317,14 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <h2 style={{
-          fontSize: 25.5, fontWeight: 640, color: T.ink,
+          fontSize: 24.5, fontWeight: 630, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 28px',
+          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 24px',
           letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -350,9 +332,9 @@ export function ReportCard({ report, childName }: Props) {
 
         <ScoreRing score={overall} />
 
-        <div style={{ marginTop: 22 }}>
+        <div style={{ marginTop: 18 }}>
           <p style={{
-            fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
+            fontSize: 15.5, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -451,8 +433,8 @@ export function ReportCard({ report, childName }: Props) {
 
               <div className="sc-teacher-comment-card-v310" style={{
                 position: 'relative',
-                background: '#F8F8F7',
-                border: 'none',
+                background: '#F7F7F7',
+                border: '1px solid rgba(17,17,17,0.045)',
                 borderRadius: '18px 18px 18px 8px',
                 padding: '12px 14px',
                 overflow: 'hidden',
@@ -462,7 +444,7 @@ export function ReportCard({ report, childName }: Props) {
                   fontSize: 13.6,
                   color: '#5F6268',
                   margin: 0,
-                  lineHeight: 1.56,
+                  lineHeight: 1.52,
                   letterSpacing: '-0.005em',
                   fontWeight: 400,
                 }}>
@@ -555,7 +537,7 @@ export function ReportCard({ report, childName }: Props) {
                         width: '100%',
                         maxWidth: 180,
                         borderRadius: 999,
-                        background: 'rgba(37,37,37,0.08)',
+                        background: 'rgba(37,37,37,0.065)',
                         overflow: 'hidden',
                         marginTop: 8,
                       }}>
@@ -563,7 +545,7 @@ export function ReportCard({ report, childName }: Props) {
                           height: '100%',
                           width: `${pct}%`,
                           borderRadius: 999,
-                          background: '#717171',
+                          background: '#5F5F5F',
                         }} />
                       </div>
 
@@ -590,7 +572,7 @@ export function ReportCard({ report, childName }: Props) {
                         minWidth: 34,
                         height: 28,
                         borderRadius: 999,
-                        background: 'rgba(255,255,255,0.72)',
+                        background: '#F7F7F7',
                         color: '#252525',
                         display: 'inline-flex',
                         alignItems: 'center',

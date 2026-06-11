@@ -40,10 +40,10 @@ export function getOverallScore(scores: Record<string, number>): number {
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 4)   return '#22C55E'  // green
-  if (score >= 3)   return '#78A6FE'  // blue
-  if (score >= 2)   return '#F59E0B'  // amber
-  return '#EF4444'                     // red
+  if (score >= 4)   return '#717171'
+  if (score >= 3)   return '#8A8A8A'
+  if (score >= 2)   return '#A3A3A3'
+  return '#B42318'
 }
 
 export function getScoreLabel(score: number): string {
