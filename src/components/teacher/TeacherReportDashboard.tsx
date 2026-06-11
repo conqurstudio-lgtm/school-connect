@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
+import SCActionRow from '@/components/ui/SCActionRow'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -994,123 +995,31 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
             </section>
           ) : (
             <>
-              <section style={{
-                background: T.white,
-                border: 'none',
-                margin: '4px 0 14px',
-                padding: '0 14px',
-                borderRadius: 24,
-                overflow: 'hidden',
-              }}>
-                <button
-                  type="button"
-                  onClick={() => { setActiveChild(null); setPreviewChild(null); setShowLearnersPage(true) }}
-                  style={{
-                    width: '100%',
-                    background: T.white,
-                    border: 'none',
-                    borderBottom: '1px solid rgba(0,0,0,0.035)',
-                    padding: '15px 0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    textAlign: 'left',
-                    fontFamily: 'inherit',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 14,
-                    border: 'none',
-                    background: T.accentSoft,
-                    color: T.accent,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <Users size={18} strokeWidth={1.7} />
-                  </span>
+              <section
+                style={{
+                  border: 'none',
+                  margin: '4px 0 14px',
+                  padding: '0 14px',
+                  borderRadius: 24,
+                  overflow: 'hidden',
+                  background: T.white,
+                }}
+              >
+                <SCActionRow
+                  icon={<Users size={18} strokeWidth={1.7} />}
+                  title="Weekly reports"
+                  subtitle={children.length > 0 && pendingCount === 0 ? 'All reports sent.' : 'Write learner updates.'}
+                  onClick={() => setShowLearnersPage(true)}
+                />
 
-                  <span style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-                      Weekly reports
-                    </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: T.accent, lineHeight: 1.35, margin: '2px 0 0' }}>
-                      Write learner updates.
-                    </span>
-                  </span>
+                <div className="sc-thin-divider" />
 
-                  <span style={{
-                    width: 24,
-                    height: 34,
-                    borderRadius: 0,
-                    background: 'transparent',
-                    color: T.accent,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <ChevronRight size={17} strokeWidth={2} />
-                  </span>
-                </button>
-
-                <button
-                  type="button"
+                <SCActionRow
+                  icon={<Camera size={17} strokeWidth={1.8} />}
+                  title="Moments"
+                  subtitle="Share class moments."
                   onClick={() => setShowTeacherMoments(true)}
-                  style={{
-                    width: '100%',
-                    background: T.white,
-                    border: 'none',
-                    padding: '15px 0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    textAlign: 'left',
-                    fontFamily: 'inherit',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 14,
-                    background: T.accentSoft,
-                    color: T.accent,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <Camera size={17} strokeWidth={1.8} />
-                  </span>
-
-                  <span style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ display: 'block', fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
-                      Moments
-                    </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: T.accent, lineHeight: 1.35, margin: '2px 0 0' }}>
-                      Share private class moments.
-                    </span>
-                  </span>
-
-                  <span style={{
-                    width: 24,
-                    height: 34,
-                    borderRadius: 0,
-                    background: 'transparent',
-                    color: T.accent,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}>
-                    <ChevronRight size={17} strokeWidth={2} />
-                  </span>
-                </button>
+                />
               </section>
 
               
