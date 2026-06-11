@@ -18,6 +18,8 @@ import { createClient } from '@/lib/supabase/client'
 import toast from 'react-hot-toast'
 import type { School, Profile } from '@/lib/types'
 import { TeachersTab } from './TeachersTab'
+import SCTopBar from '@/components/ui/SCTopBar'
+import SCIconButton from '@/components/ui/SCIconButton'
 
 interface SchoolProfilePageProps {
   school: School
@@ -1167,51 +1169,39 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         flexDirection: 'column',
         background: T.bg,
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(7px + env(safe-area-inset-top, 0px)) 16px 0',
-          background: 'transparent',
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}>
-          <button
-            type="button"
-            onClick={openSettings}
-            aria-label="Settings"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: 'none',
-              background: T.white,
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            
-              position: 'relative',}}
-          >
-            <Settings size={17} strokeWidth={2.05} />
-          
-            {!settingsSeen && (
-              <span
-                className="school-settings-attention-dot"
-                style={{
-                  position: 'absolute',
-                  top: 6,
-                  right: 6,
-                  width: 7,
-                  height: 7,
-                  borderRadius: 999,
-                  background: '#D92D20',
-                  border: `1.5px solid ${T.white}`,
-                }}
-              />
-            )}
-</button>
-        </header>
+        <SCTopBar
+          title="School"
+          align="left"
+          leftWidth={0}
+          rightWidth={40}
+          style={{ background: T.bg }}
+          right={
+            <SCIconButton
+              label="Settings"
+              onClick={openSettings}
+              size={36}
+              tone="quiet"
+              style={{ color: T.ink2, position: 'relative' }}
+            >
+              <Settings size={17} strokeWidth={2.05} />
+              {!settingsSeen && (
+                <span
+                  className="school-settings-attention-dot"
+                  style={{
+                    position: 'absolute',
+                    top: 6,
+                    right: 6,
+                    width: 7,
+                    height: 7,
+                    borderRadius: 999,
+                    background: '#D92D20',
+                    border: `1.5px solid ${T.white}`,
+                  }}
+                />
+              )}
+            </SCIconButton>
+          }
+        />
 
         <main style={{
           flex: 1,

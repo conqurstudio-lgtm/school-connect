@@ -11,6 +11,7 @@ import SCReportRow from '@/components/ui/SCReportRow'
 import SCScoreRow from '@/components/ui/SCScoreRow'
 import SCButton from '@/components/ui/SCButton'
 import SCTopBar from '@/components/ui/SCTopBar'
+import SCIconButton from '@/components/ui/SCIconButton'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -870,34 +871,24 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         flexDirection: 'column',
         background: T.white,
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(6px + env(safe-area-inset-top, 0px)) 16px 0',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          background: 'transparent',
-        }}>
-<button
-            type="button"
-            onClick={() => setShowSettings(true)}
-            aria-label="Settings"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: 'none',
-              background: T.white,
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-          >
-            <Settings size={17} strokeWidth={2.05} />
-          </button>
-        </header>
+        <SCTopBar
+          title="Teacher"
+          align="left"
+          leftWidth={0}
+          rightWidth={40}
+          style={{ background: T.white }}
+          right={
+            <SCIconButton
+              label="Settings"
+              onClick={() => setShowSettings(true)}
+              size={36}
+              tone="quiet"
+              style={{ color: T.ink2 }}
+            >
+              <Settings size={17} strokeWidth={2.05} />
+            </SCIconButton>
+          }
+        />
 
         <main style={{
           flex: 1,
