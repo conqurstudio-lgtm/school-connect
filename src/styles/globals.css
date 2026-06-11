@@ -1899,3 +1899,22 @@ a,
 }
 /* SCHOOL CONNECT SHARED ROW POLISH V358 END */
 
+
+/* SCHOOL CONNECT SHARED TOP BAR V376 START */
+.sc-top-bar {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sc-top-bar .sc-icon-button {
+  transition: transform .14s var(--sc-ease-standard), background .14s var(--sc-ease-standard), opacity .14s var(--sc-ease-standard);
+}
+
+.sc-top-bar .sc-icon-button:active {
+  transform: scale(.96);
+}
+
+.sc-top-bar-title,
+.sc-top-bar-subtitle {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+/* SCHOOL CONNECT SHARED TOP BAR V376 END */

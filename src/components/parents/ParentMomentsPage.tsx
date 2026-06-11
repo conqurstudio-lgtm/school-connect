@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SCEmptyState } from '@/components/ui'
+import { SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
 
 const T = {
@@ -359,44 +359,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
         flexDirection: 'column',
         background: T.bg,
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          background: 'transparent',
-          minHeight: 42,
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            minWidth: 0,
-          }}>
-            {embedded ? (
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Back"
-                className="sc-icon-button"
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: 'transparent',
-                  color: T.ink,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
-              >
+        <SCTopBar
+          title="Moments"
+          align="left"
+          compact
+          left={
+            embedded ? (
+              <SCIconButton label="Back" onClick={onClose} tone="quiet" size={38}>
                 <ArrowLeft size={19} strokeWidth={2.05} />
-              </button>
+              </SCIconButton>
             ) : (
               <a
                 href={`/report/${token}`}
@@ -419,19 +390,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               >
                 <ArrowLeft size={19} strokeWidth={2.05} />
               </a>
-            )}
-
-            <span style={{
-              fontSize: 15.5,
-              fontWeight: 620,
-              letterSpacing: '-0.018em',
-              color: T.ink,
-              whiteSpace: 'nowrap',
-            }}>
-              Moments
-            </span>
-          </div>
-        </header>
+            )
+          }
+        />
 
         <section style={{
           flex: 1,

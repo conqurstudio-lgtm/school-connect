@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
-import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState } from '@/components/ui'
+import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -317,78 +317,21 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
         flexDirection: 'column',
         background: T.bg,
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'transparent',
-          minHeight: 42,
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            minWidth: 0,
-          }}>
-            <button
-              type="button"
-              onClick={onBack}
-              aria-label="Back"
-              className="sc-icon-button"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: 'transparent',
-                color: T.ink,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            >
+        <SCTopBar
+          title="Moments"
+          align="left"
+          compact
+          left={
+            <SCIconButton label="Back" onClick={onBack} tone="quiet" size={38}>
               <ArrowLeft size={19} strokeWidth={2.05} />
-            </button>
-
-            <span style={{
-              fontSize: 15.5,
-              fontWeight: 620,
-              letterSpacing: '-0.018em',
-              color: T.ink,
-              whiteSpace: 'nowrap',
-            }}>
-              Moments
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => momentFileRef.current?.click()}
-            aria-label="Add Moment"
-            className="sc-icon-button"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: 'none',
-              background: 'transparent',
-              color: T.ink,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              cursor: 'pointer',
-              padding: 0,
-            }}
-          >
-            <Plus size={20} strokeWidth={2.05} />
-          </button>
-        </header>
+            </SCIconButton>
+          }
+          right={
+            <SCIconButton label="Add Moment" onClick={() => momentFileRef.current?.click()} tone="quiet" size={38}>
+              <Plus size={20} strokeWidth={2.05} />
+            </SCIconButton>
+          }
+        />
 
         <section style={{
           flex: 1,
