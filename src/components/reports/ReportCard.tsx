@@ -465,7 +465,7 @@ export function ReportCard({ report, childName }: Props) {
                 </span>
               </p>
 
-              <div className="sc-teacher-comment-card-v310" style={{
+              <div className="sc-teacher-comment-card-v386" style={{
                 position: 'relative',
                 background: '#F7F7F7',
                 border: '1px solid rgba(17,17,17,0.045)',

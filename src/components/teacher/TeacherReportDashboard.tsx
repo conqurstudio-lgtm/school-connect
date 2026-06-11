@@ -1514,7 +1514,7 @@ function ReportAveragePill({ value }: any) {
       minWidth: 56,
       height: 36,
       borderRadius: 999,
-      background: 'var(--sc-soft)',
+      background: '#F7F7F7',
       color: 'var(--sc-ink)',
       display: 'inline-flex',
       alignItems: 'center',
@@ -1790,14 +1790,21 @@ function TeacherReportPreview({ teacher, child, onBack }: any) {
               title="Teacher note"
               subtitle="Message shared with the parent."
             />
-            <p style={{
-              fontSize: 14,
-              color: T.ink2,
-              lineHeight: 1.55,
-              margin: 0,
+            <div className="sc-teacher-preview-note-v387" style={{
+              background: '#F7F7F7',
+              border: '1px solid rgba(17,17,17,0.045)',
+              borderRadius: 20,
+              padding: 14,
             }}>
-              {report.comment || 'No note added for this report.'}
-            </p>
+              <p style={{
+                fontSize: 14,
+                color: T.ink2,
+                lineHeight: 1.55,
+                margin: 0,
+              }}>
+                {report.comment || 'No note added for this report.'}
+              </p>
+            </div>
           </section>
 
           <section>
@@ -2017,6 +2024,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
           subtitle="Keep it short and helpful for the parent."
         />
         <textarea
+          className="sc-teacher-note-input-v387"
           value={comment}
           onChange={e => setComment(e.target.value)}
           rows={5}
