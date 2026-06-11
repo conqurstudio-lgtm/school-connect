@@ -814,9 +814,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           <p style={{ fontSize: 12.05, lineHeight: 1.22, color: T.ink3, margin: '5px 0 0' }}>
             {teacherCountText(teacherCount)}
           </p>
-        </div>
-
-        <button
+        </div>        <button
           type="button"
           onClick={onAddTeacher}
           aria-label="Add teacher"
@@ -825,21 +823,22 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             height: 32,
             minWidth: 32,
             borderRadius: 999,
-            border: 'none',
-            background: 'transparent',
+            border: '1px solid rgba(17,17,17,0.055)',
+            background: '#F7F7F7',
             color: T.ink2,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
-            fontWeight: 560,
             cursor: 'pointer',
             fontFamily: 'inherit',
             flexShrink: 0,
             padding: 0,
+            boxShadow: 'none',
           }}
         >
-          Add
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.15" strokeLinecap="round" />
+          </svg>
         </button>
       </div>
 

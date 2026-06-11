@@ -388,30 +388,30 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 38px',
+          padding: '0 10px 28px',
         }}>
           <div className="sc-parent-report-teacher-note-v388" style={{
-            maxWidth: 396,
+            maxWidth: 352,
             margin: '0 auto',
             display: 'flex',
             alignItems: 'flex-start',
-            gap: 12,
+            gap: 9,
             background: '#F7F7F7',
             border: '1px solid rgba(17,17,17,0.045)',
-            borderRadius: 24,
-            padding: '14px 18px 16px 14px',
+            borderRadius: 18,
+            padding: '10px 12px',
             boxShadow: 'none',
           }}>
             <div style={{
-              width: 38,
-              height: 38,
+              width: 30,
+              height: 30,
               borderRadius: 999,
               background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E9E9E9',
               color: '#717171',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 560,
               letterSpacing: '-0.01em',
               flexShrink: 0,
@@ -426,18 +426,18 @@ export function ReportCard({ report, childName }: Props) {
                 alignItems: 'baseline',
                 gap: 6,
                 flexWrap: 'wrap',
-                fontSize: 14.2,
+                fontSize: 11.6,
                 color: T.ink,
-                fontWeight: 620,
+                fontWeight: 590,
                 letterSpacing: '-0.018em',
-                lineHeight: 1.25,
-                margin: '0 0 8px',
+                lineHeight: 1.2,
+                margin: '0 0 5px',
               }}>
                 <span style={{
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
-                  maxWidth: 190,
+                  maxWidth: 168,
                 }}>
                   {teacherName || 'Teacher'}
                 </span>
@@ -452,10 +452,10 @@ export function ReportCard({ report, childName }: Props) {
               </p>
 
               <p style={{
-                fontSize: 13.9,
+                fontSize: 12.6,
                 color: '#5F6268',
                 margin: 0,
-                lineHeight: 1.5,
+                lineHeight: 1.42,
                 letterSpacing: '-0.005em',
                 fontWeight: 400,
               }}>
