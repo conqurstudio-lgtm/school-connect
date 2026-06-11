@@ -8,6 +8,7 @@ import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentCompose
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import SCActionRow from '@/components/ui/SCActionRow'
 import SCReportRow from '@/components/ui/SCReportRow'
+import SCScoreRow from '@/components/ui/SCScoreRow'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -1551,56 +1552,82 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
             borderRadius: 28,
             background: '#FFFFFF',
             border: 'none',
-            padding: 18,
+            padding: '4px 2px 10px',
             marginBottom: 14,
           }}>
-            <label>
-              <span style={labelStyle}>Week starting</span>
-              <input type="date" value={week} onChange={e => setWeek(e.target.value)} style={inputStyle} />
-            </label>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto',
+              alignItems: 'center',
+              gap: 12,
+              padding: '2px 0 16px',
+              borderBottom: `1px solid ${T.border}`,
+              marginBottom: 8,
+            }}>
+              <div style={{ minWidth: 0 }}>
+                <p style={{
+                  fontSize: 13.6,
+                  fontWeight: 560,
+                  color: T.ink,
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                }}>
+                  Report scores
+                </p>
+                <p style={{
+                  fontSize: 12.2,
+                  color: T.ink3,
+                  lineHeight: 1.35,
+                  margin: '3px 0 0',
+                }}>
+                  Tap a number for each area.
+                </p>
+              </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 18 }}>
-              {subjects.map(subject => (
-                <div key={subject}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    marginBottom: 7,
-                  }}>
-                    <span style={{ fontSize: 13.5, fontWeight: 560, color: T.ink }}>
-                      {subject}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 540, color: T.ink3 }}>
-                      {scores[subject] || 3}/5
-                    </span>
-                  </div>
+              <label style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: 5,
+                minWidth: 126,
+              }}>
+                <span style={{
+                  fontSize: 11.2,
+                  fontWeight: 540,
+                  color: T.ink3,
+                  lineHeight: 1,
+                }}>
+                  Week
+                </span>
+                <input
+                  type="date"
+                  value={week}
+                  onChange={e => setWeek(e.target.value)}
+                  style={{
+                    ...inputStyle,
+                    minHeight: 34,
+                    height: 34,
+                    borderRadius: 999,
+                    padding: '0 10px',
+                    fontSize: 12.5,
+                    background: T.soft,
+                    border: 'none',
+                    color: T.ink2,
+                    textAlign: 'right',
+                  }}
+                />
+              </label>
+            </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
-                    {[1, 2, 3, 4, 5].map(score => {
-                      const active = scores[subject] === score
-                      return (
-                        <button
-                          key={score}
-                          type="button"
-                          onClick={() => setScores(prev => ({ ...prev, [subject]: score }))}
-                          style={{
-                            height: 38,
-                            borderRadius: 999,
-                            border: active ? 'none' : `1px solid ${T.border}`,
-                            background: active ? T.accent : T.white,
-                            color: active ? T.white : T.ink2,
-                            fontSize: 13,
-                            fontWeight: 540,
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                          }}
-                        >
-                          {score}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {subjects.map((subject, index) => (
+                <SCScoreRow
+                  key={subject}
+                  label={subject}
+                  value={scores[subject] || 3}
+                  isLast={index === subjects.length - 1}
+                  onChange={(score) => setScores(prev => ({ ...prev, [subject]: score }))}
+                />
               ))}
             </div>
           </section>
@@ -1609,17 +1636,25 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
             borderRadius: 24,
             background: T.white,
             border: 'none',
-            padding: 16,
+            padding: '2px 2px 6px',
             marginBottom: 14,
           }}>
             <label>
-              <span style={labelStyle}>Teacher note optional</span>
+              <span style={{ ...labelStyle, marginBottom: 8 }}>Teacher note</span>
               <textarea
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 rows={5}
-                placeholder="Add a short note, or leave empty for an automatic comment."
-                style={{ ...inputStyle, resize: 'none', lineHeight: 1.5 }}
+                placeholder="Add a short note for the parent."
+                style={{
+                  ...inputStyle,
+                  resize: 'none',
+                  lineHeight: 1.5,
+                  background: T.soft,
+                  border: 'none',
+                  borderRadius: 20,
+                  padding: 14,
+                }}
               />
             </label>
           </section>
@@ -1643,13 +1678,13 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
                   Previous reports
                 </p>
                 <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                  Recent history for this child.
+                  Sent reports for this learner.
                 </p>
               </div>
             </div>
 
             {historyLoading ? (
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Loading history...</p>
+              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Loading previous reports...</p>
             ) : history.length === 0 ? (
               <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>No previous reports yet.</p>
             ) : (

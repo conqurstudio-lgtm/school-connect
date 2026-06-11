@@ -10,3 +10,4 @@ export { default as SCTopBar } from './SCTopBar'
 
 export { default as SCReportRow } from './SCReportRow'
 export { default as SCTeacherRow } from './SCTeacherRow'
+export { default as SCScoreRow } from './SCScoreRow'
