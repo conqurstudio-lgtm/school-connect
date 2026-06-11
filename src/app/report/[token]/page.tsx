@@ -6,21 +6,19 @@ import { useParams } from 'next/navigation'
 import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
-import SCStartupLoader from '@/components/ui/SCStartupLoader'
-import { SCButton, SCIconButton } from '@/components/ui'
-import { readLastState, writeLastState } from '@/lib/scLastState'
+import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const T = {
   ink: '#1A1A1A',
   ink2: '#5F6268',
   ink3: '#9A9A9A',
-  border: 'rgba(0,0,0,0.045)',
+  border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F5F5F7',
   soft2: '#F8F8F9',
   white: '#FFFFFF',
-  accent: '#717171',
-  accentSoft: '#F5F5F5',
+  accent: '#8FA6A1',
+  accentSoft: '#EEF3F1',
 }
 
 
@@ -86,7 +84,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 
   return (
     <details className="sc-previous-report-flat-v278" style={{
-      borderTop: '1px solid rgba(0,0,0,0.045)',
+      borderTop: '1px solid rgba(0,0,0,0.06)',
       background: 'transparent',
     }}>
       <summary style={{
@@ -250,7 +248,6 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 
 
 function FamilyShareButton({ token }: { token: string }) {
-  const wrapRef = useRef<HTMLDivElement | null>(null)
   const [open, setOpen] = useState(false)
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -308,7 +305,6 @@ function FamilyShareButton({ token }: { token: string }) {
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-        setOpen(false)
         return
       } catch {}
     }
@@ -316,78 +312,47 @@ function FamilyShareButton({ token }: { token: string }) {
     await copyShareLink()
   }
 
-  function handlePress() {
-    if (creating) return
-    if (shareUrl) {
-      setOpen(current => !current)
-      return
-    }
-    createShareLink()
-  }
-
-  useEffect(() => {
-    if (!open) return
-
-    const closeOnOutside = (event: PointerEvent) => {
-      if (!wrapRef.current) return
-      if (!wrapRef.current.contains(event.target as Node)) setOpen(false)
-    }
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    const close = () => setOpen(false)
-
-    document.addEventListener('pointerdown', closeOnOutside, true)
-    document.addEventListener('keydown', closeOnEscape)
-    window.addEventListener('scroll', close, true)
-    window.addEventListener('resize', close)
-
-    return () => {
-      document.removeEventListener('pointerdown', closeOnOutside, true)
-      document.removeEventListener('keydown', closeOnEscape)
-      window.removeEventListener('scroll', close, true)
-      window.removeEventListener('resize', close)
-    }
-  }, [open])
-
   return (
-    <div ref={wrapRef} style={{ position: 'relative' }}>
-      <SCIconButton
-        label="Share report with family"
-        onClick={handlePress}
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
         disabled={creating}
-        size={38}
-        tone="default"
-        style={{ background: '#FFFFFF' }}
+        aria-label="Share report with family"
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 999,
+          border: 'none',
+          background: '#FFFFFF',
+          color: '#252525',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: creating ? 'default' : 'pointer',
+          opacity: creating ? 0.55 : 1,
+          padding: 0,
+        }}
       >
         <Share2 size={18} strokeWidth={2} />
-      </SCIconButton>
+      </button>
 
       {open && (
-        <div
-          className="sc-parent-share-popover-v369"
-          onPointerDown={(event) => event.stopPropagation()}
-          style={{
-            position: 'absolute',
-            top: 44,
-            right: 0,
-            width: 268,
-            borderRadius: 22,
-            background: 'var(--sc-white, #FFFFFF)',
-            boxShadow: '0 18px 46px rgba(0,0,0,0.075)',
-            border: '1px solid var(--sc-border, rgba(0,0,0,0.055))',
-            padding: 14,
-            zIndex: 100,
-            transformOrigin: 'top right',
-            animation: 'scMenuIn .16s var(--sc-ease-standard, cubic-bezier(.16,1,.3,1)) both',
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: 44,
+          right: 0,
+          width: 260,
+          borderRadius: 22,
+          background: '#FFFFFF',
+          boxShadow: '0 18px 50px rgba(37,37,37,0.10)',
+          padding: 14,
+          zIndex: 100,
+        }}>
           <p style={{
             fontSize: 13.5,
             fontWeight: 560,
-            color: 'var(--sc-ink, #252525)',
+            color: '#252525',
             margin: 0,
             letterSpacing: '-0.01em',
           }}>
@@ -396,32 +361,61 @@ function FamilyShareButton({ token }: { token: string }) {
 
           <p style={{
             fontSize: 12.4,
-            color: 'var(--sc-muted, #7C8486)',
+            color: '#7C8486',
             lineHeight: 1.4,
             margin: '5px 0 12px',
           }}>
-            Create a read-only link for this report.
+            This creates a read-only link for the current report only.
           </p>
 
-          <div style={{ display: 'flex', gap: 8 }}>
-            <SCButton
-              tone="secondary"
+          <div style={{
+            display: 'flex',
+            gap: 8,
+          }}>
+            <button
+              type="button"
               onClick={copyShareLink}
-              fullWidth
-              style={{ minHeight: 36, fontSize: 12.5 }}
-              leading={copied ? <Check size={15} /> : <Copy size={15} />}
+              style={{
+                flex: 1,
+                minHeight: 36,
+                borderRadius: 999,
+                border: 'none',
+                background: '#F5F5F4',
+                color: '#252525',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+              }}
             >
+              {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? 'Copied' : 'Copy'}
-            </SCButton>
+            </button>
 
-            <SCButton
-              tone="primary"
+            <button
+              type="button"
               onClick={nativeShare}
-              fullWidth
-              style={{ minHeight: 36, fontSize: 12.5 }}
+              style={{
+                flex: 1,
+                minHeight: 36,
+                borderRadius: 999,
+                border: 'none',
+                background: '#252525',
+                color: '#FFFFFF',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                fontSize: 12.5,
+                fontWeight: 520,
+                fontFamily: 'inherit',
+              }}
             >
               Share
-            </SCButton>
+            </button>
           </div>
         </div>
       )}
@@ -460,11 +454,11 @@ function SchoolQuickView({ school }: { school: any }) {
       if (event.key === 'Escape') setOpen(false)
     }
 
-    document.addEventListener('pointerdown', closeOnOutside, true)
+    document.addEventListener('pointerdown', closeOnOutside)
     document.addEventListener('keydown', closeOnEscape)
 
     return () => {
-      document.removeEventListener('pointerdown', closeOnOutside, true)
+      document.removeEventListener('pointerdown', closeOnOutside)
       document.removeEventListener('keydown', closeOnEscape)
     }
   }, [open])
@@ -500,23 +494,16 @@ function SchoolQuickView({ school }: { school: any }) {
       </button>
 
       {open && (
-        <div
-          className="sc-school-quick-popover-v369"
-          style={{
-            position: 'absolute',
-            top: 25,
-            left: 0,
-            zIndex: 100,
-            width: 272,
-            padding: 12,
-            borderRadius: 20,
-            background: '#FFFFFF',
-            border: '1px solid var(--sc-border, rgba(0,0,0,0.055))',
-            boxShadow: '0 18px 46px rgba(0,0,0,0.075)',
-            transformOrigin: 'top left',
-            animation: 'scMenuIn .16s var(--sc-ease-standard, cubic-bezier(.16,1,.3,1)) both',
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: 25,
+          left: 0,
+          zIndex: 100,
+          width: 272,
+          padding: 12,
+          borderRadius: 20,
+          background: '#FFFFFF',
+        }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -526,8 +513,8 @@ function SchoolQuickView({ school }: { school: any }) {
               width: 38,
               height: 38,
               borderRadius: 15,
-              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#F5F5F5',
-              color: '#717171',
+              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
+              color: '#8FA6A1',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -535,6 +522,7 @@ function SchoolQuickView({ school }: { school: any }) {
               fontWeight: 560,
               flexShrink: 0,
               overflow: 'hidden',
+                boxShadow: '0 18px 45px rgba(0,0,0,0.055)',
             }}>
               {!school?.logo_url && schoolInitial}
             </div>
@@ -568,7 +556,7 @@ function SchoolQuickView({ school }: { school: any }) {
           <div style={{
             marginTop: 11,
             paddingTop: 10,
-            borderTop: '1px solid rgba(0,0,0,0.045)',
+            borderTop: '1px solid rgba(0,0,0,0.07)',
             display: 'flex',
             flexDirection: 'column',
             gap: 9,
@@ -630,7 +618,7 @@ function SchoolQuickView({ school }: { school: any }) {
                   rel="noreferrer"
                   style={{
                     fontSize: 12.5,
-                    color: '#717171',
+                    color: '#8FA6A1',
                     lineHeight: 1.4,
                     textDecoration: 'none',
                     wordBreak: 'break-word',
@@ -688,7 +676,7 @@ function ReportSafeAreaStyle() {
 }
 
 function LoadingState() {
-  return <SCStartupLoader show={true} initials="SC" />
+  return <PageGhostLoader />
 }
 
 function ErrorState({ message }: { message: string }) {
@@ -787,15 +775,6 @@ export default function ParentMagicReportPage() {
     }
 
     let alive = true
-    const cacheKey = `sc-parent-report:${token}`
-    const cached = readLastState<any>(cacheKey, null)
-
-    if (cached?.payload?.report) {
-      setPayload(cached.payload)
-      setError('')
-    }
-
-    setLoading(true)
 
     fetch(`/api/report/${encodeURIComponent(token)}`, { cache: 'no-store' })
       .then(async res => {
@@ -804,23 +783,14 @@ export default function ParentMagicReportPage() {
         if (!alive) return
 
         if (!res.ok) {
-          if (!cached?.payload?.report) {
-            setError(json.error || 'This report link is invalid or has expired.')
-          }
+          setError(json.error || 'This report link is invalid or has expired.')
           return
         }
 
         setPayload(json)
-        setError('')
-        writeLastState(cacheKey, {
-          payload: json,
-          savedAt: Date.now(),
-        })
       })
       .catch(() => {
-        if (alive && !cached?.payload?.report) {
-          setError('Could not open this report right now.')
-        }
+        if (alive) setError('Could not open this report right now.')
       })
       .finally(() => {
         if (alive) setLoading(false)
@@ -830,8 +800,7 @@ export default function ParentMagicReportPage() {
       alive = false
     }
   }, [token])
-
-  if (loading && !payload?.report) return <LoadingState />
+  if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
   if (showMoments) {
@@ -871,7 +840,7 @@ export default function ParentMagicReportPage() {
     }))
 
   return (
-    <main className="sc-parent-report-page sc-report-clean-page-v276 sc-screen-enter" style={{
+    <main className="sc-parent-report-page sc-report-clean-page-v276" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
