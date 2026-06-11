@@ -873,7 +873,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         background: T.white,
       }}>
         <SCTopBar
-          title="Teacher"
+          title=""
           align="left"
           leftWidth={0}
           rightWidth={40}
@@ -2510,32 +2510,65 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
 }
 
 function BottomSheet({ children, onClose }: any) {
-  if (typeof document === 'undefined') return null
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose?.()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [mounted, onClose])
+
+  if (!mounted || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 12000,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      padding: '0 max(0px, env(safe-area-inset-left)) 0 max(0px, env(safe-area-inset-right))',
-      boxSizing: 'border-box',
-    }}>
-      <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        maxHeight: '90dvh',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        background: T.white,
-        borderRadius: '28px 28px 0 0',
-        padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 52px rgba(0,0,0,0.08)',
-        animation: 'scSheetIn .22s cubic-bezier(.16,1,.3,1) both',
-      }}>
+    <div
+      className="sc-teacher-sheet-backdrop"
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 12000,
+        background: 'rgba(0,0,0,0.22)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        animation: 'scSheetBackdropIn 180ms cubic-bezier(.2,.8,.2,1) both',
+      }}
+    >
+      <div
+        className="sc-teacher-sheet-panel"
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: 520,
+          maxHeight: '90dvh',
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          background: T.white,
+          borderRadius: '28px 28px 0 0',
+          padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+          boxShadow: '0 -10px 34px rgba(0,0,0,0.08)',
+          borderTop: '1px solid rgba(0,0,0,0.04)',
+          animation: 'scSheetPanelIn 240ms cubic-bezier(.2,.8,.2,1) both',
+        }}
+      >
+        <div style={{
+          width: 38,
+          height: 4,
+          borderRadius: 999,
+          background: 'rgba(0,0,0,0.10)',
+          margin: '0 auto 14px',
+        }} />
         {children}
       </div>
     </div>,
@@ -2547,35 +2580,36 @@ function SheetHeader({ title, subtitle, onClose }: any) {
   return (
     <div style={{
       display: 'flex',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       justifyContent: 'space-between',
       gap: 12,
       marginBottom: 16,
     }}>
-      <div>
-        <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
+      <div style={{ minWidth: 0 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 580, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
           {title}
         </h2>
         {subtitle && (
-          <p style={{ fontSize: 13, color: T.ink3, margin: '3px 0 0' }}>
+          <p style={{ fontSize: 12.5, color: T.ink3, margin: '3px 0 0', lineHeight: 1.35 }}>
             {subtitle}
           </p>
         )}
       </div>
 
-      <button type="button" onClick={onClose} style={{
+      <button type="button" onClick={onClose} aria-label="Close" style={{
         width: 34,
         height: 34,
         borderRadius: 999,
         border: 'none',
-        background: T.soft,
+        background: 'transparent',
         color: T.ink3,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         cursor: 'pointer',
+        padding: 0,
       }}>
-        <X size={16} />
+        <X size={17} strokeWidth={1.9} />
       </button>
     </div>
   )

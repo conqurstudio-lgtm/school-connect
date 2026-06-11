@@ -886,7 +886,7 @@ export default function ParentMagicReportPage() {
         background: '#FFFFFF',
       }}>
         <SCTopBar
-          title="Report"
+          title=""
           align="left"
           leftWidth={0}
           rightWidth={isFamilyShare ? 0 : 92}

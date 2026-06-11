@@ -1171,7 +1171,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         background: T.bg,
       }}>
         <SCTopBar
-          title="School"
+          title=""
           align="left"
           leftWidth={0}
           rightWidth={40}
