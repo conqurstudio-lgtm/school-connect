@@ -81,7 +81,12 @@ export default function TeacherTokenEntryPage() {
   const [session, setSession] = useState<any>(null)
   const [message, setMessage] = useState('Need your teacher link')
   const [failed, setFailed] = useState(false)
-  const cached = readTeacherStartupCache(token)
+  const [cached, setCached] = useState<any>(null)
+
+
+  useEffect(() => {
+    setCached(readTeacherStartupCache(token))
+  }, [token])
 
   useEffect(() => {
     if (!token) {

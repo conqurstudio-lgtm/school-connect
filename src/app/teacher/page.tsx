@@ -19,7 +19,12 @@ function TeacherLinkBridgeInner() {
   const [message, setMessage] = useState(
     token ? 'Opening your class dashboard…' : 'Need your teacher link'
   )
-  const cached = readTeacherStartupCache(token)
+  const [cached, setCached] = useState<any>(null)
+
+
+  useEffect(() => {
+    setCached(readTeacherStartupCache(token))
+  }, [token])
 
   useEffect(() => {
     if (!token) return

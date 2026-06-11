@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 const T = {
   ink: '#252525',
   bg: '#FFFFFF',
@@ -82,8 +84,20 @@ function initialsFrom(name?: string | null) {
 }
 
 export function TeacherStartupLoader({ teacher, leaving = false, overlay = false }: any) {
-  const photoUrl = getTeacherStartupPhotoUrl(teacher)
-  const name = teacher?.name || 'Teacher'
+  // Important for Next hydration:
+  // localStorage cache is only available on the client. The first server render and
+  // the first client hydration render must match, so teacher-specific text/photo is
+  // only painted after mount.
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const readyTeacher = mounted ? teacher : null
+  const photoUrl = getTeacherStartupPhotoUrl(readyTeacher)
+  const name = readyTeacher?.name || 'Teacher'
+  const initials = mounted && !photoUrl ? initialsFrom(name) : ''
 
   const content = (
     <>
@@ -93,9 +107,10 @@ export function TeacherStartupLoader({ teacher, leaving = false, overlay = false
           background: photoUrl ? `url(${photoUrl}) center/cover` : T.accentSoft,
           color: T.accent,
         }}
-        aria-label={`${name} profile photo`}
+        aria-label={mounted ? `${name} profile photo` : 'Teacher profile loading'}
+        suppressHydrationWarning
       >
-        {!photoUrl && initialsFrom(name)}
+        {initials}
       </div>
 
       <style>{`
