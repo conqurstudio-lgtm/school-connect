@@ -786,17 +786,17 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         width: '100%',
         background: T.white,
         border: 'none',
-        padding: '16px 0 15px',
+        padding: '14px 0 13px',
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
+        gap: 10,
         textAlign: 'left',
         fontFamily: 'inherit',
       }}>
         <div style={{
-          width: 40,
-          height: 40,
-          borderRadius: 16,
+          width: 37,
+          height: 37,
+          borderRadius: 14,
           background: T.accentSoft,
           color: T.accent,
           display: 'flex',
@@ -804,14 +804,14 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <Users size={18} strokeWidth={1.7} />
+          <Users size={17} strokeWidth={1.75} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 13.65, lineHeight: 1.2, fontWeight: 560, color: T.ink, margin: 0 }}>
             Teachers & classes
           </p>
-          <p style={{ fontSize: 12.8, color: T.accent, margin: '3px 0 0' }}>
+          <p style={{ fontSize: 12.05, lineHeight: 1.22, color: T.ink3, margin: '5px 0 0' }}>
             {teacherCountText(teacherCount)}
           </p>
         </div>
@@ -819,22 +819,24 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         <button
           type="button"
           onClick={onAddTeacher}
+          aria-label="Add teacher"
           style={{
-            minWidth: 'auto',
-            minHeight: 38,
-            borderRadius: 0,
+            width: 32,
+            height: 32,
+            minWidth: 32,
+            borderRadius: 999,
             border: 'none',
             background: 'transparent',
             color: T.ink2,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13.5,
+            fontSize: 13,
             fontWeight: 560,
             cursor: 'pointer',
             fontFamily: 'inherit',
             flexShrink: 0,
-            padding: '0 3px',
+            padding: 0,
           }}
         >
           Add

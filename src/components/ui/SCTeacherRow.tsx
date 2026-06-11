@@ -87,7 +87,7 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
             style={{
               fontSize: 12.05,
               color: 'var(--sc-ink-3)',
-              margin: '3px 0 0',
+              margin: '5px 0 0',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',

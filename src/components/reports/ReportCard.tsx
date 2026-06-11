@@ -390,34 +390,23 @@ export function ReportCard({ report, childName }: Props) {
         <div style={{
           padding: '0 10px 38px',
         }}>
-          <div style={{
-            maxWidth: 396,
-            margin: '0 auto 10px',
-          }}>
-            <p style={{
-              fontSize: 11.5,
-              fontWeight: 560,
-              color: '#717171',
-              letterSpacing: '0.03em',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}>
-              Teacher note
-            </p>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 11,
+          <div className="sc-parent-report-teacher-note-v388" style={{
             maxWidth: 396,
             margin: '0 auto',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 12,
+            background: '#F7F7F7',
+            border: '1px solid rgba(17,17,17,0.045)',
+            borderRadius: 24,
+            padding: '14px 18px 16px 14px',
+            boxShadow: 'none',
           }}>
             <div style={{
               width: 38,
               height: 38,
-              borderRadius: 15,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F5F5F5',
+              borderRadius: 999,
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E9E9E9',
               color: '#717171',
               display: 'flex',
               alignItems: 'center',
@@ -431,60 +420,47 @@ export function ReportCard({ report, childName }: Props) {
               {!teacherPhoto && teacherInitials}
             </div>
 
-            <div style={{
-              flex: 1,
-              minWidth: 0,
-              paddingTop: 1,
-            }}>
+            <div style={{ flex: 1, minWidth: 0, paddingTop: 1 }}>
               <p style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: 5,
+                alignItems: 'baseline',
+                gap: 6,
                 flexWrap: 'wrap',
-                fontSize: 13.5,
+                fontSize: 14.2,
                 color: T.ink,
-                fontWeight: 560,
-                letterSpacing: '-0.015em',
-                lineHeight: 1.2,
+                fontWeight: 620,
+                letterSpacing: '-0.018em',
+                lineHeight: 1.25,
                 margin: '0 0 8px',
               }}>
                 <span style={{
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
-                  maxWidth: 210,
+                  maxWidth: 190,
                 }}>
-                  {teacherName}
+                  {teacherName || 'Teacher'}
                 </span>
 
                 <span style={{
                   color: '#5F6268',
-                  fontWeight: 400,
+                  fontWeight: 460,
+                  fontSize: 12.8,
                 }}>
-                  {childTeacherLabel}
+                  - {childTeacherLabel}
                 </span>
               </p>
 
-              <div className="sc-teacher-comment-card-v386" style={{
-                position: 'relative',
-                background: '#F7F7F7',
-                border: '1px solid rgba(17,17,17,0.045)',
-                borderRadius: '18px 18px 18px 8px',
-                padding: '12px 14px',
-                overflow: 'hidden',
-                boxShadow: 'none',
+              <p style={{
+                fontSize: 13.9,
+                color: '#5F6268',
+                margin: 0,
+                lineHeight: 1.5,
+                letterSpacing: '-0.005em',
+                fontWeight: 400,
               }}>
-                <p style={{
-                  fontSize: 13.6,
-                  color: '#5F6268',
-                  margin: 0,
-                  lineHeight: 1.52,
-                  letterSpacing: '-0.005em',
-                  fontWeight: 400,
-                }}>
-                  {report.comment}
-                </p>
-              </div>
+                {report.comment}
+              </p>
             </div>
           </div>
         </div>

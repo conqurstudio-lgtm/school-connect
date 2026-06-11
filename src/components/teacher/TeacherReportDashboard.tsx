@@ -1594,7 +1594,7 @@ function ReadOnlyScoreList({ scores }: any) {
               minWidth: 42,
               height: 29,
               borderRadius: 999,
-              background: 'var(--sc-soft)',
+              background: '#F7F7F7',
               color: 'var(--sc-ink-2)',
               display: 'flex',
               alignItems: 'center',

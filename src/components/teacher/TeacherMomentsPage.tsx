@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
+import { FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
@@ -323,7 +323,15 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           compact
           left={
             <SCIconButton label="Back" onClick={onBack} tone="quiet" size={38}>
-              <ArrowLeft size={19} strokeWidth={2.05} />
+              <span style={{
+                width: 13,
+                height: 13,
+                borderLeft: '2.6px solid currentColor',
+                borderBottom: '2.6px solid currentColor',
+                borderRadius: 1.5,
+                transform: 'rotate(45deg) translate(1px, -1px)',
+                display: 'block',
+              }} />
             </SCIconButton>
           }
           right={
