@@ -7,6 +7,7 @@ import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
+import { SCButton, SCIconButton } from '@/components/ui'
 import { readLastState, writeLastState } from '@/lib/scLastState'
 
 const T = {
@@ -307,11 +308,21 @@ function FamilyShareButton({ token }: { token: string }) {
     if (navigator.share) {
       try {
         await navigator.share(shareData)
+        setOpen(false)
         return
       } catch {}
     }
 
     await copyShareLink()
+  }
+
+  function handlePress() {
+    if (creating) return
+    if (shareUrl) {
+      setOpen(current => !current)
+      return
+    }
+    createShareLink()
   }
 
   useEffect(() => {
@@ -326,72 +337,57 @@ function FamilyShareButton({ token }: { token: string }) {
       if (event.key === 'Escape') setOpen(false)
     }
 
+    const close = () => setOpen(false)
+
     document.addEventListener('pointerdown', closeOnOutside, true)
     document.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('scroll', close, true)
+    window.addEventListener('resize', close)
 
     return () => {
       document.removeEventListener('pointerdown', closeOnOutside, true)
       document.removeEventListener('keydown', closeOnEscape)
+      window.removeEventListener('scroll', close, true)
+      window.removeEventListener('resize', close)
     }
   }, [open])
 
   return (
     <div ref={wrapRef} style={{ position: 'relative' }}>
-      <button
-        type="button"
-        onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
+      <SCIconButton
+        label="Share report with family"
+        onClick={handlePress}
         disabled={creating}
-        aria-label="Share report with family"
-        aria-expanded={open}
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 999,
-          border: 'none',
-          background: '#FFFFFF',
-          color: '#252525',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: creating ? 'default' : 'pointer',
-          opacity: creating ? 0.55 : 1,
-          padding: 0,
-        }}
+        size={38}
+        tone="default"
+        style={{ background: '#FFFFFF' }}
       >
         <Share2 size={18} strokeWidth={2} />
-      </button>
+      </SCIconButton>
 
       {open && (
-        <>
-          <div
-            aria-hidden="true"
-            onPointerDown={() => setOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'transparent',
-              zIndex: 90,
-            }}
-          />
-
-          <div
-            onPointerDown={(event) => event.stopPropagation()}
-            style={{
-          position: 'absolute',
-          top: 44,
-          right: 0,
-          width: 260,
-          borderRadius: 22,
-          background: '#FFFFFF',
-          boxShadow: '0 18px 50px rgba(37,37,37,0.10)',
-          border: '1px solid rgba(0,0,0,0.045)',
-          padding: 14,
-          zIndex: 100,
-        }}>
+        <div
+          className="sc-parent-share-popover-v369"
+          onPointerDown={(event) => event.stopPropagation()}
+          style={{
+            position: 'absolute',
+            top: 44,
+            right: 0,
+            width: 268,
+            borderRadius: 22,
+            background: 'var(--sc-white, #FFFFFF)',
+            boxShadow: '0 18px 46px rgba(0,0,0,0.075)',
+            border: '1px solid var(--sc-border, rgba(0,0,0,0.055))',
+            padding: 14,
+            zIndex: 100,
+            transformOrigin: 'top right',
+            animation: 'scMenuIn .16s var(--sc-ease-standard, cubic-bezier(.16,1,.3,1)) both',
+          }}
+        >
           <p style={{
             fontSize: 13.5,
             fontWeight: 560,
-            color: '#252525',
+            color: 'var(--sc-ink, #252525)',
             margin: 0,
             letterSpacing: '-0.01em',
           }}>
@@ -400,64 +396,34 @@ function FamilyShareButton({ token }: { token: string }) {
 
           <p style={{
             fontSize: 12.4,
-            color: '#7C8486',
+            color: 'var(--sc-muted, #7C8486)',
             lineHeight: 1.4,
             margin: '5px 0 12px',
           }}>
-            This creates a read-only link for the current report only.
+            Create a read-only link for this report.
           </p>
 
-          <div style={{
-            display: 'flex',
-            gap: 8,
-          }}>
-            <button
-              type="button"
+          <div style={{ display: 'flex', gap: 8 }}>
+            <SCButton
+              tone="secondary"
               onClick={copyShareLink}
-              style={{
-                flex: 1,
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: '#F5F5F4',
-                color: '#252525',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-              }}
+              fullWidth
+              style={{ minHeight: 36, fontSize: 12.5 }}
+              leading={copied ? <Check size={15} /> : <Copy size={15} />}
             >
-              {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? 'Copied' : 'Copy'}
-            </button>
+            </SCButton>
 
-            <button
-              type="button"
+            <SCButton
+              tone="primary"
               onClick={nativeShare}
-              style={{
-                flex: 1,
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: '#252525',
-                color: '#FFFFFF',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-              }}
+              fullWidth
+              style={{ minHeight: 36, fontSize: 12.5 }}
             >
               Share
-            </button>
+            </SCButton>
           </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   )
@@ -534,16 +500,23 @@ function SchoolQuickView({ school }: { school: any }) {
       </button>
 
       {open && (
-        <div style={{
-          position: 'absolute',
-          top: 25,
-          left: 0,
-          zIndex: 100,
-          width: 272,
-          padding: 12,
-          borderRadius: 20,
-          background: '#FFFFFF',
-        }}>
+        <div
+          className="sc-school-quick-popover-v369"
+          style={{
+            position: 'absolute',
+            top: 25,
+            left: 0,
+            zIndex: 100,
+            width: 272,
+            padding: 12,
+            borderRadius: 20,
+            background: '#FFFFFF',
+            border: '1px solid var(--sc-border, rgba(0,0,0,0.055))',
+            boxShadow: '0 18px 46px rgba(0,0,0,0.075)',
+            transformOrigin: 'top left',
+            animation: 'scMenuIn .16s var(--sc-ease-standard, cubic-bezier(.16,1,.3,1)) both',
+          }}
+        >
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -562,7 +535,6 @@ function SchoolQuickView({ school }: { school: any }) {
               fontWeight: 560,
               flexShrink: 0,
               overflow: 'hidden',
-                boxShadow: '0 18px 45px rgba(0,0,0,0.055)',
             }}>
               {!school?.logo_url && schoolInitial}
             </div>
@@ -918,7 +890,7 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 18px 8px',
           background: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
@@ -929,7 +901,7 @@ export default function ParentMagicReportPage() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 8,
+            gap: 10,
           }}>
             {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
