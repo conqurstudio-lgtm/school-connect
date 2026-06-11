@@ -817,7 +817,25 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
 
 export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId, bootLoading = false }: SchoolProfilePageProps) {
   const [school, setSchool] = useState(initialSchool)
-  const [teacherCount, setTeacherCount] = useState(() => readCachedTeacherCount(initialSchool.id) ?? 0)
+  const [schoolClientReady, setSchoolClientReady] = useState(false)
+
+  useEffect(() => {
+    setSchoolClientReady(true)
+  }, [])
+
+  useEffect(() => {
+    const cachedCount = readCachedTeacherCount(initialSchool.id)
+    if (cachedCount != null) {
+      setTeacherCount(cachedCount)
+    }
+
+    try {
+      setSettingsSeen(window.localStorage.getItem('school-connect-settings-seen') === 'yes')
+    } catch {
+      setSettingsSeen(true)
+    }
+  }, [initialSchool.id])
+  const [teacherCount, setTeacherCount] = useState(0)
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
   const [teacherCountReady, setTeacherCountReady] = useState(false)
   const [teacherListReady, setTeacherListReady] = useState(!isAdmin)
@@ -826,10 +844,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [schoolLogoLoaderLeaving, setSchoolLogoLoaderLeaving] = useState(false)
   const [teachersOpen, setTeachersOpen] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
-  const [settingsSeen, setSettingsSeen] = useState(() => {
-    if (typeof window === 'undefined') return true
-    return window.localStorage.getItem('school-connect-settings-seen') === 'yes'
-  })
+  const [settingsSeen, setSettingsSeen] = useState(true)
   const [showEditDetails, setShowEditDetails] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [logoDraft, setLogoDraft] = useState<any>(null)
@@ -1002,17 +1017,27 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent('school-connect-open-add-teacher'))
 
-      const buttons = Array.from(document.querySelectorAll('button'))
-      const addButton = buttons.find((button: any) =>
-        /add teacher|create teacher/i.test(String(button.textContent || ''))
-      ) as HTMLButtonElement | undefined
-
-      addButton?.click()
     }, 120)
   }
 
   const location = schoolLocation(school)
   const href = websiteHref(school.website)
+
+  if (!schoolClientReady) {
+    return (
+      <div
+        className="school-safe-screen school-hydration-shell-v404"
+        style={{
+          minHeight: '100dvh',
+          height: '100dvh',
+          overflow: 'hidden',
+          background: T.bg,
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+          color: T.ink,
+        }}
+      />
+    )
+  }
 
   return (
     <div className="school-safe-screen" style={{
@@ -1029,7 +1054,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
         <SchoolLogoIntroOverlay school={school} leaving={schoolLogoLoaderLeaving} />
       )}
 
-      {logoDraft && (
+      {schoolClientReady && logoDraft && (
         <LogoAdjustModal
           draft={logoDraft}
           uploading={uploading}
@@ -1037,14 +1062,17 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           onApply={uploadAdjustedLogo}
         />
       )}
+      {schoolClientReady && (
 
-      <input
-        ref={logoRef}
-        type="file"
-        accept="image/*"
-        style={{ display: 'none' }}
-        onChange={handleLogoChange}
+        <input
+          ref={logoRef}
+          type="file"
+          data-school-logo-file-input-v403="true"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleLogoChange}
       />
+      )}
 
       <div className={`school-page-shell ${showSchoolLogoLoader ? 'is-loading' : 'is-ready'}`} style={{
         maxWidth: 520,
