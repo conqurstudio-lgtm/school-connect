@@ -95,14 +95,6 @@ function shortenSubject(name: string): string {
   return map[name] ?? name
 }
 
-
-function getScoreEmoji(score: number): string {
-  if (score >= 4.5) return '🏆'
-  if (score >= 4) return '✨'
-  if (score >= 3.5) return '⭐'
-  return '🌱'
-}
-
 function formatWeek(date: string): string {
   const d = new Date(date)
   const end = new Date(d); end.setDate(d.getDate() + 4)
@@ -126,7 +118,7 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 }
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
-function ScoreRing({ score, max = 5, colorful = true, showEmoji = true }: { score: number; max?: number; colorful?: boolean; showEmoji?: boolean }) {
+function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
   const size   = 172
   const stroke = 7
   const radius = (size - stroke) / 2
@@ -164,21 +156,10 @@ function ScoreRing({ score, max = 5, colorful = true, showEmoji = true }: { scor
       }}>
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            {colorful ? (
-              <>
-                <stop offset="0%"   stopColor="#EF4444" />
-                <stop offset="35%"  stopColor="#F59E0B" />
-                <stop offset="70%"  stopColor="#78A6FE" />
-                <stop offset="100%" stopColor="#22C55E" />
-              </>
-            ) : (
-              <>
-                <stop offset="0%"   stopColor="#BDBDBD" />
-                <stop offset="35%"  stopColor="#CFCFCF" />
-                <stop offset="70%"  stopColor="#D6D6D6" />
-                <stop offset="100%" stopColor="#A3A3A3" />
-              </>
-            )}
+            <stop offset="0%"   stopColor="#BDBDBD" />
+            <stop offset="35%"  stopColor="#CFCFCF" />
+            <stop offset="70%"  stopColor="#D6D6D6" />
+            <stop offset="100%" stopColor="#A3A3A3" />
           </linearGradient>
         </defs>
         {/* Track */}
@@ -219,21 +200,6 @@ function ScoreRing({ score, max = 5, colorful = true, showEmoji = true }: { scor
         </div>
       </div>
 
-      {showEmoji && (
-        <div style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: -8,
-          textAlign: 'center',
-          fontSize: 32,
-          lineHeight: 1,
-          filter: colorful ? 'none' : 'grayscale(0.15)',
-          opacity: colorful ? 1 : 0.82,
-        }}>
-          {getScoreEmoji(score)}
-        </div>
-      )}
     </div>
   )
 }
@@ -308,14 +274,14 @@ export function ReportCard({ report, childName }: Props) {
   const reportStatusLabel = isLatestReport ? 'This week' : 'Previous report'
   const mutedReportOpacity = isLatestReport ? 1 : 0.82
 
-  const teacherName = String(report.teacher_name || '').trim()
+  const teacherName = report.teacher_name || 'Teacher'
   const teacherInitials = String(teacherName || 'T')
     .trim()
     .split(/\s+/)
     .filter(Boolean)
     .slice(0, 2)
     .map((part: string) => part[0]?.toUpperCase())
-    .join('') || ''
+    .join('') || 'T'
   const teacherPhoto =
     report.teacher_photo_url ||
     report.teacher_avatar_url ||
@@ -355,7 +321,7 @@ export function ReportCard({ report, childName }: Props) {
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 7px',
         }}>
-          {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly update'}
+          {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
           fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 24px',
@@ -364,7 +330,7 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <ScoreRing score={overall} colorful={isLatestReport} showEmoji />
+        <ScoreRing score={overall} />
 
         <div style={{ marginTop: 18 }}>
           <p style={{
@@ -384,96 +350,107 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
+
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div className="sc-parent-report-note-breathe-v397" style={{
-          maxWidth: 396,
-          margin: '76px auto 70px',
-          padding: '0 10px',
+        <div style={{
+          padding: '0 10px 38px',
         }}>
+          <div style={{
+            maxWidth: 396,
+            margin: '0 auto 10px',
+          }}>
+            <p style={{
+              fontSize: 11.5,
+              fontWeight: 560,
+              color: '#717171',
+              letterSpacing: '0.03em',
+              textTransform: 'uppercase',
+              margin: 0,
+            }}>
+              Teacher note
+            </p>
+          </div>
+
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
-            gap: 13,
+            gap: 11,
+            maxWidth: 396,
+            margin: '0 auto',
           }}>
             <div style={{
-              width: 34,
-              flexShrink: 0,
+              width: 38,
+              height: 38,
+              borderRadius: 15,
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F5F5F5',
+              color: '#717171',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              paddingTop: 2,
+              justifyContent: 'center',
+              fontSize: 11,
+              fontWeight: 560,
+              letterSpacing: '-0.01em',
+              flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              <div style={{
-                width: 34,
-                height: 34,
-                borderRadius: '50%',
-                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E6E6E6',
-                color: '#777A80',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 10.5,
-                fontWeight: 560,
-                letterSpacing: '-0.01em',
-                overflow: 'hidden',
-              }}>
-                {!teacherPhoto && teacherInitials}
-              </div>
-
-              <div style={{
-                width: 1,
-                height: 24,
-                background: 'rgba(17,17,17,0.12)',
-                marginTop: 7,
-              }} />
+              {!teacherPhoto && teacherInitials}
             </div>
 
             <div style={{
               flex: 1,
               minWidth: 0,
-              background: '#F5F5F7',
-              borderRadius: 24,
-              padding: '14px 16px 15px',
-              boxShadow: 'none',
+              paddingTop: 1,
             }}>
               <p style={{
                 display: 'flex',
-                alignItems: 'baseline',
-                gap: 6,
+                alignItems: 'center',
+                gap: 5,
                 flexWrap: 'wrap',
-                margin: '0 0 8px',
+                fontSize: 13.5,
+                color: T.ink,
+                fontWeight: 560,
+                letterSpacing: '-0.015em',
                 lineHeight: 1.2,
+                margin: '0 0 8px',
               }}>
                 <span style={{
-                  fontSize: 14.6,
-                  fontWeight: 560,
-                  color: '#202124',
-                  letterSpacing: '-0.02em',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 210,
                 }}>
                   {teacherName}
                 </span>
 
                 <span style={{
-                  fontSize: 12.2,
-                  fontWeight: 500,
-                  color: '#777A80',
-                  letterSpacing: '-0.01em',
+                  color: '#5F6268',
+                  fontWeight: 400,
                 }}>
-                  - {childTeacherLabel}
+                  {childTeacherLabel}
                 </span>
               </p>
 
-              <p style={{
-                margin: 0,
-                fontSize: 13.15,
-                lineHeight: 1.58,
-                color: '#55575B',
-                letterSpacing: '-0.005em',
-                fontWeight: 400,
+              <div className="sc-teacher-comment-card-v310" style={{
+                position: 'relative',
+                background: '#F7F7F7',
+                border: '1px solid rgba(17,17,17,0.045)',
+                borderRadius: '18px 18px 18px 8px',
+                padding: '12px 14px',
+                overflow: 'hidden',
+                boxShadow: 'none',
               }}>
-                {report.comment}
-              </p>
+                <p style={{
+                  fontSize: 13.6,
+                  color: '#5F6268',
+                  margin: 0,
+                  lineHeight: 1.52,
+                  letterSpacing: '-0.005em',
+                  fontWeight: 400,
+                }}>
+                  {report.comment}
+                </p>
+              </div>
             </div>
           </div>
         </div>
