@@ -1120,7 +1120,7 @@ function TeacherLearnersPage({
     }}>
       <TeacherSafeAreaStyle />
 
-      <div className={`teacher-page-shell ${showTeacherStartup ? '' : 'is-ready'}`} style={{
+      <div className="teacher-page-shell is-ready" style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
@@ -1417,6 +1417,226 @@ function ReportLinkedSafeAreaStyle() {
 }
 
 
+function TeacherReportTopBar({ title, subtitle, onBack }: any) {
+  return (
+    <header style={{
+      flexShrink: 0,
+      padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+      background: T.white,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <SchoolConnectBackButton onClick={onBack} />
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{
+            fontSize: 13.5,
+            fontWeight: 560,
+            color: T.ink,
+            margin: 0,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}>
+            {title}
+          </p>
+          {subtitle ? (
+            <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
+              {subtitle}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </header>
+  )
+}
+
+function TeacherReportScreenFrame({ title, subtitle, onBack, children, footer, linkedSafeArea = false }: any) {
+  return (
+    <div className="teacher-safe-screen sc-screen-enter" style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.white,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      {linkedSafeArea ? <ReportLinkedSafeAreaStyle /> : null}
+
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.white,
+      }}>
+        <TeacherReportTopBar title={title} subtitle={subtitle} onBack={onBack} />
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.white,
+        }}>
+          {children}
+        </main>
+
+        {footer ? (
+          <footer style={{
+            flexShrink: 0,
+            padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
+            background: T.white,
+            borderTop: '1px solid var(--sc-border-soft)',
+          }}>
+            {footer}
+          </footer>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+function ReportSectionTitle({ title, subtitle, right }: any) {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      padding: '0 0 10px',
+    }}>
+      <div style={{ minWidth: 0 }}>
+        <p style={{
+          fontSize: 13.8,
+          fontWeight: 580,
+          color: T.ink,
+          margin: 0,
+          letterSpacing: '-0.01em',
+        }}>
+          {title}
+        </p>
+        {subtitle ? (
+          <p style={{
+            fontSize: 12.3,
+            color: T.ink3,
+            lineHeight: 1.36,
+            margin: '3px 0 0',
+          }}>
+            {subtitle}
+          </p>
+        ) : null}
+      </div>
+
+      {right ? <div style={{ flexShrink: 0 }}>{right}</div> : null}
+    </div>
+  )
+}
+
+function ReportAveragePill({ value }: any) {
+  return (
+    <div style={{
+      minWidth: 56,
+      height: 36,
+      borderRadius: 999,
+      background: 'var(--sc-soft)',
+      color: 'var(--sc-ink)',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 13,
+      fontWeight: 620,
+      letterSpacing: '-0.01em',
+    }}>
+      {value}
+    </div>
+  )
+}
+
+function ReportQuietState({ title, text }: any) {
+  return (
+    <section style={{
+      padding: '30px 16px',
+      textAlign: 'center',
+      border: '1px dashed var(--sc-border-soft)',
+      borderRadius: 22,
+      background: 'transparent',
+    }}>
+      <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
+        {title}
+      </p>
+      {text ? (
+        <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+          {text}
+        </p>
+      ) : null}
+    </section>
+  )
+}
+
+function ReadOnlyScoreList({ scores }: any) {
+  const scoreEntries = Object.entries(scores || {})
+
+  if (!scoreEntries.length) {
+    return (
+      <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+        No subject scores were added to this report.
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {scoreEntries.map(([subject, value], index) => {
+        const score = Number(value)
+        const safeScore = Number.isFinite(score) ? Math.max(0, Math.min(5, score)) : 0
+
+        return (
+          <div
+            key={subject}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto',
+              alignItems: 'center',
+              gap: 12,
+              padding: '12px 0',
+              borderBottom: index === scoreEntries.length - 1 ? 'none' : '1px solid var(--sc-border-soft)',
+            }}
+          >
+            <p style={{
+              fontSize: 13.5,
+              fontWeight: 540,
+              color: T.ink,
+              margin: 0,
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}>
+              {subject}
+            </p>
+
+            <div style={{
+              minWidth: 42,
+              height: 29,
+              borderRadius: 999,
+              background: 'var(--sc-soft)',
+              color: 'var(--sc-ink-2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12.4,
+              fontWeight: 580,
+            }}>
+              {safeScore}/5
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function TeacherReportPreview({ teacher, child, onBack }: any) {
   const [loading, setLoading] = useState(true)
   const [report, setReport] = useState<any>(null)
@@ -1458,9 +1678,9 @@ function TeacherReportPreview({ teacher, child, onBack }: any) {
     }
   }, [child?.id])
 
-  const scoreEntries = Object.entries(report?.scores || {})
   const avg = averageScore(report?.scores)
   const avgLabel = avg == null ? '—' : avg.toFixed(1)
+  const scoreCount = Object.keys(report?.scores || {}).length
 
   const copyParentLink = async () => {
     if (!magicLink) {
@@ -1481,289 +1701,142 @@ function TeacherReportPreview({ teacher, child, onBack }: any) {
     window.open(magicLink, '_blank', 'noopener,noreferrer')
   }
 
-  return (
-    <div className="teacher-safe-screen sc-screen-enter" style={{
-      minHeight: '100dvh',
-      height: '100dvh',
-      overflow: 'hidden',
-      background: T.white,
-      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-      color: T.ink,
+  const footer = report ? (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: magicLink ? '1fr 1fr' : '1fr',
+      gap: 8,
+      alignItems: 'center',
     }}>
-      <ReportLinkedSafeAreaStyle />
+      {magicLink ? (
+        <SCButton tone="secondary" fullWidth onClick={openParentView} leading={<Eye size={15} strokeWidth={1.8} />}>
+          Parent view
+        </SCButton>
+      ) : null}
+      <SCButton tone="primary" fullWidth onClick={copyParentLink} leading={<Copy size={15} strokeWidth={1.8} />}>
+        Copy link
+      </SCButton>
+    </div>
+  ) : null
 
-      <div style={{
-        maxWidth: 520,
-        height: '100dvh',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        background: T.white,
-      }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: T.white,
+  return (
+    <TeacherReportScreenFrame
+      title="Report preview"
+      subtitle={child?.name || 'Learner'}
+      onBack={onBack}
+      linkedSafeArea
+      footer={footer}
+    >
+      {loading ? (
+        <section style={{
+          minHeight: 260,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: T.ink3,
+          fontSize: 13,
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <SchoolConnectBackButton onClick={onBack} />
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                Report preview
-              </p>
-              <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
-                {child?.name || 'Learner'}
-              </p>
-            </div>
-          </div>
-        </header>
-
-        <main style={{
-          flex: 1,
-          minHeight: 0,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: T.white,
-        }}>
-          {loading ? (
-            <section style={{
-              minHeight: 260,
-              display: 'flex',
+          Opening report...
+        </section>
+      ) : error ? (
+        <ReportQuietState title="Report could not load" text={error} />
+      ) : !report ? (
+        <ReportQuietState title="No sent report yet" text="Once a report is sent, the preview will appear here." />
+      ) : (
+        <>
+          <section style={{
+            padding: '18px 0 18px',
+            borderBottom: '1px solid var(--sc-border-soft)',
+            marginBottom: 16,
+          }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '56px 1fr auto',
               alignItems: 'center',
-              justifyContent: 'center',
-              color: T.ink3,
-              fontSize: 13,
+              gap: 12,
             }}>
-              Loading report...
-            </section>
-          ) : error ? (
-            <section style={{
-              padding: '30px 16px',
-              textAlign: 'center',
-              border: `1px dashed ${T.border}`,
-              borderRadius: 22,
-              background: 'transparent',
-            }}>
-              <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
-                Report could not load
-              </p>
-              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
-                {error}
-              </p>
-            </section>
-          ) : !report ? (
-            <section style={{
-              padding: '30px 16px',
-              textAlign: 'center',
-              border: `1px dashed ${T.border}`,
-              borderRadius: 22,
-              background: 'transparent',
-            }}>
-              <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
-                No sent report yet
-              </p>
-              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
-                Once a report is sent, the preview will appear here.
-              </p>
-            </section>
-          ) : (
-            <>
-              <section style={{
-                padding: '20px 0 22px',
-                borderBottom: `1px solid ${T.border}`,
-                marginBottom: 18,
+              <div style={{
+                width: 56,
+                height: 56,
+                borderRadius: 20,
+                background: 'var(--sc-soft)',
+                color: 'var(--sc-ink-2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 17,
+                fontWeight: 600,
+                letterSpacing: '-0.02em',
               }}>
-                <div style={{
-                  width: 72,
-                  height: 72,
-                  borderRadius: 26,
-                  background: T.soft,
-                  color: T.ink2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 22,
-                  fontWeight: 560,
-                  marginBottom: 14,
-                }}>
-                  {initials(child?.name)}
-                </div>
+                {initials(child?.name)}
+              </div>
 
+              <div style={{ minWidth: 0 }}>
                 <p style={{
                   fontSize: 12.2,
                   fontWeight: 520,
                   color: T.ink3,
-                  margin: '0 0 6px',
+                  margin: '0 0 4px',
                 }}>
                   {formatWeek(report.week_starting)}
                 </p>
-
                 <h1 style={{
-                  fontSize: 25,
-                  lineHeight: 1.06,
+                  fontSize: 22,
+                  lineHeight: 1.08,
                   fontWeight: 560,
-                  letterSpacing: '-0.052em',
+                  letterSpacing: '-0.045em',
                   color: T.ink,
                   margin: 0,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
                 }}>
                   {child?.name || 'Learner'}
                 </h1>
-
                 <p style={{
-                  fontSize: 13,
+                  fontSize: 12.6,
                   color: T.ink3,
-                  lineHeight: 1.45,
-                  margin: '8px 0 0',
+                  lineHeight: 1.35,
+                  margin: '5px 0 0',
                 }}>
                   Sent by {teacher?.name || 'Teacher'}
                 </p>
-              </section>
+              </div>
 
-              <section style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr auto',
-                alignItems: 'center',
-                gap: 12,
-                padding: '0 0 16px',
-                borderBottom: `1px solid ${T.border}`,
-                marginBottom: 18,
-              }}>
-                <div>
-                  <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-                    Overall progress
-                  </p>
-                  <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.4, margin: '3px 0 0' }}>
-                    Average from this report.
-                  </p>
-                </div>
+              <ReportAveragePill value={avgLabel} />
+            </div>
+          </section>
 
-                <div style={{
-                  minWidth: 58,
-                  height: 40,
-                  borderRadius: 999,
-                  background: T.soft,
-                  color: T.ink,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 14,
-                  fontWeight: 580,
-                }}>
-                  {avgLabel}
-                </div>
-              </section>
-
-              <section style={{
-                padding: '0 0 16px',
-                borderBottom: `1px solid ${T.border}`,
-                marginBottom: 18,
-              }}>
-                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: '0 0 10px' }}>
-                  Teacher note
-                </p>
-                <p style={{
-                  fontSize: 14,
-                  color: T.ink2,
-                  lineHeight: 1.55,
-                  margin: 0,
-                }}>
-                  {report.comment || 'No note added for this report.'}
-                </p>
-              </section>
-
-              <section>
-                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: '0 0 4px' }}>
-                  Subjects
-                </p>
-                <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.4, margin: '0 0 8px' }}>
-                  {scoreEntries.length} {scoreEntries.length === 1 ? 'area' : 'areas'} assessed
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {scoreEntries.map(([subject, value], index) => {
-                    const score = Number(value)
-                    const safeScore = Number.isFinite(score) ? score : 0
-
-                    return (
-                      <div
-                        key={subject}
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr auto',
-                          alignItems: 'center',
-                          gap: 12,
-                          padding: '13px 0',
-                          borderBottom: index === scoreEntries.length - 1 ? 'none' : `1px solid ${T.border}`,
-                        }}
-                      >
-                        <p style={{
-                          fontSize: 13.5,
-                          fontWeight: 520,
-                          color: T.ink,
-                          margin: 0,
-                          overflow: 'hidden',
-                          whiteSpace: 'nowrap',
-                          textOverflow: 'ellipsis',
-                        }}>
-                          {subject}
-                        </p>
-
-                        <div style={{
-                          minWidth: 40,
-                          height: 28,
-                          borderRadius: 999,
-                          background: T.soft,
-                          color: T.ink2,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 12.5,
-                          fontWeight: 560,
-                        }}>
-                          {safeScore}/5
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
-            </>
-          )}
-        </main>
-
-        {report && (
-          <footer style={{
-            flexShrink: 0,
-            padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-            display: 'grid',
-            gridTemplateColumns: magicLink ? '1fr 1fr' : '1fr',
-            gap: 8,
-            alignItems: 'center',
-            background: T.white,
-            borderTop: `1px solid ${T.border}`,
+          <section style={{
+            padding: '0 0 16px',
+            borderBottom: '1px solid var(--sc-border-soft)',
+            marginBottom: 16,
           }}>
-            {magicLink && (
-              <SCButton tone="secondary" fullWidth onClick={openParentView}>
-                Parent view
-              </SCButton>
-            )}
-            <SCButton tone="primary" fullWidth onClick={copyParentLink}>
-              Copy link
-            </SCButton>
-          </footer>
-        )}
-      </div>
-    </div>
+            <ReportSectionTitle
+              title="Teacher note"
+              subtitle="Message shared with the parent."
+            />
+            <p style={{
+              fontSize: 14,
+              color: T.ink2,
+              lineHeight: 1.55,
+              margin: 0,
+            }}>
+              {report.comment || 'No note added for this report.'}
+            </p>
+          </section>
+
+          <section>
+            <ReportSectionTitle
+              title="Subjects"
+              subtitle={`${scoreCount} ${scoreCount === 1 ? 'area' : 'areas'} assessed`}
+              right={<ReportAveragePill value={avgLabel} />}
+            />
+            <ReadOnlyScoreList scores={report.scores} />
+          </section>
+        </>
+      )}
+    </TeacherReportScreenFrame>
   )
 }
 
@@ -1794,6 +1867,9 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
       .catch(() => setHistory([]))
       .finally(() => setHistoryLoading(false))
   }, [child.id, weekStart, subjectsKey])
+
+  const draftAvg = averageScore(scores)
+  const draftAvgLabel = draftAvg == null ? '—' : draftAvg.toFixed(1)
 
   const submit = async () => {
     if (saving) return
@@ -1848,258 +1924,170 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
     toast.success('Parent link copied')
   }
 
-  return (
-    <div className="teacher-safe-screen sc-screen-enter" style={{
-      minHeight: '100dvh',
-      height: '100dvh',
-      overflow: 'hidden',
-      background: '#FFFFFF',
-      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
-      color: T.ink,
+  const footer = (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr 46px',
+      gap: 8,
+      alignItems: 'center',
     }}>
-      <div style={{
-        maxWidth: 520,
-        height: '100dvh',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#FFFFFF',
-      }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+      <SCButton
+        tone="primary"
+        fullWidth
+        onClick={submit}
+        disabled={saving}
+        style={{ minHeight: 44 }}
+      >
+        {saving ? 'Sending...' : 'Send report'}
+      </SCButton>
+
+      <button
+        type="button"
+        onClick={copyLink}
+        aria-label="Copy parent link"
+        className="sc-icon-button"
+        style={{
+          width: 46,
+          height: 44,
+          borderRadius: 999,
+          border: '1px solid var(--sc-border-soft)',
           background: T.white,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <SchoolConnectBackButton onClick={onBack} />
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 560,
-                color: T.ink,
-                margin: 0,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                {child.name}
-              </p>
-              <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
-                Weekly report
-              </p>
-            </div>
-          </div>
-        </header>
-
-        <main style={{
-          flex: 1,
-          minHeight: 0,
-          overflowY: 'auto',
-          WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: T.white,
-        }}>
-          <section style={{
-            borderRadius: 28,
-            background: '#FFFFFF',
-            border: 'none',
-            padding: '4px 2px 10px',
-            marginBottom: 14,
-          }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto',
-              alignItems: 'center',
-              gap: 12,
-              padding: '2px 0 16px',
-              borderBottom: `1px solid ${T.border}`,
-              marginBottom: 8,
-            }}>
-              <div style={{ minWidth: 0 }}>
-                <p style={{
-                  fontSize: 13.6,
-                  fontWeight: 560,
-                  color: T.ink,
-                  margin: 0,
-                  letterSpacing: '-0.01em',
-                }}>
-                  Report scores
-                </p>
-                <p style={{
-                  fontSize: 12.2,
-                  color: T.ink3,
-                  lineHeight: 1.35,
-                  margin: '3px 0 0',
-                }}>
-                  Tap a number for each area.
-                </p>
-              </div>
-
-              <label style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                gap: 5,
-                minWidth: 126,
-              }}>
-                <span style={{
-                  fontSize: 11.2,
-                  fontWeight: 540,
-                  color: T.ink3,
-                  lineHeight: 1,
-                }}>
-                  Week
-                </span>
-                <input
-                  type="date"
-                  value={week}
-                  onChange={e => setWeek(e.target.value)}
-                  style={{
-                    ...inputStyle,
-                    minHeight: 34,
-                    height: 34,
-                    borderRadius: 999,
-                    padding: '0 10px',
-                    fontSize: 12.5,
-                    background: T.soft,
-                    border: 'none',
-                    color: T.ink2,
-                    textAlign: 'right',
-                  }}
-                />
-              </label>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {subjects.map((subject, index) => (
-                <SCScoreRow
-                  key={subject}
-                  label={subject}
-                  value={scores[subject] || 3}
-                  isLast={index === subjects.length - 1}
-                  onChange={(score) => setScores(prev => ({ ...prev, [subject]: score }))}
-                />
-              ))}
-            </div>
-          </section>
-
-          <section style={{
-            borderRadius: 24,
-            background: T.white,
-            border: 'none',
-            padding: '2px 2px 6px',
-            marginBottom: 14,
-          }}>
-            <label>
-              <span style={{ ...labelStyle, marginBottom: 8 }}>Teacher note</span>
-              <textarea
-                value={comment}
-                onChange={e => setComment(e.target.value)}
-                rows={5}
-                placeholder="Add a short note for the parent."
-                style={{
-                  ...inputStyle,
-                  resize: 'none',
-                  lineHeight: 1.5,
-                  background: T.soft,
-                  border: 'none',
-                  borderRadius: 20,
-                  padding: 14,
-                }}
-              />
-            </label>
-          </section>
-
-          <section style={{
-            borderRadius: 24,
-            background: T.white,
-            border: 'none',
-            padding: 16,
-            marginBottom: 14,
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 10,
-              marginBottom: 10,
-            }}>
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
-                  Previous reports
-                </p>
-                <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
-                  Sent reports for this learner.
-                </p>
-              </div>
-            </div>
-
-            {historyLoading ? (
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Loading previous reports...</p>
-            ) : history.length === 0 ? (
-              <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>No previous reports yet.</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {history.slice(0, 4).map((report: any) => (
-                  <HistoryCard key={report.id} report={report} />
-                ))}
-              </div>
-            )}
-          </section>
-        </main>
-
-        <footer style={{
-          flexShrink: 0,
-          padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
-          display: 'grid',
-          gridTemplateColumns: '1fr 46px',
-          gap: 8,
+          color: T.ink2,
+          display: 'flex',
           alignItems: 'center',
-          background: T.white,
-        }}>
-          <button type="button" onClick={submit} disabled={saving} style={{
-            ...darkButton,
-            width: '100%',
-            opacity: saving ? 0.65 : 1,
-            cursor: saving ? 'wait' : 'pointer',
-          }}>
-            {saving ? 'Sending...' : 'Send report'}
-          </button>
-
-          <button
-            type="button"
-            onClick={copyLink}
-            aria-label="Copy parent link"
-            style={{
-              width: 46,
-              height: 42,
-              borderRadius: 999,
-              border: 'none',
-              background: T.white,
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            <Copy size={16} strokeWidth={1.8} />
-          </button>
-        </footer>
-      </div>
+          justifyContent: 'center',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        <Copy size={16} strokeWidth={1.8} />
+      </button>
     </div>
+  )
+
+  return (
+    <TeacherReportScreenFrame
+      title={child.name}
+      subtitle="Weekly report"
+      onBack={onBack}
+      footer={footer}
+    >
+      <section style={{
+        padding: '4px 0 14px',
+        marginBottom: 14,
+        borderBottom: '1px solid var(--sc-border-soft)',
+      }}>
+        <ReportSectionTitle
+          title="Report scores"
+          subtitle="Tap a number for each area."
+          right={<ReportAveragePill value={draftAvgLabel} />}
+        />
+
+        <label style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr auto',
+          alignItems: 'center',
+          gap: 12,
+          padding: '0 0 10px',
+          borderBottom: '1px solid var(--sc-border-soft)',
+          marginBottom: 2,
+        }}>
+          <span style={{
+            fontSize: 13.1,
+            fontWeight: 540,
+            color: T.ink,
+            lineHeight: 1.2,
+          }}>
+            Week
+          </span>
+          <input
+            type="date"
+            value={week}
+            onChange={e => setWeek(e.target.value)}
+            style={{
+              ...inputStyle,
+              minHeight: 34,
+              height: 34,
+              borderRadius: 999,
+              padding: '0 10px',
+              fontSize: 12.5,
+              background: T.soft,
+              border: 'none',
+              color: T.ink2,
+              textAlign: 'right',
+              width: 142,
+            }}
+          />
+        </label>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {subjects.map((subject, index) => (
+            <SCScoreRow
+              key={subject}
+              label={subject}
+              value={scores[subject] || 3}
+              isLast={index === subjects.length - 1}
+              onChange={(score) => setScores(prev => ({ ...prev, [subject]: score }))}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section style={{
+        padding: '0 0 16px',
+        borderBottom: '1px solid var(--sc-border-soft)',
+        marginBottom: 16,
+      }}>
+        <ReportSectionTitle
+          title="Teacher note"
+          subtitle="Keep it short and helpful for the parent."
+        />
+        <textarea
+          value={comment}
+          onChange={e => setComment(e.target.value)}
+          rows={5}
+          placeholder="Add a short note for the parent."
+          style={{
+            ...inputStyle,
+            resize: 'none',
+            lineHeight: 1.5,
+            background: 'var(--sc-soft)',
+            border: 'none',
+            borderRadius: 20,
+            padding: 14,
+          }}
+        />
+      </section>
+
+      <section style={{ padding: '0 0 6px' }}>
+        <ReportSectionTitle
+          title="Previous reports"
+          subtitle="Sent reports for this learner."
+        />
+
+        {historyLoading ? (
+          <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>Loading previous reports...</p>
+        ) : history.length === 0 ? (
+          <p style={{ fontSize: 13, color: T.ink3, margin: 0 }}>No previous reports yet.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {history.slice(0, 4).map((report: any, index: number) => (
+              <HistoryCard key={report.id} report={report} isLast={index === Math.min(history.length, 4) - 1} />
+            ))}
+          </div>
+        )}
+      </section>
+    </TeacherReportScreenFrame>
   )
 }
 
-function HistoryCard({ report }: any) {
+function HistoryCard({ report, isLast = false }: any) {
   const avg = averageScore(report.scores)
 
   return (
     <div style={{
-      padding: '10px 0',
-      borderTop: `1px solid ${T.border}`,
+      padding: '12px 0',
+      borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
     }}>
       <div style={{
         display: 'flex',
@@ -2108,40 +2096,26 @@ function HistoryCard({ report }: any) {
         alignItems: 'center',
       }}>
         <div style={{ minWidth: 0 }}>
-          <p style={{ fontSize: 13.2, fontWeight: 540, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 13.2, fontWeight: 560, color: T.ink, margin: 0 }}>
             {formatWeek(report.week_starting)}
           </p>
           <p style={{
             fontSize: 12.2,
             color: T.ink3,
-            margin: '2px 0 0',
+            margin: '3px 0 0',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
-            maxWidth: 260,
+            whiteSpace: 'nowrap',
           }}>
             {report.comment || 'Weekly update sent.'}
           </p>
         </div>
-
-        <div style={{
-          minWidth: 42,
-          height: 28,
-          borderRadius: 999,
-          background: T.accentSoft,
-          color: T.accent,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12.5,
-          fontWeight: 560,
-        }}>
-          {avg ? avg.toFixed(1) : '-'}
-        </div>
+        <ReportAveragePill value={avg == null ? '—' : avg.toFixed(1)} />
       </div>
     </div>
   )
 }
+
 
 function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut, onPhotoSelected }: any) {
   const fileRef = useRef<HTMLInputElement>(null)
