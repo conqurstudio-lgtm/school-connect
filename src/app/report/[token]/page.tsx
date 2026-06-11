@@ -3,11 +3,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { Camera, GraduationCap, Share2, Copy, Check } from 'lucide-react'
+import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
-import { SCButton, SCIconButton, SCTopBar } from '@/components/ui'
+import { SCButton, SCIconButton } from '@/components/ui'
 import { readLastState, writeLastState } from '@/lib/scLastState'
 
 const T = {
@@ -76,13 +76,6 @@ function getReportDateLabel(report: any) {
     month: 'short',
     year: 'numeric',
   })
-}
-
-
-function getChildReportHeader(childName: string) {
-  const first = String(childName || '').trim().split(/\s+/)[0]
-  if (!first || first.toLowerCase() === 'your') return 'Weekly report'
-  return first.toLowerCase().endsWith('s') ? `${first}’ report` : `${first}’s report`
 }
 
 function PreviousReportDropdown({ report, childName }: { report: any, childName: string }) {
@@ -237,7 +230,18 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <Camera size={18} strokeWidth={2} color={T.ink} />
+      <iframe
+        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
+        title="Moments"
+        aria-hidden="true"
+        style={{
+          width: 30,
+          height: 30,
+          border: 'none',
+          display: 'block',
+          pointerEvents: 'none',
+        }}
+      />
     </button>
   )
 }
@@ -296,7 +300,7 @@ function FamilyShareButton({ token }: { token: string }) {
     if (!shareUrl) return copyShareLink()
 
     const shareData = {
-      title: 'Learner update',
+      title: 'School report',
       text: 'I am sharing a read-only school report with you.',
       url: shareUrl,
     }
@@ -545,7 +549,7 @@ function SchoolQuickView({ school }: { school: any }) {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
               }}>
-                {school?.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : 'School details'}
+                {school?.name || 'School'}
               </p>
 
               <p style={{
@@ -556,7 +560,7 @@ function SchoolQuickView({ school }: { school: any }) {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
               }}>
-                
+                School profile
               </p>
             </div>
           </div>
@@ -841,11 +845,9 @@ export default function ParentMagicReportPage() {
   }
 
   const childName = payload.child?.name || 'Your child'
-  const rawTeacherName = String(payload.teacher?.name || '').trim()
-  const teacherName = rawTeacherName && rawTeacherName.toLowerCase() !== 'teacher' ? rawTeacherName : ''
+  const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
   const isFamilyShare = payload?.link_type === 'family_share'
-  const reportHeaderLabel = getChildReportHeader(childName)
   const reports = (payload.reports?.length ? payload.reports : [payload.report])
     .slice()
     .sort((a: any, b: any) => {
@@ -886,32 +888,25 @@ export default function ParentMagicReportPage() {
         flexDirection: 'column',
         background: '#FFFFFF',
       }}>
-        <div
-          className="sc-main-action-bar"
-          style={{
-            minHeight: 56,
-            flexShrink: 0,
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 18px 8px',
+          background: '#FFFFFF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          position: 'relative',
+          zIndex: 10,
+        }}>
+          <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
-            padding: 'calc(6px + env(safe-area-inset-top, 0px)) 18px 4px',
-            background: '#FFFFFF',
-            zIndex: 10,
-          }}
-        >
-          {!isFamilyShare ? (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              gap: 8,
-              flexShrink: 0,
-            }}>
-              <FamilyShareButton token={token || ''} />
-              <MomentBellLink token={token || ''} onOpen={() => setShowMoments(true)} />
-            </div>
-          ) : null}
-        </div>
+            gap: 10,
+          }}>
+            {!isFamilyShare && <FamilyShareButton token={token || ''} />}
+            {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
+          </div>
+        </header>
 
         <section className="sc-report-clean-scroll-v276" style={{
           flex: 1,
@@ -921,7 +916,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '0 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '2px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
           <div style={{
@@ -954,29 +949,14 @@ export default function ParentMagicReportPage() {
                 gap: 0,
                 marginTop: 8,
               }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 12,
+                <p style={{
+                  fontSize: 12.5,
+                  fontWeight: 540,
+                  color: T.ink3,
                   margin: '0 2px 6px',
                 }}>
-                  <p style={{
-                    fontSize: 12.5,
-                    fontWeight: 560,
-                    color: '#5F6268',
-                    margin: 0,
-                  }}>
-                    Previous reports
-                  </p>
-                  <span style={{
-                    fontSize: 11.5,
-                    fontWeight: 430,
-                    color: '#A3A3A3',
-                  }}>
-                    {reports.length - 1} saved
-                  </span>
-                </div>
+                  Previous reports
+                </p>
 
                 {reports.slice(1).map((report: any, index: number) => (
                   <PreviousReportDropdown
