@@ -1,14 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 const T = {
   ink: '#252525',
-  ink3: '#9A9CA3',
   bg: '#FFFFFF',
   accent: '#8FA6A1',
   accentSoft: '#EEF3F1',
-  white: '#FFFFFF',
 }
 
 const TEACHER_DASHBOARD_CACHE_PREFIX = 'school-connect:teacher-dashboard-cache:v2:'
@@ -70,31 +66,10 @@ export function getTeacherStartupPhotoUrl(teacher?: any) {
   ).trim()
 }
 
-export function preloadTeacherStartupImage(teacher?: any) {
-  if (typeof window === 'undefined') return Promise.resolve()
-
-  const url = getTeacherStartupPhotoUrl(teacher)
-  if (!url) return Promise.resolve()
-
-  return new Promise<void>((resolve) => {
-    let done = false
-
-    const finish = () => {
-      if (done) return
-      done = true
-      window.clearTimeout(timer)
-      resolve()
-    }
-
-    const timer = window.setTimeout(finish, 1200)
-    const image = new Image()
-    image.decoding = 'async'
-    image.onload = finish
-    image.onerror = finish
-    image.src = url
-
-    if (image.complete) finish()
-  })
+// Kept for backwards compatibility with earlier imports.
+// It resolves quickly so the page does not wait on a slow remote image.
+export function preloadTeacherStartupImage(_teacher?: any) {
+  return Promise.resolve()
 }
 
 function initialsFrom(name?: string | null) {
@@ -109,57 +84,29 @@ function initialsFrom(name?: string | null) {
 export function TeacherStartupLoader({ teacher, leaving = false, overlay = false }: any) {
   const photoUrl = getTeacherStartupPhotoUrl(teacher)
   const name = teacher?.name || 'Teacher'
-  const [loadedPhotoUrl, setLoadedPhotoUrl] = useState('')
-  const hasLoadedPhoto = Boolean(photoUrl && loadedPhotoUrl === photoUrl)
-
-  useEffect(() => {
-    let cancelled = false
-
-    if (!photoUrl) {
-      setLoadedPhotoUrl('')
-      return () => { cancelled = true }
-    }
-
-    preloadTeacherStartupImage({ photo_url: photoUrl }).then(() => {
-      if (!cancelled) setLoadedPhotoUrl(photoUrl)
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [photoUrl])
 
   const content = (
     <>
       <div
         className={`teacher-startup-mark ${leaving ? 'is-leaving' : ''}`}
+        style={{
+          background: photoUrl ? `url(${photoUrl}) center/cover` : T.accentSoft,
+          color: T.accent,
+        }}
         aria-label={`${name} profile photo`}
       >
-        {photoUrl && (
-          <img
-            src={photoUrl}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className={hasLoadedPhoto ? 'teacher-startup-photo is-ready' : 'teacher-startup-photo'}
-            onLoad={() => setLoadedPhotoUrl(photoUrl)}
-          />
-        )}
-
-        <span className={hasLoadedPhoto ? 'teacher-startup-initials is-hidden' : 'teacher-startup-initials'}>
-          {initialsFrom(name)}
-        </span>
+        {!photoUrl && initialsFrom(name)}
       </div>
 
       <style>{`
         @keyframes teacherStartupIn {
-          from { opacity: 0; transform: translateY(8px) scale(0.965); }
+          from { opacity: 0; transform: translateY(7px) scale(0.97); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes teacherStartupOut {
           from { opacity: 1; transform: translateY(0) scale(1); }
-          to { opacity: 0; transform: translateY(-5px) scale(0.985); }
+          to { opacity: 0; transform: translateY(-4px) scale(0.987); }
         }
 
         @keyframes teacherStartupBackdropOut {
@@ -168,65 +115,29 @@ export function TeacherStartupLoader({ teacher, leaving = false, overlay = false
         }
 
         .teacher-startup-mark {
-          position: relative;
           width: 92px;
           height: 92px;
           border-radius: 32px;
-          background: ${T.accentSoft};
-          color: ${T.accent};
           display: flex;
           align-items: center;
           justify-content: center;
           overflow: hidden;
           font-size: 25px;
           font-weight: 560;
-          box-shadow: 0 14px 34px rgba(15,23,42,0.052);
-          animation: teacherStartupIn 260ms cubic-bezier(.2,.8,.2,1) both;
+          box-shadow: 0 12px 28px rgba(15,23,42,0.045);
+          animation: teacherStartupIn 220ms cubic-bezier(.2,.8,.2,1) both;
           will-change: opacity, transform;
           contain: paint;
         }
 
         .teacher-startup-mark.is-leaving {
-          animation: teacherStartupOut 240ms cubic-bezier(.2,.8,.2,1) forwards;
-        }
-
-        .teacher-startup-photo {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          opacity: 0;
-          transform: scale(1.015);
-          transition: opacity 180ms cubic-bezier(.2,.8,.2,1), transform 220ms cubic-bezier(.2,.8,.2,1);
-          will-change: opacity, transform;
-        }
-
-        .teacher-startup-photo.is-ready {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        .teacher-startup-initials {
-          position: relative;
-          z-index: 1;
-          opacity: 1;
-          transition: opacity 160ms cubic-bezier(.2,.8,.2,1);
-        }
-
-        .teacher-startup-initials.is-hidden {
-          opacity: 0;
+          animation: teacherStartupOut 190ms cubic-bezier(.2,.8,.2,1) forwards;
         }
 
         @media (prefers-reduced-motion: reduce) {
           .teacher-startup-mark,
           .teacher-startup-mark.is-leaving {
             animation: none;
-          }
-
-          .teacher-startup-photo,
-          .teacher-startup-initials {
-            transition: none;
           }
         }
       `}</style>
@@ -247,11 +158,9 @@ export function TeacherStartupLoader({ teacher, leaving = false, overlay = false
           alignItems: 'center',
           justifyContent: 'center',
           pointerEvents: 'none',
-          backdropFilter: 'blur(3px)',
-          WebkitBackdropFilter: 'blur(3px)',
-          transform: 'translateZ(0)',
-          willChange: 'opacity',
-          animation: leaving ? 'teacherStartupBackdropOut 280ms cubic-bezier(.2,.8,.2,1) forwards' : undefined,
+          backdropFilter: 'blur(2.5px)',
+          WebkitBackdropFilter: 'blur(2.5px)',
+          animation: leaving ? 'teacherStartupBackdropOut 220ms cubic-bezier(.2,.8,.2,1) forwards' : undefined,
         }}
       >
         {content}
