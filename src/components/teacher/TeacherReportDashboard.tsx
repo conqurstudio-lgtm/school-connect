@@ -9,6 +9,7 @@ import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import SCActionRow from '@/components/ui/SCActionRow'
 import SCReportRow from '@/components/ui/SCReportRow'
 import SCScoreRow from '@/components/ui/SCScoreRow'
+import SCButton from '@/components/ui/SCButton'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -1412,6 +1413,357 @@ function ReportLinkedSafeAreaStyle() {
         height: env(safe-area-inset-bottom, 0px);
       }
     `}</style>
+  )
+}
+
+
+function TeacherReportPreview({ teacher, child, onBack }: any) {
+  const [loading, setLoading] = useState(true)
+  const [report, setReport] = useState<any>(null)
+  const [magicLink, setMagicLink] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let alive = true
+
+    async function loadPreview() {
+      setLoading(true)
+      setError('')
+
+      try {
+        const res = await fetch(`/api/teacher/report-history?child_id=${encodeURIComponent(child.id)}`, { cache: 'no-store' })
+        const json = await res.json().catch(() => ({}))
+
+        if (!res.ok) throw new Error(json.error || 'Could not load report')
+
+        if (!alive) return
+
+        const reports = Array.isArray(json.reports) ? json.reports : []
+        const latest = reports[0] || null
+
+        setReport(latest)
+        setMagicLink(String(json.magic_link || ''))
+      } catch (e: any) {
+        if (!alive) return
+        setError(e?.message || 'Could not load report')
+      } finally {
+        if (alive) setLoading(false)
+      }
+    }
+
+    if (child?.id) loadPreview()
+
+    return () => {
+      alive = false
+    }
+  }, [child?.id])
+
+  const scoreEntries = Object.entries(report?.scores || {})
+  const avg = averageScore(report?.scores)
+  const avgLabel = avg == null ? '—' : avg.toFixed(1)
+
+  const copyParentLink = async () => {
+    if (!magicLink) {
+      toast.error('Parent link is not available yet')
+      return
+    }
+
+    await navigator.clipboard.writeText(magicLink)
+    toast.success('Parent link copied')
+  }
+
+  const openParentView = () => {
+    if (!magicLink) {
+      toast.error('Parent link is not available yet')
+      return
+    }
+
+    window.open(magicLink, '_blank', 'noopener,noreferrer')
+  }
+
+  return (
+    <div className="teacher-safe-screen sc-screen-enter" style={{
+      minHeight: '100dvh',
+      height: '100dvh',
+      overflow: 'hidden',
+      background: T.white,
+      fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+      color: T.ink,
+    }}>
+      <ReportLinkedSafeAreaStyle />
+
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.white,
+      }}>
+        <header style={{
+          flexShrink: 0,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
+          background: T.white,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <SchoolConnectBackButton onClick={onBack} />
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.5,
+                fontWeight: 560,
+                color: T.ink,
+                margin: 0,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}>
+                Report preview
+              </p>
+              <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
+                {child?.name || 'Learner'}
+              </p>
+            </div>
+          </div>
+        </header>
+
+        <main style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: T.white,
+        }}>
+          {loading ? (
+            <section style={{
+              minHeight: 260,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: T.ink3,
+              fontSize: 13,
+            }}>
+              Loading report...
+            </section>
+          ) : error ? (
+            <section style={{
+              padding: '30px 16px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 22,
+              background: 'transparent',
+            }}>
+              <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
+                Report could not load
+              </p>
+              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+                {error}
+              </p>
+            </section>
+          ) : !report ? (
+            <section style={{
+              padding: '30px 16px',
+              textAlign: 'center',
+              border: `1px dashed ${T.border}`,
+              borderRadius: 22,
+              background: 'transparent',
+            }}>
+              <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
+                No sent report yet
+              </p>
+              <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.45, margin: 0 }}>
+                Once a report is sent, the preview will appear here.
+              </p>
+            </section>
+          ) : (
+            <>
+              <section style={{
+                padding: '20px 0 22px',
+                borderBottom: `1px solid ${T.border}`,
+                marginBottom: 18,
+              }}>
+                <div style={{
+                  width: 72,
+                  height: 72,
+                  borderRadius: 26,
+                  background: T.soft,
+                  color: T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 22,
+                  fontWeight: 560,
+                  marginBottom: 14,
+                }}>
+                  {initials(child?.name)}
+                </div>
+
+                <p style={{
+                  fontSize: 12.2,
+                  fontWeight: 520,
+                  color: T.ink3,
+                  margin: '0 0 6px',
+                }}>
+                  {formatWeek(report.week_starting)}
+                </p>
+
+                <h1 style={{
+                  fontSize: 25,
+                  lineHeight: 1.06,
+                  fontWeight: 560,
+                  letterSpacing: '-0.052em',
+                  color: T.ink,
+                  margin: 0,
+                }}>
+                  {child?.name || 'Learner'}
+                </h1>
+
+                <p style={{
+                  fontSize: 13,
+                  color: T.ink3,
+                  lineHeight: 1.45,
+                  margin: '8px 0 0',
+                }}>
+                  Sent by {teacher?.name || 'Teacher'}
+                </p>
+              </section>
+
+              <section style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr auto',
+                alignItems: 'center',
+                gap: 12,
+                padding: '0 0 16px',
+                borderBottom: `1px solid ${T.border}`,
+                marginBottom: 18,
+              }}>
+                <div>
+                  <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
+                    Overall progress
+                  </p>
+                  <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.4, margin: '3px 0 0' }}>
+                    Average from this report.
+                  </p>
+                </div>
+
+                <div style={{
+                  minWidth: 58,
+                  height: 40,
+                  borderRadius: 999,
+                  background: T.soft,
+                  color: T.ink,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 14,
+                  fontWeight: 580,
+                }}>
+                  {avgLabel}
+                </div>
+              </section>
+
+              <section style={{
+                padding: '0 0 16px',
+                borderBottom: `1px solid ${T.border}`,
+                marginBottom: 18,
+              }}>
+                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: '0 0 10px' }}>
+                  Teacher note
+                </p>
+                <p style={{
+                  fontSize: 14,
+                  color: T.ink2,
+                  lineHeight: 1.55,
+                  margin: 0,
+                }}>
+                  {report.comment || 'No note added for this report.'}
+                </p>
+              </section>
+
+              <section>
+                <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: '0 0 4px' }}>
+                  Subjects
+                </p>
+                <p style={{ fontSize: 12.5, color: T.ink3, lineHeight: 1.4, margin: '0 0 8px' }}>
+                  {scoreEntries.length} {scoreEntries.length === 1 ? 'area' : 'areas'} assessed
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {scoreEntries.map(([subject, value], index) => {
+                    const score = Number(value)
+                    const safeScore = Number.isFinite(score) ? score : 0
+
+                    return (
+                      <div
+                        key={subject}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr auto',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '13px 0',
+                          borderBottom: index === scoreEntries.length - 1 ? 'none' : `1px solid ${T.border}`,
+                        }}
+                      >
+                        <p style={{
+                          fontSize: 13.5,
+                          fontWeight: 520,
+                          color: T.ink,
+                          margin: 0,
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                        }}>
+                          {subject}
+                        </p>
+
+                        <div style={{
+                          minWidth: 40,
+                          height: 28,
+                          borderRadius: 999,
+                          background: T.soft,
+                          color: T.ink2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 12.5,
+                          fontWeight: 560,
+                        }}>
+                          {safeScore}/5
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </section>
+            </>
+          )}
+        </main>
+
+        {report && (
+          <footer style={{
+            flexShrink: 0,
+            padding: '10px 16px calc(12px + env(safe-area-inset-bottom, 0px))',
+            display: 'grid',
+            gridTemplateColumns: magicLink ? '1fr 1fr' : '1fr',
+            gap: 8,
+            alignItems: 'center',
+            background: T.white,
+            borderTop: `1px solid ${T.border}`,
+          }}>
+            {magicLink && (
+              <SCButton tone="secondary" fullWidth onClick={openParentView}>
+                Parent view
+              </SCButton>
+            )}
+            <SCButton tone="primary" fullWidth onClick={copyParentLink}>
+              Copy link
+            </SCButton>
+          </footer>
+        )}
+      </div>
+    </div>
   )
 }
 
