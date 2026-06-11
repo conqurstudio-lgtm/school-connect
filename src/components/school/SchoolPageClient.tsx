@@ -85,26 +85,27 @@ function SchoolRouteLogoLoader({ cachedSchool }: any) {
         fontWeight: 560,
         overflow: 'hidden',
         boxShadow: '0 14px 34px rgba(15,23,42,0.06)',
-        animation: 'schoolRouteLogoIn 260ms cubic-bezier(.2,.8,.2,1) both',
       }}>
         {!cachedSchool?.logo_url && initialsFrom(cachedSchool?.name)}
       </div>
-
-      <style>{`
-        @keyframes schoolRouteLogoIn {
-          from { opacity: 0; transform: translateY(7px) scale(0.965); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-      `}</style>
     </main>
   )
 }
 
 export function SchoolPageClient() {
   const router = useRouter()
-  const [data, setData] = useState<any>(() => readCachedSchoolPage())
+  const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [cachedSchool, setCachedSchool] = useState<any>(null)
   const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    const cached = readCachedSchoolPage()
+    if (cached?.school) {
+      setCachedSchool(cached.school)
+      setData(cached)
+    }
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -217,7 +218,7 @@ export function SchoolPageClient() {
     return <SchoolProfilePage {...data} bootLoading={loading} />
   }
 
-  if (loading) return <SchoolRouteLogoLoader cachedSchool={readCachedSchoolPage()?.school} />
+  if (loading) return <SchoolRouteLogoLoader cachedSchool={cachedSchool} />
 
   if (errorMessage) {
     return (

@@ -117,6 +117,7 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
   const up = value > 0
   const color = up ? T.up : T.down
   return (
+
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2,
                    fontSize: size, color, fontWeight: 600 }}>
       {up ? <TrendingUp size={size} strokeWidth={2.4} /> : <TrendingDown size={size} strokeWidth={2.4} />}
