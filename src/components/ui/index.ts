@@ -7,3 +7,5 @@ export { default as SCPageShell } from './SCPageShell'
 export { default as SCSection } from './SCSection'
 export { default as SCStartupLoader } from './SCStartupLoader'
 export { default as SCTopBar } from './SCTopBar'
+
+export { default as SCReportRow } from './SCReportRow'

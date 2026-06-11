@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
 import SCActionRow from '@/components/ui/SCActionRow'
+import SCReportRow from '@/components/ui/SCReportRow'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -1300,18 +1301,18 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
   const isSentGroup = String(title || '').toLowerCase().includes('sent')
 
   return (
-    <div style={{ marginTop: isSentGroup ? 28 : 2 }}>
+    <div style={{ marginTop: isSentGroup ? 24 : 2 }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 10,
-        padding: '4px 0 11px',
+        padding: '3px 0 10px',
       }}>
         <p style={{
           fontSize: 12.4,
           fontWeight: 560,
-          color: T.ink,
+          color: 'var(--sc-ink)',
           margin: 0,
         }}>
           {title}
@@ -1320,7 +1321,7 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
         <span style={{
           fontSize: 11.4,
           fontWeight: 520,
-          color: T.ink3,
+          color: 'var(--sc-ink-3)',
           lineHeight: 1,
         }}>
           {items.length}
@@ -1343,67 +1344,8 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
 
 function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   const done = isMarkedThisWeek(child, weekStart)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null)
-  const menuButtonRef = useRef<HTMLButtonElement | null>(null)
-  const menuRef = useRef<HTMLDivElement | null>(null)
-
-  const closeMenu = () => {
-    setMenuOpen(false)
-    setMenuPosition(null)
-  }
-
-  const openMenu = (event: any) => {
-    event.stopPropagation()
-
-    const rect = event.currentTarget.getBoundingClientRect()
-    const menuWidth = 142
-    const gap = 8
-
-    setMenuPosition({
-      top: rect.top + rect.height / 2,
-      left: Math.max(12, rect.left - menuWidth - gap),
-    })
-
-    setMenuOpen((value) => !value)
-  }
-
-  useEffect(() => {
-    if (!menuOpen) return
-
-    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node | null
-      if (!target) return
-
-      if (menuRef.current?.contains(target)) return
-      if (menuButtonRef.current?.contains(target)) return
-
-      closeMenu()
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeMenu()
-    }
-
-    const handleWindowChange = () => closeMenu()
-
-    document.addEventListener('mousedown', handlePointerDown, true)
-    document.addEventListener('touchstart', handlePointerDown, true)
-    document.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('resize', handleWindowChange)
-    window.addEventListener('scroll', handleWindowChange, true)
-
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown, true)
-      document.removeEventListener('touchstart', handlePointerDown, true)
-      document.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('resize', handleWindowChange)
-      window.removeEventListener('scroll', handleWindowChange, true)
-    }
-  }, [menuOpen])
 
   const remove = async () => {
-    closeMenu()
     if (!confirm(`Remove ${child.name} from your roster?`)) return
 
     const tid = toast.loading('Removing learner...')
@@ -1422,164 +1364,17 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
   }
 
   return (
-    <article style={{
-      position: 'relative',
-      padding: '14px 0',
-      marginBottom: 0,
-      borderBottom: isLast ? 'none' : `1px solid rgba(0,0,0,0.035)`,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 10,
-    }}>
-      <button
-        type="button"
-        onClick={onOpen}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          border: 'none',
-          background: 'transparent',
-          padding: 0,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
-          textAlign: 'left',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
-      >
-        <div style={{
-          width: 39,
-          height: 39,
-          borderRadius: 15,
-          background: done ? T.accentSoft : T.soft,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: done ? T.accent : T.ink2,
-          fontSize: 12,
-          fontWeight: 540,
-          flexShrink: 0,
-        }}>
-          {initials(child.name)}
-        </div>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontSize: 13.8,
-            fontWeight: 540,
-            color: T.ink,
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            lineHeight: 1.15,
-          }}>
-            {child.name}
-          </p>
-
-          <p style={{
-            fontSize: 12.2,
-            color: done ? '#717171' : T.ink3,
-            margin: '2px 0 0',
-            lineHeight: 1.18,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>
-            {done ? 'Sent this week' : 'Pending this week'}
-          </p>
-        </div>
-      </button>
-
-      <button type="button" onClick={onOpen} style={{
-        minHeight: 32,
-        padding: '0 4px 0 10px',
-        borderRadius: 999,
-        border: 'none',
-        background: 'transparent',
-        color: '#717171',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12.4,
-        fontWeight: 520,
-        fontFamily: 'inherit',
-        cursor: 'pointer',
-        flexShrink: 0,
-      }}>
-        {done ? 'View' : 'Write'}
-      </button>
-
-      <button
-        ref={menuButtonRef}
-        type="button"
-        aria-label={`More options for ${child.name}`}
-        onClick={openMenu}
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: 999,
-          border: 'none',
-          background: 'transparent',
-          color: T.ink3,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          flexShrink: 0,
-        }}
-      >
-        <MoreHorizontal size={16} strokeWidth={1.9} />
-      </button>
-
-      {menuOpen && menuPosition && (
-        <div
-          ref={menuRef}
-          role="menu"
-          aria-label={`Options for ${child.name}`}
-          style={{
-            position: 'fixed',
-            left: menuPosition.left,
-            top: menuPosition.top,
-            transform: 'translateY(-50%)',
-            zIndex: 120,
-            minWidth: 142,
-            padding: 5,
-            borderRadius: 15,
-            background: T.white,
-            border: '1px solid rgba(0,0,0,0.045)',
-            boxShadow: '0 10px 22px rgba(0,0,0,0.065)',
-          }}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={remove}
-            style={{
-              width: '100%',
-              minHeight: 36,
-              border: 'none',
-              borderRadius: 11,
-              background: 'transparent',
-              color: T.red,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: '0 10px',
-              fontFamily: 'inherit',
-              fontSize: 12.3,
-              fontWeight: 520,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Remove learner
-          </button>
-        </div>
-      )}
-    </article>
+    <SCReportRow
+      initials={initials(child.name)}
+      title={child.name}
+      subtitle={done ? 'Sent this week' : 'Pending this week'}
+      actionLabel={done ? 'View' : 'Write'}
+      isLast={isLast}
+      onOpen={onOpen}
+      onAction={onOpen}
+      onRemove={remove}
+      removeLabel="Remove learner"
+    />
   )
 }
 
