@@ -3,12 +3,12 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
-import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
+import { TeacherStartupLoader, readTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 
 const T = {
   ink: '#1A1A1A',
   ink3: '#9A9A9A',
-  bg: '#FCFCFF',
+  bg: '#FFFFFF',
   border: 'rgba(0,0,0,0.07)',
 }
 
@@ -19,6 +19,7 @@ function TeacherLinkBridgeInner() {
   const [message, setMessage] = useState(
     token ? 'Opening your class dashboard…' : 'Need your teacher link'
   )
+  const cached = readTeacherStartupCache(token)
 
   useEffect(() => {
     if (!token) return
@@ -45,7 +46,9 @@ function TeacherLinkBridgeInner() {
 
   const isOpeningTeacher = Boolean(token) && message.toLowerCase().startsWith('opening')
 
-  if (isOpeningTeacher) return <PageGhostLoader />
+  if (isOpeningTeacher) {
+    return <TeacherStartupLoader teacher={cached?.session?.teacher} />
+  }
 
   return (
     <main style={{
@@ -65,7 +68,7 @@ function TeacherLinkBridgeInner() {
         border: `1px solid ${T.border}`,
         borderRadius: 24,
         padding: '34px 24px',
-        boxShadow: '0 18px 48px rgba(0,0,0,0.06)',
+        boxShadow: '0 18px 48px rgba(0,0,0,0.04)',
       }}>
         <div style={{
           width: 58,
@@ -84,7 +87,7 @@ function TeacherLinkBridgeInner() {
         <h1 style={{
           fontSize: 20,
           lineHeight: 1.15,
-          fontWeight: 800,
+          fontWeight: 650,
           letterSpacing: '-0.03em',
           color: T.ink,
           margin: '0 0 8px',

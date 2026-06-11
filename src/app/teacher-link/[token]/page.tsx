@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GraduationCap } from 'lucide-react'
 import { TeacherReportDashboard } from '@/components/teacher/TeacherReportDashboard'
+import { TeacherStartupLoader, readTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 
 const T = {
   ink: '#262626',
@@ -13,54 +14,7 @@ const T = {
   white: '#FFFFFF',
 }
 
-export default function TeacherTokenEntryPage() {
-  const params = useParams<{ token: string }>()
-  const rawToken = params?.token
-  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
-
-  const [session, setSession] = useState<any>(null)
-  const [message, setMessage] = useState('Opening your report tracker...')
-  const [failed, setFailed] = useState(false)
-
-  useEffect(() => {
-    if (!token) {
-      setFailed(true)
-      setMessage('Need your teacher link')
-      return
-    }
-
-    let cancelled = false
-
-    fetch(`/api/teacher-session?token=${encodeURIComponent(token)}`, {
-      credentials: 'same-origin',
-      cache: 'no-store',
-    })
-      .then(async res => {
-        const json = await res.json().catch(() => ({}))
-        if (cancelled) return
-
-        if (!res.ok || !json.teacher?.id) {
-          setFailed(true)
-          setMessage(json.error || 'This teacher link is invalid or has expired')
-          return
-        }
-
-        setSession(json)
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          setFailed(true)
-          setMessage(error?.message || 'Could not open teacher link')
-        }
-      })
-
-    return () => { cancelled = true }
-  }, [token])
-
-  if (session?.teacher?.id) {
-    return <TeacherReportDashboard initialSession={session} initialToken={token} />
-  }
-
+function TeacherLinkError({ message }: { message: string }) {
   return (
     <main style={{
       minHeight: '100dvh',
@@ -112,11 +66,63 @@ export default function TeacherTokenEntryPage() {
           color: T.ink3,
           margin: 0,
         }}>
-          {failed
-            ? 'This is the exact error from the teacher-session API.'
-            : 'Please wait while we connect you to your weekly report tracker.'}
+          Open the private teacher link shared by the school admin.
         </p>
       </section>
     </main>
   )
+}
+
+export default function TeacherTokenEntryPage() {
+  const params = useParams<{ token: string }>()
+  const rawToken = params?.token
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
+
+  const [session, setSession] = useState<any>(null)
+  const [message, setMessage] = useState('Need your teacher link')
+  const [failed, setFailed] = useState(false)
+  const cached = readTeacherStartupCache(token)
+
+  useEffect(() => {
+    if (!token) {
+      setFailed(true)
+      setMessage('Need your teacher link')
+      return
+    }
+
+    let cancelled = false
+
+    fetch(`/api/teacher-session?token=${encodeURIComponent(token)}`, {
+      credentials: 'same-origin',
+      cache: 'no-store',
+    })
+      .then(async res => {
+        const json = await res.json().catch(() => ({}))
+        if (cancelled) return
+
+        if (!res.ok || !json.teacher?.id) {
+          setFailed(true)
+          setMessage(json.error || 'This teacher link is invalid or has expired')
+          return
+        }
+
+        setSession(json)
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setFailed(true)
+          setMessage(error?.message || 'Could not open teacher link')
+        }
+      })
+
+    return () => { cancelled = true }
+  }, [token])
+
+  if (session?.teacher?.id) {
+    return <TeacherReportDashboard initialSession={session} initialToken={token} />
+  }
+
+  if (failed) return <TeacherLinkError message={message} />
+
+  return <TeacherStartupLoader teacher={cached?.session?.teacher} />
 }

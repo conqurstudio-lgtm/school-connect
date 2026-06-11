@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
+import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
@@ -477,15 +478,21 @@ function averageScore(scores: any) {
 }
 
 export function TeacherReportDashboard({ initialSession = null, initialToken = '' }: any) {
-  const [session, setSession] = useState(initialSession)
-  const [loading, setLoading] = useState(!initialSession)
+  // teacher-photo-startup-v342
+  const cachedDashboard = readTeacherStartupCache(initialToken)
+  const [session, setSession] = useState(initialSession || cachedDashboard?.session || null)
+  const [loading, setLoading] = useState(!initialSession && !cachedDashboard?.session)
+  const [bootLoading, setBootLoading] = useState(true)
+  const [showTeacherStartup, setShowTeacherStartup] = useState(true)
+  const [teacherStartupLeaving, setTeacherStartupLeaving] = useState(false)
+  const startupStartedRef = useRef(Date.now())
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [photoDraft, setPhotoDraft] = useState<any>(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [showTeacherMoments, setShowTeacherMoments] = useState(false)
   const [showLearnersPage, setShowLearnersPage] = useState(false)
-  const [momentSummary, setMomentSummary] = useState({ moments: 0, reactions: 0, recipients: 0, viewed: 0, reacted_moments: 0 })
+  const [momentSummary, setMomentSummary] = useState(cachedDashboard?.momentSummary || { moments: 0, reactions: 0, recipients: 0, viewed: 0, reacted_moments: 0 })
   const [momentDraft, setMomentDraft] = useState<any>(null)
   const momentFileRef = useRef<HTMLInputElement>(null)
   const [activeChild, setActiveChild] = useState<any>(null)
@@ -538,13 +545,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       setSession((current: any) => {
         if (!current) return current
 
-        return {
+        const nextSession = {
           ...current,
           teacher: {
             ...current.teacher,
             photo_url: json.photo_url,
           },
         }
+
+        writeTeacherStartupCache(initialToken, nextSession, momentSummary)
+        return nextSession
       })
 
       if (photoDraft?.previewUrl) URL.revokeObjectURL(photoDraft.previewUrl)
@@ -588,14 +598,17 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
       const mergedChildren = await loadStatuses(json.children || [])
 
-      setSession({
+      const nextSession = {
         ...json,
         children: mergedChildren,
-      })
+      }
 
-      loadMomentSummary()
+      setSession(nextSession)
+      writeTeacherStartupCache(initialToken, nextSession, momentSummary)
+      loadMomentSummary(nextSession)
     } finally {
       setLoading(false)
+      setBootLoading(false)
     }
   }
 
@@ -603,23 +616,42 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     load()
   }, [])
 
+  useEffect(() => {
+    if (!showTeacherStartup) return
+    if (loading || bootLoading) return
+
+    const elapsed = Date.now() - startupStartedRef.current
+    const wait = Math.max(0, 720 - elapsed)
+
+    const startLeaving = window.setTimeout(() => setTeacherStartupLeaving(true), wait)
+    const finish = window.setTimeout(() => setShowTeacherStartup(false), wait + 280)
+
+    return () => {
+      window.clearTimeout(startLeaving)
+      window.clearTimeout(finish)
+    }
+  }, [loading, bootLoading, showTeacherStartup])
+
   const signOut = async () => {
     await fetch('/api/teacher-session', { method: 'POST' })
     window.location.href = '/teacher'
   }
 
-  const loadMomentSummary = async () => {
+  const loadMomentSummary = async (sessionForCache: any = session) => {
     try {
       const res = await fetch('/api/teacher/moments/list?summary=1', { cache: 'no-store' })
       const json = await res.json().catch(() => ({}))
       if (res.ok && json.summary) {
-        setMomentSummary({
+        const nextSummary = {
           moments: Number(json.summary.moments || 0),
           reactions: Number(json.summary.reactions || 0),
           recipients: Number(json.summary.recipients || 0),
           viewed: Number(json.summary.viewed || 0),
           reacted_moments: Number(json.summary.reacted_moments || 0),
-        })
+        }
+
+        setMomentSummary(nextSummary)
+        writeTeacherStartupCache(initialToken, sessionForCache, nextSummary)
       }
     } catch {
       // Keep dashboard clean if summary is unavailable.
@@ -651,7 +683,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     setMomentDraft({ file })
   }
 
-  if (loading) return <PageGhostLoader />
+  if (loading) {
+    return <TeacherStartupLoader teacher={cachedDashboard?.session?.teacher} />
+  }
 
   if (!session?.teacher?.id) {
     return (
@@ -786,6 +820,10 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       color: T.ink,
     }}>
       <TeacherSafeAreaStyle />
+
+      {showTeacherStartup && (
+        <TeacherStartupLoader teacher={teacher} overlay leaving={teacherStartupLeaving} />
+      )}
 
       {photoDraft && (
         <TeacherPhotoAdjustModal
