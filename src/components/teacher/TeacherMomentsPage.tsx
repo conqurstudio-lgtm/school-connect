@@ -295,32 +295,51 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           background: 'transparent',
           minHeight: 42,
         }}>
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Back"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: 'none',
-              background: 'transparent',
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            minWidth: 0,
+          }}>
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Back"
+              className="sc-icon-button"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: 'transparent',
+                color: T.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <ArrowLeft size={19} strokeWidth={2.05} />
+            </button>
+
+            <span style={{
+              fontSize: 15.5,
+              fontWeight: 620,
+              letterSpacing: '-0.018em',
               color: T.ink,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              cursor: 'pointer',
-              padding: 0,
-            }}
-          >
-            <ArrowLeft size={19} strokeWidth={2.05} />
-          </button>
+              whiteSpace: 'nowrap',
+            }}>
+              Moments
+            </span>
+          </div>
 
           <button
             type="button"
             onClick={() => momentFileRef.current?.click()}
             aria-label="Add Moment"
+            className="sc-icon-button"
             style={{
               width: 38,
               height: 38,
@@ -346,21 +365,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+          padding: '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
-          <section style={{ padding: '20px 0 22px' }}>
-            <h1 style={{
-              fontSize: 25,
-              lineHeight: 1.05,
-              fontWeight: 560,
-              letterSpacing: '-0.052em',
-              color: T.ink,
-              margin: 0,
-            }}>
-              Moments
-            </h1>
-          </section>
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
@@ -635,7 +642,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
                   width: 132,
                   borderRadius: 18,
                   background: T.white,
-                  boxShadow: '0 14px 35px rgba(0,0,0,0.085)',
+                  boxShadow: 'var(--sc-shadow-menu)',
                   border: `1px solid ${T.border}`,
                   padding: 6,
                 }}

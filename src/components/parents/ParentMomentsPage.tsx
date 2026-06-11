@@ -331,50 +331,69 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           background: 'transparent',
           minHeight: 42,
         }}>
-          {embedded ? (
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Back"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: 'transparent',
-                color: T.ink,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            >
-              <ArrowLeft size={19} strokeWidth={2.05} />
-            </button>
-          ) : (
-            <a
-              href={`/report/${token}`}
-              aria-label="Back to report"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: 'none',
-                background: 'transparent',
-                color: T.ink,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textDecoration: 'none',
-                flexShrink: 0,
-                padding: 0,
-              }}
-            >
-              <ArrowLeft size={19} strokeWidth={2.05} />
-            </a>
-          )}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            minWidth: 0,
+          }}>
+            {embedded ? (
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Back"
+                className="sc-icon-button"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: 'transparent',
+                  color: T.ink,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                <ArrowLeft size={19} strokeWidth={2.05} />
+              </button>
+            ) : (
+              <a
+                href={`/report/${token}`}
+                aria-label="Back to report"
+                className="sc-icon-button"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: 'transparent',
+                  color: T.ink,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textDecoration: 'none',
+                  flexShrink: 0,
+                  padding: 0,
+                }}
+              >
+                <ArrowLeft size={19} strokeWidth={2.05} />
+              </a>
+            )}
+
+            <span style={{
+              fontSize: 15.5,
+              fontWeight: 620,
+              letterSpacing: '-0.018em',
+              color: T.ink,
+              whiteSpace: 'nowrap',
+            }}>
+              Moments
+            </span>
+          </div>
         </header>
 
         <section style={{
@@ -383,21 +402,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '16px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
-          <section style={{ padding: '20px 0 22px' }}>
-            <h1 style={{
-              fontSize: 25,
-              lineHeight: 1.05,
-              fontWeight: 560,
-              letterSpacing: '-0.052em',
-              color: T.ink,
-              margin: 0,
-            }}>
-              Moments
-            </h1>
-          </section>
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
