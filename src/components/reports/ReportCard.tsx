@@ -12,8 +12,8 @@ const T = {
   ink4:    '#D8D8D8',
   divider: 'rgba(0,0,0,0.035)',
   trackBg: '#EFEFF2',
-  up:      '#22C55E',
-  down:    '#EF4444',
+  up:      '#A3A3A3',
+  down:    '#BDBDBD',
   same:    '#9A9A9A',
 }
 
@@ -164,10 +164,10 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
       }}>
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#EF4444" />
-            <stop offset="35%"  stopColor="#F59E0B" />
-            <stop offset="70%"  stopColor="#78A6FE" />
-            <stop offset="100%" stopColor="#22C55E" />
+            <stop offset="0%"   stopColor="#BDBDBD" />
+            <stop offset="35%"  stopColor="#CFCFCF" />
+            <stop offset="70%"  stopColor="#D6D6D6" />
+            <stop offset="100%" stopColor="#A3A3A3" />
           </linearGradient>
         </defs>
         {/* Track */}
