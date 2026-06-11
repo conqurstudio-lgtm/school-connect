@@ -78,6 +78,13 @@ function getReportDateLabel(report: any) {
   })
 }
 
+
+function getChildReportHeader(childName: string) {
+  const first = String(childName || '').trim().split(/\s+/)[0]
+  if (!first || first.toLowerCase() === 'your') return 'Weekly report'
+  return first.toLowerCase().endsWith('s') ? `${first}’ report` : `${first}’s report`
+}
+
 function PreviousReportDropdown({ report, childName }: { report: any, childName: string }) {
   const score = getReportScore(report)
   const scoreText = score > 0 ? score.toFixed(1) : '—'
@@ -837,6 +844,7 @@ export default function ParentMagicReportPage() {
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
   const isFamilyShare = payload?.link_type === 'family_share'
+  const reportHeaderLabel = getChildReportHeader(childName)
   const reports = (payload.reports?.length ? payload.reports : [payload.report])
     .slice()
     .sort((a: any, b: any) => {
@@ -883,14 +891,54 @@ export default function ParentMagicReportPage() {
           background: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
+          gap: 14,
           position: 'relative',
           zIndex: 10,
         }}>
           <div style={{
+            minWidth: 0,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+          }}>
+            <p style={{
+              fontSize: 14.5,
+              fontWeight: 610,
+              color: '#252525',
+              letterSpacing: '-0.015em',
+              lineHeight: 1.1,
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '100%',
+            }}>
+              {reportHeaderLabel}
+            </p>
+
+            {school ? (
+              <SchoolQuickView school={school} />
+            ) : (
+              <span style={{
+                fontSize: 10.5,
+                color: '#9A9A9A',
+                fontWeight: 430,
+                lineHeight: 1,
+                marginTop: 4,
+              }}>
+                Private report
+              </span>
+            )}
+          </div>
+
+          <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
+            gap: 8,
+            flexShrink: 0,
           }}>
             {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
@@ -905,7 +953,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '2px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '0 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
           <div style={{
@@ -938,14 +986,29 @@ export default function ParentMagicReportPage() {
                 gap: 0,
                 marginTop: 8,
               }}>
-                <p style={{
-                  fontSize: 12.5,
-                  fontWeight: 540,
-                  color: T.ink3,
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
                   margin: '0 2px 6px',
                 }}>
-                  Previous reports
-                </p>
+                  <p style={{
+                    fontSize: 12.5,
+                    fontWeight: 560,
+                    color: '#5F6268',
+                    margin: 0,
+                  }}>
+                    Previous reports
+                  </p>
+                  <span style={{
+                    fontSize: 11.5,
+                    fontWeight: 430,
+                    color: '#A3A3A3',
+                  }}>
+                    {reports.length - 1} saved
+                  </span>
+                </div>
 
                 {reports.slice(1).map((report: any, index: number) => (
                   <PreviousReportDropdown

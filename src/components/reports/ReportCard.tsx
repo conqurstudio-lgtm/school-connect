@@ -119,7 +119,7 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
-  const size   = 184
+  const size   = 172
   const stroke = 7
   const radius = (size - stroke) / 2
   const circ   = 2 * Math.PI * radius
@@ -296,7 +296,7 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section style={{ paddingBottom: 24 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '12px 0 30px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '6px 0 28px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -319,7 +319,7 @@ export function ReportCard({ report, childName }: Props) {
         <h2 style={{
           fontSize: 24.5, fontWeight: 630, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          margin: '0 0 8px',
+          margin: '0 0 7px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
