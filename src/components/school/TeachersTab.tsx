@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react'
 import { Check, Copy, MoreVertical, Plus, RotateCw, Slash, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SCBottomSheet, SCButton, SCInput } from '@/components/ui'
+import { SCBottomSheet, SCButton, SCInput, SCTeacherRow } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -195,12 +195,18 @@ export function TeachersTab() {
 
     const close = () => setFloatingMenu(null)
 
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close()
+    }
+
     window.addEventListener('resize', close)
     window.addEventListener('scroll', close, true)
+    window.addEventListener('keydown', onKey)
 
     return () => {
       window.removeEventListener('resize', close)
       window.removeEventListener('scroll', close, true)
+      window.removeEventListener('keydown', onKey)
     }
   }, [floatingMenu])
 
@@ -349,13 +355,13 @@ export function TeachersTab() {
           zIndex: 30,
         }}>
           {teachers.map((teacher, index) => (
-            <TeacherRow
+            <SCTeacherRow
               key={teacher.id}
               teacher={teacher}
               isLast={index === teachers.length - 1}
-              copiedId={copiedId}
-              onCopy={copyLink}
-              onMenu={openTeacherMenu}
+              copied={copiedId === teacher.id}
+              onCopy={(item: any) => copyLink(item as Teacher)}
+              onMenu={(event: any, item: any) => openTeacherMenu(event, item as Teacher)}
             />
           ))}
         </div>
@@ -365,6 +371,11 @@ export function TeachersTab() {
         <FloatingTeacherMenu
           menu={floatingMenu}
           onClose={() => setFloatingMenu(null)}
+          onCopy={() => {
+            const teacher = floatingMenu.teacher as Teacher
+            setFloatingMenu(null)
+            copyLink(teacher)
+          }}
           onRotate={() => updateTeacher(floatingMenu.teacher.id, 'rotate')}
           onRevoke={() => updateTeacher(floatingMenu.teacher.id, 'revoke')}
           onReactivate={() => updateTeacher(floatingMenu.teacher.id, 'reactivate')}
@@ -497,7 +508,7 @@ function TeacherRow({
   )
 }
 
-function FloatingTeacherMenu({ menu, onClose, onRotate, onRevoke, onReactivate, onDelete }: any) {
+function FloatingTeacherMenu({ menu, onClose, onCopy, onRotate, onRevoke, onReactivate, onDelete }: any) {
   const teacher = menu.teacher as Teacher
   const isActive = teacher.status === 'active'
 
@@ -521,19 +532,25 @@ function FloatingTeacherMenu({ menu, onClose, onRotate, onRevoke, onReactivate, 
         background: T.white,
         borderRadius: 16,
         border: `1px solid ${T.border}`,
-        boxShadow: '0 18px 42px rgba(0,0,0,0.11)',
+        boxShadow: '0 12px 34px rgba(15,23,42,0.08)',
         padding: 6,
-        minWidth: 184,
+        minWidth: 192,
       }}>
+        {isActive ? (
+          <MenuItem onClick={onCopy} Icon={Copy} label="Copy invite link" />
+        ) : null}
+
         <MenuItem onClick={onRotate} Icon={RotateCw} label="Issue new link" />
 
         {isActive ? (
-          <MenuItem onClick={onRevoke} Icon={Slash} label="Revoke access" danger />
+          <MenuItem onClick={onRevoke} Icon={Slash} label="Revoke access" />
         ) : (
           <MenuItem onClick={onReactivate} Icon={Check} label="Reactivate" />
         )}
 
-        <MenuItem onClick={onDelete} Icon={Trash2} label="Delete" danger />
+        <div style={{ height: 1, background: 'var(--sc-border-soft)', margin: '5px 6px' }} />
+
+        <MenuItem onClick={onDelete} Icon={Trash2} label="Remove teacher" danger />
       </div>
     </>
   )
