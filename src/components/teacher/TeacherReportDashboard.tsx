@@ -636,31 +636,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
     load()
   }, [])
 
-  useEffect(() => {
-    if (!showTeacherStartup) return
-
-    let cancelled = false
-
-    const teacherForLoader = session?.teacher || cachedDashboard?.session?.teacher || null
-
-    preloadTeacherStartupImage(teacherForLoader).then(() => {
-      if (!cancelled) setTeacherStartupAssetReady(true)
-    })
-
-    return () => {
-      cancelled = true
-    }
-  }, [
-    showTeacherStartup,
-    session?.teacher?.id,
-    session?.teacher?.photo_url,
-    session?.teacher?.image_url,
-    session?.teacher?.avatar_url,
-    cachedDashboard?.session?.teacher?.id,
-    cachedDashboard?.session?.teacher?.photo_url,
-    cachedDashboard?.session?.teacher?.image_url,
-    cachedDashboard?.session?.teacher?.avatar_url,
-  ])
+  
 
   useEffect(() => {
     if (!showTeacherStartup) return
