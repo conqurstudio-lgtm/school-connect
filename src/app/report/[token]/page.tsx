@@ -545,7 +545,7 @@ function SchoolQuickView({ school }: { school: any }) {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
               }}>
-                {school?.name || 'School'}
+                {school?.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : 'School details'}
               </p>
 
               <p style={{
@@ -556,7 +556,7 @@ function SchoolQuickView({ school }: { school: any }) {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
               }}>
-                School profile
+                
               </p>
             </div>
           </div>

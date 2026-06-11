@@ -348,6 +348,18 @@ function TeacherSafeAreaStyle() {
         height: env(safe-area-inset-bottom, 0px);
       }
 
+
+
+      @keyframes scSheetBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes scSheetPanelIn {
+        from { transform: translateY(18px); opacity: 0.92; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
       .teacher-page-shell {
         opacity: 0;
         transform: translateY(7px);
@@ -361,7 +373,19 @@ function TeacherSafeAreaStyle() {
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .teacher-page-shell {
+  
+
+      @keyframes scSheetBackdropIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes scSheetPanelIn {
+        from { transform: translateY(18px); opacity: 0.92; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+
+      .teacher-page-shell {
           opacity: 1;
           transform: none;
           transition: none;
@@ -930,7 +954,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               {!teacher.photo_url && initials(teacher.name)}
             </div>
 
-            {teacher.name ? (
+            {teacher.name && String(teacher.name).trim().toLowerCase() !== 'teacher' ? (
               <h1 style={{
                 fontSize: 22,
                 lineHeight: 1.08,
@@ -949,7 +973,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
               lineHeight: 1.35,
               margin: 0,
             }}>
-              {[school?.name, classLabel].filter(Boolean).join(' · ')}
+              {[school?.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : '', classLabel].filter(Boolean).join(' · ')}
             </p>
 
             <div style={{
@@ -2372,7 +2396,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}>
-            {school?.name || 'School'} · {classLabel}
+            {[school?.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : '', classLabel].filter(Boolean).join(' · ')}
           </p>
         </div>
       </div>
@@ -2533,7 +2557,7 @@ function BottomSheet({ children, onClose }: any) {
 
   return createPortal(
     <div
-      className="sc-teacher-sheet-backdrop"
+      className="sc-school-sheet-backdrop"
       onClick={onClose}
       style={{
         position: 'fixed',
@@ -2548,7 +2572,7 @@ function BottomSheet({ children, onClose }: any) {
       }}
     >
       <div
-        className="sc-teacher-sheet-panel"
+        className="sc-school-sheet-panel"
         onClick={e => e.stopPropagation()}
         style={{
           width: 'min(520px, 100%)',

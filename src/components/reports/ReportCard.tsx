@@ -404,25 +404,12 @@ export function ReportCard({ report, childName }: Props) {
           </p>
 
           <div className="sc-teacher-note-soft" style={{
-            background: '#F6F3EA',
-            border: '1px solid rgba(17,17,17,0.045)',
+            background: '#FFF8E5',
+            border: '1px solid rgba(154, 122, 54, 0.10)',
             borderRadius: 22,
             padding: '14px 15px',
             boxShadow: 'none',
           }}>
-            {teacherName ? (
-              <p style={{
-                fontSize: 12.6,
-                color: '#5F6268',
-                margin: '0 0 6px',
-                lineHeight: 1.25,
-                fontWeight: 520,
-                letterSpacing: '-0.005em',
-              }}>
-                {teacherName}
-              </p>
-            ) : null}
-
             <p style={{
               fontSize: 13.8,
               color: '#4A4A4A',

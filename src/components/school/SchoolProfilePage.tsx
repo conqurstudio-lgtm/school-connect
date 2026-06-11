@@ -888,7 +888,7 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
             {school.name || 'School'}
           </p>
           <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0', overflow: 'visible', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {schoolLocation(school) || 'School profile'}
+            {schoolLocation(school) || ''}
           </p>
         </div>
       </div>
@@ -1240,7 +1240,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               {!school.logo_url && initialsFrom(school.name)}
             </div>
 
-            {school.name ? (
+            {school.name && String(school.name).trim().toLowerCase() !== 'school' ? (
               <h1 style={{
                 fontSize: 22,
                 lineHeight: 1.08,
