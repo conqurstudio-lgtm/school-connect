@@ -18,8 +18,8 @@ const T = {
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
-  accent: '#8FA6A1',
-  accentSoft: '#EEF3F1',
+  accent: '#717171',
+  accentSoft: '#F5F5F5',
   white: '#FFFFFF',
   red: '#B42318',
   green: '#5B8F7F',
@@ -1571,7 +1571,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
 
           <p style={{
             fontSize: 12.2,
-            color: done ? '#8FA6A1' : T.ink3,
+            color: done ? '#717171' : T.ink3,
             margin: '2px 0 0',
             lineHeight: 1.18,
             whiteSpace: 'nowrap',
@@ -1589,7 +1589,7 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
         borderRadius: 999,
         border: 'none',
         background: 'transparent',
-        color: '#8FA6A1',
+        color: '#717171',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -2165,7 +2165,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                 style={{
                   minHeight: 38,
                   borderRadius: 999,
-                  border: ecdActive ? '1px solid #8FA6A1' : `1px solid ${T.border}`,
+                  border: ecdActive ? '1px solid #717171' : `1px solid ${T.border}`,
                   background: ecdActive ? T.accentSoft : T.white,
                   color: ecdActive ? T.accent : T.ink2,
                   fontSize: 12.5,
@@ -2183,7 +2183,7 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
                 style={{
                   minHeight: 38,
                   borderRadius: 999,
-                  border: primaryActive ? '1px solid #8FA6A1' : `1px solid ${T.border}`,
+                  border: primaryActive ? '1px solid #717171' : `1px solid ${T.border}`,
                   background: primaryActive ? T.accentSoft : T.white,
                   color: primaryActive ? T.accent : T.ink2,
                   fontSize: 12.5,

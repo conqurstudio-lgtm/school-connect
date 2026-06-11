@@ -1544,3 +1544,78 @@ a:active {
 }
 /* End School Connect no-colour motion polish v338 */
 
+/* SCHOOL CONNECT NEUTRAL UI FOUNDATION START */
+:root {
+  --sc-bg: #FFFFFF;
+  --sc-surface: #FFFFFF;
+  --sc-soft: #F7F7F7;
+  --sc-soft-2: #F4F4F4;
+  --sc-press: #F2F2F2;
+  --sc-border: rgba(17, 17, 17, .075);
+  --sc-border-soft: rgba(17, 17, 17, .055);
+  --sc-ink: #222222;
+  --sc-ink-2: #5F5F5F;
+  --sc-ink-3: #8A8A8A;
+  --sc-muted-accent: #717171;
+  --sc-danger: #B42318;
+}
+
+html,
+body {
+  background: var(--sc-bg);
+}
+
+.sc-screen-enter {
+  animation: scScreenEnter .28s cubic-bezier(.22,.61,.36,1) both;
+}
+
+.sc-action-row {
+  -webkit-tap-highlight-color: transparent;
+  transition: background .16s ease, transform .16s ease, opacity .16s ease;
+}
+
+.sc-action-row:active {
+  background: var(--sc-press) !important;
+  transform: scale(.995);
+}
+
+.sc-thin-divider {
+  height: 1px;
+  background: var(--sc-border-soft);
+  transform: scaleY(.5);
+  transform-origin: center;
+}
+
+.sc-soft-surface {
+  background: var(--sc-soft);
+  border: 1px solid var(--sc-border-soft);
+}
+
+.sc-floating-menu {
+  animation: scMenuIn .14s cubic-bezier(.22,.61,.36,1) both;
+}
+
+.sc-bottom-sheet {
+  animation: scSheetIn .28s cubic-bezier(.22,.61,.36,1) both;
+}
+
+@keyframes scScreenEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes scSheetIn {
+  from { transform: translateY(18px); opacity: .88; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scIdentityPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.025); opacity: .94; }
+}
+/* SCHOOL CONNECT NEUTRAL UI FOUNDATION END */

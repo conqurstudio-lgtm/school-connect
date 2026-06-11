@@ -13,8 +13,8 @@ const T = {
   border: 'rgba(0,0,0,0.045)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
-  accent: '#8FA6A1',
-  accentSoft: '#EEF3F1',
+  accent: '#717171',
+  accentSoft: '#F5F5F5',
   white: '#FFFFFF',
 }
 

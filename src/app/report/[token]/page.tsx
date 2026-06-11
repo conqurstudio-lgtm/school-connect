@@ -17,8 +17,8 @@ const T = {
   soft: '#F5F5F7',
   soft2: '#F8F8F9',
   white: '#FFFFFF',
-  accent: '#8FA6A1',
-  accentSoft: '#EEF3F1',
+  accent: '#717171',
+  accentSoft: '#F5F5F5',
 }
 
 
@@ -552,8 +552,8 @@ function SchoolQuickView({ school }: { school: any }) {
               width: 38,
               height: 38,
               borderRadius: 15,
-              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
-              color: '#8FA6A1',
+              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#F5F5F5',
+              color: '#717171',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -657,7 +657,7 @@ function SchoolQuickView({ school }: { school: any }) {
                   rel="noreferrer"
                   style={{
                     fontSize: 12.5,
-                    color: '#8FA6A1',
+                    color: '#717171',
                     lineHeight: 1.4,
                     textDecoration: 'none',
                     wordBreak: 'break-word',

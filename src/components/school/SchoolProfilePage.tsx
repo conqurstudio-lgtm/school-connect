@@ -37,8 +37,8 @@ const T = {
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
-  accent: '#8FA6A1',
-  accentSoft: '#EEF3F1',
+  accent: '#717171',
+  accentSoft: '#F5F5F5',
   white: '#FFFFFF',
   red: '#B42318',
 }

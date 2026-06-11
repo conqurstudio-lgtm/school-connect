@@ -18,7 +18,7 @@ const T = {
 }
 
 const SUBJECT_GRAPH = {
-  fill: '#8FA6A1',
+  fill: '#717171',
   fillSoft: '#EAF0EE',
   track: '#F4F5F5',
   border: 'rgba(143,166,161,0.20)',
@@ -247,7 +247,7 @@ function TeacherNameTag({ name }: { name?: string | null }) {
         height: 22,
         padding: '0 9px',
         borderRadius: 999,
-        background: '#EEF3F1',
+        background: '#F5F5F5',
         color: '#78918C',
         display: 'inline-flex',
         alignItems: 'center',
@@ -381,7 +381,7 @@ export function ReportCard({ report, childName }: Props) {
             <p style={{
               fontSize: 11.5,
               fontWeight: 560,
-              color: '#8FA6A1',
+              color: '#717171',
               letterSpacing: '0.03em',
               textTransform: 'uppercase',
               margin: 0,
@@ -401,8 +401,8 @@ export function ReportCard({ report, childName }: Props) {
               width: 38,
               height: 38,
               borderRadius: 15,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
-              color: '#8FA6A1',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F5F5F5',
+              color: '#717171',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -563,7 +563,7 @@ export function ReportCard({ report, childName }: Props) {
                           height: '100%',
                           width: `${pct}%`,
                           borderRadius: 999,
-                          background: '#8FA6A1',
+                          background: '#717171',
                         }} />
                       </div>
 
