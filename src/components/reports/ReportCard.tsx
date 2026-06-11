@@ -384,78 +384,87 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div style={{
-          padding: '0 10px 28px',
+        <div className="sc-teacher-note-plain-v391" style={{
+          maxWidth: 396,
+          margin: '0 auto 28px',
+          padding: '0 10px',
         }}>
-          <div className="sc-parent-report-teacher-note-v388" style={{
-            maxWidth: 352,
-            margin: '0 auto',
+          <div style={{
             display: 'flex',
             alignItems: 'flex-start',
-            gap: 9,
-            background: '#F7F7F7',
-            border: '1px solid rgba(17,17,17,0.045)',
-            borderRadius: 18,
-            padding: '10px 12px',
-            boxShadow: 'none',
+            gap: 14,
           }}>
             <div style={{
-              width: 30,
-              height: 30,
-              borderRadius: 999,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E9E9E9',
-              color: '#717171',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 10,
-              fontWeight: 560,
-              letterSpacing: '-0.01em',
+              width: 36,
               flexShrink: 0,
-              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
             }}>
-              {!teacherPhoto && teacherInitials}
+              <div style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E6E6E6',
+                color: '#7A7A7A',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 560,
+                letterSpacing: '-0.01em',
+                overflow: 'hidden',
+              }}>
+                {!teacherPhoto && teacherInitials}
+              </div>
+
+              <div style={{
+                width: 1,
+                height: 22,
+                background: 'rgba(17,17,17,0.12)',
+                marginTop: 6,
+              }} />
             </div>
 
-            <div style={{ flex: 1, minWidth: 0, paddingTop: 1 }}>
+            <div style={{
+              flex: 1,
+              minWidth: 0,
+              paddingTop: 1,
+            }}>
               <p style={{
                 display: 'flex',
                 alignItems: 'baseline',
                 gap: 6,
                 flexWrap: 'wrap',
-                fontSize: 11.6,
-                color: T.ink,
-                fontWeight: 590,
-                letterSpacing: '-0.018em',
-                lineHeight: 1.2,
-                margin: '0 0 5px',
+                margin: '0 0 10px',
+                lineHeight: 1.22,
               }}>
                 <span style={{
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 168,
+                  fontSize: 15.5,
+                  fontWeight: 560,
+                  color: '#202124',
+                  letterSpacing: '-0.02em',
                 }}>
-                  {teacherName || 'Teacher'}
+                  {teacherName}
                 </span>
 
                 <span style={{
-                  color: '#5F6268',
-                  fontWeight: 460,
-                  fontSize: 12.8,
+                  fontSize: 12.6,
+                  fontWeight: 500,
+                  color: '#7B7B7B',
+                  letterSpacing: '-0.01em',
                 }}>
                   - {childTeacherLabel}
                 </span>
               </p>
 
               <p style={{
-                fontSize: 12.6,
-                color: '#5F6268',
                 margin: 0,
-                lineHeight: 1.42,
+                fontSize: 13.8,
+                lineHeight: 1.62,
+                color: '#55575B',
                 letterSpacing: '-0.005em',
                 fontWeight: 400,
               }}>
