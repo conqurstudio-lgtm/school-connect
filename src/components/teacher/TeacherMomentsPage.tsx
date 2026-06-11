@@ -288,94 +288,56 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: T.bg,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'transparent',
+          minHeight: 42,
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
-            <div style={{
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Back"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 999,
+              border: 'none',
+              background: 'transparent',
+              color: T.ink,
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
-              minWidth: 0,
-            }}>
-              <button
-                type="button"
-                onClick={onBack}
-                aria-label="Back"
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.ink2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
-              >
-                <ArrowLeft size={16} strokeWidth={2} />
-              </button>
+              justifyContent: 'center',
+              flexShrink: 0,
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <ArrowLeft size={19} strokeWidth={2.05} />
+          </button>
 
-              <div style={{ minWidth: 0 }}>
-                <p style={{
-                  fontSize: 15,
-                  fontWeight: 560,
-                  color: T.ink,
-                  margin: 0,
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.15,
-                }}>
-                  Moments
-                </p>
-                <p style={{
-                  fontSize: 11.8,
-                  color: T.ink3,
-                  margin: '2px 0 0',
-                  lineHeight: 1.25,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
-                  Private updates for parents
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => momentFileRef.current?.click()}
-              aria-label="Add Moment"
-              style={{
-                minHeight: 34,
-                borderRadius: 999,
-                border: 'none',
-                background: T.soft,
-                color: T.ink2,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                flexShrink: 0,
-                cursor: 'pointer',
-                padding: '0 11px',
-                fontFamily: 'inherit',
-                fontSize: 12.5,
-                fontWeight: 540,
-              }}
-            >
-              <Plus size={15} strokeWidth={2} />
-              New
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => momentFileRef.current?.click()}
+            aria-label="Add Moment"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 999,
+              border: 'none',
+              background: 'transparent',
+              color: T.ink,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            <Plus size={20} strokeWidth={2.05} />
+          </button>
         </header>
 
         <section style={{
@@ -384,9 +346,21 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '18px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
+          <section style={{ padding: '20px 0 22px' }}>
+            <h1 style={{
+              fontSize: 25,
+              lineHeight: 1.05,
+              fontWeight: 560,
+              letterSpacing: '-0.052em',
+              color: T.ink,
+              margin: 0,
+            }}>
+              Moments
+            </h1>
+          </section>
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (

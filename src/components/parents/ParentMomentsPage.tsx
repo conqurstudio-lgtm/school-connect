@@ -324,83 +324,57 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: T.bg,
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          background: 'transparent',
+          minHeight: 42,
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}>
-            {embedded ? (
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Back"
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.ink2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
-              >
-                <ArrowLeft size={16} strokeWidth={2} />
-              </button>
-            ) : (
-              <a
-                href={`/report/${token}`}
-                aria-label="Back to report"
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 999,
-                  border: 'none',
-                  background: T.soft,
-                  color: T.ink2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  textDecoration: 'none',
-                  flexShrink: 0,
-                  padding: 0,
-                }}
-              >
-                <ArrowLeft size={16} strokeWidth={2} />
-              </a>
-            )}
-
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                fontSize: 15,
-                fontWeight: 560,
+          {embedded ? (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Back"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: 'transparent',
                 color: T.ink,
-                margin: 0,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.15,
-              }}>
-                Moments
-              </p>
-              <p style={{
-                fontSize: 11.8,
-                color: T.ink3,
-                margin: '2px 0 0',
-                lineHeight: 1.25,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}>
-                {child?.name ? `${child.name}'s private updates` : 'Private teacher updates'}
-              </p>
-            </div>
-          </div>
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <ArrowLeft size={19} strokeWidth={2.05} />
+            </button>
+          ) : (
+            <a
+              href={`/report/${token}`}
+              aria-label="Back to report"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: 'transparent',
+                color: T.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                flexShrink: 0,
+                padding: 0,
+              }}
+            >
+              <ArrowLeft size={19} strokeWidth={2.05} />
+            </a>
+          )}
         </header>
 
         <section style={{
@@ -409,9 +383,21 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '18px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
+          <section style={{ padding: '20px 0 22px' }}>
+            <h1 style={{
+              fontSize: 25,
+              lineHeight: 1.05,
+              fontWeight: 560,
+              letterSpacing: '-0.052em',
+              color: T.ink,
+              margin: 0,
+            }}>
+              Moments
+            </h1>
+          </section>
           {loading ? (
             <LoadingDots />
           ) : moments.length === 0 ? (
@@ -426,7 +412,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
                 No Moments yet
               </p>
               <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
-                Private teacher updates will appear here.
+                Teacher Moments will appear here.
               </p>
             </div>
           ) : (
