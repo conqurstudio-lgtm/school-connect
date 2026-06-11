@@ -1865,3 +1865,79 @@ body {
     transition: none;
   }
 }
+
+/* sc-school-global-v396: moved from inline SchoolSafeAreaStyle to avoid hydration mismatches */
+html,
+body {
+  background: #FFFFFF !important;
+}
+
+.school-safe-screen {
+  background: #FFFFFF;
+}
+
+.school-safe-screen::before,
+.school-safe-screen::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.school-safe-screen::before {
+  top: 0;
+  height: env(safe-area-inset-top, 0px);
+}
+
+.school-safe-screen::after {
+  bottom: 0;
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+@keyframes schoolLogoIntroIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.965); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes schoolLogoIntroOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-5px) scale(0.985); }
+}
+
+.school-page-shell {
+  opacity: 0;
+  transform: translateY(7px);
+  transition: opacity 280ms cubic-bezier(.2,.8,.2,1), transform 280ms cubic-bezier(.2,.8,.2,1);
+  will-change: opacity, transform;
+}
+
+.school-page-shell.is-ready {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.school-logo-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: #FFFFFF;
+  animation: schoolLogoIntroIn 220ms ease-out both;
+}
+
+.school-logo-loader.is-leaving {
+  animation: schoolLogoIntroOut 220ms ease-in both;
+}
+
+.school-logo-loader-mark {
+  width: 86px;
+  height: 86px;
+  border-radius: 28px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}

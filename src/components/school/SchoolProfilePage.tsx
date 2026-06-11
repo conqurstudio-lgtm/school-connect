@@ -8,6 +8,7 @@ import {
   Camera,
   LogOut,
   Pencil,
+  Plus,
   Save,
   Settings,
   Users,
@@ -694,15 +695,16 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           onClick={onAddTeacher}
           aria-label="Add teacher"
           title="Add teacher"
-          className="sc-add-teacher-filled-v393"
+          className="sc-school-add-teacher-plus-v396"
           style={{
-            width: 34,
-            minWidth: 34,
-            height: 34,
+            width: 36,
+            height: 36,
+            minWidth: 36,
+            minHeight: 36,
             borderRadius: 999,
             border: 'none',
-            background: T.ink,
-            color: T.white,
+            background: 'transparent',
+            color: T.ink2,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -710,13 +712,10 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             fontFamily: 'inherit',
             flexShrink: 0,
             padding: 0,
-            marginRight: 4,
-            boxShadow: 'none',
+            marginRight: 10,
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: 'block' }}>
-            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.35" strokeLinecap="round" />
-          </svg>
+          <Plus size={19} strokeWidth={2.15} />
         </button>
       </div>
 
@@ -823,6 +822,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [teacherCountReady, setTeacherCountReady] = useState(false)
   const [teacherListReady, setTeacherListReady] = useState(!isAdmin)
   const [showSchoolLogoLoader, setShowSchoolLogoLoader] = useState(true)
+  const [schoolIntroMounted, setSchoolIntroMounted] = useState(false)
   const [schoolLogoLoaderLeaving, setSchoolLogoLoaderLeaving] = useState(false)
   const [teachersOpen, setTeachersOpen] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
@@ -835,6 +835,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [logoDraft, setLogoDraft] = useState<any>(null)
   const logoRef = useRef<HTMLInputElement>(null)
   const introStartedRef = useRef(Date.now())
+
+  useEffect(() => {
+    setSchoolIntroMounted(true)
+  }, [])
 
 
   useEffect(() => {
@@ -1021,7 +1025,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
     }}>
       <SchoolSafeAreaStyle />
 
-      {showSchoolLogoLoader && (
+      {schoolIntroMounted && showSchoolLogoLoader && (
         <SchoolLogoIntroOverlay school={school} leaving={schoolLogoLoaderLeaving} />
       )}
 

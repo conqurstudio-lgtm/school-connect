@@ -386,10 +386,10 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div className="sc-teacher-note-breathing-v395" style={{
+        <div className="sc-teacher-note-plain-v396" style={{
           maxWidth: 396,
-          margin: '72px auto 70px',
-          padding: '0 18px',
+          margin: '58px auto 54px',
+          padding: '0 10px',
         }}>
           <div style={{
             display: 'flex',
@@ -397,22 +397,22 @@ export function ReportCard({ report, childName }: Props) {
             gap: 13,
           }}>
             <div style={{
-              width: 32,
+              width: 34,
               flexShrink: 0,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}>
               <div style={{
-                width: 32,
-                height: 32,
+                width: 34,
+                height: 34,
                 borderRadius: '50%',
-                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E7E7E7',
-                color: '#777777',
+                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E6E6E6',
+                color: '#7A7A7A',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 10,
+                fontSize: 10.5,
                 fontWeight: 560,
                 letterSpacing: '-0.01em',
                 overflow: 'hidden',
@@ -422,36 +422,36 @@ export function ReportCard({ report, childName }: Props) {
 
               <div style={{
                 width: 1,
-                height: 18,
+                height: 24,
                 background: 'rgba(17,17,17,0.12)',
-                marginTop: 6,
+                marginTop: 7,
               }} />
             </div>
 
             <div style={{
               flex: 1,
               minWidth: 0,
-              paddingTop: 0,
+              paddingTop: 1,
             }}>
               <p style={{
                 display: 'flex',
                 alignItems: 'baseline',
                 gap: 6,
                 flexWrap: 'wrap',
-                margin: '0 0 8px',
-                lineHeight: 1.18,
+                margin: '0 0 9px',
+                lineHeight: 1.2,
               }}>
                 <span style={{
-                  fontSize: 14.4,
+                  fontSize: 15,
                   fontWeight: 560,
                   color: '#202124',
-                  letterSpacing: '-0.018em',
+                  letterSpacing: '-0.02em',
                 }}>
                   {teacherName}
                 </span>
 
                 <span style={{
-                  fontSize: 12,
+                  fontSize: 12.2,
                   fontWeight: 500,
                   color: '#777A80',
                   letterSpacing: '-0.01em',
@@ -462,10 +462,10 @@ export function ReportCard({ report, childName }: Props) {
 
               <p style={{
                 margin: 0,
-                fontSize: 13.1,
+                fontSize: 13.4,
                 lineHeight: 1.58,
-                color: '#56585D',
-                letterSpacing: '-0.004em',
+                color: '#55575B',
+                letterSpacing: '-0.005em',
                 fontWeight: 400,
               }}>
                 {report.comment}
