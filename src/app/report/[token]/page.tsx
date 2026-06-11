@@ -890,7 +890,7 @@ export default function ParentMagicReportPage() {
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 18px 8px',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
           background: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
@@ -901,7 +901,7 @@ export default function ParentMagicReportPage() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
+            gap: 8,
           }}>
             {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
@@ -916,7 +916,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '2px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '4px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
           <div style={{
@@ -925,13 +925,13 @@ export default function ParentMagicReportPage() {
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: reports.length > 1 ? 16 : 0,
+            gap: reports.length > 1 ? 18 : 0,
           }}>
             {reports[0] && (
               <div className="sc-main-report-card-v292" style={{
                 background: '#FFFFFF',
                 borderRadius: 28,
-                padding: '10px 10px 16px',
+                padding: '14px 10px 16px',
                 border: 'none',
                 overflow: 'hidden',
               }}>

@@ -10,19 +10,19 @@ const T = {
   ink2:    '#4A4A4A',
   ink3:    '#9A9A9A',
   ink4:    '#D8D8D8',
-  divider: 'rgba(0,0,0,0.035)',
+  divider: 'rgba(0,0,0,0.04)',
   trackBg: '#EFEFF2',
-  up:      '#A3A3A3',
-  down:    '#BDBDBD',
+  up:      '#22C55E',
+  down:    '#EF4444',
   same:    '#9A9A9A',
 }
 
 const SUBJECT_GRAPH = {
-  fill: '#717171',
-  fillSoft: '#F5F5F5',
-  track: '#F4F4F4',
-  border: 'rgba(17,17,17,0.075)',
-  text: '#5F5F5F',
+  fill: '#8FA6A1',
+  fillSoft: '#EAF0EE',
+  track: '#F4F5F5',
+  border: 'rgba(143,166,161,0.20)',
+  text: '#51615E',
 }
 
 function subjectGraphOpacity(score: number): number {
@@ -33,7 +33,7 @@ function subjectGraphOpacity(score: number): number {
 
 function subjectGraphColor(score: number): string {
   const opacity = subjectGraphOpacity(score)
-  return `rgba(113, 113, 113, ${opacity})`
+  return `rgba(143, 166, 161, ${opacity})`
 }
 
 interface Props {
@@ -117,7 +117,6 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
   const up = value > 0
   const color = up ? T.up : T.down
   return (
-
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2,
                    fontSize: size, color, fontWeight: 600 }}>
       {up ? <TrendingUp size={size} strokeWidth={2.4} /> : <TrendingDown size={size} strokeWidth={2.4} />}
@@ -165,10 +164,10 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
       }}>
         <defs>
           <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#BDBDBD" />
-            <stop offset="35%"  stopColor="#CFCFCF" />
-            <stop offset="70%"  stopColor="#D6D6D6" />
-            <stop offset="100%" stopColor="#A3A3A3" />
+            <stop offset="0%"   stopColor="#EF4444" />
+            <stop offset="35%"  stopColor="#F59E0B" />
+            <stop offset="70%"  stopColor="#78A6FE" />
+            <stop offset="100%" stopColor="#22C55E" />
           </linearGradient>
         </defs>
         {/* Track */}
@@ -248,8 +247,8 @@ function TeacherNameTag({ name }: { name?: string | null }) {
         height: 22,
         padding: '0 9px',
         borderRadius: 999,
-        background: '#F5F5F5',
-        color: '#717171',
+        background: '#EEF3F1',
+        color: '#78918C',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -266,11 +265,6 @@ function TeacherNameTag({ name }: { name?: string | null }) {
 }
 
 
-
-function getSubjectCountLabel(count: number) {
-  if (count === 1) return '1 subject'
-  return `${count} subjects`
-}
 
 function getSubjectDetailComment(score: number) {
   if (score >= 4.5) return 'Excellent progress'
@@ -313,9 +307,9 @@ export function ReportCard({ report, childName }: Props) {
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
-    <section style={{ paddingBottom: 24 }}>
+    <section style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '14px 0 36px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '20px 0 42px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -336,14 +330,14 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <h2 style={{
-          fontSize: 25.5, fontWeight: 640, color: T.ink,
+          fontSize: 26.5, fontWeight: 650, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 28px',
+          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
           letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -351,7 +345,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <ScoreRing score={overall} />
 
-        <div style={{ marginTop: 22 }}>
+        <div style={{ marginTop: 24 }}>
           <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
@@ -373,24 +367,8 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <div style={{
-          padding: '0 10px 38px',
+          padding: '2px 10px 44px',
         }}>
-          <div style={{
-            maxWidth: 396,
-            margin: '0 auto 10px',
-          }}>
-            <p style={{
-              fontSize: 11.5,
-              fontWeight: 560,
-              color: '#717171',
-              letterSpacing: '0.03em',
-              textTransform: 'uppercase',
-              margin: 0,
-            }}>
-              Teacher note
-            </p>
-          </div>
-
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -402,8 +380,8 @@ export function ReportCard({ report, childName }: Props) {
               width: 38,
               height: 38,
               borderRadius: 15,
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F5F5F5',
-              color: '#717171',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#EEF3F1',
+              color: '#8FA6A1',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -447,8 +425,7 @@ export function ReportCard({ report, childName }: Props) {
                   fontWeight: 400,
                 }}>
                   {childTeacherLabel}
-                </span>
-              </p>
+                </span>&nbsp;</p>
 
               <div className="sc-teacher-comment-card-v310" style={{
                 position: 'relative',
@@ -457,7 +434,7 @@ export function ReportCard({ report, childName }: Props) {
                 borderRadius: '18px 18px 18px 8px',
                 padding: '12px 14px',
                 overflow: 'hidden',
-                boxShadow: 'none',
+                boxShadow: '0 12px 28px rgba(37,37,37,0.055)',
               }}>
                 <p style={{
                   fontSize: 13.6,
@@ -564,7 +541,7 @@ export function ReportCard({ report, childName }: Props) {
                           height: '100%',
                           width: `${pct}%`,
                           borderRadius: 999,
-                          background: '#717171',
+                          background: '#8FA6A1',
                         }} />
                       </div>
 
