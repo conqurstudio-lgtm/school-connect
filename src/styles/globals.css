@@ -1864,3 +1864,38 @@ a,
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 /* SCHOOL CONNECT NEUTRAL POLISH PHASE 3 END */
+
+/* SCHOOL CONNECT SHARED ROW POLISH V358 START */
+:root {
+  --sc-border-soft: rgba(17, 17, 17, .045);
+  --sc-shadow-menu: 0 8px 20px rgba(0, 0, 0, .055);
+}
+
+.sc-action-row,
+.sc-list-row,
+.sc-report-row {
+  border-color: var(--sc-border-soft) !important;
+}
+
+.sc-action-row:focus-visible,
+.sc-icon-button:focus-visible,
+.sc-pill-button:focus-visible {
+  outline: 2px solid rgba(34,34,34,.13);
+  outline-offset: 2px;
+}
+
+.sc-action-row:hover,
+.sc-list-row:hover,
+.sc-report-row:hover {
+  background: rgba(17, 17, 17, .012);
+}
+
+@media (hover: none) {
+  .sc-action-row:hover,
+  .sc-list-row:hover,
+  .sc-report-row:hover {
+    background: transparent;
+  }
+}
+/* SCHOOL CONNECT SHARED ROW POLISH V358 END */
+

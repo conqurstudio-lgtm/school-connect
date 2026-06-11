@@ -34,18 +34,20 @@ export default function SCActionRow({
         background: 'transparent',
         display: 'flex',
         alignItems: 'center',
-        gap: 12,
-        padding: '13px 2px',
+        gap: 11,
+        padding: '12px 1px',
         textAlign: 'left',
         cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.5 : 1,
+        opacity: disabled ? 0.48 : 1,
+        fontFamily: 'inherit',
       }}
     >
       {icon ? (
         <span
+          aria-hidden="true"
           style={{
-            width: 38,
-            height: 38,
+            width: 36,
+            height: 36,
             borderRadius: 14,
             background: 'var(--sc-soft)',
             color: 'var(--sc-ink-2)',
@@ -59,18 +61,20 @@ export default function SCActionRow({
         </span>
       ) : null}
 
-      <span style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'block', fontSize: 13.5, fontWeight: 560, color: 'var(--sc-ink)', lineHeight: 1.25 }}>
+      <span style={{ flex: 1, minWidth: 0, paddingRight: 4 }}>
+        <span style={{ display: 'block', fontSize: 13.5, fontWeight: 560, color: 'var(--sc-ink)', lineHeight: 1.22 }}>
           {title}
         </span>
         {subtitle ? (
-          <span style={{ display: 'block', marginTop: 3, fontSize: 12.5, color: 'var(--sc-ink-3)', lineHeight: 1.35 }}>
+          <span style={{ display: 'block', marginTop: 3, fontSize: 12.15, color: 'var(--sc-ink-3)', lineHeight: 1.28 }}>
             {subtitle}
           </span>
         ) : null}
       </span>
 
-      {right || (showChevron ? <ChevronRight size={18} strokeWidth={2} color="var(--sc-ink-3)" /> : null)}
+      <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 22, color: 'var(--sc-ink-3)', flexShrink: 0 }}>
+        {right || (showChevron ? <ChevronRight size={17} strokeWidth={1.9} /> : null)}
+      </span>
     </button>
   )
 }

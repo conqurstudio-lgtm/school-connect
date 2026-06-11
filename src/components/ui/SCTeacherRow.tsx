@@ -1,5 +1,6 @@
 'use client'
 
+import type { MouseEvent } from 'react'
 import { Check, Copy, MoreVertical } from 'lucide-react'
 
 type TeacherLike = {
@@ -16,7 +17,7 @@ type Props = {
   copied?: boolean
   isLast?: boolean
   onCopy?: (teacher: TeacherLike) => void
-  onMenu?: (event: React.MouseEvent<HTMLButtonElement>, teacher: TeacherLike) => void
+  onMenu?: (event: MouseEvent<HTMLButtonElement>, teacher: TeacherLike) => void
 }
 
 function initials(name?: string | null) {
@@ -37,7 +38,7 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
       className="sc-list-row"
       style={{
         padding: '12px 0',
-        borderBottom: isLast ? 'none' : '1px solid var(--sc-border)',
+        borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
         display: 'flex',
         alignItems: 'center',
         gap: 10,
@@ -48,8 +49,8 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
     >
       <div
         style={{
-          width: 36,
-          height: 36,
+          width: 37,
+          height: 37,
           borderRadius: 14,
           background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : 'var(--sc-soft)',
           display: 'flex',
@@ -68,14 +69,14 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p
           style={{
-            fontSize: 13.8,
+            fontSize: 13.65,
             fontWeight: 560,
             color: 'var(--sc-ink)',
             margin: 0,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            lineHeight: 1.25,
+            lineHeight: 1.2,
           }}
         >
           {teacher.name}
@@ -84,13 +85,13 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
         {subtitle ? (
           <p
             style={{
-              fontSize: 12.2,
+              fontSize: 12.05,
               color: 'var(--sc-ink-3)',
-              margin: '2px 0 0',
+              margin: '3px 0 0',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              lineHeight: 1.25,
+              lineHeight: 1.22,
             }}
           >
             {subtitle}
@@ -103,10 +104,10 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
           type="button"
           onClick={() => onCopy(teacher)}
           aria-label="Copy teacher link"
-          className="sc-icon-tap"
+          className="sc-icon-button"
           style={{
-            width: 34,
-            height: 34,
+            width: 32,
+            height: 32,
             borderRadius: 999,
             border: 'none',
             background: copied ? 'var(--sc-soft)' : 'transparent',
@@ -128,10 +129,10 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
           type="button"
           onClick={(event) => onMenu(event, teacher)}
           aria-label="Teacher options"
-          className="sc-icon-tap"
+          className="sc-icon-button"
           style={{
-            width: 34,
-            height: 34,
+            width: 32,
+            height: 32,
             borderRadius: 999,
             border: 'none',
             background: 'transparent',

@@ -39,8 +39,8 @@ export default function SCReportRow({
   const toggleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
     const rect = event.currentTarget.getBoundingClientRect()
-    const menuWidth = 154
-    const gap = 8
+    const menuWidth = 158
+    const gap = 7
     const left = Math.min(
       Math.max(12, rect.right - menuWidth),
       Math.max(12, window.innerWidth - menuWidth - 12)
@@ -85,14 +85,15 @@ export default function SCReportRow({
 
   return (
     <article
-      className="sc-report-row"
+      className="sc-report-row sc-list-row"
       style={{
         position: 'relative',
-        padding: '13px 0',
-        borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.045)',
+        padding: '12px 0',
+        borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
+        gap: 9,
+        overflow: 'visible',
       }}
     >
       <button
@@ -106,7 +107,7 @@ export default function SCReportRow({
           padding: 0,
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
+          gap: 11,
           textAlign: 'left',
           cursor: 'pointer',
           fontFamily: 'inherit',
@@ -114,8 +115,8 @@ export default function SCReportRow({
       >
         <span
           style={{
-            width: 39,
-            height: 39,
+            width: 38,
+            height: 38,
             borderRadius: 15,
             background: 'var(--sc-soft)',
             color: 'var(--sc-ink-2)',
@@ -134,10 +135,10 @@ export default function SCReportRow({
           <span
             style={{
               display: 'block',
-              fontSize: 13.8,
+              fontSize: 13.65,
               fontWeight: 560,
               color: 'var(--sc-ink)',
-              lineHeight: 1.17,
+              lineHeight: 1.18,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -150,9 +151,9 @@ export default function SCReportRow({
             style={{
               display: 'block',
               marginTop: 3,
-              fontSize: 12.2,
+              fontSize: 12.05,
               color: 'var(--sc-ink-3)',
-              lineHeight: 1.2,
+              lineHeight: 1.22,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -166,9 +167,10 @@ export default function SCReportRow({
       <button
         type="button"
         onClick={onAction || onOpen}
+        className="sc-pill-button"
         style={{
-          minHeight: 32,
-          padding: '0 5px 0 10px',
+          minHeight: 31,
+          padding: '0 8px',
           borderRadius: 999,
           border: 'none',
           background: 'transparent',
@@ -176,7 +178,7 @@ export default function SCReportRow({
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 12.4,
+          fontSize: 12.25,
           fontWeight: 540,
           fontFamily: 'inherit',
           cursor: 'pointer',
@@ -192,9 +194,10 @@ export default function SCReportRow({
           type="button"
           aria-label={`More options for ${title}`}
           onClick={toggleMenu}
+          className="sc-icon-button"
           style={{
-            width: 32,
-            height: 32,
+            width: 31,
+            height: 31,
             borderRadius: 999,
             border: 'none',
             background: 'transparent',
@@ -204,9 +207,10 @@ export default function SCReportRow({
             justifyContent: 'center',
             cursor: 'pointer',
             flexShrink: 0,
+            padding: 0,
           }}
         >
-          <MoreHorizontal size={16} strokeWidth={1.9} />
+          <MoreHorizontal size={16} strokeWidth={1.85} />
         </button>
       ) : null}
 
@@ -221,12 +225,12 @@ export default function SCReportRow({
             left: menuPosition.left,
             top: menuPosition.top,
             zIndex: 140,
-            minWidth: 154,
+            minWidth: 158,
             padding: 6,
             borderRadius: 16,
             background: 'var(--sc-surface)',
-            border: '1px solid rgba(0,0,0,0.055)',
-            boxShadow: '0 10px 24px rgba(0,0,0,0.065)',
+            border: '1px solid var(--sc-border)',
+            boxShadow: 'var(--sc-shadow-menu)',
           }}
           onClick={(event) => event.stopPropagation()}
         >
@@ -243,13 +247,13 @@ export default function SCReportRow({
               border: 'none',
               borderRadius: 12,
               background: 'transparent',
-              color: '#B42318',
+              color: 'var(--sc-danger)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-start',
               padding: '0 10px',
               fontFamily: 'inherit',
-              fontSize: 12.4,
+              fontSize: 12.35,
               fontWeight: 540,
               cursor: 'pointer',
               whiteSpace: 'nowrap',
