@@ -1,16 +1,16 @@
 'use client'
 
-import React from 'react'
+import type { ReactNode } from 'react'
 import { ChevronRight } from 'lucide-react'
 
-type SCActionRowProps = {
-  icon?: React.ReactNode
-  title: React.ReactNode
-  subtitle?: React.ReactNode
-  right?: React.ReactNode
+type Props = {
+  icon?: ReactNode
+  title: string
+  subtitle?: string
+  right?: ReactNode
   onClick?: () => void
   disabled?: boolean
-  as?: 'button' | 'div'
+  showChevron?: boolean
 }
 
 export default function SCActionRow({
@@ -20,42 +20,35 @@ export default function SCActionRow({
   right,
   onClick,
   disabled = false,
-  as = 'button',
-}: SCActionRowProps) {
-  const isButton = as === 'button'
-  const Component: any = isButton ? 'button' : 'div'
-
+  showChevron = true,
+}: Props) {
   return (
-    <Component
-      type={isButton ? 'button' : undefined}
-      onClick={disabled ? undefined : onClick}
-      aria-disabled={disabled || undefined}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
       className="sc-action-row"
       style={{
         width: '100%',
-        minHeight: 58,
         border: 'none',
-        borderBottom: '1px solid var(--sc-border-soft)',
         background: 'transparent',
         display: 'flex',
         alignItems: 'center',
         gap: 12,
-        padding: '12px 2px',
-        cursor: disabled ? 'default' : onClick ? 'pointer' : 'default',
-        opacity: disabled ? 0.55 : 1,
-        fontFamily: 'inherit',
+        padding: '13px 2px',
         textAlign: 'left',
-        color: 'var(--sc-ink)',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       {icon ? (
         <span
           style={{
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             borderRadius: 14,
             background: 'var(--sc-soft)',
-            color: 'var(--sc-muted-accent)',
+            color: 'var(--sc-ink-2)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -67,41 +60,17 @@ export default function SCActionRow({
       ) : null}
 
       <span style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            display: 'block',
-            fontSize: 13.5,
-            fontWeight: 560,
-            color: 'var(--sc-ink)',
-            lineHeight: 1.22,
-          }}
-        >
+        <span style={{ display: 'block', fontSize: 13.5, fontWeight: 560, color: 'var(--sc-ink)', lineHeight: 1.25 }}>
           {title}
         </span>
         {subtitle ? (
-          <span
-            style={{
-              display: 'block',
-              marginTop: 3,
-              fontSize: 12.3,
-              fontWeight: 450,
-              color: 'var(--sc-muted-accent)',
-              lineHeight: 1.28,
-            }}
-          >
+          <span style={{ display: 'block', marginTop: 3, fontSize: 12.5, color: 'var(--sc-ink-3)', lineHeight: 1.35 }}>
             {subtitle}
           </span>
         ) : null}
       </span>
 
-      {right ?? (
-        <ChevronRight
-          size={17}
-          strokeWidth={2}
-          color="var(--sc-muted-accent)"
-          style={{ flexShrink: 0, marginRight: 4 }}
-        />
-      )}
-    </Component>
+      {right || (showChevron ? <ChevronRight size={18} strokeWidth={2} color="var(--sc-ink-3)" /> : null)}
+    </button>
   )
 }

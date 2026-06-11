@@ -1,49 +1,54 @@
 'use client'
 
-import React from 'react'
+import type { ReactNode } from 'react'
 
-type SCStartupLoaderProps = {
+type Props = {
+  show: boolean
   imageUrl?: string | null
   initials?: string
-  visible?: boolean
+  children?: ReactNode
 }
 
-export default function SCStartupLoader({ imageUrl, initials = 'SC', visible = true }: SCStartupLoaderProps) {
-  if (!visible) return null
-
+export default function SCStartupLoader({ show, imageUrl, initials = 'SC', children }: Props) {
   return (
     <div
-      className="sc-startup-loader"
+      className={show ? 'sc-startup-loader is-visible' : 'sc-startup-loader'}
+      aria-hidden={!show}
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 1200,
+        zIndex: 3000,
         background: 'var(--sc-bg)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transition: 'opacity .34s cubic-bezier(.22,.61,.36,1)',
+        pointerEvents: show ? 'auto' : 'none',
       }}
     >
       <div
         style={{
-          width: 82,
-          height: 82,
+          width: 78,
+          height: 78,
           borderRadius: 26,
-          background: imageUrl ? `url(${imageUrl}) center/cover` : 'var(--sc-soft)',
-          color: 'var(--sc-muted-accent)',
-          border: '1px solid var(--sc-border)',
+          background: 'var(--sc-soft)',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          color: 'var(--sc-ink)',
           fontSize: 20,
-          fontWeight: 620,
-          boxShadow: '0 16px 42px rgba(0,0,0,.07)',
-          animation: 'scIdentityPulse 1.7s ease-in-out infinite',
+          fontWeight: 650,
+          letterSpacing: '-.02em',
         }}
       >
-        {imageUrl ? null : initials}
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        ) : (
+          initials
+        )}
       </div>
+      {children}
     </div>
   )
 }

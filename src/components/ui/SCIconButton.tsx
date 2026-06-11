@@ -1,22 +1,34 @@
 'use client'
 
-import React from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
-type SCIconButtonProps = {
-  children: React.ReactNode
-  onClick?: () => void
+export type SCIconButtonProps = {
+  children: ReactNode
   label: string
-  size?: number
-  subtle?: boolean
+  onClick?: () => void
   disabled?: boolean
+  size?: number
+  tone?: 'default' | 'quiet' | 'danger'
+  style?: CSSProperties
 }
 
-export default function SCIconButton({ children, onClick, label, size = 38, subtle = true, disabled = false }: SCIconButtonProps) {
+export default function SCIconButton({
+  children,
+  label,
+  onClick,
+  disabled = false,
+  size = 38,
+  tone = 'default',
+  style,
+}: SCIconButtonProps) {
+  const bg = tone === 'quiet' ? 'transparent' : 'var(--sc-soft)'
+  const color = tone === 'danger' ? 'var(--sc-danger)' : 'var(--sc-ink)'
+
   return (
     <button
       type="button"
       aria-label={label}
-      onClick={disabled ? undefined : onClick}
+      onClick={onClick}
       disabled={disabled}
       className="sc-icon-button"
       style={{
@@ -24,14 +36,16 @@ export default function SCIconButton({ children, onClick, label, size = 38, subt
         height: size,
         borderRadius: 999,
         border: 'none',
-        background: subtle ? 'var(--sc-soft)' : 'var(--sc-ink)',
-        color: subtle ? 'var(--sc-ink)' : '#FFFFFF',
+        background: bg,
+        color,
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 0,
-        cursor: disabled ? 'default' : 'pointer',
-        opacity: disabled ? 0.55 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.45 : 1,
+        flexShrink: 0,
+        ...style,
       }}
     >
       {children}

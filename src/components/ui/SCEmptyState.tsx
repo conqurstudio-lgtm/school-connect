@@ -1,20 +1,29 @@
 'use client'
 
-import React from 'react'
+import type { ReactNode } from 'react'
 
-type SCEmptyStateProps = {
-  icon?: React.ReactNode
-  title: React.ReactNode
-  subtitle?: React.ReactNode
-  action?: React.ReactNode
+type Props = {
+  icon?: ReactNode
+  title: string
+  text?: string
+  action?: ReactNode
 }
 
-export default function SCEmptyState({ icon, title, subtitle, action }: SCEmptyStateProps) {
+export default function SCEmptyState({ icon, title, text, action }: Props) {
   return (
-    <div className="sc-empty-state" style={{ borderRadius: 24, background: 'var(--sc-soft)', border: '1px solid var(--sc-border-soft)', padding: 18, textAlign: 'center' }}>
-      {icon ? <div style={{ width: 44, height: 44, borderRadius: 18, margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--sc-surface)', color: 'var(--sc-muted-accent)' }}>{icon}</div> : null}
-      <div style={{ fontSize: 14, fontWeight: 620, color: 'var(--sc-ink)' }}>{title}</div>
-      {subtitle ? <div style={{ marginTop: 4, fontSize: 12.5, lineHeight: 1.4, color: 'var(--sc-ink-3)' }}>{subtitle}</div> : null}
+    <div
+      className="sc-empty-state"
+      style={{
+        padding: '26px 18px',
+        textAlign: 'center',
+        borderRadius: 24,
+        background: 'var(--sc-soft)',
+        color: 'var(--sc-ink)',
+      }}
+    >
+      {icon ? <div style={{ marginBottom: 10, color: 'var(--sc-ink-3)' }}>{icon}</div> : null}
+      <div style={{ fontSize: 14, fontWeight: 620, marginBottom: text ? 5 : 0 }}>{title}</div>
+      {text ? <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.45, color: 'var(--sc-ink-3)' }}>{text}</p> : null}
       {action ? <div style={{ marginTop: 14 }}>{action}</div> : null}
     </div>
   )

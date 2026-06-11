@@ -1,44 +1,55 @@
 'use client'
 
-import React from 'react'
+import type { ReactNode } from 'react'
 
-type SCTopBarProps = {
-  title?: React.ReactNode
-  left?: React.ReactNode
-  right?: React.ReactNode
-  center?: boolean
+type Props = {
+  title?: string
+  left?: ReactNode
+  right?: ReactNode
+  compact?: boolean
 }
 
-export default function SCTopBar({ title, left, right, center = false }: SCTopBarProps) {
+export default function SCTopBar({ title, left, right, compact = false }: Props) {
   return (
     <header
       className="sc-top-bar"
       style={{
-        minHeight: 48,
-        display: 'grid',
-        gridTemplateColumns: '44px 1fr 44px',
+        height: compact ? 52 : 58,
+        display: 'flex',
         alignItems: 'center',
-        gap: 6,
-        marginBottom: 12,
+        justifyContent: 'space-between',
+        gap: 12,
+        padding: '0 18px',
+        background: 'var(--sc-bg)',
+        flexShrink: 0,
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>{left}</div>
-      <div
-        style={{
-          minWidth: 0,
-          textAlign: center ? 'center' : 'left',
-          fontSize: 16,
-          fontWeight: 620,
-          letterSpacing: '-0.02em',
-          color: 'var(--sc-ink)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {title}
+      <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+        {left}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>{right}</div>
+      {title ? (
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            textAlign: 'center',
+            fontSize: 15,
+            fontWeight: 620,
+            color: 'var(--sc-ink)',
+            letterSpacing: '-.01em',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {title}
+        </div>
+      ) : (
+        <div style={{ flex: 1 }} />
+      )}
+      <div style={{ width: 44, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {right}
+      </div>
     </header>
   )
 }

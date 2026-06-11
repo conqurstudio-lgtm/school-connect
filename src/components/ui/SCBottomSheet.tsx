@@ -1,65 +1,45 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
-type SCBottomSheetProps = {
+type Props = {
   open: boolean
   onClose: () => void
-  children: React.ReactNode
+  children: ReactNode
   maxWidth?: number
 }
 
-export default function SCBottomSheet({ open, onClose, children, maxWidth = 520 }: SCBottomSheetProps) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
-
+export default function SCBottomSheet({ open, onClose, children, maxWidth = 430 }: Props) {
   useEffect(() => {
     if (!open) return
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
     }
-    document.addEventListener('keydown', handleKeyDown)
-    const previous = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = previous
-    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  if (!mounted || !open) return null
+  if (!open || typeof document === 'undefined') return null
 
   return createPortal(
-    <div
-      className="sc-sheet-overlay"
-      onMouseDown={onClose}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,.22)',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        padding: '0 12px env(safe-area-inset-bottom)',
-      }}
-    >
+    <div className="sc-bottom-sheet-backdrop" onClick={onClose}>
       <div
         className="sc-bottom-sheet"
-        onMouseDown={(event) => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         style={{
+          position: 'fixed',
+          left: '50%',
+          bottom: 0,
           width: '100%',
           maxWidth,
-          maxHeight: '88dvh',
-          overflow: 'auto',
-          borderRadius: '26px 26px 0 0',
-          background: 'var(--sc-surface)',
-          border: '1px solid var(--sc-border)',
-          boxShadow: '0 -18px 60px rgba(0,0,0,.10)',
+          transform: 'translateX(-50%)',
+          borderRadius: '28px 28px 0 0',
+          padding: '18px 18px calc(18px + env(safe-area-inset-bottom))',
+          animation: 'scSheetIn .22s var(--sc-ease-standard) both',
         }}
       >
+        <div style={{ width: 38, height: 4, borderRadius: 999, background: 'var(--sc-border)', margin: '0 auto 14px' }} />
         {children}
       </div>
     </div>,

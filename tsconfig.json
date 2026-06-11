@@ -41,6 +41,9 @@
     "files/**",
     "school-connect-*",
     "school-connect-*/**",
-    "**/*.zip"
+    "**/*.zip",
+    ".next",
+    "README_INSTALL.md",
+    "apply-*.sh"
   ]
 }

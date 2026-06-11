@@ -1739,3 +1739,128 @@ button {
   50% { transform: scale(1.018); opacity: .96; }
 }
 /* SCHOOL CONNECT NEUTRAL SYSTEM PHASE 2 END */
+
+/* SCHOOL CONNECT NEUTRAL POLISH PHASE 3 START */
+:root {
+  --sc-bg: #FFFFFF;
+  --sc-surface: #FFFFFF;
+  --sc-soft: #F7F7F7;
+  --sc-soft-2: #F3F3F3;
+  --sc-press: #F1F1F1;
+  --sc-border: rgba(17, 17, 17, .075);
+  --sc-border-soft: rgba(17, 17, 17, .052);
+  --sc-ink: #222222;
+  --sc-ink-2: #5F5F5F;
+  --sc-ink-3: #8A8A8A;
+  --sc-ink-4: #C7C7C7;
+  --sc-muted-accent: #717171;
+  --sc-danger: #B42318;
+  --sc-shadow-menu: 0 8px 22px rgba(0, 0, 0, .07);
+  --sc-shadow-sheet: 0 -14px 44px rgba(0, 0, 0, .085);
+  --sc-ease-standard: cubic-bezier(.22,.61,.36,1);
+}
+
+html,
+body,
+.app-root,
+.sc-page-shell,
+.school-safe-screen,
+.teacher-safe-screen {
+  background: var(--sc-bg) !important;
+}
+
+button,
+a,
+.sc-action-row,
+.sc-icon-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sc-screen-enter {
+  animation: scScreenEnter .22s var(--sc-ease-standard) both;
+}
+
+.sc-action-row,
+.sc-icon-button,
+.sc-list-row,
+.sc-pill-button {
+  transition:
+    background .16s var(--sc-ease-standard),
+    transform .16s var(--sc-ease-standard),
+    opacity .16s var(--sc-ease-standard);
+}
+
+.sc-action-row:active,
+.sc-icon-button:active,
+.sc-list-row:active,
+.sc-pill-button:active {
+  transform: scale(.985);
+}
+
+.sc-thin-divider {
+  height: 1px;
+  background: var(--sc-border-soft);
+  transform: scaleY(.5);
+  transform-origin: center;
+}
+
+.sc-soft-surface {
+  background: var(--sc-soft) !important;
+  border-color: var(--sc-border-soft) !important;
+}
+
+.sc-top-bar {
+  padding-top: env(safe-area-inset-top);
+}
+
+.sc-bottom-sheet-backdrop,
+.sc-sheet-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, .22) !important;
+  z-index: 1000 !important;
+}
+
+.sc-bottom-sheet {
+  background: var(--sc-surface) !important;
+  border: 1px solid var(--sc-border) !important;
+  box-shadow: var(--sc-shadow-sheet) !important;
+}
+
+.sc-floating-menu {
+  background: var(--sc-surface) !important;
+  border-color: var(--sc-border) !important;
+  box-shadow: var(--sc-shadow-menu) !important;
+  animation: scMenuIn .14s var(--sc-ease-standard) both;
+}
+
+.sc-startup-loader {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .22s var(--sc-ease-standard), visibility .22s var(--sc-ease-standard);
+}
+
+.sc-startup-loader.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sc-empty-state {
+  border: 1px solid var(--sc-border-soft);
+}
+
+@keyframes scScreenEnter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes scSheetIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(18px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+/* SCHOOL CONNECT NEUTRAL POLISH PHASE 3 END */

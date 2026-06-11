@@ -81,3 +81,12 @@ scripts/*parent*.sh
 
 # Local env backup
 .env.local.save
+
+# School Connect local install packages and backups
+/backups/
+/files/
+/school-connect-*/
+/school-connect-*.zip
+/README_INSTALL.md
+/apply-*.sh
+
