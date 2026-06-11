@@ -3,9 +3,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Check, Copy, MoreVertical, Plus, RotateCw, Slash, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { SCBottomSheet, SCButton, SCInput } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -373,15 +373,14 @@ export function TeachersTab() {
       )}
 
       {showAdd && (
-        <SheetPortal>
-          <AddTeacherSheet
-            onClose={() => setShowAdd(false)}
-            onCreated={() => {
-              setShowAdd(false)
-              load()
-            }}
-          />
-        </SheetPortal>
+        <AddTeacherSheet
+          open={showAdd}
+          onClose={() => setShowAdd(false)}
+          onCreated={() => {
+            setShowAdd(false)
+            load()
+          }}
+        />
       )}
     </div>
   )
@@ -569,7 +568,7 @@ function MenuItem({ onClick, Icon, label, danger }: any) {
   )
 }
 
-function AddTeacherSheet({ onClose, onCreated }: any) {
+function AddTeacherSheet({ open, onClose, onCreated }: any) {
   const [name, setName] = useState('')
   const [grade, setGrade] = useState('')
   const [className, setClassName] = useState('')
@@ -610,100 +609,104 @@ function AddTeacherSheet({ onClose, onCreated }: any) {
   }
 
   return (
-    <div onClick={onClose} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 10000,
-      background: 'rgba(0,0,0,0.30)',
-      display: 'flex',
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        width: '100%',
-        maxWidth: 520,
-        maxHeight: '90dvh',
-        overflowY: 'auto',
-        background: T.white,
-        borderRadius: '24px 24px 0 0',
-        padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-        boxShadow: '0 -18px 48px rgba(0,0,0,0.12)',
+    <SCBottomSheet open={open} onClose={onClose} maxWidth={520}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 14,
+        marginBottom: 18,
       }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          gap: 12,
-          marginBottom: 16,
-        }}>
-          <div>
-            <h2 style={{ fontSize: 17, fontWeight: 600, color: T.ink, margin: 0 }}>
-              Add teacher
-            </h2>
-            <p style={{ fontSize: 13, color: T.ink3, margin: '3px 0 0' }}>
-              Create one private teacher link.
-            </p>
-          </div>
+        <div style={{ minWidth: 0 }}>
+          <h2 style={{
+            fontSize: 18,
+            fontWeight: 620,
+            color: 'var(--sc-ink)',
+            margin: 0,
+            letterSpacing: '-0.02em',
+          }}>
+            Add teacher
+          </h2>
+          <p style={{
+            fontSize: 13,
+            color: 'var(--sc-ink-3)',
+            lineHeight: 1.45,
+            margin: '4px 0 0',
+          }}>
+            Create one private link for this teacher.
+          </p>
+        </div>
 
-          <button type="button" onClick={onClose} style={{
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close add teacher"
+          className="sc-icon-button sc-tap"
+          style={{
             width: 36,
             height: 36,
             borderRadius: 999,
             border: 'none',
-            background: T.soft,
-            color: T.ink3,
-            display: 'flex',
+            background: 'var(--sc-soft)',
+            color: 'var(--sc-ink-3)',
+            display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-          }}>
-            <X size={16} />
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <Field label="Teacher name" value={name} onChange={setName} placeholder="Mrs. Khumalo" />
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <Field label="Grade" value={grade} onChange={setGrade} placeholder="Grade 4" />
-            <Field label="Class optional" value={className} onChange={setClassName} placeholder="4B" />
-          </div>
-
-          <Field label="Email optional" value={email} onChange={setEmail} placeholder="teacher@school.com" type="email" />
-
-          <button
-            type="button"
-            onClick={submit}
-            disabled={saving}
-            style={{
-              minHeight: 48,
-              ...primaryButton,
-              width: '100%',
-              marginTop: 4,
-              opacity: saving ? 0.65 : 1,
-              cursor: saving ? 'wait' : 'pointer',
-            }}
-          >
-            {saving ? 'Creating...' : 'Create teacher'}
-          </button>
-        </div>
+            flexShrink: 0,
+            padding: 0,
+          }}
+        >
+          <X size={16} strokeWidth={2} />
+        </button>
       </div>
-    </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+        <Field label="Teacher name" value={name} onChange={setName} placeholder="Mrs. Khumalo" autoFocus />
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <Field label="Grade" value={grade} onChange={setGrade} placeholder="Grade 4" />
+          <Field label="Class" value={className} onChange={setClassName} placeholder="4B" />
+        </div>
+
+        <Field label="Email" value={email} onChange={setEmail} placeholder="teacher@school.com" type="email" inputMode="email" />
+
+        <div style={{
+          marginTop: 2,
+          padding: '12px 13px',
+          borderRadius: 18,
+          background: 'var(--sc-soft)',
+          color: 'var(--sc-ink-3)',
+          fontSize: 12.8,
+          lineHeight: 1.45,
+        }}>
+          The teacher link can be copied from the teacher row after creating them.
+        </div>
+
+        <SCButton
+          type="button"
+          onClick={submit}
+          disabled={saving}
+          fullWidth
+          style={{ minHeight: 48, marginTop: 2 }}
+        >
+          {saving ? 'Creating...' : 'Create teacher'}
+        </SCButton>
+      </div>
+    </SCBottomSheet>
   )
 }
 
-function Field({ label, value, onChange, placeholder, type = 'text' }: any) {
+function Field({ label, value, onChange, placeholder, type = 'text', autoFocus = false, inputMode }: any) {
   return (
-    <label style={{ display: 'block' }}>
-      <span style={labelStyle}>{label}</span>
-      <input
-        type={type}
-        value={value}
-        onChange={event => onChange(event.target.value)}
-        placeholder={placeholder}
-        style={inputStyle}
-      />
-    </label>
+    <SCInput
+      label={label}
+      type={type}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      inputMode={inputMode}
+    />
   )
 }

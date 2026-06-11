@@ -69,7 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               border:               '1px solid rgba(255,255,255,0.08)',
               fontFamily:           'var(--font-inter), system-ui, sans-serif',
             },
-            success: { iconTheme: { primary: '#22C55E', secondary: '#fff' } },
+            success: { iconTheme: { primary: '#A3A3A3', secondary: '#fff' } },
             error:   { iconTheme: { primary: '#FF3B30', secondary: '#fff' } },
           }}
         />

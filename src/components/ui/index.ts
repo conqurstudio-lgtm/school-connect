@@ -14,3 +14,5 @@ export { default as SCScoreRow } from './SCScoreRow'
 
 export { default as SCButton } from './SCButton'
 export { default as SCTextArea } from './SCTextArea'
+
+export { default as SCInput } from './SCInput'
