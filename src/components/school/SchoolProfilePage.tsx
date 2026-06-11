@@ -818,14 +818,16 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           type="button"
           onClick={onAddTeacher}
           aria-label="Add teacher"
+          title="Add teacher"
+          className="sc-add-teacher-filled-v393"
           style={{
-            width: 32,
-            height: 32,
-            minWidth: 32,
+            width: 34,
+            minWidth: 34,
+            height: 34,
             borderRadius: 999,
-            border: '1px solid rgba(17,17,17,0.055)',
-            background: '#F7F7F7',
-            color: T.ink2,
+            border: 'none',
+            background: T.ink,
+            color: T.white,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -833,11 +835,12 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             fontFamily: 'inherit',
             flexShrink: 0,
             padding: 0,
+            marginRight: 4,
             boxShadow: 'none',
           }}
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.15" strokeLinecap="round" />
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: 'block' }}>
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.35" strokeLinecap="round" />
           </svg>
         </button>
       </div>

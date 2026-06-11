@@ -386,9 +386,9 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div className="sc-teacher-note-plain-v391" style={{
+        <div className="sc-teacher-note-plain-v393" style={{
           maxWidth: 396,
-          margin: '0 auto 28px',
+          margin: '0 auto 30px',
           padding: '0 10px',
         }}>
           <div style={{
@@ -408,7 +408,7 @@ export function ReportCard({ report, childName }: Props) {
                 height: 36,
                 borderRadius: '50%',
                 background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E6E6E6',
-                color: '#7A7A7A',
+                color: '#737373',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -422,8 +422,8 @@ export function ReportCard({ report, childName }: Props) {
 
               <div style={{
                 width: 1,
-                height: 22,
-                background: 'rgba(17,17,17,0.12)',
+                height: 24,
+                background: 'rgba(17,17,17,0.13)',
                 marginTop: 6,
               }} />
             </div>
@@ -442,7 +442,7 @@ export function ReportCard({ report, childName }: Props) {
                 lineHeight: 1.22,
               }}>
                 <span style={{
-                  fontSize: 15.5,
+                  fontSize: 15.4,
                   fontWeight: 560,
                   color: '#202124',
                   letterSpacing: '-0.02em',
@@ -453,7 +453,7 @@ export function ReportCard({ report, childName }: Props) {
                 <span style={{
                   fontSize: 12.6,
                   fontWeight: 500,
-                  color: '#7B7B7B',
+                  color: '#707276',
                   letterSpacing: '-0.01em',
                 }}>
                   - {childTeacherLabel}
@@ -462,8 +462,8 @@ export function ReportCard({ report, childName }: Props) {
 
               <p style={{
                 margin: 0,
-                fontSize: 13.8,
-                lineHeight: 1.62,
+                fontSize: 14.2,
+                lineHeight: 1.6,
                 color: '#55575B',
                 letterSpacing: '-0.005em',
                 fontWeight: 400,
