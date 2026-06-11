@@ -10,6 +10,7 @@ import SCActionRow from '@/components/ui/SCActionRow'
 import SCReportRow from '@/components/ui/SCReportRow'
 import SCScoreRow from '@/components/ui/SCScoreRow'
 import SCButton from '@/components/ui/SCButton'
+import SCTopBar from '@/components/ui/SCTopBar'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -1128,74 +1129,46 @@ function TeacherLearnersPage({
         flexDirection: 'column',
         background: T.white,
       }}>
-        <header style={{
-          flexShrink: 0,
-          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          background: 'transparent',
-          minHeight: 42,
-        }}>
-          <SchoolConnectBackButton onClick={onBack} />
-
-          <button
-            type="button"
-            onClick={onAdd}
-            aria-label="Add learner"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: 'none',
-              background: 'transparent',
-              color: '#252525',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-              padding: 0,
-              alignSelf: 'center',
-              transform: 'translateY(1px)',
-            }}
-          >
-            <Plus size={20} strokeWidth={2.05} />
-          </button>
-        </header>
+        <SCTopBar
+          title="Reports"
+          subtitle={reportsSummary}
+          align="left"
+          compact
+          left={<SchoolConnectBackButton onClick={onBack} />}
+          right={
+            <button
+              type="button"
+              onClick={onAdd}
+              aria-label="Add learner"
+              className="sc-pressable"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: 'none',
+                background: 'transparent',
+                color: 'var(--sc-ink)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+                padding: 0,
+              }}
+            >
+              <Plus size={20} strokeWidth={2.05} />
+            </button>
+          }
+        />
 
         <main style={{
           flex: 1,
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '10px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.white,
         }}>
-          <section style={{
-            padding: '20px 0 24px',
-          }}>
-            <h1 style={{
-              fontSize: 25,
-              lineHeight: 1.05,
-              fontWeight: 560,
-              letterSpacing: '-0.052em',
-              color: T.ink,
-              margin: 0,
-            }}>
-              Reports
-            </h1>
-            <p style={{
-              fontSize: 12.8,
-              lineHeight: 1.45,
-              fontWeight: 430,
-              color: T.ink3,
-              margin: '8px 0 0',
-            }}>
-              {reportsSummary}
-            </p>
-          </section>
-
           {!hasLearners ? (
             <section style={{
               padding: '30px 16px',
@@ -1419,34 +1392,13 @@ function ReportLinkedSafeAreaStyle() {
 
 function TeacherReportTopBar({ title, subtitle, onBack }: any) {
   return (
-    <header style={{
-      flexShrink: 0,
-      padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-      background: T.white,
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <SchoolConnectBackButton onClick={onBack} />
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontSize: 13.5,
-            fontWeight: 560,
-            color: T.ink,
-            margin: 0,
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}>
-            {title}
-          </p>
-          {subtitle ? (
-            <p style={{ fontSize: 12, color: T.ink3, margin: '1px 0 0' }}>
-              {subtitle}
-            </p>
-          ) : null}
-        </div>
-      </div>
-    </header>
+    <SCTopBar
+      title={title}
+      subtitle={subtitle}
+      align="left"
+      compact
+      left={<SchoolConnectBackButton onClick={onBack} />}
+    />
   )
 }
 
