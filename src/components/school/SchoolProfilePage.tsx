@@ -819,20 +819,21 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           type="button"
           onClick={onAddTeacher}
           style={{
-            minWidth: 50,
-            minHeight: 40,
-            borderRadius: 999,
+            minWidth: 'auto',
+            minHeight: 38,
+            borderRadius: 0,
             border: 'none',
-            background: T.soft,
+            background: 'transparent',
             color: T.ink2,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
+            fontSize: 13.5,
             fontWeight: 560,
             cursor: 'pointer',
             fontFamily: 'inherit',
             flexShrink: 0,
+            padding: '0 3px',
           }}
         >
           Add

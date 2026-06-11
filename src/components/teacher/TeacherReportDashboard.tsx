@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
@@ -2509,28 +2510,36 @@ function AddLearnerSheet({ onClose, onCreated }: any) {
 }
 
 function BottomSheet({ children, onClose }: any) {
-  return (
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <div className="sc-bottom-sheet-backdrop" onClick={onClose} style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 9000,
+      zIndex: 12000,
       background: 'rgba(0,0,0,0.30)',
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'center',
+      padding: '0 max(0px, env(safe-area-inset-left)) 0 max(0px, env(safe-area-inset-right))',
+      boxSizing: 'border-box',
     }}>
       <div className="sc-bottom-sheet" onClick={e => e.stopPropagation()} style={{
         width: '100%',
         maxWidth: 520,
         maxHeight: '90dvh',
         overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
         background: T.white,
         borderRadius: '28px 28px 0 0',
         padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
+        boxShadow: '0 -18px 52px rgba(0,0,0,0.08)',
+        animation: 'scSheetIn .22s cubic-bezier(.16,1,.3,1) both',
       }}>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 

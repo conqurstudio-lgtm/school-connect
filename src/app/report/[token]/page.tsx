@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap, Share2, Copy, Check, ImageIcon } from 'lucide-react'
+import { Camera, GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
@@ -237,7 +237,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <ImageIcon size={18} strokeWidth={2} color={T.ink} />
+      <Camera size={18} strokeWidth={2} color={T.ink} />
     </button>
   )
 }
@@ -886,22 +886,10 @@ export default function ParentMagicReportPage() {
         background: '#FFFFFF',
       }}>
         <SCTopBar
-          title={reportHeaderLabel}
+          title="Report"
           align="left"
           leftWidth={0}
           rightWidth={isFamilyShare ? 0 : 92}
-          subtitleNode={school ? (
-            <SchoolQuickView school={school} />
-          ) : (
-            <span style={{
-              fontSize: 10.5,
-              color: '#9A9A9A',
-              fontWeight: 430,
-              lineHeight: 1,
-            }}>
-              Private report
-            </span>
-          )}
           right={!isFamilyShare ? (
             <div style={{
               display: 'flex',
