@@ -2,12 +2,12 @@
 'use client'
 // school-connect-route-lock-v1
 // school-admin-landing-route-repair-v1
+// school-connect-cached-logo-loader-v341
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { SchoolProfilePage } from '@/components/school/SchoolProfilePage'
-import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
 const supabase = createClient()
 
@@ -16,13 +16,93 @@ const T = {
   ink2: '#4A4A4A',
   ink3: '#9A9A9A',
   border: 'rgba(0,0,0,0.07)',
-  bg: '#FCFCFF',
+  bg: '#FFFFFF',
+  soft: '#F7F7F8',
+  accent: '#8FA6A1',
+  accentSoft: '#EEF3F1',
   white: '#FFFFFF',
+}
+
+const SCHOOL_PAGE_CACHE_KEY = 'school-connect:school-page-cache:v1'
+
+function initialsFrom(name?: string | null) {
+  return String(name || 'SC')
+    .split(' ')
+    .map(part => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
+}
+
+function readCachedSchoolPage() {
+  if (typeof window === 'undefined') return null
+
+  try {
+    const raw = window.localStorage.getItem(SCHOOL_PAGE_CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    return parsed?.data || null
+  } catch {
+    return null
+  }
+}
+
+function writeCachedSchoolPage(data: any) {
+  if (typeof window === 'undefined' || !data?.school?.id) return
+
+  try {
+    window.localStorage.setItem(
+      SCHOOL_PAGE_CACHE_KEY,
+      JSON.stringify({ data, saved_at: new Date().toISOString() })
+    )
+  } catch {
+    // Local storage can fail in private mode; the app should still work.
+  }
+}
+
+function SchoolRouteLogoLoader({ cachedSchool }: any) {
+  return (
+    <main style={{
+      minHeight: '100dvh',
+      background: T.bg,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      color: T.ink,
+    }}>
+      <div style={{
+        width: 92,
+        height: 92,
+        borderRadius: 32,
+        background: cachedSchool?.logo_url ? `url(${cachedSchool.logo_url}) center/cover` : T.accentSoft,
+        color: T.accent,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 25,
+        fontWeight: 560,
+        overflow: 'hidden',
+        boxShadow: '0 14px 34px rgba(15,23,42,0.06)',
+        animation: 'schoolRouteLogoIn 260ms cubic-bezier(.2,.8,.2,1) both',
+      }}>
+        {!cachedSchool?.logo_url && initialsFrom(cachedSchool?.name)}
+      </div>
+
+      <style>{`
+        @keyframes schoolRouteLogoIn {
+          from { opacity: 0; transform: translateY(7px) scale(0.965); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+    </main>
+  )
 }
 
 export function SchoolPageClient() {
   const router = useRouter()
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<any>(() => readCachedSchoolPage())
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -107,12 +187,15 @@ export function SchoolPageClient() {
           return
         }
 
-        setData({
+        const nextData = {
           school,
           profile,
           isAdmin: profile.role === 'school',
           userId: session.user.id,
-        })
+        }
+
+        setData(nextData)
+        writeCachedSchoolPage(nextData)
       } catch (error: any) {
         console.error('[school-page] load failed:', error)
         if (mounted) {
@@ -130,7 +213,11 @@ export function SchoolPageClient() {
     }
   }, [router])
 
-  if (loading) return <PageGhostLoader />
+  if (data) {
+    return <SchoolProfilePage {...data} bootLoading={loading} />
+  }
+
+  if (loading) return <SchoolRouteLogoLoader cachedSchool={readCachedSchoolPage()?.school} />
 
   if (errorMessage) {
     return (
@@ -154,7 +241,7 @@ export function SchoolPageClient() {
         }}>
           <p style={{
             fontSize: 15,
-            fontWeight: 950,
+            fontWeight: 650,
             color: T.ink,
             margin: '0 0 5px',
             letterSpacing: '-0.025em',
@@ -186,7 +273,7 @@ export function SchoolPageClient() {
                 background: T.white,
                 color: T.ink2,
                 fontSize: 13,
-                fontWeight: 850,
+                fontWeight: 560,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
               }}
@@ -204,7 +291,7 @@ export function SchoolPageClient() {
                 background: T.ink,
                 color: T.white,
                 fontSize: 13,
-                fontWeight: 850,
+                fontWeight: 560,
                 cursor: 'pointer',
                 fontFamily: 'inherit',
               }}
@@ -217,7 +304,5 @@ export function SchoolPageClient() {
     )
   }
 
-  if (!data) return null
-
-  return <SchoolProfilePage {...data} />
+  return null
 }

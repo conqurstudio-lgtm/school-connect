@@ -23,6 +23,7 @@ interface SchoolProfilePageProps {
   profile: Profile
   isAdmin: boolean
   userId: string
+  bootLoading?: boolean
 }
 
 const supabase = createClient()
@@ -31,7 +32,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.035)',
+  border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
@@ -118,7 +119,7 @@ function SchoolSafeAreaStyle() {
         right: 0;
         background: #FFFFFF;
         pointer-events: none;
-        z-index: -1;
+        z-index: 0;
       }
 
       .school-safe-screen::before {
@@ -136,15 +137,15 @@ function SchoolSafeAreaStyle() {
         40% { transform: scale(1); opacity: 1; }
       }
 
-      /* School logo intro loader v339 */
+      /* school-logo-loader-v341 */
       @keyframes schoolLogoIntroIn {
-        from { opacity: 0; transform: translateY(8px) scale(0.96); }
+        from { opacity: 0; transform: translateY(8px) scale(0.965); }
         to { opacity: 1; transform: translateY(0) scale(1); }
       }
 
       @keyframes schoolLogoIntroOut {
         from { opacity: 1; transform: translateY(0) scale(1); }
-        to { opacity: 0; transform: translateY(-6px) scale(0.985); }
+        to { opacity: 0; transform: translateY(-5px) scale(0.985); }
       }
 
       @keyframes schoolLoaderBackdropOut {
@@ -167,11 +168,11 @@ function SchoolSafeAreaStyle() {
       .school-logo-loader {
         position: fixed;
         inset: 0;
-        z-index: 8500;
+        z-index: 12000;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255,255,255,0.96);
+        background: rgba(255,255,255,0.98);
         pointer-events: none;
         backdrop-filter: blur(3px);
         -webkit-backdrop-filter: blur(3px);
@@ -246,17 +247,47 @@ function websiteHref(value?: string | null) {
   return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`
 }
 
+const SCHOOL_TEACHER_COUNT_CACHE_PREFIX = 'school-connect:teacher-count:'
+
+function readCachedTeacherCount(schoolId?: string | null) {
+  if (typeof window === 'undefined' || !schoolId) return null
+
+  try {
+    const raw = window.localStorage.getItem(`${SCHOOL_TEACHER_COUNT_CACHE_PREFIX}${schoolId}`)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    const value = Number(parsed?.count)
+    return Number.isFinite(value) ? value : null
+  } catch {
+    return null
+  }
+}
+
+function writeCachedTeacherCount(schoolId: string | null | undefined, count: number) {
+  if (typeof window === 'undefined' || !schoolId) return
+
+  try {
+    window.localStorage.setItem(
+      `${SCHOOL_TEACHER_COUNT_CACHE_PREFIX}${schoolId}`,
+      JSON.stringify({ count, saved_at: new Date().toISOString() })
+    )
+  } catch {
+    // Do nothing. Caching should never block the page.
+  }
+}
+
 function teacherCountText(count: number) {
-  return `${count || 0} ${count === 1 ? 'teacher' : 'teachers'}`
+  const safeCount = Number.isFinite(Number(count)) ? Number(count) : 0
+  return `${safeCount} ${safeCount === 1 ? 'teacher' : 'teachers'}`
 }
 
 function SectionCard({ children, style = {} }: any) {
   return (
     <section style={{
       borderRadius: 28,
-      background: 'transparent',
+      background: T.white,
       border: 'none',
-      padding: 0,
+      padding: 16,
       ...style,
     }}>
       {children}
@@ -267,15 +298,14 @@ function SectionCard({ children, style = {} }: any) {
 function MiniStat({ label, value }: any) {
   return (
     <div style={{
-      padding: '12px 10px',
-      borderRadius: 24,
+      padding: '10px 8px',
+      borderRadius: 17,
       background: T.soft,
       textAlign: 'center',
-      border: `1px solid ${T.border}`,
     }}>
       <p style={{
         fontSize: 18,
-        fontWeight: 550,
+        fontWeight: 560,
         color: T.ink,
         margin: 0,
         minHeight: 22,
@@ -285,7 +315,7 @@ function MiniStat({ label, value }: any) {
       }}>
         {value}
       </p>
-      <p style={{ fontSize: 12, color: T.ink3, margin: '3px 0 0' }}>
+      <p style={{ fontSize: 11.5, color: T.ink3, margin: '2px 0 0' }}>
         {label}
       </p>
     </div>
@@ -704,7 +734,7 @@ function SchoolLogoIntroOverlay({ school, leaving }: any) {
           color: T.accent,
           fontSize: 25,
           fontWeight: 560,
-          boxShadow: '0 14px 34px rgba(15, 23, 42, 0.08)',
+          boxShadow: '0 14px 34px rgba(15,23,42,0.06)',
         }}
       >
         {!school?.logo_url && initialsFrom(school?.name)}
@@ -715,12 +745,12 @@ function SchoolLogoIntroOverlay({ school, leaving }: any) {
 
 function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: any) {
   return (
-    <SectionCard style={{ padding: 0, overflow: 'visible', position: 'relative', zIndex: 20, marginTop: 10 }}>
+    <SectionCard style={{ padding: '0 14px', overflow: 'visible', position: 'relative', zIndex: 20 }}>
       <div style={{
         width: '100%',
         background: T.white,
         border: 'none',
-        padding: '16px 0 15px',
+        padding: 15,
         display: 'flex',
         alignItems: 'center',
         gap: 12,
@@ -728,9 +758,9 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         fontFamily: 'inherit',
       }}>
         <div style={{
-          width: 40,
-          height: 40,
-          borderRadius: 16,
+          width: 38,
+          height: 38,
+          borderRadius: 14,
           background: T.accentSoft,
           color: T.accent,
           display: 'flex',
@@ -742,11 +772,11 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: 15, fontWeight: 560, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 540, color: T.ink, margin: 0 }}>
             Teachers & classes
           </p>
-          <p style={{ fontSize: 12.8, color: T.accent, margin: '3px 0 0' }}>
-            {teacherCountLoading ? 'Loading teachers...' : teacherCountText(teacherCount)}
+          <p style={{ fontSize: 12.5, color: T.accent, margin: '2px 0 0' }}>
+            {teacherCountText(teacherCount)}
           </p>
         </div>
 
@@ -754,8 +784,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
           type="button"
           onClick={onAddTeacher}
           style={{
-            minWidth: 50,
-            minHeight: 40,
+            minWidth: 54,
+            minHeight: 44,
             borderRadius: 999,
             border: 'none',
             background: T.white,
@@ -763,8 +793,8 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 13,
-            fontWeight: 560,
+            fontSize: 12.5,
+            fontWeight: 540,
             cursor: 'pointer',
             fontFamily: 'inherit',
             flexShrink: 0,
@@ -776,7 +806,7 @@ function TeachersAccordion({ teacherCount, teacherCountLoading, onAddTeacher }: 
 
       <div style={{
         borderTop: `1px solid ${T.border}`,
-        padding: '0 0 10px',
+        padding: '0 14px 12px',
         background: T.white,
       }}>
         <TeachersTab />
@@ -870,10 +900,14 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
   )
 }
 
-export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId }: SchoolProfilePageProps) {
+export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId, bootLoading = false }: SchoolProfilePageProps) {
   const [school, setSchool] = useState(initialSchool)
-  const [teacherCount, setTeacherCount] = useState(0)
+  const [teacherCount, setTeacherCount] = useState(() => readCachedTeacherCount(initialSchool.id) ?? 0)
   const [teacherCountLoading, setTeacherCountLoading] = useState(false)
+  const [teacherCountReady, setTeacherCountReady] = useState(false)
+  const [teacherListReady, setTeacherListReady] = useState(!isAdmin)
+  const [showSchoolLogoLoader, setShowSchoolLogoLoader] = useState(true)
+  const [schoolLogoLoaderLeaving, setSchoolLogoLoaderLeaving] = useState(false)
   const [teachersOpen, setTeachersOpen] = useState(true)
   const [showSettings, setShowSettings] = useState(false)
   const [settingsSeen, setSettingsSeen] = useState(() => {
@@ -883,20 +917,36 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const [showEditDetails, setShowEditDetails] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [logoDraft, setLogoDraft] = useState<any>(null)
-  const [showSchoolLogoLoader, setShowSchoolLogoLoader] = useState(true)
-  const [schoolLogoLoaderLeaving, setSchoolLogoLoaderLeaving] = useState(false)
   const logoRef = useRef<HTMLInputElement>(null)
+  const introStartedRef = useRef(Date.now())
+
 
   useEffect(() => {
-    // school-logo-loader-timer-v339
-    const startLeaving = window.setTimeout(() => setSchoolLogoLoaderLeaving(true), 560)
-    const finish = window.setTimeout(() => setShowSchoolLogoLoader(false), 860)
+    setTeacherListReady(!isAdmin)
+    setTeacherCountReady(false)
+    setShowSchoolLogoLoader(true)
+    setSchoolLogoLoaderLeaving(false)
+    introStartedRef.current = Date.now()
+  }, [school.id, isAdmin])
+
+  useEffect(() => {
+    const handleTeachersReady = (event: any) => {
+      const nextCount = Number(event?.detail?.count)
+
+      if (Number.isFinite(nextCount)) {
+        setTeacherCount(nextCount)
+        writeCachedTeacherCount(school.id, nextCount)
+      }
+
+      setTeacherListReady(true)
+    }
+
+    window.addEventListener('school-connect-teachers-ready', handleTeachersReady)
 
     return () => {
-      window.clearTimeout(startLeaving)
-      window.clearTimeout(finish)
+      window.removeEventListener('school-connect-teachers-ready', handleTeachersReady)
     }
-  }, [])
+  }, [school.id])
 
   useEffect(() => {
     let alive = true
@@ -911,7 +961,13 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
       if (!alive) return
 
-      if (!error) setTeacherCount(count || 0)
+      if (!error) {
+        const nextCount = count || 0
+        setTeacherCount(nextCount)
+        writeCachedTeacherCount(school.id, nextCount)
+      }
+
+      setTeacherCountReady(true)
       setTeacherCountLoading(false)
     }
 
@@ -921,6 +977,25 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
       alive = false
     }
   }, [school.id])
+
+
+  useEffect(() => {
+    // school-logo-loader-ready-v341
+    if (bootLoading) return
+    if (!teacherCountReady) return
+    if (isAdmin && !teacherListReady) return
+
+    const elapsed = Date.now() - introStartedRef.current
+    const wait = Math.max(0, 720 - elapsed)
+
+    const startLeaving = window.setTimeout(() => setSchoolLogoLoaderLeaving(true), wait)
+    const finish = window.setTimeout(() => setShowSchoolLogoLoader(false), wait + 280)
+
+    return () => {
+      window.clearTimeout(startLeaving)
+      window.clearTimeout(finish)
+    }
+  }, [bootLoading, teacherCountReady, teacherListReady, isAdmin])
 
   const uploadAdjustedLogo = async (blob: Blob) => {
     setUploading(true)
@@ -1020,7 +1095,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
   const href = websiteHref(school.website)
 
   return (
-    <div className="school-safe-screen sc-screen-enter" style={{
+    <div className="school-safe-screen" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'visible',
@@ -1061,7 +1136,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
       }}>
         <header style={{
           flexShrink: 0,
-          padding: 'calc(7px + env(safe-area-inset-top, 0px)) 16px 0',
+          padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 4px',
           background: 'transparent',
           display: 'flex',
           justifyContent: 'flex-end',
@@ -1110,23 +1185,23 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
           minHeight: 0,
           overflowY: 'auto',
           WebkitOverflowScrolling: 'touch',
-          padding: '0 20px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
           <SectionCard style={{
-            minHeight: 236,
+            minHeight: 260,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
-            marginBottom: 18,
-            padding: '20px 0 24px',
+            marginBottom: 14,
+            padding: '28px 18px 26px',
           }}>
             <div style={{
-              width: 88,
-              height: 88,
-              borderRadius: 30,
+              width: 92,
+              height: 92,
+              borderRadius: 32,
               background: school.logo_url ? `url(${school.logo_url}) center/cover` : T.accentSoft,
               color: T.accent,
               display: 'flex',
@@ -1135,7 +1210,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               fontSize: 25,
               fontWeight: 560,
               overflow: 'hidden',
-              marginBottom: 16,
+              marginBottom: 18,
             }}>
               {!school.logo_url && initialsFrom(school.name)}
             </div>
@@ -1143,8 +1218,8 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
             <h1 style={{
               fontSize: 22,
               lineHeight: 1.08,
-              fontWeight: 580,
-              letterSpacing: '-0.04em',
+              fontWeight: 560,
+              letterSpacing: '-0.045em',
               color: T.ink,
               margin: '0 0 7px',
             }}>
@@ -1153,9 +1228,9 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
 
             <p style={{
               maxWidth: 310,
-              fontSize: 13.5,
+              fontSize: 13,
               color: T.ink3,
-              lineHeight: 1.48,
+              lineHeight: 1.5,
               margin: 0,
             }}>
               {school.tagline || 'School Connect keeps your school structure simple and organized.'}
@@ -1166,10 +1241,10 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               gridTemplateColumns: '1fr 1fr',
               gap: 9,
               width: '100%',
-              maxWidth: 288,
-              marginTop: 22,
+              maxWidth: 260,
+              marginTop: 20,
             }}>
-              <MiniStat label="Teachers" value={teacherCountLoading ? '...' : teacherCount} />
+              <MiniStat label="Teachers" value={teacherCount} />
               <MiniStat label="Admin" value={<User size={18} strokeWidth={2.25} />} />
             </div>
           </SectionCard>

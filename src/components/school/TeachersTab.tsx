@@ -10,7 +10,7 @@ const T = {
   ink: '#252525',
   ink2: '#5F6268',
   ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.035)',
+  border: 'rgba(0,0,0,0.07)',
   bg: '#FFFFFF',
   soft: '#F7F7F8',
   soft2: '#F4F5F5',
@@ -97,6 +97,41 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value))
 }
 
+const TEACHERS_CACHE_KEY = 'school-connect:teachers:list:v1'
+
+function readCachedTeachers(): Teacher[] {
+  if (typeof window === 'undefined') return []
+
+  try {
+    const raw = window.localStorage.getItem(TEACHERS_CACHE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed?.teachers) ? parsed.teachers : []
+  } catch {
+    return []
+  }
+}
+
+function writeCachedTeachers(teachers: Teacher[]) {
+  if (typeof window === 'undefined') return
+
+  try {
+    window.localStorage.setItem(
+      TEACHERS_CACHE_KEY,
+      JSON.stringify({ teachers, saved_at: new Date().toISOString() })
+    )
+  } catch {
+    // Caching should never block the page.
+  }
+}
+
+function announceTeachersReady(teachers: Teacher[]) {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent('school-connect-teachers-ready', {
+    detail: { count: Array.isArray(teachers) ? teachers.length : 0 },
+  }))
+}
+
 function SheetPortal({ children }: any) {
   const [mounted, setMounted] = useState(false)
 
@@ -110,7 +145,7 @@ function SheetPortal({ children }: any) {
 }
 
 export function TeachersTab() {
-  const [teachers, setTeachers] = useState<Teacher[]>([])
+  const [teachers, setTeachers] = useState<Teacher[]>(() => readCachedTeachers())
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -118,16 +153,27 @@ export function TeachersTab() {
 
   const load = async () => {
     setLoading(true)
+    let nextTeachers: Teacher[] | null = null
 
     try {
       const res = await fetch('/api/teachers')
       const json = await res.json()
-      setTeachers(json.teachers ?? [])
+      nextTeachers = json.teachers ?? []
+      setTeachers(nextTeachers)
+      writeCachedTeachers(nextTeachers)
+      announceTeachersReady(nextTeachers)
     } catch {
-      toast.error('Could not load teachers')
+      const cached = readCachedTeachers()
+      if (cached.length) {
+        setTeachers(cached)
+        announceTeachersReady(cached)
+      } else {
+        announceTeachersReady([])
+        toast.error('Could not load teachers')
+      }
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -239,13 +285,13 @@ export function TeachersTab() {
     })
   }
 
-  if (loading) {
+  if (loading && teachers.length === 0) {
     return <div aria-hidden="true" style={{ height: 1 }} />
   }
 
   return (
     <div style={{
-      paddingTop: teachers.length ? 0 : 10,
+      paddingTop: teachers.length ? 4 : 10,
       background: T.white,
       overflow: 'visible',
       position: 'relative',
@@ -253,9 +299,9 @@ export function TeachersTab() {
     }}>
       {teachers.length === 0 ? (
         <div style={{
-          padding: '28px 16px',
+          padding: '30px 16px',
           textAlign: 'center',
-          border: `1px dashed rgba(0,0,0,0.055)`,
+          border: `1px dashed ${T.border}`,
           borderRadius: 16,
           background: 'transparent',
           marginTop: 10,
@@ -353,19 +399,19 @@ function TeacherRow({
 
   return (
     <article style={{
-      padding: '14px 0',
+      padding: '12px 0',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       display: 'flex',
       alignItems: 'center',
-      gap: 12,
+      gap: 10,
       position: 'relative',
       overflow: 'visible',
       opacity: isActive ? 1 : 0.62,
     }}>
       <div style={{
-        width: 40,
-        height: 40,
-        borderRadius: 15,
+        width: 36,
+        height: 36,
+        borderRadius: 14,
         background: t.photo_url ? `url(${t.photo_url}) center/cover` : T.accentSoft,
         display: 'flex',
         alignItems: 'center',
@@ -381,8 +427,8 @@ function TeacherRow({
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{
-          fontSize: 14.2,
-          fontWeight: 560,
+          fontSize: 13.8,
+          fontWeight: 540,
           color: T.ink,
           margin: 0,
           whiteSpace: 'nowrap',
@@ -393,7 +439,7 @@ function TeacherRow({
         </p>
 
         <p style={{
-          fontSize: 12.7,
+          fontSize: 12.2,
           color: T.ink3,
           margin: '2px 0 0',
           whiteSpace: 'nowrap',
@@ -410,8 +456,8 @@ function TeacherRow({
           onClick={() => onCopy(t)}
           aria-label="Copy teacher link"
           style={{
-            width: 36,
-            height: 36,
+            width: 34,
+            height: 34,
             borderRadius: 999,
             border: 'none',
             background: isCopied ? T.accentSoft : T.white,
@@ -432,8 +478,8 @@ function TeacherRow({
         onClick={(event) => onMenu(event, t)}
         aria-label="Teacher options"
         style={{
-          width: 36,
-          height: 36,
+          width: 34,
+          height: 34,
           borderRadius: 999,
           border: 'none',
           background: T.white,
@@ -475,7 +521,7 @@ function FloatingTeacherMenu({ menu, onClose, onRotate, onRevoke, onReactivate, 
         background: T.white,
         borderRadius: 16,
         border: `1px solid ${T.border}`,
-        boxShadow: '0 18px 42px rgba(0,0,0,0.11)',
+        boxShadow: '0 18px 48px rgba(0,0,0,0.16)',
         padding: 6,
         minWidth: 184,
       }}>
