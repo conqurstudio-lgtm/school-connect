@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
-import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
+import { TeacherStartupLoader, preloadTeacherStartupImage, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 
@@ -340,6 +340,26 @@ function TeacherSafeAreaStyle() {
         bottom: 0;
         height: env(safe-area-inset-bottom, 0px);
       }
+
+      .teacher-page-shell {
+        opacity: 0;
+        transform: translateY(7px);
+        transition: opacity 280ms cubic-bezier(.2,.8,.2,1), transform 280ms cubic-bezier(.2,.8,.2,1);
+        will-change: opacity, transform;
+      }
+
+      .teacher-page-shell.is-ready {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .teacher-page-shell {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
     `}</style>
   )
 }
@@ -485,6 +505,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   const [bootLoading, setBootLoading] = useState(true)
   const [showTeacherStartup, setShowTeacherStartup] = useState(true)
   const [teacherStartupLeaving, setTeacherStartupLeaving] = useState(false)
+  const [teacherStartupAssetReady, setTeacherStartupAssetReady] = useState(false)
   const startupStartedRef = useRef(Date.now())
   const [showAdd, setShowAdd] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -618,7 +639,34 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
 
   useEffect(() => {
     if (!showTeacherStartup) return
-    if (loading || bootLoading) return
+
+    let cancelled = false
+    setTeacherStartupAssetReady(false)
+
+    const teacherForLoader = session?.teacher || cachedDashboard?.session?.teacher || null
+
+    preloadTeacherStartupImage(teacherForLoader).then(() => {
+      if (!cancelled) setTeacherStartupAssetReady(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [
+    showTeacherStartup,
+    session?.teacher?.id,
+    session?.teacher?.photo_url,
+    session?.teacher?.image_url,
+    session?.teacher?.avatar_url,
+    cachedDashboard?.session?.teacher?.id,
+    cachedDashboard?.session?.teacher?.photo_url,
+    cachedDashboard?.session?.teacher?.image_url,
+    cachedDashboard?.session?.teacher?.avatar_url,
+  ])
+
+  useEffect(() => {
+    if (!showTeacherStartup) return
+    if (loading || bootLoading || !teacherStartupAssetReady) return
 
     const elapsed = Date.now() - startupStartedRef.current
     const wait = Math.max(0, 720 - elapsed)
@@ -630,7 +678,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
       window.clearTimeout(startLeaving)
       window.clearTimeout(finish)
     }
-  }, [loading, bootLoading, showTeacherStartup])
+  }, [loading, bootLoading, teacherStartupAssetReady, showTeacherStartup])
 
   const signOut = async () => {
     await fetch('/api/teacher-session', { method: 'POST' })
@@ -834,7 +882,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         />
       )}
 
-      <div style={{
+      <div className={`teacher-page-shell ${showTeacherStartup ? '' : 'is-ready'}`} style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
@@ -1185,7 +1233,7 @@ function TeacherLearnersPage({
     }}>
       <TeacherSafeAreaStyle />
 
-      <div style={{
+      <div className={`teacher-page-shell ${showTeacherStartup ? '' : 'is-ready'}`} style={{
         maxWidth: 520,
         height: '100dvh',
         margin: '0 auto',
