@@ -3,9 +3,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Check, Copy, FileText, Heart, MoreVertical, Plus, RotateCw, Slash, Smile, ThumbsUp, Trash2, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SCBottomSheet, SCButton, SCInput, SCTeacherRow } from '@/components/ui'
+import { SCBottomSheet, SCButton, SCInput, SCTeacherRow, SCTopBar, SCIconButton, SCEmptyState } from '@/components/ui'
 
 const T = {
   ink: '#252525',
@@ -386,7 +387,7 @@ export function TeachersTab() {
       )}
 
       {selectedTeacherMoments && (
-        <AdminTeacherMomentsSheet
+        <AdminTeacherMomentsScreen
           teacher={selectedTeacherMoments}
           onClose={() => setSelectedTeacherMoments(null)}
         />
@@ -760,11 +761,27 @@ function formatMomentTime(value?: string | null) {
   })
 }
 
-function AdminTeacherMomentsSheet({ teacher, onClose }: any) {
+
+function reactionLabel(reaction: string) {
+  if (reaction === 'heart') return 'Loved'
+  if (reaction === 'like') return 'Liked'
+  if (reaction === 'smile') return 'Smiled'
+  return 'Reacted'
+}
+
+function reactionIcon(reaction: string) {
+  if (reaction === 'heart') return '♡'
+  if (reaction === 'like') return '👍'
+  if (reaction === 'smile') return '😊'
+  return '•'
+}
+
+function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
   const [loading, setLoading] = useState(true)
   const [moments, setMoments] = useState<any[]>([])
   const [summary, setSummary] = useState<any>(null)
   const [openImage, setOpenImage] = useState('')
+  const [reactionMoment, setReactionMoment] = useState<any>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -795,104 +812,181 @@ function AdminTeacherMomentsSheet({ teacher, onClose }: any) {
     }
   }, [teacher?.id])
 
-  return (
-    <>
-      <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-          <div style={{ minWidth: 0 }}>
-            <p style={{ fontSize: 15.5, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
-              Class Moments
-            </p>
-            <p style={{ fontSize: 12.6, color: 'var(--sc-ink-3)', lineHeight: 1.45, margin: '4px 0 0' }}>
-              See what {teacher?.name || 'this teacher'} has shared with parents.
-            </p>
-          </div>
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close teacher Moments"
-            className="sc-icon-button sc-tap"
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 999,
-              border: 'none',
-              background: 'var(--sc-soft)',
-              color: 'var(--sc-ink-3)',
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
+    <main
+      className="sc-screen-enter sc-admin-teacher-moments-screen-v417"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9200,
+        minHeight: '100dvh',
+        height: '100dvh',
+        overflow: 'hidden',
+        background: T.bg,
+        fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+        color: T.ink,
+        overscrollBehavior: 'none',
+      }}
+    >
+      <div style={{
+        maxWidth: 520,
+        height: '100dvh',
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        background: T.bg,
+      }}>
+        <SCTopBar
+          title="Moments"
+          align="left"
+          compact
+          left={
+            <SCIconButton label="Back" onClick={onClose} tone="quiet" size={38}>
+              <span style={{
+                width: 13,
+                height: 13,
+                borderLeft: '2.6px solid currentColor',
+                borderBottom: '2.6px solid currentColor',
+                borderRadius: 1.5,
+                transform: 'rotate(45deg) translate(1px, -1px)',
+                display: 'block',
+              }} />
+            </SCIconButton>
+          }
+          right={
+            <span style={{
               display: 'inline-flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              flexShrink: 0,
-              padding: 0,
-            }}
-          >
-            <X size={16} strokeWidth={2} />
-          </button>
-        </div>
+              minHeight: 28,
+              padding: '0 10px',
+              borderRadius: 999,
+              background: 'transparent',
+              color: 'var(--sc-ink-3)',
+              fontSize: 11.5,
+              fontWeight: 560,
+              whiteSpace: 'nowrap',
+            }}>
+              Admin view
+            </span>
+          }
+        />
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '38px 1fr',
-          gap: 10,
-          alignItems: 'center',
-          padding: '0 0 14px',
-          borderBottom: '1px solid var(--sc-border-soft)',
-          marginBottom: 16,
-        }}>
+        <section
+          data-admin-teacher-moments-scroll-v417="true"
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            padding: '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+            background: T.bg,
+            overscrollBehavior: 'contain',
+          }}
+        >
           <div style={{
-            width: 38,
-            height: 38,
-            borderRadius: 14,
-            background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : 'var(--sc-soft)',
-            color: 'var(--sc-ink-2)',
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '38px 1fr',
+            gap: 10,
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12,
-            fontWeight: 560,
+            padding: '0 0 16px',
+            marginBottom: 22,
+            borderBottom: `1px solid ${T.border}`,
           }}>
-            {!teacher?.photo_url && initials(teacher?.name)}
+            <div style={{
+              width: 38,
+              height: 38,
+              borderRadius: 14,
+              background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
+              color: T.accent,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 560,
+              overflow: 'hidden',
+              flexShrink: 0,
+            }}>
+              {!teacher?.photo_url && initials(teacher?.name)}
+            </div>
+
+            <div style={{ minWidth: 0 }}>
+              <p style={{
+                fontSize: 13.8,
+                fontWeight: 580,
+                color: T.ink,
+                margin: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {teacher?.name || 'Teacher'}
+              </p>
+              <p style={{
+                fontSize: 12.2,
+                color: T.ink3,
+                margin: '4px 0 0',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {[teacher?.grade, teacher?.class_name, summary ? `${summary.moments || 0} moments` : null].filter(Boolean).join(' · ')}
+              </p>
+            </div>
           </div>
 
-          <div style={{ minWidth: 0 }}>
-            <p style={{ fontSize: 13.8, fontWeight: 580, color: 'var(--sc-ink)', margin: 0 }}>
-              {teacher?.name || 'Teacher'}
-            </p>
-            <p style={{ fontSize: 12.2, color: 'var(--sc-ink-3)', margin: '4px 0 0' }}>
-              {[teacher?.grade, teacher?.class_name, summary ? `${summary.moments || 0} moments` : null].filter(Boolean).join(' · ')}
-            </p>
-          </div>
-        </div>
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+              {[0, 1].map((item) => (
+                <div key={item} style={{ display: 'grid', gridTemplateColumns: '38px 1fr', gap: 10 }}>
+                  <span style={{ width: 38, height: 38, borderRadius: 14, background: T.accentSoft }} />
+                  <div style={{ minWidth: 0 }}>
+                    <span style={{ display: 'block', width: '44%', height: 12, borderRadius: 999, background: T.soft }} />
+                    <span style={{ display: 'block', width: '28%', height: 9, borderRadius: 999, background: T.soft, marginTop: 8 }} />
+                    <span style={{ display: 'block', width: '100%', height: 210, borderRadius: 18, background: T.soft, marginTop: 14 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : moments.length === 0 ? (
+            <SCEmptyState
+              title="No Moments shared yet"
+              text="When this teacher shares a Moment with parents, it will appear here for school review."
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+              {moments.map((moment, index) => (
+                <AdminTeacherMomentPost
+                  key={moment.id}
+                  moment={moment}
+                  teacher={teacher}
+                  isLast={index === moments.length - 1}
+                  onImage={setOpenImage}
+                  onReactions={() => setReactionMoment(moment)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
 
-        {loading ? (
-          <div style={{ padding: '14px 0 20px', color: 'var(--sc-ink-3)', fontSize: 13 }}>
-            Loading Moments...
-          </div>
-        ) : moments.length === 0 ? (
-          <div style={{ padding: '18px 4px 22px', textAlign: 'center' }}>
-            <p style={{ fontSize: 14.4, fontWeight: 580, color: 'var(--sc-ink)', margin: '0 0 5px' }}>
-              No Moments shared yet
-            </p>
-            <p style={{ fontSize: 12.8, color: 'var(--sc-ink-3)', lineHeight: 1.45, margin: 0 }}>
-              When this teacher shares a Moment, it will appear here for school review.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-            {moments.map((moment, index) => (
-              <AdminTeacherMomentPost
-                key={moment.id}
-                moment={moment}
-                teacher={teacher}
-                isLast={index === moments.length - 1}
-                onImage={setOpenImage}
-              />
-            ))}
-          </div>
-        )}
-      </SCBottomSheet>
+      {reactionMoment && (
+        <AdminReactionSheet
+          moment={reactionMoment}
+          onClose={() => setReactionMoment(null)}
+        />
+      )}
 
       {openImage && (
         <div
@@ -940,11 +1034,13 @@ function AdminTeacherMomentsSheet({ teacher, onClose }: any) {
           />
         </div>
       )}
-    </>
+    </main>,
+    document.body
   )
 }
 
-function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
+function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions }: any) {
+  const teacherName = teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
   const reactionTotal = Number(moment.reaction_count || 0)
@@ -955,15 +1051,15 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
       gridTemplateColumns: '38px 1fr',
       gap: 10,
       padding: '0 0 22px',
-      borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
+      borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
       <div style={{
         width: 38,
         height: 38,
         borderRadius: 14,
-        background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : 'var(--sc-soft)',
-        color: 'var(--sc-ink-2)',
+        background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
+        color: T.accent,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -972,7 +1068,7 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
         overflow: 'hidden',
         flexShrink: 0,
       }}>
-        {!teacher?.photo_url && initials(teacher?.name)}
+        {!teacher?.photo_url && initials(teacherName)}
       </div>
 
       <div style={{ minWidth: 0 }}>
@@ -982,25 +1078,25 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
             minWidth: 0,
             fontSize: 13.8,
             fontWeight: 560,
-            color: 'var(--sc-ink)',
+            color: T.ink,
             margin: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}>
-            {teacher?.name || 'Teacher'}
-            <span style={{ color: 'var(--sc-ink-3)', fontSize: 11.5, fontWeight: 520, marginLeft: 5 }}>
-              · Admin view
+            {teacherName}
+            <span style={{ color: T.ink3, fontSize: 11.5, fontWeight: 520, marginLeft: 5 }}>
+              · Teacher
             </span>
           </p>
 
-          <span style={{ fontSize: 10.8, color: 'var(--sc-ink-3)', fontWeight: 520, whiteSpace: 'nowrap', lineHeight: 1.4, marginTop: 1 }}>
+          <span style={{ fontSize: 10.8, color: T.ink3, fontWeight: 520, whiteSpace: 'nowrap', lineHeight: 1.4, marginTop: 1 }}>
             {formatMomentTime(moment.created_at)}
           </span>
         </div>
 
         {moment.note ? (
-          <p style={{ fontSize: 13.6, color: 'var(--sc-ink-2)', lineHeight: 1.5, margin: '10px 0 0', whiteSpace: 'pre-wrap' }}>
+          <p style={{ fontSize: 13.6, color: T.ink2, lineHeight: 1.5, margin: '10px 0 0', whiteSpace: 'pre-wrap' }}>
             {moment.note}
           </p>
         ) : null}
@@ -1011,8 +1107,8 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
           minHeight: 22,
           padding: '0 9px',
           borderRadius: 999,
-          background: isPrivate ? 'var(--sc-soft)' : 'transparent',
-          color: isPrivate ? 'var(--sc-ink-2)' : 'var(--sc-ink-3)',
+          background: isPrivate ? T.accentSoft : T.soft,
+          color: isPrivate ? T.accent : T.ink3,
           fontSize: 11.5,
           fontWeight: 560,
           marginTop: 10,
@@ -1065,11 +1161,11 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
                 maxWidth: 390,
                 padding: 13,
                 borderRadius: 20,
-                background: 'var(--sc-soft)',
+                background: T.soft,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
-                color: 'var(--sc-ink)',
+                color: T.ink,
                 textDecoration: 'none',
                 boxSizing: 'border-box',
               }}
@@ -1078,8 +1174,8 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
                 width: 44,
                 height: 44,
                 borderRadius: 16,
-                background: '#FFFFFF',
-                color: 'var(--sc-ink-2)',
+                background: T.accentSoft,
+                color: T.accent,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1089,10 +1185,10 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
               </div>
 
               <div style={{ minWidth: 0 }}>
-                <p style={{ fontSize: 13.5, fontWeight: 560, color: 'var(--sc-ink)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: 13.5, fontWeight: 560, color: T.ink, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {moment.file_name || 'Document'}
                 </p>
-                <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', margin: '2px 0 0' }}>
+                <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
                   Open document
                 </p>
               </div>
@@ -1100,34 +1196,160 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage }: any) {
           )}
         </div>
 
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 13, color: 'var(--sc-ink-3)' }}>
+        <button
+          type="button"
+          onClick={onReactions}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            marginTop: 13,
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            color: T.ink3,
+          }}
+        >
           <AdminReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} />
           <AdminReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} />
           <AdminReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} />
 
-          <span style={{ fontSize: 12.2, color: 'var(--sc-ink-3)', marginLeft: 2 }}>
-            {reactionTotal > 0 ? `${reactionTotal} reactions` : 'No reactions yet'}
+          <span style={{ fontSize: 12.2, color: T.ink3, marginLeft: 2 }}>
+            {reactionTotal > 0 ? `${reactionTotal} reactions` : ''}
           </span>
-        </div>
+        </button>
       </div>
     </article>
+  )
+}
+
+function AdminReactionSheet({ moment, onClose }: any) {
+  const reactions = moment.reactions || []
+
+  return (
+    <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+        <div>
+          <h2 style={{ fontSize: 16, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
+            Reactions
+          </h2>
+          <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', margin: '3px 0 0' }}>
+            Parents who reacted to this Moment.
+          </p>
+        </div>
+
+        <button type="button" onClick={onClose} aria-label="Close" className="sc-icon-button" style={{
+          width: 34,
+          height: 34,
+          borderRadius: 999,
+          border: 'none',
+          background: 'var(--sc-soft)',
+          color: 'var(--sc-ink-3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          padding: 0,
+          flexShrink: 0,
+        }}>
+          <X size={16} />
+        </button>
+      </div>
+
+      {reactions.length === 0 ? (
+        <SCEmptyState title="No reactions yet" text="Parent reactions will appear here." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {reactions.map((item: any, index: number) => (
+            <div key={`${item.child_id}-${item.reaction}-${index}`} style={{
+              padding: '12px 0',
+              borderBottom: index === reactions.length - 1 ? 'none' : '1px solid var(--sc-border)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+            }}>
+              <div style={{
+                width: 36,
+                height: 36,
+                borderRadius: 14,
+                background: 'var(--sc-soft-2)',
+                color: 'var(--sc-ink-2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 560,
+                flexShrink: 0,
+              }}>
+                {initials(item.child?.name)}
+              </div>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{
+                  fontSize: 13.8,
+                  fontWeight: 540,
+                  color: 'var(--sc-ink)',
+                  margin: 0,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {item.child?.name || 'Parent'}
+                </p>
+
+                <p style={{
+                  fontSize: 12.2,
+                  color: 'var(--sc-ink-3)',
+                  margin: '2px 0 0',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}>
+                  {item.parent_whatsapp || item.parent_email || 'Parent contact hidden'}
+                </p>
+              </div>
+
+              <span style={{
+                minHeight: 30,
+                borderRadius: 999,
+                background: 'var(--sc-soft)',
+                color: 'var(--sc-ink-2)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 5,
+                padding: '0 10px',
+                fontSize: 12.2,
+                fontWeight: 540,
+                flexShrink: 0,
+              }}>
+                <span>{reactionIcon(item.reaction)}</span>
+                {reactionLabel(item.reaction)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </SCBottomSheet>
   )
 }
 
 function AdminReactionCount({ Icon, value, active }: any) {
   return (
     <span style={{
-      minWidth: 30,
-      height: 30,
+      minWidth: 34,
+      height: 34,
       borderRadius: 999,
       border: 'none',
-      background: 'transparent',
-      color: active ? 'var(--sc-ink-2)' : 'var(--sc-ink-3)',
+      background: active ? T.accentSoft : T.soft,
+      color: active ? T.accent : T.ink3,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
       gap: 4,
-      padding: '0 4px',
+      padding: '0 8px',
       fontSize: 12,
       fontWeight: 560,
     }}>
