@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+export const runtime = 'nodejs'
 
-function getSupabase() {
+function authClient() {
   const cookieStore = cookies()
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +21,32 @@ function getSupabase() {
       },
     }
   )
+}
+
+function adminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
+
+async function getSchoolContext() {
+  const auth = authClient()
+  const { data: { user } } = await auth.auth.getUser()
+  if (!user) return { error: NextResponse.json({ error: 'unauthorized' }, { status: 401 }) }
+
+  const sb = adminClient()
+  const { data: school, error } = await sb
+    .from('schools')
+    .select('id')
+    .eq('owner_id', user.id)
+    .maybeSingle()
+
+  if (error) return { error: NextResponse.json({ error: error.message }, { status: 500 }) }
+  if (!school) return { error: NextResponse.json({ error: 'no school' }, { status: 404 }) }
+
+  return { sb, user, school }
 }
 
 async function buildMomentRows(sb: any, moments: any[]) {
@@ -61,8 +89,24 @@ async function buildMomentRows(sb: any, moments: any[]) {
     })
   }
 
-  const reactionMap: any = {}
+  // Count one active reaction per child per moment, matching the parent feed logic.
+  const latestReactionByChildMoment: any = {}
   for (const row of reactions || []) {
+    const key = `${row.moment_id}:${row.child_id || 'unknown'}`
+    const existing = latestReactionByChildMoment[key]
+
+    if (!existing) {
+      latestReactionByChildMoment[key] = row
+      continue
+    }
+
+    const existingTime = new Date(existing.created_at || 0).getTime()
+    const rowTime = new Date(row.created_at || 0).getTime()
+    if (rowTime >= existingTime) latestReactionByChildMoment[key] = row
+  }
+
+  const reactionMap: any = {}
+  for (const row of Object.values(latestReactionByChildMoment) as any[]) {
     if (!reactionMap[row.moment_id]) reactionMap[row.moment_id] = []
 
     const child = childMap[row.child_id] || null
@@ -96,22 +140,15 @@ async function buildMomentRows(sb: any, moments: any[]) {
 }
 
 export async function GET(req: NextRequest) {
-  const supabase = getSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  const context = await getSchoolContext()
+  if (context.error) return context.error
 
-  const { data: school } = await supabase
-    .from('schools')
-    .select('id')
-    .eq('owner_id', user.id)
-    .single()
-
-  if (!school) return NextResponse.json({ error: 'no school' }, { status: 404 })
-
+  const { sb, school } = context
   const teacherId = req.nextUrl.searchParams.get('teacher_id')
+
   if (!teacherId) return NextResponse.json({ error: 'teacher_id required' }, { status: 400 })
 
-  const { data: teacher, error: teacherError } = await supabase
+  const { data: teacher, error: teacherError } = await sb
     .from('teachers')
     .select('*')
     .eq('id', teacherId)
@@ -121,17 +158,22 @@ export async function GET(req: NextRequest) {
   if (teacherError) return NextResponse.json({ error: teacherError.message }, { status: 500 })
   if (!teacher) return NextResponse.json({ error: 'teacher not found' }, { status: 404 })
 
-  const { data: moments, error: momentsError } = await supabase
+  // service-role-v416
+  // Teacher Moments are created by the teacher API using the service role.
+  // The school admin has already been verified above, so this endpoint also uses
+  // the service role to read the teacher's Moments instead of relying on RLS.
+  // Query by teacher_id first; older Moments builds did not always need school_id
+  // for the teacher feed, so this keeps admin review aligned with what teachers see.
+  const { data: moments, error: momentsError } = await sb
     .from('moments')
     .select('*')
-    .eq('school_id', school.id)
     .eq('teacher_id', teacher.id)
     .order('created_at', { ascending: false })
     .limit(80)
 
   if (momentsError) return NextResponse.json({ error: momentsError.message }, { status: 500 })
 
-  const rows = await buildMomentRows(supabase, moments || [])
+  const rows = await buildMomentRows(sb, moments || [])
 
   return NextResponse.json({
     teacher,
