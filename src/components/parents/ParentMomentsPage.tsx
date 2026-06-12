@@ -217,10 +217,12 @@ function ReactionBurstLayer({ bursts = [] }: any) {
   )
 }
 
+// child-class-tabs-v420
 export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [child, setChild] = useState<any>(null)
   const [moments, setMoments] = useState<any[]>([])
+  const [momentScope, setMomentScope] = useState<'child' | 'class'>('child')
   const [openImage, setOpenImage] = useState('')
   const [reacting, setReacting] = useState('')
   const [reactionBursts, setReactionBursts] = useState<any[]>([])
@@ -341,6 +343,11 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
     setReacting('')
   }
 
+
+  const childMoments = moments.filter((moment: any) => moment.share_mode !== 'all')
+  const classMoments = moments.filter((moment: any) => moment.share_mode === 'all')
+  const visibleMoments = momentScope === 'child' ? childMoments : classMoments
+
   return (
     <main className="sc-screen-enter" style={{
       minHeight: '100dvh',
@@ -407,9 +414,60 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           overflowY: 'auto',
           overflowX: 'hidden',
           WebkitOverflowScrolling: 'touch',
-          padding: '16px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '12px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
+          {moments.length > 0 && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 22,
+              margin: '0 0 22px 56px',
+              borderBottom: `1px solid ${T.border}`,
+            }}>
+              {[
+                ['child', 'Child'],
+                ['class', 'Class'],
+              ].map(([key, label]: any) => {
+                const active = momentScope === key
+
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setMomentScope(key)}
+                    style={{
+                      position: 'relative',
+                      border: 'none',
+                      background: 'transparent',
+                      color: active ? T.ink : T.ink3,
+                      fontSize: 13.2,
+                      fontWeight: active ? 620 : 560,
+                      padding: '0 0 10px',
+                      margin: 0,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {label}
+                    {active && (
+                      <span style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: -1,
+                        height: 2,
+                        borderRadius: 999,
+                        background: T.ink,
+                      }} />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
           {moments.length === 0 ? (
             <SCEmptyState
               title={loading ? 'Loading Moments' : 'No Moments yet'}
