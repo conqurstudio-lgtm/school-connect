@@ -1,5 +1,7 @@
 'use client'
 
+// school-connect-teacher-active-dot-top-v419
+
 import type { MouseEvent } from 'react'
 import { Check, Copy, MoreVertical } from 'lucide-react'
 
@@ -40,7 +42,7 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
     teacher.grade,
     teacher.class_name,
     hasMoments ? `${momentCount} moment${momentCount === 1 ? '' : 's'}` : null,
-    isActive ? 'Active' : 'Revoked',
+    !isActive ? 'Revoked' : null,
   ].filter(Boolean).join(' · ')
 
   return (
@@ -89,14 +91,14 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
           {!teacher.photo_url ? initials(teacher.name) : null}
         </span>
 
-        {hasMoments ? (
+        {isActive ? (
           <span
-            aria-label="Teacher has shared moments"
-            title="Teacher has shared moments"
+            aria-label="Teacher is active"
+            title="Teacher is active"
             style={{
               position: 'absolute',
               right: -1,
-              bottom: -1,
+              top: -1,
               width: 9,
               height: 9,
               borderRadius: 999,
