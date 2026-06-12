@@ -47,7 +47,44 @@ export async function GET() {
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ teachers })
+
+  const teacherIds = (teachers || []).map((teacher: any) => teacher.id).filter(Boolean)
+
+  let momentSummaryByTeacher: Record<string, { moment_count: number; latest_moment_at: string | null }> = {}
+
+  if (teacherIds.length) {
+    const { data: moments } = await supabase
+      .from('moments')
+      .select('teacher_id,created_at')
+      .eq('school_id', school.id)
+      .in('teacher_id', teacherIds)
+
+    for (const moment of moments || []) {
+      const teacherId = String((moment as any).teacher_id || '')
+      if (!teacherId) continue
+
+      if (!momentSummaryByTeacher[teacherId]) {
+        momentSummaryByTeacher[teacherId] = { moment_count: 0, latest_moment_at: null }
+      }
+
+      momentSummaryByTeacher[teacherId].moment_count += 1
+
+      const createdAt = (moment as any).created_at || null
+      const currentLatest = momentSummaryByTeacher[teacherId].latest_moment_at
+
+      if (createdAt && (!currentLatest || new Date(createdAt).getTime() > new Date(currentLatest).getTime())) {
+        momentSummaryByTeacher[teacherId].latest_moment_at = createdAt
+      }
+    }
+  }
+
+  const rows = (teachers || []).map((teacher: any) => ({
+    ...teacher,
+    moment_count: momentSummaryByTeacher[teacher.id]?.moment_count || 0,
+    latest_moment_at: momentSummaryByTeacher[teacher.id]?.latest_moment_at || null,
+  }))
+
+  return NextResponse.json({ teachers: rows })
 }
 
 // ── POST /api/teachers ─ add a new teacher ──────────────────────

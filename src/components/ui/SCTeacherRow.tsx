@@ -10,6 +10,8 @@ type TeacherLike = {
   grade?: string | null
   class_name?: string | null
   status?: 'active' | 'revoked' | string | null
+  moment_count?: number | null
+  latest_moment_at?: string | null
 }
 
 type Props = {
@@ -18,6 +20,7 @@ type Props = {
   isLast?: boolean
   onCopy?: (teacher: TeacherLike) => void
   onMenu?: (event: MouseEvent<HTMLButtonElement>, teacher: TeacherLike) => void
+  onOpen?: (teacher: TeacherLike) => void
 }
 
 function initials(name?: string | null) {
@@ -29,13 +32,21 @@ function initials(name?: string | null) {
     .toUpperCase()
 }
 
-export default function SCTeacherRow({ teacher, copied = false, isLast = false, onCopy, onMenu }: Props) {
-  const isActive = teacher.status !== 'revoked'
-  const subtitle = [teacher.grade, teacher.class_name, isActive ? 'Active' : 'Revoked'].filter(Boolean).join(' · ')
+export default function SCTeacherRow({ teacher, copied = false, isLast = false, onCopy, onMenu, onOpen }: Props) {
+  const isActive = teacher.status !== 'revoked' && teacher.status !== 'inactive'
+  const momentCount = Number(teacher.moment_count || 0)
+  const hasMoments = momentCount > 0
+  const subtitle = [
+    teacher.grade,
+    teacher.class_name,
+    hasMoments ? `${momentCount} moment${momentCount === 1 ? '' : 's'}` : null,
+    isActive ? 'Active' : 'Revoked',
+  ].filter(Boolean).join(' · ')
 
   return (
     <article
       className="sc-list-row"
+      onClick={() => onOpen?.(teacher)}
       style={{
         padding: '12px 0',
         borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
@@ -45,6 +56,7 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
         position: 'relative',
         overflow: 'visible',
         opacity: isActive ? 1 : 0.62,
+        cursor: onOpen ? 'pointer' : 'default',
       }}
     >
       <div
@@ -60,10 +72,39 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
           fontSize: 12,
           fontWeight: 560,
           flexShrink: 0,
-          overflow: 'hidden',
+          overflow: 'visible',
+          position: 'relative',
         }}
       >
-        {!teacher.photo_url ? initials(teacher.name) : null}
+        <span style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: 14,
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : 'var(--sc-soft)',
+        }}>
+          {!teacher.photo_url ? initials(teacher.name) : null}
+        </span>
+
+        {hasMoments ? (
+          <span
+            aria-label="Teacher has shared moments"
+            title="Teacher has shared moments"
+            style={{
+              position: 'absolute',
+              right: -1,
+              bottom: -1,
+              width: 9,
+              height: 9,
+              borderRadius: 999,
+              background: '#24A148',
+              boxShadow: '0 0 0 2px #FFFFFF',
+            }}
+          />
+        ) : null}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -102,7 +143,10 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
       {isActive && onCopy ? (
         <button
           type="button"
-          onClick={() => onCopy(teacher)}
+          onClick={(event) => {
+            event.stopPropagation()
+            onCopy(teacher)
+          }}
           aria-label="Copy teacher link"
           className="sc-icon-button"
           style={{
@@ -127,7 +171,10 @@ export default function SCTeacherRow({ teacher, copied = false, isLast = false, 
       {onMenu ? (
         <button
           type="button"
-          onClick={(event) => onMenu(event, teacher)}
+          onClick={(event) => {
+            event.stopPropagation()
+            onMenu(event, teacher)
+          }}
           aria-label="Teacher options"
           className="sc-icon-button"
           style={{
