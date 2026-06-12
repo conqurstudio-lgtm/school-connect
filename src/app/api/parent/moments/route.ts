@@ -1,4 +1,5 @@
 // @ts-nocheck
+// parent-moments-scope-fix-v421
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -216,6 +217,19 @@ export async function GET(req: NextRequest) {
     .select('moment_id,child_id,reaction,created_at')
     .in('moment_id', momentIds)
 
+  const { data: allRecipientsForMomentScope } = await sb
+    .from('moment_recipients')
+    .select('moment_id,child_id')
+    .in('moment_id', momentIds)
+
+  const classMomentIdSet = new Set(classMomentIds)
+  const recipientCountMap: any = {}
+
+  for (const row of allRecipientsForMomentScope || []) {
+    if (!row?.moment_id) continue
+    recipientCountMap[row.moment_id] = Number(recipientCountMap[row.moment_id] || 0) + 1
+  }
+
   const reactionMap = Object.fromEntries((reactions || []).map((row: any) => [row.moment_id, row.reaction]))
   const recipientMap = Object.fromEntries((recipients || []).map((row: any) => [row.moment_id, row]))
 
@@ -259,8 +273,18 @@ export async function GET(req: NextRequest) {
       Number(reactionCounts.like || 0) +
       Number(reactionCounts.smile || 0)
 
+    const rawShareMode = String(moment.share_mode || '').trim().toLowerCase()
+    const recipientCount = Number(recipientCountMap[moment.id] || 0)
+    const momentScope = (
+      classMomentIdSet.has(moment.id) ||
+      ['all', 'class', 'classroom', 'whole_class', 'whole-class', 'everyone', 'all_parents', 'all-parents'].includes(rawShareMode) ||
+      (!rawShareMode && recipientCount > 1)
+    ) ? 'class' : 'child'
+
     return {
       ...moment,
+      moment_scope: momentScope,
+      recipient_count: recipientCount,
       teacher: moment.teacher_id ? teacherMap[moment.teacher_id] || null : null,
       recipient: recipientMap[moment.id] || null,
       reaction: reactionMap[moment.id] || null,

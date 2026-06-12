@@ -185,6 +185,39 @@ function reactionTone(reaction: string) {
   return T.ink
 }
 
+
+function parentMomentScope(moment: any): 'child' | 'class' {
+  const raw = String(
+    moment?.moment_scope ||
+    moment?.scope ||
+    moment?.audience ||
+    moment?.target ||
+    moment?.share_mode ||
+    ''
+  ).trim().toLowerCase()
+
+  if (
+    moment?.is_class_moment === true ||
+    ['all', 'class', 'classroom', 'whole_class', 'whole-class', 'everyone', 'all_parents', 'all-parents'].includes(raw)
+  ) {
+    return 'class'
+  }
+
+  if (
+    moment?.is_child_moment === true ||
+    ['child', 'learner', 'student', 'selected', 'private', 'direct', 'individual', 'specific'].includes(raw)
+  ) {
+    return 'child'
+  }
+
+  // Older saved class posts may not have share_mode populated. If the API sends
+  // a recipient count and it clearly went to more than one learner, treat it as class.
+  const recipientCount = Number(moment?.recipient_count || moment?.recipients_count || 0)
+  if (recipientCount > 1) return 'class'
+
+  return 'child'
+}
+
 function ReactionBurstLayer({ bursts = [] }: any) {
   if (!bursts.length) return null
 
@@ -218,6 +251,7 @@ function ReactionBurstLayer({ bursts = [] }: any) {
 }
 
 // child-class-tabs-v420
+// child-class-scope-fix-v421
 export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [child, setChild] = useState<any>(null)
@@ -344,8 +378,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   }
 
 
-  const childMoments = moments.filter((moment: any) => moment.share_mode !== 'all')
-  const classMoments = moments.filter((moment: any) => moment.share_mode === 'all')
+
+  const childMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'child')
+  const classMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'class')
   const visibleMoments = momentScope === 'child' ? childMoments : classMoments
 
   return (
@@ -475,11 +510,11 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-              {moments.map((moment, index) => (
+              {visibleMoments.map((moment, index) => (
                 <MomentPost
                   key={moment.id}
                   moment={moment}
-                  isLast={index === moments.length - 1}
+                  isLast={index === visibleMoments.length - 1}
                   onImage={setOpenImage}
                   onReact={react}
                   reacting={reacting === moment.id}
