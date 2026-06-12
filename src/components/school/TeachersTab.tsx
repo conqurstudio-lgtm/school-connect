@@ -825,7 +825,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
 
   return createPortal(
     <main
-      className="sc-screen-enter sc-admin-teacher-moments-screen-v417"
+      className="sc-screen-enter sc-admin-teacher-moments-screen-v418"
       style={{
         position: 'fixed',
         inset: 0,
@@ -883,7 +883,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
         />
 
         <section
-          data-admin-teacher-moments-scroll-v417="true"
+          data-admin-teacher-moments-scroll-v418="true"
           style={{
             flex: 1,
             minHeight: 0,
@@ -895,57 +895,6 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
             overscrollBehavior: 'contain',
           }}
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '38px 1fr',
-            gap: 10,
-            alignItems: 'center',
-            padding: '0 0 16px',
-            marginBottom: 22,
-            borderBottom: `1px solid ${T.border}`,
-          }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 14,
-              background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
-              color: T.accent,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12,
-              fontWeight: 560,
-              overflow: 'hidden',
-              flexShrink: 0,
-            }}>
-              {!teacher?.photo_url && initials(teacher?.name)}
-            </div>
-
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.8,
-                fontWeight: 580,
-                color: T.ink,
-                margin: 0,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}>
-                {teacher?.name || 'Teacher'}
-              </p>
-              <p style={{
-                fontSize: 12.2,
-                color: T.ink3,
-                margin: '4px 0 0',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}>
-                {[teacher?.grade, teacher?.class_name, summary ? `${summary.moments || 0} moments` : null].filter(Boolean).join(' · ')}
-              </p>
-            </div>
-          </div>
-
           {loading ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
               {[0, 1].map((item) => (
