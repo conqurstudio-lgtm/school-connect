@@ -45,33 +45,98 @@ export async function GET(req: NextRequest) {
 
   const sb = adminClient()
 
-  // Keep Class Life protected. If this parent is not approved for this class,
-  // return an empty set instead of exposing the class posts.
+  const { data: profile } = await sb
+    .from('profiles')
+    .select('id, school_id, role, child_name')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (!profile?.id || !profile?.school_id) {
+    return NextResponse.json({ error: 'unauthorized', posts: [] }, { status: 401 })
+  }
+
+  const { data: teacher } = await sb
+    .from('teachers')
+    .select('id, school_id, grade, class_name, status')
+    .eq('id', teacherId)
+    .eq('status', 'active')
+    .maybeSingle()
+
+  if (!teacher) {
+    return NextResponse.json({ posts: [], approved: false })
+  }
+
+  if (teacher.school_id !== profile.school_id) {
+    return NextResponse.json({ posts: [], approved: false })
+  }
+
   let approved = false
 
   try {
     const { data: joinReq } = await sb.from('class_join_requests')
       .select('id, status')
-      .eq('teacher_id', teacherId)
-      .eq('parent_id', user.id)
+      .eq('teacher_id', teacher.id)
+      .eq('parent_id', profile.id)
       .eq('status', 'approved')
       .limit(1)
 
     approved = (joinReq ?? []).length > 0
   } catch {
-    // Some older schemas may not have parent_id/status exactly as above.
-    // In that case, let the page fail closed.
     approved = false
   }
 
-  if (!approved) {
+  let hasLinkedChildInClass = false
+
+  try {
+    const { data: links } = await sb
+      .from('child_guardians')
+      .select('child_id')
+      .eq('guardian_id', profile.id)
+
+    const childIds = (links ?? []).map((link: any) => link.child_id).filter(Boolean)
+
+    if (childIds.length > 0) {
+      const { data: kids } = await sb
+        .from('children')
+        .select('id, school_id, grade, class_name, status')
+        .in('id', childIds)
+
+      hasLinkedChildInClass = (kids ?? []).some((kid: any) => (
+        kid.school_id === teacher.school_id &&
+        String(kid.status || 'active').toLowerCase() === 'active' &&
+        String(kid.grade || '').trim() === String(teacher.grade || '').trim() &&
+        String(kid.class_name || '').trim() === String(teacher.class_name || '').trim()
+      ))
+    }
+
+    if (!hasLinkedChildInClass && profile.child_name) {
+      const { data: legacyKids } = await sb
+        .from('children')
+        .select('id, school_id, grade, class_name, status')
+        .eq('school_id', teacher.school_id)
+        .ilike('name', profile.child_name)
+
+      hasLinkedChildInClass = (legacyKids ?? []).some((kid: any) => (
+        String(kid.status || 'active').toLowerCase() === 'active' &&
+        String(kid.grade || '').trim() === String(teacher.grade || '').trim() &&
+        String(kid.class_name || '').trim() === String(teacher.class_name || '').trim()
+      ))
+    }
+  } catch {
+    hasLinkedChildInClass = false
+  }
+
+  const canViewClassLife = approved || hasLinkedChildInClass
+
+  if (!canViewClassLife) {
     return NextResponse.json({ posts: [], approved: false })
   }
 
   try {
     const { data: posts, error } = await sb.from('posts')
       .select('*')
-      .eq('teacher_id', teacherId)
+      .eq('teacher_id', teacher.id)
+      .eq('status', 'published')
       .order('created_at', { ascending: false })
       .limit(30)
 
@@ -84,3 +149,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ posts: [], approved: true, warning: e?.message || 'Could not load posts' })
   }
 }
+
