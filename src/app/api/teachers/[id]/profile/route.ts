@@ -166,30 +166,42 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const joinStatus = isMyTeacher ? 'approved' : (latestRequest?.status || 'none')
 
-  const { data: posts } = await sb.from('posts')
-    .select('*, reactions(post_id, type, user_id)')
-    .eq('teacher_id', teacher.id)
-    .eq('status', 'published')
-    .order('created_at', { ascending: false })
-    .limit(50)
+  // teacher-profile-content-lock-v430
+  // Parents should only see teacher posts when this teacher belongs to their child/class.
+  // School/admin viewers may still review teacher content.
+  const canViewTeacherContent = Boolean(
+    isMyTeacher ||
+    ['school', 'admin', 'super_admin'].includes(String(profile.role || '').toLowerCase())
+  )
 
-  const enrichedPosts = (posts ?? []).map((post: any) => {
-    const counts: Record<string, number> = {}
-    let mine: string | null = null
+  let enrichedPosts: any[] = []
 
-    for (const reaction of (post.reactions ?? [])) {
-      counts[reaction.type] = (counts[reaction.type] || 0) + 1
-      if (reaction.user_id === profile.id) mine = reaction.type
-    }
+  if (canViewTeacherContent) {
+    const { data: posts } = await sb.from('posts')
+      .select('*, reactions(post_id, type, user_id)')
+      .eq('teacher_id', teacher.id)
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(50)
 
-    return {
-      ...post,
-      reaction_count: Object.values(counts).reduce((a, b) => a + b, 0),
-      reaction_counts: counts,
-      my_reaction: mine,
-      reactions: undefined,
-    }
-  })
+    enrichedPosts = (posts ?? []).map((post: any) => {
+      const counts: Record<string, number> = {}
+      let mine: string | null = null
+
+      for (const reaction of (post.reactions ?? [])) {
+        counts[reaction.type] = (counts[reaction.type] || 0) + 1
+        if (reaction.user_id === profile.id) mine = reaction.type
+      }
+
+      return {
+        ...post,
+        reaction_count: Object.values(counts).reduce((a, b) => a + b, 0),
+        reaction_counts: counts,
+        my_reaction: mine,
+        reactions: undefined,
+      }
+    })
+  }
 
   let reports: any[] = []
   if (myChildIds.length > 0) {
