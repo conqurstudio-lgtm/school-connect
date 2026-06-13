@@ -30,26 +30,51 @@ function userClient() {
   )
 }
 
+async function getParentCaller(req: NextRequest, sb: any) {
+  const supa = userClient()
+  const { data: { user } } = await supa.auth.getUser()
+
+  if (user?.id) {
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('id, school_id, role, child_name')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profile?.id && profile?.school_id) return profile
+  }
+
+  const parentToken = req.cookies.get('parent_token')?.value
+
+  if (parentToken) {
+    const { data: session } = await sb
+      .from('parent_sessions')
+      .select('*')
+      .eq('access_token', parentToken)
+      .maybeSingle()
+
+    if (session && (!session.expires_at || new Date(session.expires_at).getTime() > Date.now())) {
+      const { data: profile } = await sb
+        .from('profiles')
+        .select('id, school_id, role, child_name')
+        .eq('id', session.parent_id)
+        .maybeSingle()
+
+      if (profile?.id && profile?.school_id) return profile
+    }
+  }
+
+  return null
+}
+
 export async function GET(req: NextRequest) {
   const teacherId = req.nextUrl.searchParams.get('teacher_id')
   if (!teacherId) {
     return NextResponse.json({ error: 'teacher_id required' }, { status: 400 })
   }
 
-  const supa = userClient()
-  const { data: { user } } = await supa.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: 'unauthorized', posts: [] }, { status: 401 })
-  }
-
   const sb = adminClient()
-
-  const { data: profile } = await sb
-    .from('profiles')
-    .select('id, school_id, role, child_name')
-    .eq('id', user.id)
-    .maybeSingle()
+  const profile = await getParentCaller(req, sb)
 
   if (!profile?.id || !profile?.school_id) {
     return NextResponse.json({ error: 'unauthorized', posts: [] }, { status: 401 })
@@ -62,18 +87,15 @@ export async function GET(req: NextRequest) {
     .eq('status', 'active')
     .maybeSingle()
 
-  if (!teacher) {
-    return NextResponse.json({ posts: [], approved: false })
-  }
-
-  if (teacher.school_id !== profile.school_id) {
+  if (!teacher || teacher.school_id !== profile.school_id) {
     return NextResponse.json({ posts: [], approved: false })
   }
 
   let approved = false
 
   try {
-    const { data: joinReq } = await sb.from('class_join_requests')
+    const { data: joinReq } = await sb
+      .from('class_join_requests')
       .select('id, status')
       .eq('teacher_id', teacher.id)
       .eq('parent_id', profile.id)
@@ -132,21 +154,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ posts: [], approved: false })
   }
 
-  try {
-    const { data: posts, error } = await sb.from('posts')
-      .select('*')
-      .eq('teacher_id', teacher.id)
-      .eq('status', 'published')
-      .order('created_at', { ascending: false })
-      .limit(30)
+  const { data: posts, error } = await sb
+    .from('posts')
+    .select('*')
+    .eq('teacher_id', teacher.id)
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(30)
 
-    if (error) {
-      return NextResponse.json({ posts: [], approved: true, warning: error.message })
-    }
-
-    return NextResponse.json({ posts: posts ?? [], approved: true })
-  } catch (e: any) {
-    return NextResponse.json({ posts: [], approved: true, warning: e?.message || 'Could not load posts' })
+  if (error) {
+    return NextResponse.json({ posts: [], approved: true, warning: error.message })
   }
+
+  return NextResponse.json({ posts: posts ?? [], approved: true })
 }
 
