@@ -824,27 +824,31 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
                 type="button"
                 onClick={() => onReact(moment, key)}
                 style={{
-                  minWidth: 34,
-                  height: 34,
+                  minWidth: 40,
+                  height: 40,
                   borderRadius: 999,
                   border: 'none',
-                  background: active ? 'rgba(113,113,113,0.08)' : T.soft,
+                  background: 'transparent',
                   color: active ? reactionTone(key) : T.ink3,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: 4,
+                  gap: 5,
                   cursor: 'pointer',
                   opacity: reacting ? 0.72 : 1,
-                  padding: '0 8px',
+                  padding: '0 7px',
                   fontFamily: 'inherit',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: 560,
-                  transition: 'background 160ms ease, color 160ms ease, transform 160ms ease, opacity 160ms ease',
-                  transform: active ? 'translateY(-1px)' : 'none',
+                  transition: 'color 160ms ease, transform 160ms ease, opacity 160ms ease',
+                  transform: active ? 'translateY(-1px) scale(1.04)' : 'none',
                 }}
               >
-                <Icon size={14} strokeWidth={active ? 2.2 : 1.9} />
+                <Icon
+                  size={19}
+                  strokeWidth={active ? 2.25 : 2}
+                  fill={key === 'heart' && active ? reactionTone(key) : 'none'}
+                />
                 {count > 0 && <span>{count}</span>}
               </button>
             )
