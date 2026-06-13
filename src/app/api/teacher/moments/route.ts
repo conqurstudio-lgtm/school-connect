@@ -79,13 +79,25 @@ export async function POST(req: NextRequest) {
 
   const { data: children, error: childrenError } = await sb
     .from('children')
-    .select('id,name,parent_whatsapp,parent_email,school_id')
+    .select('id,name,parent_whatsapp,parent_email,school_id,created_by_teacher_id,status')
     .eq('school_id', teacher.school_id)
     .in('id', childIds)
 
   if (childrenError) return NextResponse.json({ error: childrenError.message }, { status: 500 })
 
   if ((children || []).length !== childIds.length) {
+    return NextResponse.json({ error: 'One or more selected learners are not in your roster' }, { status: 403 })
+  }
+
+  const invalidChild = (children || []).find((child: any) => {
+    const sameSchool = child.school_id === teacher.school_id
+    const sameTeacher = !child.created_by_teacher_id || child.created_by_teacher_id === teacher.id
+    const activeChild = !child.status || String(child.status).toLowerCase() === 'active'
+
+    return !sameSchool || !sameTeacher || !activeChild
+  })
+
+  if (invalidChild) {
     return NextResponse.json({ error: 'One or more selected learners are not in your roster' }, { status: 403 })
   }
 

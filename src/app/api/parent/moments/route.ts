@@ -142,43 +142,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: recError.message }, { status: 500 })
   }
 
-  // class-history-v270
-  // Direct/private Moments still come from moment_recipients.
-  // Class/shared Moments are available to all learners in the same school,
-  // including learners added after the Moment was originally shared.
-  const directMomentIds = (recipients || []).map((row: any) => row.moment_id)
-
-  const { data: classMoments, error: classMomentsError } = await sb
-    .from('moments')
-    .select('*')
-    .eq('school_id', child.school_id)
-    .eq('share_mode', 'all')
-    .order('created_at', { ascending: false })
-
-  if (classMomentsError) {
-    return NextResponse.json({ error: classMomentsError.message }, { status: 500 })
-  }
-
-  const classMomentIds = (classMoments || []).map((moment: any) => moment.id)
-  const momentIds = Array.from(new Set([...directMomentIds, ...classMomentIds]))
+  // parent-moments-privacy-lock-v430
+  // Parents should only see Moments where their child is an explicit recipient.
+  // Teacher class/all sharing already creates moment_recipients rows for the selected learners.
+  // Do not auto-add every school-wide share_mode='all' Moment here, because that can expose
+  // another teacher/class Moment to the wrong parent.
+  const directMomentIds = (recipients || []).map((row: any) => row.moment_id).filter(Boolean)
+  const classMomentIds: any[] = []
+  const momentIds = Array.from(new Set(directMomentIds))
 
   if (!momentIds.length) {
     return NextResponse.json({ child, moments: [] })
-  }
-
-  const existingRecipientIds = new Set((recipients || []).map((row: any) => row.moment_id))
-  const missingClassRecipientRows = (classMoments || [])
-    .filter((moment: any) => !existingRecipientIds.has(moment.id))
-    .map((moment: any) => ({
-      moment_id: moment.id,
-      child_id: child.id,
-      parent_whatsapp: child.parent_whatsapp || null,
-      parent_email: child.parent_email || null,
-      viewed_at: peek ? null : new Date().toISOString(),
-    }))
-
-  if (!peek && missingClassRecipientRows.length) {
-    await sb.from('moment_recipients').insert(missingClassRecipientRows)
   }
 
   const { data: moments, error: momentsError } = await sb
