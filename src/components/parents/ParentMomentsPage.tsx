@@ -252,11 +252,12 @@ function ReactionBurstLayer({ bursts = [] }: any) {
 
 // child-class-tabs-v420
 // child-class-scope-fix-v421
+// recent-default-v424
 export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
   const [loading, setLoading] = useState(true)
   const [child, setChild] = useState<any>(null)
   const [moments, setMoments] = useState<any[]>([])
-  const [momentScope, setMomentScope] = useState<'child' | 'class'>('child')
+  const [momentScope, setMomentScope] = useState<'recent' | 'child' | 'class'>('recent')
   const [openImage, setOpenImage] = useState('')
   const [reacting, setReacting] = useState('')
   const [reactionBursts, setReactionBursts] = useState<any[]>([])
@@ -382,7 +383,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
   const childMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'child')
   const classMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'class')
-  const visibleMoments = momentScope === 'child' ? childMoments : classMoments
+  const visibleMoments = momentScope === 'recent' ? moments : (momentScope === 'child' ? childMoments : classMoments)
 
   return (
     <main className="sc-screen-enter" style={{
@@ -453,7 +454,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           padding: '12px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: T.bg,
         }}>
-          {moments.length > 0 && (
+          {true && (
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -462,6 +463,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               borderBottom: `1px solid ${T.border}`,
             }}>
               {[
+                ['recent', 'Recent'],
+                ['recent', 'Recent'],
+                ['recent', 'Recent'],
                 ['child', 'Child'],
                 ['class', 'Class'],
               ].map(([key, label]: any) => {
