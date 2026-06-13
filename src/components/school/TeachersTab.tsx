@@ -1194,9 +1194,9 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions,
             color: T.ink3,
           }}
         >
-          <AdminReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} />
-          <AdminReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} />
-          <AdminReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} />
+          <AdminReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} tone="#E25563" />
+          <AdminReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} tone="#3B82F6" />
+          <AdminReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} tone="#F59E0B" fillOpacity={0.18} />
 
           <span style={{ fontSize: 12.2, color: T.ink3, marginLeft: 2 }}>
             {reactionTotal > 0 ? `${reactionTotal} reactions` : ''}
@@ -1318,24 +1318,29 @@ function AdminReactionSheet({ moment, onClose }: any) {
   )
 }
 
-function AdminReactionCount({ Icon, value, active }: any) {
+function AdminReactionCount({ Icon, value, active, tone = T.accent, fillOpacity = 1 }: any) {
   return (
     <span style={{
-      minWidth: 34,
-      height: 34,
+      minWidth: 40,
+      height: 40,
       borderRadius: 999,
       border: 'none',
-      background: active ? T.accentSoft : T.soft,
-      color: active ? T.accent : T.ink3,
+      background: 'transparent',
+      color: active ? tone : T.ink3,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 4,
-      padding: '0 8px',
-      fontSize: 12,
+      gap: 5,
+      padding: '0 7px',
+      fontSize: 13,
       fontWeight: 560,
     }}>
-      <Icon size={14} strokeWidth={1.9} />
+      <Icon
+        size={19}
+        strokeWidth={active ? 2.25 : 2}
+        fill={active ? tone : 'none'}
+        fillOpacity={active ? fillOpacity : 1}
+      />
       {Number(value) > 0 ? <span>{value}</span> : null}
     </span>
   )

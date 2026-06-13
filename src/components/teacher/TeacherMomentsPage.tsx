@@ -795,9 +795,9 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             color: T.ink3,
           }}
         >
-          <ReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} />
-          <ReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} />
-          <ReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} />
+          <ReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} tone="#E25563" />
+          <ReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} tone="#3B82F6" />
+          <ReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} tone="#F59E0B" fillOpacity={0.18} />
 
           <span style={{
             fontSize: 12.2,
@@ -812,24 +812,29 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
   )
 }
 
-function ReactionCount({ Icon, value, active }: any) {
+function ReactionCount({ Icon, value, active, tone = T.accent, fillOpacity = 1 }: any) {
   return (
     <span style={{
-      minWidth: 34,
-      height: 34,
+      minWidth: 40,
+      height: 40,
       borderRadius: 999,
       border: 'none',
-      background: active ? T.accentSoft : T.soft,
-      color: active ? T.accent : T.ink3,
+      background: 'transparent',
+      color: active ? tone : T.ink3,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 4,
-      padding: '0 8px',
-      fontSize: 12,
+      gap: 5,
+      padding: '0 7px',
+      fontSize: 13,
       fontWeight: 560,
     }}>
-      <Icon size={14} strokeWidth={1.9} />
+      <Icon
+        size={19}
+        strokeWidth={active ? 2.25 : 2}
+        fill={active ? tone : 'none'}
+        fillOpacity={active ? fillOpacity : 1}
+      />
       {Number(value) > 0 && (
         <span>{value}</span>
       )}

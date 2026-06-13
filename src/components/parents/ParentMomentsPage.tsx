@@ -847,7 +847,8 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
                 <Icon
                   size={19}
                   strokeWidth={active ? 2.25 : 2}
-                  fill={key === 'heart' && active ? reactionTone(key) : 'none'}
+                  fill={active ? reactionTone(key) : 'none'}
+                  fillOpacity={active && key === 'smile' ? 0.18 : 1}
                 />
                 {count > 0 && <span>{count}</span>}
               </button>
