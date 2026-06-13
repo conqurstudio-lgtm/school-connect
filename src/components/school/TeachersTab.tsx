@@ -782,6 +782,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
   const [summary, setSummary] = useState<any>(null)
   const [openImage, setOpenImage] = useState('')
   const [reactionMoment, setReactionMoment] = useState<any>(null)
+  const [renderLimit, setRenderLimit] = useState(3)
 
   useEffect(() => {
     let cancelled = false
@@ -790,7 +791,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
       setLoading(true)
 
       try {
-        const res = await fetch(`/api/school/teacher-moments?teacher_id=${encodeURIComponent(teacher.id)}`, { cache: 'no-store' })
+        const res = await fetch(`/api/school/teacher-moments?teacher_id=${encodeURIComponent(teacher.id)}&_=${Date.now()}`, { cache: 'no-store' })
         const json = await res.json().catch(() => ({}))
         if (!res.ok) throw new Error(json.error || 'Could not load teacher Moments')
 
@@ -811,6 +812,25 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
       cancelled = true
     }
   }, [teacher?.id])
+
+
+
+  // admin-moments-progressive-v427
+  useEffect(() => {
+    setRenderLimit(3)
+  }, [teacher?.id, moments.length])
+
+  useEffect(() => {
+    if (loading || renderLimit >= moments.length) return
+
+    const id = window.setTimeout(() => {
+      setRenderLimit(value => Math.min(value + 2, moments.length))
+    }, 180)
+
+    return () => window.clearTimeout(id)
+  }, [loading, renderLimit, moments.length])
+
+  const renderedAdminMoments = moments.slice(0, renderLimit)
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -915,14 +935,15 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-              {moments.map((moment, index) => (
+              {renderedAdminMoments.map((moment, index) => (
                 <AdminTeacherMomentPost
                   key={moment.id}
                   moment={moment}
                   teacher={teacher}
-                  isLast={index === moments.length - 1}
+                  isLast={index === renderedAdminMoments.length - 1}
                   onImage={setOpenImage}
                   onReactions={() => setReactionMoment(moment)}
+                  imageIndex={index}
                 />
               ))}
             </div>
@@ -937,21 +958,31 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
         />
       )}
 
-      {openImage && (
+      {openImage && createPortal(
         <div
+          data-admin-moments-fullscreen-lightbox-v427="true"
           onClick={() => setOpenImage('')}
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 99999,
-            background: '#101114',
+            zIndex: 2147483000,
+            width: '100vw',
+            height: '100dvh',
+            background: 'rgba(2, 6, 23, 0.94)',
+            backdropFilter: 'blur(7px)',
+            WebkitBackdropFilter: 'blur(7px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px))',
+            boxSizing: 'border-box',
+            overscrollBehavior: 'contain',
+            touchAction: 'none',
           }}
         >
           <button
             type="button"
+            aria-label="Close image preview"
             onClick={(event) => {
               event.stopPropagation()
               setOpenImage('')
@@ -970,6 +1001,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
+              zIndex: 2147483001,
             }}
           >
             <X size={18} />
@@ -978,21 +1010,32 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
           <img
             src={openImage}
             alt=""
+            decoding="async"
             onClick={event => event.stopPropagation()}
-            style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              maxWidth: '100vw',
+              maxHeight: '100dvh',
+              objectFit: 'contain',
+              display: 'block',
+            }}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </main>,
     document.body
   )
 }
 
-function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions }: any) {
+function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions, imageIndex = 0 }: any) {
   const teacherName = teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
   const reactionTotal = Number(moment.reaction_count || 0)
+  // admin-image-fade-v427
+  const [imageReady, setImageReady] = useState(false)
 
   return (
     <article style={{
@@ -1087,6 +1130,9 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions 
               <img
                 src={moment.file_url}
                 alt=""
+                loading={imageIndex === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                onLoad={() => setImageReady(true)}
                 style={{
                   width: 'auto',
                   maxWidth: '100%',
@@ -1097,6 +1143,8 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions 
                   display: 'block',
                   borderRadius: 18,
                   background: 'transparent',
+                  opacity: imageReady ? 1 : 0,
+                  transition: 'opacity 220ms ease',
                 }}
               />
             </button>

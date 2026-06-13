@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
@@ -554,21 +555,31 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
         </section>
       </div>
 
-      {openImage && (
+      {openImage && createPortal(
         <div
+          data-moments-fullscreen-lightbox-v427="true"
           onClick={() => setOpenImage('')}
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 5000,
-            background: '#101114',
+            zIndex: 2147483000,
+            width: '100vw',
+            height: '100dvh',
+            background: 'rgba(2, 6, 23, 0.94)',
+            backdropFilter: 'blur(7px)',
+            WebkitBackdropFilter: 'blur(7px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px))',
+            boxSizing: 'border-box',
+            overscrollBehavior: 'contain',
+            touchAction: 'none',
           }}
         >
           <button
             type="button"
+            aria-label="Close image preview"
             onClick={(event) => {
               event.stopPropagation()
               setOpenImage('')
@@ -587,6 +598,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
+              zIndex: 2147483001,
             }}
           >
             <X size={18} />
@@ -595,15 +607,19 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
           <img
             src={openImage}
             alt=""
+            decoding="async"
             onClick={event => event.stopPropagation()}
             style={{
               width: '100%',
               height: '100%',
+              maxWidth: '100vw',
+              maxHeight: '100dvh',
               objectFit: 'contain',
               display: 'block',
             }}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </main>
   )
