@@ -1078,7 +1078,7 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions,
           }}>
             {teacherName}
             <span style={{ color: T.ink3, fontSize: 11.5, fontWeight: 520, marginLeft: 5 }}>
-              · Teacher
+              · {isPrivate ? 'Shared with parent' : 'Shared with class'}
             </span>
           </p>
 
@@ -1092,21 +1092,6 @@ function AdminTeacherMomentPost({ moment, teacher, isLast, onImage, onReactions,
             {moment.note}
           </p>
         ) : null}
-
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          minHeight: 22,
-          padding: '0 9px',
-          borderRadius: 999,
-          background: isPrivate ? T.accentSoft : T.soft,
-          color: isPrivate ? T.accent : T.ink3,
-          fontSize: 11.5,
-          fontWeight: 560,
-          marginTop: 10,
-        }}>
-          {isPrivate ? 'Shared only to parent' : 'Shared with class'}
-        </span>
 
         <div style={{ marginTop: 12 }}>
           {isImage ? (
