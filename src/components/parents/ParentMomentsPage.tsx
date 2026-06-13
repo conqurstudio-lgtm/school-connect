@@ -697,6 +697,19 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
             {formatTimeAgo(moment.created_at)}
           </span>
         </div>
+        {/* moments-caption-above-image-v429 */}
+{moment.note && (
+          <p style={{
+            fontSize: 13.6,
+            color: T.ink2,
+            lineHeight: 1.5,
+            margin: '12px 0 0',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {moment.note}
+          </p>
+        )}
+
         <div style={{ marginTop: 12, position: 'relative' }}>
           {isImage ? (
             <button
@@ -791,21 +804,6 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
           )}
           <ReactionBurstLayer bursts={bursts} />
         </div>
-
-        {/* moments-clean-image-first-v428:parent */}
-        {moment.note && (
-          <p style={{
-            fontSize: 13.6,
-            color: T.ink2,
-            lineHeight: 1.5,
-            margin: '12px 0 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {moment.note}
-          </p>
-        )}
-
-
         <div style={{
           display: 'flex',
           alignItems: 'center',

@@ -679,6 +679,19 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             )}
           </div>
         </div>
+        {/* moments-caption-above-image-v429 */}
+{moment.note && (
+          <p style={{
+            fontSize: 13.6,
+            color: T.ink2,
+            lineHeight: 1.5,
+            margin: '12px 0 0',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {moment.note}
+          </p>
+        )}
+
         <div style={{ marginTop: 12 }}>
           {isImage ? (
             <button
@@ -766,21 +779,6 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             </a>
           )}
         </div>
-
-        {/* moments-clean-image-first-v428:teacher */}
-        {moment.note && (
-          <p style={{
-            fontSize: 13.6,
-            color: T.ink2,
-            lineHeight: 1.5,
-            margin: '12px 0 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {moment.note}
-          </p>
-        )}
-
-
         <button
           type="button"
           onClick={onReactions}
