@@ -103,6 +103,12 @@ function SafeStyle() {
           opacity: 0;
         }
       }
+
+
+      @keyframes scMomentImageGhost {
+        0% { background-position: 120% 0; }
+        100% { background-position: -120% 0; }
+      }
     `}</style>
   )
 }
@@ -261,6 +267,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   const [openImage, setOpenImage] = useState('')
   const [reacting, setReacting] = useState('')
   const [reactionBursts, setReactionBursts] = useState<any[]>([])
+  // parent-moments-progressive-v425
+  const [renderLimit, setRenderLimit] = useState(6)
   const [momentsView, setMomentsView] = useState<'recent' | 'child' | 'class'>('recent')
 
   const load = async (quiet = false) => {
@@ -384,6 +392,22 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   const childMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'child')
   const classMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'class')
   const visibleMoments = momentScope === 'recent' ? moments : (momentScope === 'child' ? childMoments : classMoments)
+
+  const renderedMoments = visibleMoments.slice(0, renderLimit)
+
+  useEffect(() => {
+    setRenderLimit(6)
+  }, [momentScope, moments.length])
+
+  useEffect(() => {
+    if (renderLimit >= visibleMoments.length) return
+
+    const timer = window.setTimeout(() => {
+      setRenderLimit((current) => Math.min(current + 3, visibleMoments.length))
+    }, 160)
+
+    return () => window.clearTimeout(timer)
+  }, [renderLimit, visibleMoments.length, momentScope])
 
   return (
     <main className="sc-screen-enter" style={{
@@ -513,14 +537,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
             />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
-              {visibleMoments.map((moment, index) => (
+              {renderedMoments.map((moment, index) => (
                 <MomentPost
                   key={moment.id}
                   moment={moment}
-                  isLast={index === visibleMoments.length - 1}
+                  isLast={index === renderedMoments.length - 1}
                   onImage={setOpenImage}
                   onReact={react}
                   reacting={reacting === moment.id}
+                  imageIndex={index}
                   bursts={reactionBursts.filter(item => item.momentId === moment.id)}
                 />
               ))}
@@ -584,10 +609,11 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   )
 }
 
-function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }: any) {
+function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], imageIndex = 0 }: any) {
   const teacherName = moment.teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
+  const [imageReady, setImageReady] = useState(false)
 
   return (
     <article className="sc-parent-moment-post-v414" style={{
@@ -688,32 +714,42 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [] }:
               type="button"
               onClick={() => onImage(moment.file_url)}
               style={{
-                display: 'inline-flex',
-                width: 'fit-content',
-                maxWidth: '100%',
+                display: 'block',
+                width: '100%',
+                maxWidth: 390,
+                aspectRatio: '4 / 3',
+                position: 'relative',
+                overflow: 'hidden',
                 padding: 0,
                 border: 'none',
-                background: 'transparent',
+                borderRadius: 18,
+                background: imageReady ? 'transparent' : 'linear-gradient(90deg, #F1F2F3 0%, #FAFAFA 48%, #F1F2F3 100%)',
+                backgroundSize: '220% 100%',
+                animation: imageReady ? 'none' : 'scMomentImageGhost 1.35s ease-in-out infinite',
                 cursor: 'zoom-in',
                 fontFamily: 'inherit',
                 textAlign: 'left',
-                alignItems: 'flex-start',
-                justifyContent: 'flex-start',
               }}
             >
               <img
                 src={moment.file_url}
                 alt=""
+                loading={imageIndex === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
+                onLoad={() => setImageReady(true)}
                 style={{
-                  width: 'auto',
-                  maxWidth: '100%',
-                  height: 'auto',
-                  maxHeight: 360,
+                  position: 'absolute',
+                  inset: 0,
+                  width: '100%',
+                  height: '100%',
                   objectFit: 'contain',
-                  objectPosition: 'left center',
+                  objectPosition: 'center',
                   display: 'block',
                   borderRadius: 18,
                   background: 'transparent',
+                  opacity: imageReady ? 1 : 0,
+                  transition: 'opacity 220ms ease',
                 }}
               />
             </button>
