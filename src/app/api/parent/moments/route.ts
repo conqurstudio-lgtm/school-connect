@@ -44,7 +44,7 @@ async function resolveChildFromToken(sb: any, token: string) {
 
       const { data: child } = await sb
         .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
         .eq('id', data.child_id)
         .maybeSingle()
 
@@ -54,7 +54,7 @@ async function resolveChildFromToken(sb: any, token: string) {
     async () => {
       const { data } = await sb
         .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
         .eq('parent_token', token)
         .maybeSingle()
 
@@ -64,7 +64,7 @@ async function resolveChildFromToken(sb: any, token: string) {
     async () => {
       const { data } = await sb
         .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
         .eq('magic_token', token)
         .maybeSingle()
 
@@ -84,7 +84,7 @@ async function resolveChildFromToken(sb: any, token: string) {
 
       const { data: child } = await sb
         .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
         .eq('id', report.child_id)
         .maybeSingle()
 
@@ -104,7 +104,7 @@ async function resolveChildFromToken(sb: any, token: string) {
 
       const { data: child } = await sb
         .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
+        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
         .eq('id', report.child_id)
         .maybeSingle()
 
@@ -249,23 +249,41 @@ export async function GET(req: NextRequest) {
 
     const rawShareMode = String(moment.share_mode || '').trim().toLowerCase()
     const recipientCount = Number(recipientCountMap[moment.id] || 0)
+    const teacher = moment.teacher_id ? teacherMap[moment.teacher_id] || null : null
+
     const momentScope = (
       classMomentIdSet.has(moment.id) ||
       ['all', 'class', 'classroom', 'whole_class', 'whole-class', 'everyone', 'all_parents', 'all-parents'].includes(rawShareMode) ||
       (!rawShareMode && recipientCount > 1)
     ) ? 'class' : 'child'
 
+    // parent-class-moment-teacher-scope-v431
+    // Protect parents from seeing another teacher/class Moment through old or incorrect
+    // moment_recipients rows. Class Moments must belong to the child's grade/class teacher.
+    const childGrade = String(child.grade || '').trim()
+    const childClass = String(child.class_name || '').trim()
+    const teacherGrade = String(teacher?.grade || '').trim()
+    const teacherClass = String(teacher?.class_name || '').trim()
+
+    const classMomentMatchesChildClass = momentScope !== 'class' || (
+      Boolean(teacher) &&
+      childGrade === teacherGrade &&
+      childClass === teacherClass
+    )
+
+    if (!classMomentMatchesChildClass) return null
+
     return {
       ...moment,
       moment_scope: momentScope,
       recipient_count: recipientCount,
-      teacher: moment.teacher_id ? teacherMap[moment.teacher_id] || null : null,
+      teacher,
       recipient: recipientMap[moment.id] || null,
       reaction: reactionMap[moment.id] || null,
       reaction_counts: reactionCounts,
       reaction_count: reactionTotal,
     }
-  })
+  }).filter(Boolean)
 
   // Important: do this after building rows so the first page load can still show the new-dot state correctly.
   if (!peek && (recipients || []).some((row: any) => !row.viewed_at)) {
