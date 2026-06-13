@@ -483,6 +483,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
   const teacherName = teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
+  const shareLabel = isPrivate ? 'Shared with parent' : 'Shared with class'
   const reactionTotal = Number(moment.reaction_count || 0)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -512,7 +513,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,
-      padding: '0 0 22px',
+      padding: '0 0 24px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
@@ -558,7 +559,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
               fontWeight: 520,
               marginLeft: 5,
             }}>
-              · Your teacher
+              · {shareLabel}
             </span>&nbsp;</p>
 
           <div style={{
@@ -678,34 +679,6 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             )}
           </div>
         </div>
-
-        {moment.note && (
-          <p style={{
-            fontSize: 13.6,
-            color: T.ink2,
-            lineHeight: 1.5,
-            margin: '10px 0 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {moment.note}
-          </p>
-        )}
-
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          minHeight: 22,
-          padding: '0 9px',
-          borderRadius: 999,
-          background: isPrivate ? T.accentSoft : T.soft,
-          color: isPrivate ? T.accent : T.ink3,
-          fontSize: 11.5,
-          fontWeight: 560,
-          marginTop: 10,
-        }}>
-          {isPrivate ? 'Shared only to parent' : 'Shared with class'}
-        </span>
-
         <div style={{ marginTop: 12 }}>
           {isImage ? (
             <button
@@ -793,6 +766,20 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             </a>
           )}
         </div>
+
+        {/* moments-clean-image-first-v428:teacher */}
+        {moment.note && (
+          <p style={{
+            fontSize: 13.6,
+            color: T.ink2,
+            lineHeight: 1.5,
+            margin: '12px 0 0',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {moment.note}
+          </p>
+        )}
+
 
         <button
           type="button"

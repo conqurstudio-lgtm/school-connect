@@ -629,6 +629,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   const teacherName = moment.teacher?.name || 'Teacher'
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
+  const shareLabel = isPrivate ? 'Shared with parent' : 'Shared with class'
   const [imageReady, setImageReady] = useState(false)
 
   return (
@@ -636,7 +637,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,
-      padding: '0 0 22px',
+      padding: '0 0 24px',
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
@@ -682,7 +683,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
               fontWeight: 520,
               marginLeft: 5,
             }}>
-              · Your teacher
+              · {shareLabel}
             </span>&nbsp;</p>
 
           <span style={{
@@ -696,34 +697,6 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
             {formatTimeAgo(moment.created_at)}
           </span>
         </div>
-
-        {moment.note && (
-          <p style={{
-            fontSize: 13.6,
-            color: T.ink2,
-            lineHeight: 1.5,
-            margin: '10px 0 0',
-            whiteSpace: 'pre-wrap',
-          }}>
-            {moment.note}
-          </p>
-        )}
-
-        <span style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          minHeight: 22,
-          padding: '0 9px',
-          borderRadius: 999,
-          background: isPrivate ? T.accentSoft : T.soft,
-          color: isPrivate ? T.accent : T.ink3,
-          fontSize: 11.5,
-          fontWeight: 560,
-          marginTop: 10,
-        }}>
-          {isPrivate ? 'Shared only to you' : 'Shared with class'}
-        </span>
-
         <div style={{ marginTop: 12, position: 'relative' }}>
           {isImage ? (
             <button
@@ -818,6 +791,20 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
           )}
           <ReactionBurstLayer bursts={bursts} />
         </div>
+
+        {/* moments-clean-image-first-v428:parent */}
+        {moment.note && (
+          <p style={{
+            fontSize: 13.6,
+            color: T.ink2,
+            lineHeight: 1.5,
+            margin: '12px 0 0',
+            whiteSpace: 'pre-wrap',
+          }}>
+            {moment.note}
+          </p>
+        )}
+
 
         <div style={{
           display: 'flex',
