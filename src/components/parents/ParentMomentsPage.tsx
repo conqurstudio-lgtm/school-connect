@@ -714,21 +714,17 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
               type="button"
               onClick={() => onImage(moment.file_url)}
               style={{
-                display: 'block',
-                width: '100%',
-                maxWidth: 390,
-                aspectRatio: '4 / 3',
-                position: 'relative',
-                overflow: 'hidden',
+                display: 'inline-flex',
+                width: 'fit-content',
+                maxWidth: '100%',
                 padding: 0,
                 border: 'none',
-                borderRadius: 18,
-                background: imageReady ? 'transparent' : 'linear-gradient(90deg, #F1F2F3 0%, #FAFAFA 48%, #F1F2F3 100%)',
-                backgroundSize: '220% 100%',
-                animation: imageReady ? 'none' : 'scMomentImageGhost 1.35s ease-in-out infinite',
+                background: 'transparent',
                 cursor: 'zoom-in',
                 fontFamily: 'inherit',
                 textAlign: 'left',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-start',
               }}
             >
               <img
@@ -739,12 +735,12 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
                 fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
                 onLoad={() => setImageReady(true)}
                 style={{
-                  position: 'absolute',
-                  inset: 0,
-                  width: '100%',
-                  height: '100%',
+                  width: 'auto',
+                  maxWidth: '100%',
+                  height: 'auto',
+                  maxHeight: 360,
                   objectFit: 'contain',
-                  objectPosition: 'center',
+                  objectPosition: 'left center',
                   display: 'block',
                   borderRadius: 18,
                   background: 'transparent',
