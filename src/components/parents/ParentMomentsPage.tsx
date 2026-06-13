@@ -464,8 +464,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
             }}>
               {[
                 ['recent', 'Recent'],
-                ['recent', 'Recent'],
-                ['recent', 'Recent'],
                 ['child', 'Child'],
                 ['class', 'Class'],
               ].map(([key, label]: any) => {
