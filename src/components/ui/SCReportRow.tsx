@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Trash2 } from 'lucide-react'
 
 type Props = {
   initials: string
@@ -215,53 +215,68 @@ export default function SCReportRow({
       ) : null}
 
       {menuOpen && menuPosition && onRemove ? (
-        <div
-          ref={menuRef}
-          role="menu"
-          aria-label={`Options for ${title}`}
-          className="sc-floating-menu"
-          style={{
-            position: 'fixed',
-            left: menuPosition.left,
-            top: menuPosition.top,
-            zIndex: 140,
-            minWidth: 158,
-            padding: 6,
-            borderRadius: 16,
-            background: 'var(--sc-surface)',
-            border: '1px solid var(--sc-border)',
-            boxShadow: 'var(--sc-shadow-menu)',
-          }}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <button
-            type="button"
-            role="menuitem"
-            onClick={() => {
-              closeMenu()
-              onRemove()
-            }}
+        <>
+          <div
+            onClick={closeMenu}
             style={{
-              width: '100%',
-              minHeight: 38,
-              border: 'none',
-              borderRadius: 12,
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9000,
               background: 'transparent',
-              color: 'var(--sc-danger)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              padding: '0 10px',
-              fontFamily: 'inherit',
-              fontSize: 12.35,
-              fontWeight: 540,
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
             }}
+          />
+
+          <div
+            ref={menuRef}
+            role="menu"
+            aria-label={`Options for ${title}`}
+            className="sc-floating-menu"
+            style={{
+              position: 'fixed',
+              left: menuPosition.left,
+              top: menuPosition.top,
+              zIndex: 9001,
+              minWidth: 178,
+              padding: 6,
+              borderRadius: 16,
+              background: '#FFFFFF',
+              border: '1px solid var(--sc-border)',
+              boxShadow: '0 12px 34px rgba(15,23,42,0.08)',
+            }}
+            onClick={(event) => event.stopPropagation()}
           >
-            {removeLabel}
-          </button>
-        </div>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                closeMenu()
+                onRemove()
+              }}
+              style={{
+                width: '100%',
+                minHeight: 36,
+                border: 'none',
+                borderRadius: 12,
+                background: 'transparent',
+                color: 'var(--sc-danger)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                gap: 9,
+                padding: '0 10px',
+                fontFamily: 'inherit',
+                fontSize: 12.8,
+                fontWeight: 520,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+              }}
+            >
+              <Trash2 size={14} strokeWidth={1.9} />
+              {removeLabel}
+            </button>
+          </div>
+        </>
       ) : null}
     </article>
   )
