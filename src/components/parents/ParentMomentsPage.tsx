@@ -557,51 +557,50 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
       {openImage && createPortal(
         <div
-          data-moments-fullscreen-lightbox-v427="true"
           onClick={() => setOpenImage('')}
+          role="dialog"
+          aria-modal="true"
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 2147483000,
-            width: '100vw',
-            height: '100dvh',
-            background: 'rgba(2, 6, 23, 0.94)',
-            backdropFilter: 'blur(7px)',
-            WebkitBackdropFilter: 'blur(7px)',
+            background: 'rgba(15, 23, 42, 0.94)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 'calc(18px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px))',
+            padding: 'calc(16px + env(safe-area-inset-top, 0px)) 14px calc(16px + env(safe-area-inset-bottom, 0px))',
             boxSizing: 'border-box',
-            overscrollBehavior: 'contain',
-            touchAction: 'none',
+            cursor: 'zoom-out',
           }}
         >
           <button
             type="button"
             aria-label="Close image preview"
-            onClick={(event) => {
+            onClick={event => {
               event.stopPropagation()
               setOpenImage('')
             }}
             style={{
               position: 'fixed',
-              top: 'calc(12px + env(safe-area-inset-top, 0px))',
+              top: 'calc(14px + env(safe-area-inset-top, 0px))',
               right: 14,
-              width: 38,
-              height: 38,
+              width: 40,
+              height: 40,
               borderRadius: 999,
-              border: '1px solid rgba(255,255,255,0.18)',
-              background: 'rgba(255,255,255,0.12)',
+              border: '1px solid rgba(255,255,255,0.16)',
+              background: 'rgba(255,255,255,0.10)',
               color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              padding: 0,
               cursor: 'pointer',
               zIndex: 2147483001,
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
             }}
           >
-            <X size={18} />
+            <X size={18} strokeWidth={2} />
           </button>
 
           <img
@@ -610,12 +609,14 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
             decoding="async"
             onClick={event => event.stopPropagation()}
             style={{
-              width: '100%',
-              height: '100%',
-              maxWidth: '100vw',
-              maxHeight: '100dvh',
+              maxWidth: '100%',
+              maxHeight: '100%',
+              width: 'auto',
+              height: 'auto',
               objectFit: 'contain',
               display: 'block',
+              borderRadius: 0,
+              boxShadow: 'none',
             }}
           />
         </div>,
@@ -701,7 +702,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
 {moment.note && (
           <p style={{
             fontSize: 13.6,
-            color: T.ink2,
+            color: T.ink,
             lineHeight: 1.5,
             margin: '12px 0 0',
             whiteSpace: 'pre-wrap',
@@ -806,6 +807,9 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
         </div>
         <div style={{
           display: 'flex',
+            // parent-reactions-left-align-v432
+            marginLeft: -48,
+            width: 'calc(100% + 48px)',
           alignItems: 'center',
           gap: 8,
           marginTop: 13,
@@ -829,7 +833,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
                   borderRadius: 999,
                   border: 'none',
                   background: 'transparent',
-                  color: active ? reactionTone(key) : T.ink3,
+                  color: active ? reactionTone(key) : T.ink,
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',

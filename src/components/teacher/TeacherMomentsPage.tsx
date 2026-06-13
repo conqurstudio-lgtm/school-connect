@@ -697,7 +697,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
 {moment.note && (
           <p style={{
             fontSize: 13.6,
-            color: T.ink2,
+            color: T.ink,
             lineHeight: 1.5,
             margin: '12px 0 0',
             whiteSpace: 'pre-wrap',
@@ -834,7 +834,7 @@ function ReactionCount({ Icon, value, active, tone = T.accent, fillOpacity = 1 }
       borderRadius: 999,
       border: 'none',
       background: 'transparent',
-      color: active ? tone : T.ink3,
+      color: active ? tone : T.ink,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',

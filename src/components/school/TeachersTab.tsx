@@ -1326,7 +1326,7 @@ function AdminReactionCount({ Icon, value, active, tone = T.accent, fillOpacity 
       borderRadius: 999,
       border: 'none',
       background: 'transparent',
-      color: active ? tone : T.ink3,
+      color: active ? tone : T.ink,
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
