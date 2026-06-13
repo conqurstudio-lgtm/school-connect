@@ -16,6 +16,8 @@ import SCIconButton from '@/components/ui/SCIconButton'
 import { TeacherStartupLoader, readTeacherStartupCache, writeTeacherStartupCache } from '@/components/teacher/TeacherStartupLoader'
 import { SchoolConnectLoader, SchoolConnectPageLoader } from '@/components/ui/SchoolConnectLoader'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
+import { ReportCard } from '@/components/reports/ReportCard'
+import { generateComment } from '@/lib/reports'
 
 const T = {
   ink: '#252525',
@@ -1527,6 +1529,32 @@ function ReadOnlyScoreList({ scores }: any) {
   )
 }
 
+
+function TeacherParentReportCardPreview({ report, child, teacher }: any) {
+  const safeReport = {
+    ...(report || {}),
+    id: report?.id || 'draft-parent-preview',
+    child_name: child?.name || report?.child_name || 'Learner',
+    teacher_name: teacher?.name || report?.teacher_name || 'Teacher',
+    teacher_photo_url: teacher?.photo_url || report?.teacher_photo_url || null,
+    week_starting: report?.week_starting,
+    scores: report?.scores || {},
+    previous_scores: report?.previous_scores || null,
+    comment: report?.comment || null,
+    display_position: 'latest',
+  }
+
+  return (
+    <div style={{
+      margin: '0 auto',
+      padding: '0 0 20px',
+      maxWidth: 430,
+    }}>
+      <ReportCard report={safeReport} childName={safeReport.child_name} />
+    </div>
+  )
+}
+
 function TeacherReportPreview({ teacher, child, onBack }: any) {
   const [loading, setLoading] = useState(true)
   const [report, setReport] = useState<any>(null)
@@ -1633,105 +1661,7 @@ function TeacherReportPreview({ teacher, child, onBack }: any) {
       ) : !report ? (
         <ReportQuietState title="No sent report yet" text="Once a report is sent, the preview will appear here." />
       ) : (
-        <>
-          <section style={{
-            padding: '18px 0 18px',
-            borderBottom: '1px solid var(--sc-border-soft)',
-            marginBottom: 16,
-          }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '56px 1fr auto',
-              alignItems: 'center',
-              gap: 12,
-            }}>
-              <div style={{
-                width: 56,
-                height: 56,
-                borderRadius: 20,
-                background: 'var(--sc-soft)',
-                color: 'var(--sc-ink-2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 17,
-                fontWeight: 600,
-                letterSpacing: '-0.02em',
-              }}>
-                {initials(child?.name)}
-              </div>
-
-              <div style={{ minWidth: 0 }}>
-                <p style={{
-                  fontSize: 12.2,
-                  fontWeight: 520,
-                  color: T.ink3,
-                  margin: '0 0 4px',
-                }}>
-                  {formatWeek(report.week_starting)}
-                </p>
-                <h1 style={{
-                  fontSize: 22,
-                  lineHeight: 1.08,
-                  fontWeight: 560,
-                  letterSpacing: '-0.045em',
-                  color: T.ink,
-                  margin: 0,
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                }}>
-                  {child?.name || 'Learner'}
-                </h1>
-                <p style={{
-                  fontSize: 12.6,
-                  color: T.ink3,
-                  lineHeight: 1.35,
-                  margin: '5px 0 0',
-                }}>
-                  Sent by {teacher?.name || 'Teacher'}
-                </p>
-              </div>
-
-              <ReportAveragePill value={avgLabel} />
-            </div>
-          </section>
-
-          <section style={{
-            padding: '0 0 16px',
-            borderBottom: '1px solid var(--sc-border-soft)',
-            marginBottom: 16,
-          }}>
-            <ReportSectionTitle
-              title="Teacher note"
-              subtitle="Message shared with the parent."
-            />
-            <div className="sc-teacher-preview-note-v387" style={{
-              background: '#F7F7F7',
-              border: '1px solid rgba(17,17,17,0.045)',
-              borderRadius: 20,
-              padding: 14,
-            }}>
-              <p style={{
-                fontSize: 14,
-                color: T.ink2,
-                lineHeight: 1.55,
-                margin: 0,
-              }}>
-                {report.comment || 'No note added for this report.'}
-              </p>
-            </div>
-          </section>
-
-          <section>
-            <ReportSectionTitle
-              title="Subjects"
-              subtitle={`${scoreCount} ${scoreCount === 1 ? 'area' : 'areas'} assessed`}
-              right={<ReportAveragePill value={avgLabel} />}
-            />
-            <ReadOnlyScoreList scores={report.scores} />
-          </section>
-        </>
+        <TeacherParentReportCardPreview report={report} child={child} teacher={teacher} />
       )}
     </TeacherReportScreenFrame>
   )
@@ -1747,12 +1677,14 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
   const [magicLink, setMagicLink] = useState('')
   const [history, setHistory] = useState<any[]>([])
   const [historyLoading, setHistoryLoading] = useState(true)
+  const [previewing, setPreviewing] = useState(false)
 
   useEffect(() => {
     setWeek(weekStart)
     setScores(current => scoresForSubjects(subjects, current))
     setComment('')
     setMagicLink('')
+    setPreviewing(false)
     setHistoryLoading(true)
 
     fetch(`/api/teacher/report-history?child_id=${encodeURIComponent(child.id)}`, { cache: 'no-store' })
@@ -1767,6 +1699,18 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
 
   const draftAvg = averageScore(scores)
   const draftAvgLabel = draftAvg == null ? '—' : draftAvg.toFixed(1)
+  const previousScoresForPreview = history.find((item: any) => item?.week_starting !== week)?.scores || null
+  const draftReport = {
+    id: 'draft-parent-preview',
+    child_name: child?.name || 'Learner',
+    teacher_name: teacher?.name || 'Teacher',
+    teacher_photo_url: teacher?.photo_url || null,
+    week_starting: week,
+    scores,
+    previous_scores: previousScoresForPreview,
+    comment: comment.trim() || generateComment(scores),
+    display_position: 'latest',
+  }
 
   const submit = async () => {
     if (saving) return
@@ -1804,6 +1748,8 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
         json.report,
         ...current.filter((item) => item.id !== json.report?.id),
       ].filter(Boolean))
+
+      onBack?.()
     } catch (e: any) {
       toast.error(e.message || 'Could not send report', { id: tid })
     }
@@ -1821,13 +1767,35 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
     toast.success('Parent link copied')
   }
 
-  const footer = (
+  const writeFooter = (
+    <SCButton
+      tone="primary"
+      fullWidth
+      onClick={() => setPreviewing(true)}
+      disabled={saving}
+      style={{ minHeight: 44 }}
+    >
+      Done
+    </SCButton>
+  )
+
+  const previewFooter = (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '1fr 46px',
+      gridTemplateColumns: '0.9fr 1.1fr',
       gap: 8,
       alignItems: 'center',
     }}>
+      <SCButton
+        tone="secondary"
+        fullWidth
+        onClick={() => setPreviewing(false)}
+        disabled={saving}
+        style={{ minHeight: 44 }}
+      >
+        Back to edit
+      </SCButton>
+
       <SCButton
         tone="primary"
         fullWidth
@@ -1835,39 +1803,30 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
         disabled={saving}
         style={{ minHeight: 44 }}
       >
-        {saving ? 'Sending...' : 'Send report'}
+        {saving ? 'Sending...' : 'Send to parent'}
       </SCButton>
-
-      <button
-        type="button"
-        onClick={copyLink}
-        aria-label="Copy parent link"
-        className="sc-icon-button"
-        style={{
-          width: 46,
-          height: 44,
-          borderRadius: 999,
-          border: '1px solid var(--sc-border-soft)',
-          background: T.white,
-          color: T.ink2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
-      >
-        <Copy size={16} strokeWidth={1.8} />
-      </button>
     </div>
   )
+
+  if (previewing) {
+    return (
+      <TeacherReportScreenFrame
+        title="Parent preview"
+        subtitle={child?.name || 'Learner'}
+        onBack={() => setPreviewing(false)}
+        footer={previewFooter}
+      >
+        <TeacherParentReportCardPreview report={draftReport} child={child} teacher={teacher} />
+      </TeacherReportScreenFrame>
+    )
+  }
 
   return (
     <TeacherReportScreenFrame
       title={child.name}
       subtitle="Weekly report"
       onBack={onBack}
-      footer={footer}
+      footer={writeFooter}
     >
       <section style={{
         padding: '4px 0 14px',
