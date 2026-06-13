@@ -605,77 +605,91 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
             </button>
 
             {menuOpen && (
-              <div
-                onClick={event => event.stopPropagation()}
-                style={{
-                  position: 'absolute',
-                  top: 34,
-                  right: 0,
-                  zIndex: 40,
-                  width: 132,
-                  borderRadius: 18,
-                  background: T.white,
-                  boxShadow: 'var(--sc-shadow-menu)',
-                  border: `1px solid ${T.border}`,
-                  padding: 6,
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    onEdit?.()
-                  }}
+              <>
+                <div
+                  onClick={() => setMenuOpen(false)}
                   style={{
-                    width: '100%',
-                    minHeight: 36,
-                    borderRadius: 13,
-                    border: 'none',
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 9000,
                     background: 'transparent',
-                    color: T.ink,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 9,
-                    fontFamily: 'inherit',
-                    fontSize: 12.5,
-                    fontWeight: 520,
-                    cursor: 'pointer',
-                    padding: '0 9px',
-                    textAlign: 'left',
                   }}
-                >
-                  <Pencil size={13} strokeWidth={1.9} />
-                  Edit
-                </button>
+                />
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false)
-                    onDelete?.()
-                  }}
+                <div
+                  onClick={event => event.stopPropagation()}
                   style={{
-                    width: '100%',
-                    minHeight: 36,
-                    borderRadius: 13,
-                    border: 'none',
-                    background: 'transparent',
-                    color: T.ink,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 9,
-                    fontFamily: 'inherit',
-                    fontSize: 12.5,
-                    fontWeight: 520,
-                    cursor: 'pointer',
-                    padding: '0 9px',
-                    textAlign: 'left',
+                    position: 'absolute',
+                    top: 34,
+                    right: 0,
+                    zIndex: 9001,
+                    minWidth: 164,
+                    borderRadius: 16,
+                    background: T.white,
+                    boxShadow: '0 12px 34px rgba(15,23,42,0.08)',
+                    border: `1px solid ${T.border}`,
+                    padding: 6,
                   }}
                 >
-                  <Trash2 size={13} strokeWidth={1.9} />
-                  Delete
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false)
+                      onEdit?.()
+                    }}
+                    style={{
+                      width: '100%',
+                      minHeight: 36,
+                      borderRadius: 12,
+                      border: 'none',
+                      background: 'transparent',
+                      color: T.ink2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 9,
+                      fontFamily: 'inherit',
+                      fontSize: 12.8,
+                      fontWeight: 520,
+                      cursor: 'pointer',
+                      padding: '0 10px',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <Pencil size={14} strokeWidth={1.9} />
+                    Edit Moment
+                  </button>
+
+                  <div style={{ height: 1, background: 'var(--sc-border-soft)', margin: '5px 6px' }} />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false)
+                      onDelete?.()
+                    }}
+                    style={{
+                      width: '100%',
+                      minHeight: 36,
+                      borderRadius: 12,
+                      border: 'none',
+                      background: 'transparent',
+                      color: T.red,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 9,
+                      fontFamily: 'inherit',
+                      fontSize: 12.8,
+                      fontWeight: 520,
+                      cursor: 'pointer',
+                      padding: '0 10px',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <Trash2 size={14} strokeWidth={1.9} />
+                    Delete Moment
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
