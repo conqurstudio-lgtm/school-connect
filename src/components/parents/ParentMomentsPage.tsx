@@ -260,6 +260,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
   const [openImage, setOpenImage] = useState('')
   const [reacting, setReacting] = useState('')
   const [reactionBursts, setReactionBursts] = useState<any[]>([])
+  const [momentsView, setMomentsView] = useState<'recent' | 'child' | 'class'>('recent')
 
   const load = async (quiet = false) => {
     if (!quiet) setLoading(true)
