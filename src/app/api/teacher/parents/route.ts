@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
     .eq('status', 'active')
   if (teacher.class_name) {
     kidsQuery = kidsQuery.eq('class_name', teacher.class_name)
+  } else {
+    kidsQuery = kidsQuery.is('class_name', null)
   }
   const { data: kids } = await kidsQuery
 
