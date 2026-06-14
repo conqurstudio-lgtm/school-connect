@@ -370,34 +370,34 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <section className="sc-parent-report-teacher-note-simple-v435" style={{
-          maxWidth: 390,
-          margin: '12px auto 48px',
-          padding: '0 14px',
+        <section className="sc-parent-report-teacher-note-minimal-v436" style={{
+          maxWidth: 360,
+          margin: '6px auto 46px',
+          padding: '0 18px',
           textAlign: 'center',
         }}>
           <p style={{
-            fontSize: 10.8,
-            color: '#8A8D92',
-            fontWeight: 620,
-            letterSpacing: '0.055em',
-            textTransform: 'uppercase',
-            lineHeight: 1.2,
-            margin: '0 0 9px',
-          }}>
-            From {teacherName}
-          </p>
-
-          <p style={{
-            fontSize: 13,
-            color: '#252525',
+            fontSize: 12.8,
+            color: '#3F4247',
             margin: 0,
-            lineHeight: 1.65,
-            letterSpacing: '-0.006em',
+            lineHeight: 1.72,
+            letterSpacing: '-0.004em',
             fontWeight: 400,
             textAlign: 'center',
           }}>
             {report.comment}
+          </p>
+
+          <p style={{
+            fontSize: 11,
+            color: '#9A9CA3',
+            margin: '13px 0 0',
+            lineHeight: 1.25,
+            fontWeight: 500,
+            letterSpacing: '-0.002em',
+            textAlign: 'center',
+          }}>
+            From {teacherName}
           </p>
         </section>
       )}
