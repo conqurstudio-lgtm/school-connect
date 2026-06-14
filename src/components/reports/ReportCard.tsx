@@ -370,35 +370,59 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <section className="sc-parent-report-teacher-note-minimal-v436" style={{
-          maxWidth: 360,
-          margin: '6px auto 46px',
+        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
+          maxWidth: 370,
+          margin: '8px auto 46px',
           padding: '0 18px',
           textAlign: 'center',
         }}>
           <p style={{
-            fontSize: 12.8,
+            fontSize: 12.7,
             color: '#3F4247',
             margin: 0,
             lineHeight: 1.72,
             letterSpacing: '-0.004em',
-            fontWeight: 400,
+            fontWeight: 380,
             textAlign: 'center',
           }}>
             {report.comment}
           </p>
 
-          <p style={{
-            fontSize: 11,
-            color: '#9A9CA3',
-            margin: '13px 0 0',
-            lineHeight: 1.25,
-            fontWeight: 500,
-            letterSpacing: '-0.002em',
-            textAlign: 'center',
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 7,
+            marginTop: 14,
           }}>
-            From {teacherName}
-          </p>
+            <div style={{
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+              color: '#7A7D82',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 8.5,
+              fontWeight: 620,
+              letterSpacing: '-0.01em',
+              overflow: 'hidden',
+              flexShrink: 0,
+            }}>
+              {!teacherPhoto && teacherInitials}
+            </div>
+
+            <span style={{
+              fontSize: 11,
+              color: '#9A9CA3',
+              lineHeight: 1.2,
+              fontWeight: 500,
+              letterSpacing: '-0.002em',
+            }}>
+              From {teacherName}
+            </span>
+          </div>
         </section>
       )}
 

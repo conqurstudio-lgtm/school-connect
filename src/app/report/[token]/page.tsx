@@ -1027,21 +1027,6 @@ export default function ParentMagicReportPage() {
             alignItems: 'center',
             gap: 8,
           }}>
-            {!isFamilyShare && (
-              <div style={{
-                position: 'fixed',
-                left: 'calc(16px + env(safe-area-inset-left, 0px))',
-                top: 'calc(18px + env(safe-area-inset-top, 0px))',
-                zIndex: 120,
-              }}>
-                <ReportTeacherActionAvatar
-                  teacher={payload?.teacher}
-                  school={payload?.school}
-                  child={payload?.child}
-                />
-              </div>
-            )}
-
             <div style={{
               marginLeft: 'auto',
               display: 'inline-flex',
