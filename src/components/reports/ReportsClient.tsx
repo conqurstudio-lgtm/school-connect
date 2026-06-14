@@ -40,6 +40,8 @@ export function ReportsClient() {
   const [reports, setReports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [childName, setChildName] = useState('Your child')
+  const [teacher, setTeacher] = useState<any>(null)
+  const [school, setSchool] = useState<any>(null)
 
   useEffect(() => {
     let alive = true
@@ -64,6 +66,8 @@ export function ReportsClient() {
         if (!alive) return
         setReports(json.reports ?? [])
         setChildName(json.child_name ?? 'Your child')
+        setTeacher(json.teacher ?? null)
+        setSchool(json.school ?? null)
       } catch {
         if (!alive) return
         setReports([])
@@ -150,7 +154,7 @@ export function ReportsClient() {
             </p>
           </div>
         ) : (
-          <ReportSwiper reports={reports} childName={childName} />
+          <ReportSwiper reports={reports} childName={childName} teacher={teacher} school={school} />
         )}
 
         {reports.length > 0 && (

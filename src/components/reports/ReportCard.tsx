@@ -276,6 +276,7 @@ function getSubjectDetailComment(score: number) {
 
 export function ReportCard({ report, childName }: Props) {
   const [expanded, setExpanded] = useState(false)
+  const [teacherInfoOpen, setTeacherInfoOpen] = useState(false)
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
@@ -301,6 +302,11 @@ export function ReportCard({ report, childName }: Props) {
     report.teacher_image_url ||
     report.photo_url ||
     ''
+  const schoolName =
+    report.school_name ||
+    report.school?.name ||
+    report.schoolName ||
+    ''
   const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
   const childTeacherLabel = childFirstName === 'Your child'
     ? 'Your child’s teacher'
@@ -309,7 +315,134 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '24px 0 46px', opacity: mutedReportOpacity }}>
+      <div style={{
+        position: 'relative',
+        textAlign: 'center',
+        padding: '24px 0 46px',
+        opacity: mutedReportOpacity,
+      }}>
+        {/* report-teacher-avatar-top-left-v434 */}
+        <button
+          type="button"
+          onClick={() => setTeacherInfoOpen(true)}
+          aria-label="View teacher information"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            border: '1px solid rgba(37,37,37,0.10)',
+            background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#FFFFFF',
+            color: '#5F6268',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 11,
+            fontWeight: 620,
+            letterSpacing: '-0.01em',
+            overflow: 'hidden',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            boxShadow: '0 8px 18px rgba(0,0,0,0.05)',
+            zIndex: 20,
+          }}
+        >
+          {!teacherPhoto && teacherInitials}
+        </button>
+
+        {teacherInfoOpen && (
+          <div style={{
+            position: 'absolute',
+            top: 46,
+            left: 0,
+            zIndex: 40,
+            width: 'min(300px, calc(100vw - 56px))',
+            borderRadius: 22,
+            border: '1px solid rgba(37,37,37,0.08)',
+            background: '#FFFFFF',
+            boxShadow: '0 18px 46px rgba(0,0,0,0.14)',
+            padding: 14,
+            textAlign: 'left',
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 11,
+            }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: '50%',
+                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+                color: '#5F6268',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 640,
+                flexShrink: 0,
+                overflow: 'hidden',
+              }}>
+                {!teacherPhoto && teacherInitials}
+              </div>
+
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{
+                  fontSize: 14,
+                  fontWeight: 620,
+                  color: T.ink,
+                  letterSpacing: '-0.02em',
+                  margin: '1px 0 4px',
+                }}>
+                  {teacherName}
+                </p>
+
+                <p style={{
+                  fontSize: 12.6,
+                  color: '#5F6268',
+                  lineHeight: 1.35,
+                  margin: 0,
+                }}>
+                  {childTeacherLabel}
+                </p>
+
+                {schoolName ? (
+                  <p style={{
+                    fontSize: 12.3,
+                    color: '#5F6268',
+                    lineHeight: 1.35,
+                    margin: '9px 0 0',
+                  }}>
+                    {schoolName}
+                  </p>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setTeacherInfoOpen(false)}
+                aria-label="Close teacher information"
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: '#F6F6F7',
+                  color: '#5F6268',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  fontSize: 16,
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -365,70 +498,26 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <section className="sc-parent-report-teacher-note-flat-v432" style={{
-          maxWidth: 396,
-          margin: '8px auto 50px',
-          padding: '20px 10px 22px',
-          borderTop: '1px solid rgba(37,37,37,0.08)',
-          borderBottom: '1px solid rgba(37,37,37,0.08)',
+        <section className="sc-parent-report-teacher-note-simple-v434" style={{
+          maxWidth: 390,
+          margin: '12px auto 48px',
+          padding: '0 14px',
           textAlign: 'center',
         }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            marginBottom: 15,
+          <p style={{
+            fontSize: 11,
+            color: '#8A8D92',
+            fontWeight: 620,
+            letterSpacing: '0.055em',
+            textTransform: 'uppercase',
+            lineHeight: 1.2,
+            margin: '0 0 10px',
           }}>
-            <div style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
-              color: '#5F6268',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 10.5,
-              fontWeight: 620,
-              letterSpacing: '-0.01em',
-              flexShrink: 0,
-              overflow: 'hidden',
-            }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <div style={{
-              textAlign: 'left',
-              minWidth: 0,
-            }}>
-              <p style={{
-                fontSize: 10.5,
-                color: '#8A8D92',
-                fontWeight: 620,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                lineHeight: 1.1,
-                margin: '0 0 3px',
-              }}>
-                From your teacher
-              </p>
-
-              <p style={{
-                fontSize: 13,
-                color: '#252525',
-                fontWeight: 560,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.25,
-                margin: 0,
-              }}>
-                {teacherName}
-              </p>
-            </div>
-          </div>
+            From {teacherName}
+          </p>
 
           <p style={{
-            fontSize: 14,
+            fontSize: 13.1,
             color: '#252525',
             margin: 0,
             lineHeight: 1.68,

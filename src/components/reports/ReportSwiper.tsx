@@ -11,6 +11,8 @@ const T = {
 type Props = {
   reports: any[]
   childName?: string
+  teacher?: any
+  school?: any
 }
 
 type Gesture = 'none' | 'horizontal' | 'vertical'
@@ -23,7 +25,7 @@ function reportTime(report: any) {
   return new Date(report.week_starting || report.published_at || report.created_at || 0).getTime()
 }
 
-export function ReportSwiper({ reports = [], childName }: Props) {
+export function ReportSwiper({ reports = [], childName, teacher, school }: Props) {
   // Older reports live on the LEFT, latest report lives on the RIGHT.
   // The parent lands on the latest report.
   const visualReports = useMemo(() => {
