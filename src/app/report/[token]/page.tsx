@@ -1022,16 +1022,24 @@ export default function ParentMagicReportPage() {
           zIndex: 10,
         }}>
           <div style={{
+              position: 'relative',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
           }}>
             {!isFamilyShare && (
-              <ReportTeacherActionAvatar
-                teacher={payload?.teacher}
-                school={payload?.school}
-                child={payload?.child}
-              />
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                zIndex: 20,
+              }}>
+                <ReportTeacherActionAvatar
+                  teacher={payload?.teacher}
+                  school={payload?.school}
+                  child={payload?.child}
+                />
+              </div>
             )}
 
             <div style={{
