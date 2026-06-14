@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect, useId } from 'react'
-import { TrendingUp, TrendingDown, Minus, Info, X } from 'lucide-react'
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
 const T = {
@@ -275,7 +275,6 @@ function getSubjectDetailComment(score: number) {
 }
 
 export function ReportCard({ report, childName }: Props) {
-  const [subjectInfoOpen, setSubjectInfoOpen] = useState(false)
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
@@ -388,42 +387,7 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <div className="sc-report-score-ring-info-v439" style={{
-          position: 'relative',
-          width: 'fit-content',
-          margin: '0 auto',
-        }}>
-          <ScoreRing score={overall} compact={!isLatestReport} />
-
-          {subjects.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setSubjectInfoOpen(true)}
-              aria-label="View subjects"
-              style={{
-                position: 'absolute',
-                top: -8,
-                right: -26,
-                width: 30,
-                height: 30,
-                borderRadius: '50%',
-                border: '1.5px solid #1A1A1A',
-                background: '#FFFFFF',
-                color: '#1A1A1A',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-                fontFamily: 'inherit',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                zIndex: 5,
-              }}
-            >
-              <Info size={17} strokeWidth={2.1} />
-            </button>
-          )}
-        </div>
+        <ScoreRing score={overall} compact={!isLatestReport} />
 
         <div style={{ marginTop: 24 }}>
           <p style={{
@@ -443,150 +407,6 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-      {subjectInfoOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Subject scores"
-          onClick={() => setSubjectInfoOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2147482500,
-            background: 'rgba(255,255,255,0.76)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '22px',
-          }}
-        >
-          <div
-            onClick={(event) => event.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: 360,
-              borderRadius: 24,
-              background: '#FFFFFF',
-              border: '1px solid rgba(37,37,37,0.08)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.14)',
-              padding: '18px 18px 16px',
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 12,
-              marginBottom: 14,
-            }}>
-              <div>
-                <p style={{
-                  fontSize: 15,
-                  fontWeight: 620,
-                  color: T.ink,
-                  margin: 0,
-                  letterSpacing: '-0.02em',
-                }}>
-                  Subject scores
-                </p>
-                <p style={{
-                  fontSize: 12.3,
-                  color: '#8A8D92',
-                  margin: '3px 0 0',
-                  lineHeight: 1.35,
-                }}>
-                  Simple view of each area assessed.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSubjectInfoOpen(false)}
-                aria-label="Close subject scores"
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: '50%',
-                  border: 'none',
-                  background: '#F5F5F7',
-                  color: '#5F6268',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  padding: 0,
-                  flexShrink: 0,
-                }}
-              >
-                <X size={16} strokeWidth={2} />
-              </button>
-            </div>
-
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 0,
-            }}>
-              {subjects.map(([name, score]) => {
-                const numericScore = Number(score)
-                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const meaning = getSubjectDetailComment(safeScore)
-
-                return (
-                  <div key={String(name)} style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto',
-                    gap: 14,
-                    padding: '12px 0',
-                    borderTop: '1px solid rgba(37,37,37,0.06)',
-                    alignItems: 'center',
-                  }}>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{
-                        fontSize: 13.3,
-                        color: '#252525',
-                        fontWeight: 540,
-                        letterSpacing: '-0.01em',
-                        margin: 0,
-                      }}>
-                        {shortenSubject(String(name))}
-                      </p>
-                      <p style={{
-                        fontSize: 12.1,
-                        color: '#7C8486',
-                        margin: '4px 0 0',
-                        lineHeight: 1.35,
-                      }}>
-                        {meaning}
-                      </p>
-                    </div>
-
-                    <span style={{
-                      minWidth: 40,
-                      height: 30,
-                      borderRadius: 999,
-                      background: '#F5F5F7',
-                      color: '#252525',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12.2,
-                      fontWeight: 620,
-                      fontVariantNumeric: 'tabular-nums',
-                      padding: '0 10px',
-                    }}>
-                      {safeScore.toFixed(1)}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
