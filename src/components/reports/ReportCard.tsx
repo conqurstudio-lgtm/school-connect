@@ -365,55 +365,30 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div className="sc-parent-report-teacher-note-v410" style={{
+        <div className="sc-parent-report-teacher-note-v431" style={{
           maxWidth: 396,
-          margin: '44px auto 46px',
+          margin: '28px auto 42px',
           padding: '0 10px',
+          textAlign: 'center',
         }}>
           <div style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            gap: 11,
+            background: 'transparent',
+            border: '1px solid rgba(37,37,37,0.14)',
+            borderRadius: 22,
+            padding: '15px 18px 16px',
+            boxShadow: 'none',
           }}>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#E5E5E5',
-              color: '#777777',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 10.5,
-              fontWeight: 560,
-              letterSpacing: '-0.01em',
-              flexShrink: 0,
-              overflow: 'hidden',
-              marginBottom: 4,
+            <p style={{
+              fontSize: 13.2,
+              color: '#252525',
+              margin: 0,
+              lineHeight: 1.58,
+              letterSpacing: '-0.006em',
+              fontWeight: 400,
+              textAlign: 'center',
             }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <div style={{
-              flex: 1,
-              minWidth: 0,
-              background: '#F4F4F5',
-              border: 'none',
-              borderRadius: '22px 22px 22px 4px',
-              padding: '13px 16px 14px',
-              boxShadow: 'none',
-            }}>
-              <p style={{
-                fontSize: 12.8,
-                color: '#3F4247',
-                margin: 0,
-                lineHeight: 1.58,
-                letterSpacing: '-0.006em',
-                fontWeight: 400,
-              }}>
-                {report.comment}
-              </p>
-            </div>
+              {report.comment}
+            </p>
           </div>
         </div>
       )}

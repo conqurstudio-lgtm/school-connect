@@ -631,6 +631,31 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   const isPrivate = moment.share_mode === 'child'
   const isImage = moment.file_type === 'image'
   const shareLabel = isPrivate ? 'Shared with parent' : 'Shared with class'
+  const [teacherInfoOpen, setTeacherInfoOpen] = useState(false)
+
+  const teacherPhoto =
+    moment.teacher?.photo_url ||
+    moment.teacher?.avatar_url ||
+    moment.teacher?.image_url ||
+    ''
+
+  const schoolName =
+    moment.school?.name ||
+    moment.school_name ||
+    moment.teacher?.school_name ||
+    moment.teacher?.school?.name ||
+    ''
+
+  const childName =
+    moment.child?.name ||
+    moment.child_name ||
+    moment.learner_name ||
+    'Your child'
+
+  const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
+  const childTeacherLabel = childFirstName === 'Your child'
+    ? 'Your child’s teacher'
+    : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
   const [imageReady, setImageReady] = useState(false)
 
   return (
@@ -642,22 +667,125 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
       borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
       background: 'transparent',
     }}>
-      <div style={{
-        width: 38,
-        height: 38,
-        borderRadius: 14,
-        background: moment.teacher?.photo_url ? `url(${moment.teacher.photo_url}) center/cover` : T.accentSoft,
-        color: T.accent,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 12,
-        fontWeight: 560,
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}>
-        {!moment.teacher?.photo_url && initials(teacherName)}
-      </div>
+      <div style={{ position: 'relative', flexShrink: 0 }}>
+            {/* parent-moment-teacher-avatar-popup-v433 */}
+            <button
+              type="button"
+              onClick={() => setTeacherInfoOpen(true)}
+              aria-label="View teacher information"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                border: '1px solid rgba(37,37,37,0.10)',
+                background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : T.soft,
+                color: T.ink2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 11,
+                fontWeight: 620,
+                letterSpacing: '-0.01em',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                boxShadow: '0 6px 16px rgba(0,0,0,0.045)',
+              }}
+            >
+              {!teacherPhoto && initials(teacherName)}
+            </button>
+
+            {teacherInfoOpen && (
+              <div style={{
+                position: 'absolute',
+                top: 46,
+                left: 0,
+                zIndex: 9005,
+                width: 'min(292px, calc(100vw - 44px))',
+                borderRadius: 22,
+                border: '1px solid rgba(37,37,37,0.08)',
+                background: '#FFFFFF',
+                boxShadow: '0 18px 46px rgba(0,0,0,0.14)',
+                padding: 14,
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 11,
+                }}>
+                  <div style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: '50%',
+                    background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : T.soft,
+                    color: T.ink2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 12,
+                    fontWeight: 640,
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                  }}>
+                    {!teacherPhoto && initials(teacherName)}
+                  </div>
+
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <p style={{
+                      fontSize: 14,
+                      fontWeight: 620,
+                      color: T.ink,
+                      letterSpacing: '-0.02em',
+                      margin: '1px 0 4px',
+                    }}>
+                      {teacherName}
+                    </p>
+
+                    <p style={{
+                      fontSize: 12.6,
+                      color: T.ink2,
+                      lineHeight: 1.35,
+                      margin: 0,
+                    }}>
+                      {childTeacherLabel}
+                    </p>
+
+                    {schoolName ? (
+                      <p style={{
+                        fontSize: 12.3,
+                        color: T.ink2,
+                        lineHeight: 1.35,
+                        margin: '9px 0 0',
+                      }}>
+                        {schoolName}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setTeacherInfoOpen(false)}
+                    aria-label="Close teacher information"
+                    style={{
+                      width: 26,
+                      height: 26,
+                      borderRadius: '50%',
+                      border: 'none',
+                      background: T.soft,
+                      color: T.ink2,
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      fontSize: 16,
+                      lineHeight: 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
       <div style={{ minWidth: 0 }}>
         <div style={{
