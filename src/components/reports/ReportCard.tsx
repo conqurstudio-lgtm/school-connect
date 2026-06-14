@@ -309,7 +309,7 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '20px 0 42px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '24px 0 46px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -365,32 +365,80 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <div className="sc-parent-report-teacher-note-v431" style={{
+        <section className="sc-parent-report-teacher-note-flat-v432" style={{
           maxWidth: 396,
-          margin: '28px auto 42px',
-          padding: '0 10px',
+          margin: '8px auto 50px',
+          padding: '20px 10px 22px',
+          borderTop: '1px solid rgba(37,37,37,0.08)',
+          borderBottom: '1px solid rgba(37,37,37,0.08)',
           textAlign: 'center',
         }}>
           <div style={{
-            background: 'transparent',
-            border: '1px solid rgba(37,37,37,0.14)',
-            borderRadius: 22,
-            padding: '15px 18px 16px',
-            boxShadow: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            marginBottom: 15,
           }}>
-            <p style={{
-              fontSize: 13.2,
-              color: '#252525',
-              margin: 0,
-              lineHeight: 1.58,
-              letterSpacing: '-0.006em',
-              fontWeight: 400,
-              textAlign: 'center',
+            <div style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+              color: '#5F6268',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 10.5,
+              fontWeight: 620,
+              letterSpacing: '-0.01em',
+              flexShrink: 0,
+              overflow: 'hidden',
             }}>
-              {report.comment}
-            </p>
+              {!teacherPhoto && teacherInitials}
+            </div>
+
+            <div style={{
+              textAlign: 'left',
+              minWidth: 0,
+            }}>
+              <p style={{
+                fontSize: 10.5,
+                color: '#8A8D92',
+                fontWeight: 620,
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+                lineHeight: 1.1,
+                margin: '0 0 3px',
+              }}>
+                From your teacher
+              </p>
+
+              <p style={{
+                fontSize: 13,
+                color: '#252525',
+                fontWeight: 560,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.25,
+                margin: 0,
+              }}>
+                {teacherName}
+              </p>
+            </div>
           </div>
-        </div>
+
+          <p style={{
+            fontSize: 14,
+            color: '#252525',
+            margin: 0,
+            lineHeight: 1.68,
+            letterSpacing: '-0.006em',
+            fontWeight: 400,
+            textAlign: 'center',
+          }}>
+            {report.comment}
+          </p>
+        </section>
       )}
 
       {/* Subjects (collapsible) */}
