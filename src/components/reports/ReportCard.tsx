@@ -431,6 +431,7 @@ export function ReportCard({ report, childName }: Props) {
         maxWidth: 396,
         margin: '0 auto',
         padding: '0 10px',
+        textAlign: 'center',
       }}>
         <button
           type="button"
@@ -448,7 +449,8 @@ export function ReportCard({ report, childName }: Props) {
             borderRadius: 999,
             cursor: 'pointer',
             fontFamily: 'inherit',
-            marginBottom: expanded ? 12 : 0,
+            margin: '0 auto',
+            marginBottom: expanded ? 20 : 0,
           }}
         >
           <span style={{
@@ -458,16 +460,17 @@ export function ReportCard({ report, childName }: Props) {
             letterSpacing: '-0.005em',
             lineHeight: 1,
           }}>
-            Subjects
+            {expanded ? 'Hide subjects' : 'View subjects'}
           </span>
         </button>
 
         {expanded && (
-          <div className="sc-report-subjects-list-v306 sc-report-subjects-list-v307" style={{
+          <div className="sc-report-subjects-list-v438" style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 12,
-            padding: '2px 0 8px',
+            gap: 14,
+            padding: '6px 0 8px',
+            textAlign: 'left',
           }}>
             {subjects.length ? subjects.map(([name, score]) => {
               const numericScore = Number(score)
@@ -478,9 +481,9 @@ export function ReportCard({ report, childName }: Props) {
               const detailComment = getSubjectDetailComment(safeScore)
 
               return (
-                <div key={String(name)} className="sc-report-subject-detail-row-v306 sc-report-subject-detail-row-v307" style={{
-                  padding: '8px 0',
-                  borderTop: 'none',
+                <div key={String(name)} className="sc-report-subject-detail-row-v438" style={{
+                  padding: '10px 0 12px',
+                  borderTop: '1px solid rgba(37,37,37,0.055)',
                 }}>
                   <div style={{
                     display: 'flex',
