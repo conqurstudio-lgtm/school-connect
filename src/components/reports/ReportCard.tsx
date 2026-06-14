@@ -126,9 +126,9 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 }
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
-function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
-  const size   = 200
-  const stroke = 8
+function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
+  const size   = compact ? 196 : 214
+  const stroke = compact ? 8 : 9
   const radius = (size - stroke) / 2
   const circ   = 2 * Math.PI * radius
   const targetPct = score / max
@@ -194,7 +194,7 @@ function ScoreRing({ score, max = 5 }: { score: number; max?: number }) {
         alignItems: 'center', justifyContent: 'center',
       }}>
         <div style={{
-          fontSize: 48, fontWeight: 600, color: T.ink,
+          fontSize: compact ? 46 : 52, fontWeight: 600, color: T.ink,
           letterSpacing: '-0.04em', lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>
@@ -348,7 +348,7 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <ScoreRing score={overall} />
+        <ScoreRing score={overall} compact={!isLatestReport} />
 
         <div style={{ marginTop: 24 }}>
           <p style={{

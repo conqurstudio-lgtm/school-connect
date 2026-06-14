@@ -220,8 +220,8 @@ export function ReportSwiper({ reports = [], childName, teacher, school }: Props
                     touchAction: 'pan-y',
                     paddingBottom: '42px',
                     boxSizing: 'border-box',
-                    opacity: isActive ? 1 : 0.48,
-                    filter: isActive ? 'none' : 'grayscale(1)',
+                    opacity: isLatest ? 1 : 0.56,
+                    filter: isLatest ? 'none' : 'grayscale(1)',
                     transition: 'opacity 0.25s ease, filter 0.25s ease',
                   }}
                 >
