@@ -352,33 +352,7 @@ export function ReportCard({ report, childName }: Props) {
             {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
           </h2>
 
-          {subjects.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setSubjectInfoOpen(true)}
-              aria-label="View subjects"
-              style={{
-                position: 'absolute',
-                right: -43,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 30,
-                height: 30,
-                borderRadius: '50%',
-                border: '1.5px solid #1A1A1A',
-                background: 'transparent',
-                color: '#1A1A1A',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-                fontFamily: 'inherit',
-              }}
-            >
-              <Info size={17} strokeWidth={2.1} />
-            </button>
-          )}
+          
         </div>
         <p style={{
           fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
