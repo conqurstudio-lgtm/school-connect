@@ -1029,10 +1029,10 @@ export default function ParentMagicReportPage() {
           }}>
             {!isFamilyShare && (
               <div style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                zIndex: 20,
+                position: 'fixed',
+                left: 'calc(16px + env(safe-area-inset-left, 0px))',
+                top: 'calc(18px + env(safe-area-inset-top, 0px))',
+                zIndex: 120,
               }}>
                 <ReportTeacherActionAvatar
                   teacher={payload?.teacher}
