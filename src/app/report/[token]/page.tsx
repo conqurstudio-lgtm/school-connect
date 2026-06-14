@@ -247,6 +247,160 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 
 
 
+
+function reportTeacherInitials(name: any) {
+  return String(name || 'Teacher')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part: string) => part[0]?.toUpperCase())
+    .join('') || 'T'
+}
+
+function ReportTeacherActionAvatar({ teacher, school, child }: any) {
+  const [open, setOpen] = useState(false)
+
+  const teacherName = teacher?.name || 'Teacher'
+  const teacherPhoto =
+    teacher?.photo_url ||
+    teacher?.avatar_url ||
+    teacher?.image_url ||
+    ''
+
+  const childName = child?.name || child?.first_name || 'Your child'
+  const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
+  const childTeacherLabel = childFirstName === 'Your child'
+    ? 'Your child’s teacher'
+    : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
+
+  const schoolName = school?.name || teacher?.school_name || ''
+
+  return (
+    <div style={{ position: 'relative', flexShrink: 0 }}>
+      {/* report-action-teacher-avatar-v435 */}
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        aria-label="View teacher information"
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          border: '1px solid rgba(37,37,37,0.10)',
+          background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#FFFFFF',
+          color: '#5F6268',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 11,
+          fontWeight: 620,
+          letterSpacing: '-0.01em',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          boxShadow: '0 8px 18px rgba(0,0,0,0.05)',
+        }}
+      >
+        {!teacherPhoto && reportTeacherInitials(teacherName)}
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: 48,
+          left: 0,
+          zIndex: 100,
+          width: 'min(300px, calc(100vw - 42px))',
+          borderRadius: 22,
+          border: '1px solid rgba(37,37,37,0.08)',
+          background: '#FFFFFF',
+          boxShadow: '0 18px 46px rgba(0,0,0,0.14)',
+          padding: 14,
+          textAlign: 'left',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 11,
+          }}>
+            <div style={{
+              width: 42,
+              height: 42,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+              color: '#5F6268',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              fontWeight: 640,
+              flexShrink: 0,
+              overflow: 'hidden',
+            }}>
+              {!teacherPhoto && reportTeacherInitials(teacherName)}
+            </div>
+
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{
+                fontSize: 14,
+                fontWeight: 620,
+                color: '#252525',
+                letterSpacing: '-0.02em',
+                margin: '1px 0 4px',
+              }}>
+                {teacherName}
+              </p>
+
+              <p style={{
+                fontSize: 12.6,
+                color: '#5F6268',
+                lineHeight: 1.35,
+                margin: 0,
+              }}>
+                {childTeacherLabel}
+              </p>
+
+              {schoolName ? (
+                <p style={{
+                  fontSize: 12.3,
+                  color: '#5F6268',
+                  lineHeight: 1.35,
+                  margin: '9px 0 0',
+                }}>
+                  {schoolName}
+                </p>
+              ) : null}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close teacher information"
+              style={{
+                width: 26,
+                height: 26,
+                borderRadius: '50%',
+                border: 'none',
+                background: '#F6F6F7',
+                color: '#5F6268',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: 16,
+                lineHeight: 1,
+                flexShrink: 0,
+              }}
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+
 function FamilyShareButton({ token }: { token: string }) {
   const [open, setOpen] = useState(false)
   const [creating, setCreating] = useState(false)
@@ -872,8 +1026,23 @@ export default function ParentMagicReportPage() {
             alignItems: 'center',
             gap: 8,
           }}>
-            {!isFamilyShare && <FamilyShareButton token={token || ''} />}
-            {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
+            {!isFamilyShare && (
+              <ReportTeacherActionAvatar
+                teacher={payload?.teacher}
+                school={payload?.school}
+                child={payload?.child}
+              />
+            )}
+
+            <div style={{
+              marginLeft: 'auto',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+            }}>
+              {!isFamilyShare && <FamilyShareButton token={token || ''} />}
+              {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
+            </div>
           </div>
         </header>
 

@@ -230,6 +230,9 @@ export function ReportSwiper({ reports = [], childName, teacher, school }: Props
                     report={{
                       ...report,
                       display_position: isLatest ? 'latest' : 'previous',
+                      teacher_name: report.teacher_name || teacher?.name || report.teacher?.name,
+                      teacher_photo_url: report.teacher_photo_url || teacher?.photo_url || teacher?.avatar_url || teacher?.image_url || report.teacher?.photo_url,
+                      school_name: report.school_name || school?.name || report.school?.name,
                     }}
                     childName={childName}
                   />
