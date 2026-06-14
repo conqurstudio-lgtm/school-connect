@@ -275,6 +275,7 @@ function getSubjectDetailComment(score: number) {
 }
 
 export function ReportCard({ report, childName }: Props) {
+  const [expanded, setExpanded] = useState(false)
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
@@ -333,27 +334,13 @@ export function ReportCard({ report, childName }: Props) {
           {reportStatusLabel}
         </div>
 
-        <div style={{
-          position: 'relative',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          maxWidth: '100%',
-          margin: '0 auto 8px',
+        <h2 style={{
+          fontSize: 26.5, fontWeight: 650, color: T.ink,
+          letterSpacing: '-0.03em', lineHeight: 1.1,
+          margin: '0 0 8px',
         }}>
-          <h2 style={{
-            fontSize: 26.5,
-            fontWeight: 650,
-            color: T.ink,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.1,
-            margin: 0,
-          }}>
-            {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
-          </h2>
-
-          
-        </div>
+          {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
+        </h2>
         <p style={{
           fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
           letterSpacing: '0.002em', fontWeight: 430,
@@ -361,42 +348,7 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <div className="sc-report-score-ring-info-v439" style={{
-          position: 'relative',
-          width: 'fit-content',
-          margin: '0 auto',
-        }}>
-          <ScoreRing score={overall} compact={!isLatestReport} />
-
-          {subjects.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setSubjectInfoOpen(true)}
-              aria-label="View subjects"
-              style={{
-                position: 'absolute',
-                top: -8,
-                right: -26,
-                width: 30,
-                height: 30,
-                borderRadius: '50%',
-                border: '1.5px solid #1A1A1A',
-                background: '#FFFFFF',
-                color: '#1A1A1A',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-                fontFamily: 'inherit',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                zIndex: 5,
-              }}
-            >
-              <Info size={17} strokeWidth={2.1} />
-            </button>
-          )}
-        </div>
+        <ScoreRing score={overall} compact={!isLatestReport} />
 
         <div style={{ marginTop: 24 }}>
           <p style={{
@@ -474,7 +426,154 @@ export function ReportCard({ report, childName }: Props) {
         </section>
       )}
 
-      {/* Subjects moved to report info popup */}
+      {/* Subjects (collapsible) */}
+      <div className="sc-report-subjects-clean-v306 sc-report-subjects-clean-v307" style={{
+        maxWidth: 396,
+        margin: '0 auto',
+        padding: '0 10px',
+        textAlign: 'center',
+      }}>
+        <button
+          type="button"
+          onClick={() => setExpanded(v => !v)}
+          aria-expanded={expanded}
+          style={{
+            width: 'fit-content',
+            minHeight: 38,
+            padding: '0 18px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#252525',
+            border: 'none',
+            borderRadius: 999,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            margin: '0 auto',
+            marginBottom: expanded ? 20 : 0,
+          }}
+        >
+          <span style={{
+            fontSize: 13,
+            fontWeight: 520,
+            color: '#FFFFFF',
+            letterSpacing: '-0.005em',
+            lineHeight: 1,
+          }}>
+            {expanded ? 'Hide subjects' : 'View subjects'}
+          </span>
+        </button>
+
+        {expanded && (
+          <div className="sc-report-subjects-list-v438" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 14,
+            padding: '6px 0 8px',
+            textAlign: 'left',
+          }}>
+            {subjects.length ? subjects.map(([name, score]) => {
+              const numericScore = Number(score)
+              const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+              const pct = (safeScore / 5) * 100
+              const prev = report.previous_scores?.[name]
+              const delta = prev !== undefined ? safeScore - Number(prev) : null
+              const detailComment = getSubjectDetailComment(safeScore)
+
+              return (
+                <div key={String(name)} className="sc-report-subject-detail-row-v438" style={{
+                  padding: '10px 0 12px',
+                  borderTop: '1px solid rgba(37,37,37,0.055)',
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: 14,
+                  }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{
+                        fontSize: 13.5,
+                        color: '#252525',
+                        fontWeight: 540,
+                        letterSpacing: '-0.01em',
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }} title={String(name)}>
+                        {shortenSubject(String(name))}
+                      </p>
+
+                      <div style={{
+                        height: 3,
+                        width: '100%',
+                        maxWidth: 180,
+                        borderRadius: 999,
+                        background: 'rgba(37,37,37,0.08)',
+                        overflow: 'hidden',
+                        marginTop: 8,
+                      }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${pct}%`,
+                          borderRadius: 999,
+                          background: '#8FA6A1',
+                        }} />
+                      </div>
+
+                      <p style={{
+                        fontSize: 12.3,
+                        color: '#6F7476',
+                        lineHeight: 1.35,
+                        margin: '6px 0 0',
+                        fontWeight: 400,
+                      }}>
+                        {detailComment}
+                      </p>
+                    </div>
+
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      flexShrink: 0,
+                    }}>
+                      {delta !== null && <Delta value={delta} />}
+
+                      <span style={{
+                        minWidth: 34,
+                        height: 28,
+                        borderRadius: 999,
+                        background: 'rgba(255,255,255,0.72)',
+                        color: '#252525',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 560,
+                        fontVariantNumeric: 'tabular-nums',
+                        padding: '0 8px',
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            }) : (
+              <p style={{
+                fontSize: 13,
+                color: '#7C8486',
+                lineHeight: 1.5,
+                margin: 0,
+              }}>
+                No subject details were added to this report.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
 
     </section>
   )
