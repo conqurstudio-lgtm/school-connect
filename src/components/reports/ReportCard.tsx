@@ -388,7 +388,42 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <ScoreRing score={overall} compact={!isLatestReport} />
+        <div className="sc-report-score-ring-info-v439" style={{
+          position: 'relative',
+          width: 'fit-content',
+          margin: '0 auto',
+        }}>
+          <ScoreRing score={overall} compact={!isLatestReport} />
+
+          {subjects.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setSubjectInfoOpen(true)}
+              aria-label="View subjects"
+              style={{
+                position: 'absolute',
+                top: -8,
+                right: -26,
+                width: 30,
+                height: 30,
+                borderRadius: '50%',
+                border: '1.5px solid #1A1A1A',
+                background: '#FFFFFF',
+                color: '#1A1A1A',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                padding: 0,
+                fontFamily: 'inherit',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                zIndex: 5,
+              }}
+            >
+              <Info size={17} strokeWidth={2.1} />
+            </button>
+          )}
+        </div>
 
         <div style={{ marginTop: 24 }}>
           <p style={{
