@@ -2049,3 +2049,73 @@ select:focus-visible {
   }
 }
 
+
+/* school-connect-premium-moments-v1 */
+.sc-moment-card,
+.sc-class-life-card,
+.sc-feed-card,
+.sc-post-card {
+  background: #FFFFFF;
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  border-radius: var(--sc-radius-xl, 28px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.065);
+  overflow: hidden;
+}
+
+.sc-moment-card img,
+.sc-class-life-card img,
+.sc-feed-card img,
+.sc-post-card img {
+  border-radius: 18px;
+}
+
+.sc-moment-action,
+.sc-moment-reaction,
+.sc-feed-action,
+.sc-post-action {
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  background: #FFFFFF;
+  color: var(--sc-ink, #202124);
+  border-radius: var(--sc-radius-pill, 999px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.045);
+}
+
+.sc-moment-action:hover,
+.sc-moment-reaction:hover,
+.sc-feed-action:hover,
+.sc-post-action:hover {
+  background: #F7F7F8;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.07);
+}
+
+.sc-moment-meta,
+.sc-feed-meta,
+.sc-post-meta {
+  color: var(--sc-muted, #7A7D82);
+  font-size: 12px;
+  letter-spacing: -0.005em;
+}
+
+.sc-moment-title,
+.sc-feed-title,
+.sc-post-title {
+  color: var(--sc-ink, #202124);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.sc-moment-text,
+.sc-feed-text,
+.sc-post-text {
+  color: var(--sc-ink-soft, #3F4247);
+  line-height: 1.55;
+}
+
+.sc-lightbox-card,
+.sc-image-viewer-card {
+  background: #FFFFFF;
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  border-radius: var(--sc-radius-xl, 28px);
+  box-shadow: var(--sc-shadow-float, 0 22px 64px rgba(0,0,0,0.14));
+}
+
