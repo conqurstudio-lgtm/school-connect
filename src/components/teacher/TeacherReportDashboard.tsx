@@ -1071,7 +1071,7 @@ function TeacherLearnersPage({
  }}>
  <SCTopBar
  title="Reports"
- subtitle={reportsSummary}
+ subtitle=""
  align="left"
  compact
  left={<SchoolConnectBackButton onClick={onBack} />}
@@ -1826,7 +1826,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  return (
  <TeacherReportScreenFrame
  title={child.name}
- subtitle="Weekly report"
+ subtitle=""
  onBack={onBack}
  footer={writeFooter}
  >
