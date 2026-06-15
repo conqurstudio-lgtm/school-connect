@@ -85,7 +85,7 @@ export default function SCReportRow({
 
   return (
     <article
-      className="sc-report-row sc-list-row"
+      className="sc-report-row sc-list-row sc-premium-list-row"
       style={{
         position: 'relative',
         padding: '12px 0',
@@ -167,7 +167,7 @@ export default function SCReportRow({
       <button
         type="button"
         onClick={onAction || onOpen}
-        className="sc-pill-button"
+        className="sc-pill-button sc-premium-chip"
         style={{
           minHeight: 31,
           padding: '0 8px',
@@ -194,7 +194,7 @@ export default function SCReportRow({
           type="button"
           aria-label={`More options for ${title}`}
           onClick={toggleMenu}
-          className="sc-icon-button"
+          className="sc-icon-button sc-premium-icon-button"
           style={{
             width: 31,
             height: 31,
@@ -230,7 +230,7 @@ export default function SCReportRow({
             ref={menuRef}
             role="menu"
             aria-label={`Options for ${title}`}
-            className="sc-floating-menu"
+            className="sc-floating-menu sc-premium-menu"
             style={{
               position: 'fixed',
               left: menuPosition.left,
