@@ -2931,3 +2931,31 @@ button[aria-label="Settings"]:active {
   transform: scale(0.96);
 }
 
+
+/* school-connect-report-row-options-menu-v1 */
+/* Keep learner options menu clean, above the page, and borderless on trigger buttons */
+.sc-report-row .sc-icon-button,
+.sc-report-row button[aria-label*="More options"] {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.sc-report-row .sc-icon-button:focus,
+.sc-report-row .sc-icon-button:focus-visible,
+.sc-report-row button[aria-label*="More options"]:focus,
+.sc-report-row button[aria-label*="More options"]:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-row-options-menu {
+  animation: scMenuIn 140ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.sc-report-row-options-menu button {
+  box-shadow: none !important;
+}
+

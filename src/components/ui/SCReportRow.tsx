@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { MoreHorizontal, Trash2 } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { MoreVertical, Trash2 } from 'lucide-react'
 
 type Props = {
   initials: string
@@ -30,6 +31,7 @@ export default function SCReportRow({
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   const closeMenu = () => {
     setMenuOpen(false)
@@ -52,6 +54,10 @@ export default function SCReportRow({
     })
     setMenuOpen((value) => !value)
   }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -98,7 +104,10 @@ export default function SCReportRow({
     >
       <button
         type="button"
-        onClick={onOpen}
+        onClick={() => {
+          closeMenu()
+          onOpen()
+        }}
         style={{
           flex: 1,
           minWidth: 0,
@@ -166,7 +175,10 @@ export default function SCReportRow({
 
       <button
         type="button"
-        onClick={onAction || onOpen}
+        onClick={() => {
+          closeMenu()
+          ;(onAction || onOpen)?.()
+        }}
         className="sc-pill-button"
         style={{
           minHeight: 31,
@@ -210,18 +222,18 @@ export default function SCReportRow({
             padding: 0,
           }}
         >
-          <MoreHorizontal size={16} strokeWidth={1.85} />
+          <MoreVertical size={17} strokeWidth={1.9} />
         </button>
       ) : null}
 
-      {menuOpen && menuPosition && onRemove ? (
+      {menuOpen && menuPosition && onRemove && mounted ? createPortal(
         <>
           <div
             onClick={closeMenu}
             style={{
               position: 'fixed',
               inset: 0,
-              zIndex: 9000,
+              zIndex: 2147483000,
               background: 'transparent',
             }}
           />
@@ -230,12 +242,12 @@ export default function SCReportRow({
             ref={menuRef}
             role="menu"
             aria-label={`Options for ${title}`}
-            className="sc-floating-menu"
+            className="sc-floating-menu sc-report-row-options-menu"
             style={{
               position: 'fixed',
               left: menuPosition.left,
               top: menuPosition.top,
-              zIndex: 9001,
+              zIndex: 2147483001,
               minWidth: 178,
               padding: 6,
               borderRadius: 16,
@@ -276,7 +288,8 @@ export default function SCReportRow({
               {removeLabel}
             </button>
           </div>
-        </>
+        </>,
+        document.body
       ) : null}
     </article>
   )
