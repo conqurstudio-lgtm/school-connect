@@ -2388,3 +2388,86 @@ tbody tr:hover {
   box-shadow: 0 18px 52px rgba(0, 0, 0, 0.14);
 }
 
+
+/* school-connect-premium-buttons-motion-v1 */
+.sc-screen-enter {
+  animation: scPremiumScreenEnter 280ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes scPremiumScreenEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sc-icon-button {
+  border: none;
+  background: #FFFFFF;
+  color: var(--sc-ink, #202124);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.075);
+  transition:
+    transform 160ms var(--sc-ease, ease),
+    box-shadow 160ms var(--sc-ease, ease),
+    background-color 160ms var(--sc-ease, ease),
+    color 160ms var(--sc-ease, ease);
+}
+
+.sc-icon-button:hover {
+  background: #F7F7F8;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.105);
+}
+
+.sc-icon-button:active {
+  transform: translateY(1px) scale(0.96);
+}
+
+.sc-pill-button {
+  border-radius: var(--sc-radius-pill, 999px);
+  transition:
+    transform 160ms var(--sc-ease, ease),
+    box-shadow 160ms var(--sc-ease, ease),
+    background-color 160ms var(--sc-ease, ease),
+    color 160ms var(--sc-ease, ease);
+}
+
+.sc-pill-button:hover {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.075);
+}
+
+.sc-pill-button:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.sc-premium-lift {
+  transition:
+    transform 180ms var(--sc-ease, ease),
+    box-shadow 180ms varift {
+  transition:
+    transform 180ms var(--sc-ease, ease),
+    box-shadow 180ms var(--sc-ease, ease),
+    border-color 180ms var(--sc-ease, ease);
+}
+
+.sc-premium-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.09);
+}
+
+.sc-premium-soft-page {
+  background:
+    radial-gradient(circle at top left, rgba(0, 132, 255, 0.035), transparent 34%),
+    linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-screen-enter {
+    animation: none !important;
+  }
+}
+
