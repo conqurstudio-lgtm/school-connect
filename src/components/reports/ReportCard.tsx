@@ -275,29 +275,50 @@ function getSubjectDetailComment(score: number) {
 }
 
 
+
 function getSubjectParentLabel(score: number): string {
-  if (score >= 4.3) return 'Excelling'
-  if (score >= 3.6) return 'Doing well'
+  if (score >= 4.3) return 'Excellent'
+  if (score >= 3.6) return 'Good'
   if (score >= 2.8) return 'Growing'
-  return 'Needs support'
+  return 'Help needed'
 }
 
-function getSubjectParentTip(subject: string, score: number): string {
-  const name = shortenSubject(String(subject || 'this area'))
+function getSubjectChangePhrase(previousScore: number | null, currentScore: number): string {
+  if (previousScore === null || !Number.isFinite(previousScore)) {
+    return ''
+  }
+
+  const change = currentScore - previousScore
+
+  if (change >= 0.3) return 'This has improved since the previous report.'
+  if (change <= -0.3) return 'This has gone down since the previous report, so a little extra support will help.'
+  return 'This is steady compared with the previous report.'
+}
+
+function getSubjectParentTip(
+  childName: string | undefined,
+  subject: string,
+  score: number,
+  previousScore: number | null
+): string {
+  const firstName = String(childName || 'The learner').split(' ')[0] || 'The learner'
+  const name = shortenSubject(String(subject || 'this subject'))
+  const changePhrase = getSubjectChangePhrase(previousScore, score)
+  const changeText = changePhrase ? ` ${changePhrase}` : ''
 
   if (score >= 4.3) {
-    return `${name} is a clear strength. Keep encouraging confidence here with small challenges and praise.`
+    return `${firstName} is excelling in ${name}.${changeText} Keep encouraging this strength with praise and small challenges.`
   }
 
   if (score >= 3.6) {
-    return `${name} is moving well. A little steady practice can help this become an even stronger area.`
+    return `${firstName} is doing well in ${name}.${changeText} A little regular practice can help this become even stronger.`
   }
 
   if (score >= 2.8) {
-    return `${name} is developing. Short, regular practice and gentle support will help build confidence.`
+    return `${firstName} is growing in ${name}.${changeText} Short practice at home and gentle encouragement will help build confidence.`
   }
 
-  return `${name} needs extra support. Start with simple activities at home and ask the teacher where to focus first.`
+  return `${firstName} needs extra help in ${name}.${changeText} Focus on one small activity at a time and ask the teacher what to practise first.`
 }
 
 function buildParentReportMemo(childName: string | undefined, subjects: [string, number][]): string {
@@ -307,10 +328,10 @@ function buildParentReportMemo(childName: string | undefined, subjects: [string,
     .filter(([, score]) => Number.isFinite(score))
 
   if (!rows.length) {
-    return `${firstName}'s report is ready. Use the teacher note below as the main guide for support this week.`
+    return `${firstName}'s report is ready. The subject notes below will guide what to support at home.`
   }
 
-  const strengths = rows
+  const strongest = rows
     .filter(([, score]) => score >= 3.8)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 2)
@@ -322,19 +343,19 @@ function buildParentReportMemo(childName: string | undefined, subjects: [string,
     .slice(0, 2)
     .map(([name]) => shortenSubject(name))
 
-  if (strengths.length && support.length) {
-    return `${firstName} is showing good progress in ${strengths.join(' and ')}. The main area to gently support next is ${support.join(' and ')}. Keep the support calm, short and consistent.`
+  if (strongest.length && support.length) {
+    return `${firstName} is strongest in ${strongest.join(' and ')}. The subject notes below show where to keep encouraging progress and where to give extra support.`
   }
 
-  if (strengths.length) {
-    return `${firstName} is doing well, especially in ${strengths.join(' and ')}. Keep building confidence with praise, reading, conversation and small weekly practice.`
+  if (strongest.length) {
+    return `${firstName} is showing strong progress, especially in ${strongest.join(' and ')}. Keep supporting this with simple weekly practice.`
   }
 
   if (support.length) {
-    return `${firstName} needs a little extra support in ${support.join(' and ')}. Focus on one small step at a time and celebrate small improvements.`
+    return `${firstName} will benefit from extra support in ${support.join(' and ')}. The notes below suggest where to focus at home.`
   }
 
-  return `${firstName} is progressing steadily. Keep a simple weekly routine and use the teacher note as the best guide for what to practise next.`
+  return `${firstName} is progressing steadily. The subject notes below show what to keep practising and encouraging.`
 }
 
 export function ReportCard({ report, childName }: Props) {
@@ -422,7 +443,7 @@ export function ReportCard({ report, childName }: Props) {
             <button
               type="button"
               onClick={() => setSubjectInfoOpen(true)}
-              aria-label="View report guide"
+              aria-label="View subject support"
               className="sc-report-info-button sc-report-info-button-restored"
               style={{
                 position: 'absolute',
@@ -466,7 +487,7 @@ export function ReportCard({ report, childName }: Props) {
           className="sc-report-subject-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Report guide"
+          aria-label="Subject support"
           onClick={() => setSubjectInfoOpen(false)}
           style={{
             position: 'fixed',
@@ -502,23 +523,13 @@ export function ReportCard({ report, childName }: Props) {
                   margin: 0,
                   letterSpacing: '-0.02em',
                 }}>
-                  Report guide
+                  Subject support
                 </p>
                 <p style={{
                   fontSize: 12.1,
                   color: '#8A8D92',
                   margin: '4px 0 0',
                   lineHeight: 1.35,
-                }}>
-                  A calm explanation of what this report means.
-                </p>
-
-                <p className="sc-report-parent-memo" style={{
-                  fontSize: 12.6,
-                  color: '#4A4A4A',
-                  margin: '11px 0 0',
-                  lineHeight: 1.55,
-                  maxWidth: 270,
                 }}>
                   {buildParentReportMemo(childName || report.child_name, subjects)}
                 </p>
@@ -528,7 +539,7 @@ export function ReportCard({ report, childName }: Props) {
                 className="sc-report-subject-close"
                 type="button"
                 onClick={() => setSubjectInfoOpen(false)}
-                aria-label="Close report guide"
+                aria-label="Close subject support"
                 style={{
                   width: 30,
                   height: 30,
@@ -548,7 +559,9 @@ export function ReportCard({ report, childName }: Props) {
               {subjects.map(([name, score]) => {
                 const numericScore = Number(score)
                 const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const meaning = getSubjectParentTip(String(name), safeScore)
+                const previousRaw = report.previous_scores ? Number(report.previous_scores[String(name)]) : NaN
+                const previousSafeScore = Number.isFinite(previousRaw) ? Math.max(0, Math.min(5, previousRaw)) : null
+                const meaning = getSubjectParentTip(childName || report.child_name, String(name), safeScore, previousSafeScore)
 
                 return (
                   <div key={String(name)} className="sc-report-subject-row" style={{
@@ -579,11 +592,28 @@ export function ReportCard({ report, childName }: Props) {
                     </div>
 
                     <span className="sc-report-subject-chip" style={{
-                      minWidth: 86,
-                      height: 30,
-                      fontVariantNumeric: 'normal',
+                      minWidth: 76,
+                      height: 38,
+                      fontVariantNumeric: 'tabular-nums',
                     }}>
-                      {getSubjectParentLabel(safeScore)}
+                      <strong style={{
+                        fontSize: 12.8,
+                        fontWeight: 680,
+                        lineHeight: 1,
+                        color: '#252525',
+                      }}>
+                        {safeScore.toFixed(1)}
+                      </strong>
+                      <em style={{
+                        fontSize: 9.7,
+                        fontStyle: 'normal',
+                        fontWeight: 560,
+                        color: '#7C8486',
+                        lineHeight: 1.05,
+                        marginTop: 3,
+                      }}>
+                        {getSubjectParentLabel(safeScore)}
+                      </em>
                     </span>
                   </div>
                 )
