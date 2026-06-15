@@ -360,7 +360,7 @@ export function ReportCard({ report, childName }: Props) {
               type="button"
               onClick={() => setSubjectInfoOpen(true)}
               aria-label="View subject scores"
-              className="sc-premium-icon-button"
+              className="sc-report-info-button"
               style={{
                 position: 'absolute',
                 top: -7,
@@ -400,7 +400,7 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {subjectInfoOpen && (
         <div
-          className="sc-premium-overlay"
+          className="sc-report-subject-overlay"
           role="dialog"
           aria-modal="true"
           aria-label="Subject scores"
@@ -416,7 +416,7 @@ export function ReportCard({ report, childName }: Props) {
           }}
         >
           <div
-            className="sc-premium-floating-card"
+            className="sc-report-subject-panel"
             onClick={(event) => event.stopPropagation()}
             style={{
               width: '100%',
@@ -452,7 +452,7 @@ export function ReportCard({ report, childName }: Props) {
               </div>
 
               <button
-                className="sc-premium-close-button"
+                className="sc-report-subject-close"
                 type="button"
                 onClick={() => setSubjectInfoOpen(false)}
                 aria-label="Close subject scores"
@@ -478,7 +478,7 @@ export function ReportCard({ report, childName }: Props) {
                 const meaning = getSubjectDetailComment(safeScore)
 
                 return (
-                  <div key={String(name)} className="sc-premium-row" style={{
+                  <div key={String(name)} className="sc-report-subject-row" style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr auto',
                     gap: 14,
@@ -505,7 +505,7 @@ export function ReportCard({ report, childName }: Props) {
                       </p>
                     </div>
 
-                    <span className="sc-premium-chip" style={{
+                    <span className="sc-report-subject-chip" style={{
                       minWidth: 40,
                       height: 30,
                       fontVariantNumeric: 'tabular-nums',

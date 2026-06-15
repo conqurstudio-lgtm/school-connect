@@ -2959,3 +2959,85 @@ button[aria-label="Settings"]:active {
   box-shadow: none !important;
 }
 
+
+/* school-connect-flat-report-subject-popup-v1 */
+/* Flat, clean report subject score popup without premium/card-heavy classes */
+.sc-report-info-button {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--sc-ink-2, #5F6268);
+  border-radius: 999px;
+}
+
+.sc-report-info-button:focus,
+.sc-report-info-button:focus-visible,
+.sc-report-info-button:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.sc-report-subject-overlay {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sc-report-subject-panel {
+  background: #FFFFFF;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  border-radius: 22px;
+  box-shadow: none !important;
+}
+
+.sc-report-subject-close {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--sc-ink-2, #5F6268);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+}
+
+.sc-report-subject-close:focus,
+.sc-report-subject-close:focus-visible,
+.sc-report-subject-close:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.sc-report-subject-row {
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.045);
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.sc-report-subject-row:last-child {
+  border-bottom: none;
+}
+
+.sc-report-subject-chip {
+  min-width: 40px;
+  height: 30px;
+  border-radius: 999px;
+  border: none !important;
+  background: #F6F6F7;
+  color: var(--sc-ink, #252525);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.2px;
+  font-weight: 560;
+  box-shadow: none !important;
+}
+
