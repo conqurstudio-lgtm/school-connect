@@ -367,7 +367,7 @@ export function ReportCard({ report, childName }: Props) {
                 width: 28,
                 height: 28,
                 borderRadius: '50%',
-                border: '1.4px solid #202124',
+                border: 'none',
                 background: '#FFFFFF',
                 color: '#202124',
                 display: 'inline-flex',
@@ -375,7 +375,7 @@ export function ReportCard({ report, childName }: Props) {
                 justifyContent: 'center',
                 cursor: 'pointer',
                 padding: 0,
-                boxShadow: '0 5px 14px rgba(0,0,0,0.055)',
+                boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
                 zIndex: 8,
               }}
             >
