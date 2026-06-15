@@ -400,6 +400,7 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {subjectInfoOpen && (
         <div
+          className="sc-premium-overlay"
           role="dialog"
           aria-modal="true"
           aria-label="Subject scores"
@@ -408,9 +409,6 @@ export function ReportCard({ report, childName }: Props) {
             position: 'fixed',
             inset: 0,
             zIndex: 2147482500,
-            background: 'rgba(255,255,255,0.72)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -454,19 +452,13 @@ export function ReportCard({ report, childName }: Props) {
               </div>
 
               <button
+                className="sc-premium-close-button"
                 type="button"
                 onClick={() => setSubjectInfoOpen(false)}
                 aria-label="Close subject scores"
                 style={{
                   width: 30,
                   height: 30,
-                  borderRadius: '50%',
-                  border: 'none',
-                  background: '#F5F5F7',
-                  color: '#55585E',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   cursor: 'pointer',
                   padding: 0,
                   flexShrink: 0,
@@ -486,12 +478,10 @@ export function ReportCard({ report, childName }: Props) {
                 const meaning = getSubjectDetailComment(safeScore)
 
                 return (
-                  <div key={String(name)} style={{
+                  <div key={String(name)} className="sc-premium-row" style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr auto',
                     gap: 14,
-                    padding: '12px 0',
-                    borderTop: '1px solid rgba(32,33,36,0.06)',
                     alignItems: 'center',
                   }}>
                     <div style={{ minWidth: 0 }}>
