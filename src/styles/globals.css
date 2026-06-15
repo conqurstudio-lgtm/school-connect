@@ -2618,3 +2618,33 @@ tbody tr:hover {
   color: var(--sc-muted, #7A7D82);
 }
 
+
+/* school-connect-flat-revert-v1 */
+.sc-icon-button,
+.sc-main-action-bar button,
+.teacher-safe-screen button,
+.teacher-page-shell button {
+  box-shadow: none !important;
+}
+
+.sc-pressable,
+.sc-main-action-bar,
+.sc-parent-moment-post-v414,
+.sc-school-sheet-panel {
+  box-shadow: none !important;
+}
+
+.teacher-page-shell,
+.teacher-safe-screen {
+  background: #ffffff;
+}
+
+.sc-pressable {
+  border-radius: inherit;
+}
+
+.sc-main-action-bar {
+  background: transparent;
+  border: none;
+}
+
