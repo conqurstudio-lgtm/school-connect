@@ -1920,7 +1920,6 @@ a,
 /* SCHOOL CONNECT SHARED TOP BAR V376 END */
 
 
-/* school-connect-premium-ui-foundation-v1 */
 :root {
   --sc-ink: #202124;
   --sc-ink-soft: #3F4247;
@@ -1997,46 +1996,6 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
-.sc-premium-card {
-  background: var(--sc-surface);
-  border: 1px solid var(--sc-line);
-  border-radius: var(--sc-radius-xl);
-  box-shadow: var(--sc-shadow-card);
-}
-
-.sc-premium-floating-card {
-  background: var(--sc-surface);
-  border: 1px solid var(--sc-line);
-  border-radius: var(--sc-radius-xl);
-  box-shadow: var(--sc-shadow-float);
-}
-
-.sc-premium-icon-button {
-  border: none;
-  background: #FFFFFF;
-  color: var(--sc-ink);
-  border-radius: 50%;
-  box-shadow: var(--sc-shadow-soft);
-}
-
-.sc-premium-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 30px;
-  padding: 0 12px;
-  border-radius: var(--sc-radius-pill);
-  background: var(--sc-surface-soft);
-  color: var(--sc-ink-soft);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.sc-premium-row {
-  border-top: 1px solid var(--sc-line-soft);
-  padding: 12px 0;
-}
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -2050,7 +2009,6 @@ select:focus-visible {
 }
 
 
-/* school-connect-premium-moments-v1 */
 .sc-moment-card,
 .sc-class-life-card,
 .sc-feed-card,
@@ -2120,7 +2078,6 @@ select:focus-visible {
 }
 
 
-/* school-connect-premium-forms-v1 */
 input:not([type='checkbox']):not([type='radio']):not([type='range']),
 textarea,
 select {
@@ -2194,27 +2151,7 @@ select {
   background-clip: padding-box;
 }
 
-.sc-premium-input-shell {
-  background: #FFFFFF;
-  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.045);
-}
 
-.sc-premium-section-title {
-  color: var(--sc-ink, #202124);
-  font-weight: 680;
-  letter-spacing: -0.03em;
-}
-
-.sc-premium-section-subtitle {
-  color: var(--sc-muted, #7A7D82);
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-}
-
-
-/* school-connect-premium-tables-lists-v1 */
 table {
   border-collapse: separate;
   border-spacing: 0;
@@ -2247,148 +2184,7 @@ tbody tr:hover {
   background: rgba(247, 247, 248, 0.72);
 }
 
-.sc-premium-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 
-.sc-premium-list-row {
-  background: #FFFFFF;
-  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.045);
-  transition:
-    transform 160ms var(--sc-ease, ease),
-    box-shadow 160ms var(--sc-ease, ease),
-    border-color 160ms var(--sc-ease, ease);
-}
-
-.sc-premium-list-row:hover {
-  transform: translateY(-1px);
-  border-color: rgba(32, 33, 36, 0.12);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.075);
-}
-
-.sc-premium-avatar {
-  border-radius: 50%;
-  background: #F5F5F7;
-  box-shadow: inset 0 0 0 1px rgba(32, 33, 36, 0.06);
-  overflow: hidden;
-}
-
-.sc-premium-empty-state {
-  background: #FFFFFF;
-  border: 1px dashed rgba(32, 33, 36, 0.14);
-  border-radius: 24px;
-  padding: 28px 20px;
-  text-align: center;
-  color: var(--sc-muted, #7A7D82);
-}
-
-.sc-premium-divider {
-  height: 1px;
-  background: var(--sc-line-soft, rgba(32, 33, 36, 0.055));
-  border: none;
-}
-
-
-/* school-connect-premium-overlays-menus-v1 */
-.sc-premium-overlay {
-  background: rgba(255, 255, 255, 0.74);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.sc-premium-modal,
-.sc-premium-sheet,
-.sc-premium-menu {
-  background: #FFFFFF;
-  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
-  box-shadow: var(--sc-shadow-float, 0 22px 64px rgba(0, 0, 0, 0.14));
-}
-
-.sc-premium-modal {
-  border-radius: var(--sc-radius-xl, 28px);
-}
-
-.sc-premium-sheet {
-  border-radius: 28px 28px 0 0;
-}
-
-.sc-premium-menu {
-  border-radius: 18px;
-  padding: 6px;
-}
-
-.sc-premium-menu-item {
-  min-height: 40px;
-  border-radius: 13px;
-  color: var(--sc-ink-soft, #3F4247);
-  transition:
-    background-color 150ms var(--sc-ease, ease),
-    transform 150ms var(--sc-ease, ease),
-    color 150ms var(--sc-ease, ease);
-}
-
-.sc-premium-menu-item:hover {
-  background: #F7F7F8;
-  color: var(--sc-ink, #202124);
-}
-
-.sc-premium-menu-item:active {
-  transform: scale(0.985);
-}
-
-.sc-premium-danger {
-  color: #B42318;
-}
-
-.sc-premium-danger:hover {
-  background: rgba(180, 35, 24, 0.08);
-  color: #B42318;
-}
-
-.sc-premium-backdrop-blur {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.sc-premium-close-button {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 50%;
-  background: #F5F5F7;
-  color: #55585E;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: none;
-}
-
-.sc-premium-close-button:hover {
-  background: #ECEDEF;
-}
-
-.sc-premium-toolbar {
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.075);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: var(--sc-radius-pill, 999px);
-}
-
-.sc-premium-toast {
-  background: #FFFFFF;
-  color: var(--sc-ink, #202124);
-  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
-  border-radius: 18px;
-  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.14);
-}
-
-/* school-connect-premium-buttons-motion-v1 */
 .sc-screen-enter {
   animation: scPremiumScreenEnter 280ms cubic-bezier(.2, .8, .2, 1) both;
 }
@@ -2444,23 +2240,6 @@ tbody tr:hover {
   transform: translateY(1px) scale(0.985);
 }
 
-.sc-premium-lift {
-  transition:
-    transform 180ms var(--sc-ease, ease),
-    box-shadow 180ms var(--sc-ease, ease),
-    border-color 180ms var(--sc-ease, ease);
-}
-
-.sc-premium-lift:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.09);
-}
-
-.sc-premium-soft-page {
-  background:
-    radial-gradient(circle at top left, rgba(0, 132, 255, 0.035), transparent 34%),
-    linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .sc-screen-enter {
@@ -2468,7 +2247,6 @@ tbody tr:hover {
   }
 }
 
-/* school-connect-premium-teacher-workspace-v1 */
 .sc-teacher-workspace,
 .sc-report-workspace,
 .sc-teacher-report-workspace {
@@ -2548,7 +2326,6 @@ tbody tr:hover {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.055);
 }
 
-/* school-connect-premium-school-admin-v1 */
 .sc-school-page,
 .sc-school-dashboard,
 .sc-school-admin,
@@ -2851,61 +2628,10 @@ select {
 }
 
 
-/* school-connect-flat-report-row-final-v1 */
-/* Teacher report learner rows: flat list, not card rows */
-.sc-report-row,
-.sc-report-row.sc-list-row,
-.sc-report-row.sc-premium-list-row {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
-.sc-report-row:hover,
-.sc-report-row.sc-list-row:hover,
-.sc-report-row.sc-premium-list-row:hover {
-  background: rgba(17, 17, 17, 0.012) !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-.sc-report-row .sc-pill-button,
-.sc-report-row .sc-premium-chip,
-.sc-report-row .sc-icon-button,
-.sc-report-row .sc-premium-icon-button {
-  background: transparent !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
-.sc-report-row .sc-floating-menu,
-.sc-report-row .sc-premium-menu {
-  box-shadow: none !important;
-}
-
 /* Cancel old premium list-row styles only inside teacher report rows */
 .teacher-safe-screen .teacher-page-shell .sc-report-row,
 .teacher-safe-screen .teacher-page-shell .sc-report-row * {
   box-shadow: none !important;
-}
-
-
-/* school-connect-borderless-icon-buttons-v1 */
-/* Remove subtle borders/rings around settings, options and icon buttons */
-.sc-icon-button,
-.sc-premium-icon-button,
-.teacher-safe-screen .sc-icon-button,
-.teacher-page-shell .sc-icon-button,
-.sc-report-row .sc-icon-button,
-.sc-main-action-bar .sc-icon-button,
-button[aria-label="Settings"],
-button[aria-label="Add learner"],
-button[aria-label*="More options"] {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
 }
 
 /* Remove focus ring/settle outline that appears after tapping */
@@ -3041,3 +2767,5 @@ button[aria-label="Settings"]:active {
   box-shadow: none !important;
 }
 
+/* school-connect-unused-premium-css-cleaned-v1 */
+/* Removed unused .sc-premium-* CSS rules after project-wide usage check. */
