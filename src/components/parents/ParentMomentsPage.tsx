@@ -448,7 +448,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
               <a
                 href={`/report/${token}`}
                 aria-label="Back to report"
-                className="sc-icon-button"
+                className="sc-icon-button sc-premium-icon-button"
                 style={{
                   width: 38,
                   height: 38,
@@ -659,7 +659,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   const [imageReady, setImageReady] = useState(false)
 
   return (
-    <article className="sc-parent-moment-post-v414" style={{
+    <article className="sc-parent-moment-post-v414 sc-moment-card sc-premium-card" style={{
       display: 'grid',
       gridTemplateColumns: '38px 1fr',
       gap: 10,

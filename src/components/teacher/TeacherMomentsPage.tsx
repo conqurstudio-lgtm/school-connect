@@ -877,7 +877,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="sc-icon-button"
+          className="sc-icon-button sc-premium-icon-button"
           style={{
             width: 34,
             height: 34,
@@ -957,7 +957,7 @@ function ReactionSheet({ moment, onClose }: any) {
           </p>
         </div>
 
-        <button type="button" onClick={onClose} aria-label="Close" className="sc-icon-button" style={{
+        <button type="button" onClick={onClose} aria-label="Close" className="sc-icon-button sc-premium-icon-button" style={{
           width: 34,
           height: 34,
           borderRadius: 999,
