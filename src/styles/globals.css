@@ -2769,3 +2769,35 @@ button[aria-label="Settings"]:active {
 
 /* school-connect-unused-premium-css-cleaned-v1 */
 /* Removed unused .sc-premium-* CSS rules after project-wide usage check. */
+
+
+/* school-connect-parent-report-memo-popup-v1 */
+/* Restore the parent report guide eye icon and make the popup more helpful than statistical */
+.sc-report-info-button-restored {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(17, 17, 17, 0.055) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.075) !important;
+  color: #4A4A4A !important;
+}
+
+.sc-report-info-button-restored:active {
+  transform: scale(0.94);
+  opacity: 0.86;
+}
+
+.sc-report-subject-panel {
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.105) !important;
+}
+
+.sc-report-parent-memo {
+  background: #F8F8F9;
+  border-radius: 16px;
+  padding: 11px 12px;
+}
+
+.sc-report-subject-chip {
+  padding: 0 10px;
+  font-size: 11.4px !important;
+  letter-spacing: -0.01em;
+}
+
