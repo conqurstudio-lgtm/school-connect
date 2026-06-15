@@ -2681,3 +2681,125 @@ tbody tr:hover {
   box-shadow: none !important;
 }
 
+
+/* school-connect-gestalt-lite-v1 */
+:root {
+  --sc-g-bg: #ffffff;
+  --sc-g-surface: #ffffff;
+  --sc-g-soft: #f7f7f7;
+  --sc-g-soft-pink: #fff8fa;
+  --sc-g-line: rgba(32, 33, 36, 0.10);
+  --sc-g-line-soft: rgba(32, 33, 36, 0.07);
+  --sc-g-ink: #202124;
+  --sc-g-muted: #6f7277;
+  --sc-g-brand: #de2c62;
+  --sc-g-brand-dark: #a30c4a;
+  --sc-g-blue: #0074e8;
+  --sc-g-radius-sm: 8px;
+  --sc-g-radius-md: 12px;
+  --sc-g-radius-lg: 16px;
+  --sc-g-radius-pill: 999px;
+}
+
+/* Simple premium base: flat, clean, not heavy cards */
+.teacher-safe-screen,
+.parent-safe-screen,
+.sc-app-screen {
+  color: var(--sc-g-ink);
+  background: var(--sc-g-bg);
+}
+
+.teacher-page-shell,
+.parent-page-shell,
+.sc-page-shell {
+  background: transparent !important;
+}
+
+/* Buttons: Gestalt-inspired pill shape, but no card shadow */
+.sc-icon-button,
+.teacher-safe-screen button,
+.parent-safe-screen button,
+.sc-main-action-bar button {
+  box-shadow: none !important;
+}
+
+.sc-icon-button {
+  border-radius: var(--sc-g-radius-pill) !important;
+  border: 1px solid var(--sc-g-line-soft) !important;
+  background: #ffffff !important;
+}
+
+.sc-main-action-bar {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Teacher report learner list: force flat row look */
+.teacher-page-shell .sc-pressable,
+.teacher-safe-screen .sc-pressable {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.teacher-page-shell [class*="learner"],
+.teacher-page-shell [class*="student"],
+.teacher-page-shell [class*="Learner"],
+.teacher-page-shell [class*="Student"],
+.teacher-safe-screen [class*="learner"],
+.teacher-safe-screen [class*="student"],
+.teacher-safe-screen [class*="Learner"],
+.teacher-safe-screen [class*="Student"] {
+  box-shadow: none !important;
+}
+
+.teacher-page-shell [class*="learner"] button,
+.teacher-page-shell [class*="student"] button,
+.teacher-safe-screen [class*="learner"] button,
+.teacher-safe-screen [class*="student"] button {
+  box-shadow: none !important;
+}
+
+/* Flat rows with divider instead of floating cards */
+.sc-flat-row,
+.teacher-page-shell .sc-pressable,
+.teacher-safe-screen .sc-pressable {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--sc-g-line-soft) !important;
+}
+
+/* Keep content sections simple */
+.sc-parent-moment-post-v414,
+.sc-report-card-shell,
+.sc-workspace-card,
+.sc-teacher-card,
+.sc-report-panel,
+.sc-workspace-panel,
+.sc-teacher-panel {
+  box-shadow: none !important;
+}
+
+/* Inputs/notes: clean bordered surfaces, not heavy cards */
+.sc-teacher-note-input-v387,
+textarea,
+input,
+select {
+  box-shadow: none !important;
+}
+
+/* Mobile polish */
+@media (max-width: 768px) {
+  .teacher-safe-screen,
+  .parent-safe-screen {
+    background: #ffffff !important;
+  }
+
+  .sc-main-action-bar {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
