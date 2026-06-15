@@ -2803,3 +2803,50 @@ select {
   }
 }
 
+
+/* school-connect-flat-teacher-report-learners-v2 */
+
+/* Keep the teacher report learner list flat instead of card-based */
+.teacher-safe-screen .teacher-page-shell [class*="learner"],
+.teacher-safe-screen .teacher-page-shell [class*="Learner"],
+.teacher-safe-screen .teacher-page-shell [class*="student"],
+.teacher-safe-screen .teacher-page-shell [class*="Student"],
+.teacher-safe-screen .teacher-page-shell [class*="pupil"],
+.teacher-safe-screen .teacher-page-shell [class*="Pupil"] {
+  box-shadow: none !important;
+}
+
+/* Common row/list patterns inside teacher reports */
+.teacher-safe-screen .teacher-page-shell li,
+.teacher-safe-screen .teacher-page-shell [role="listitem"],
+.teacher-safe-screen .teacher-page-shell button.sc-pressable,
+.teacher-safe-screen .teacher-page-shell .sc-pressable {
+  box-shadow: none !important;
+}
+
+/* Flatten row backgrounds and remove floating card spacing */
+.teacher-safe-screen .teacher-page-shell button.sc-pressable,
+.teacher-safe-screen .teacher-page-shell .sc-pressable {
+  background: transparent !important;
+  border-radius: 0 !important;
+  transform: none !important;
+}
+
+.teacher-safe-screen .teacher-page-shell button.sc-pressable:hover,
+.teacher-safe-screen .teacher-page-shell .sc-pressable:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Remove card look from learner containers while keeping readable separators */
+.teacher-safe-screen .teacher-page-shell [class*="learner"],
+.teacher-safe-screen .teacher-page-shell [class*="student"] {
+  border-radius: 0 !important;
+}
+
+/* If the learner list has inline card styles, this cancels the visual weight */
+.teacher-safe-screen .teacher-page-shell [style*="box-shadow"],
+.teacher-safe-screen .teacher-page-shell [style*="boxShadow"] {
+  box-shadow: none !important;
+}
+
