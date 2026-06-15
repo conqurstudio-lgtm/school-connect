@@ -2890,3 +2890,44 @@ select {
   box-shadow: none !important;
 }
 
+
+/* school-connect-borderless-icon-buttons-v1 */
+/* Remove subtle borders/rings around settings, options and icon buttons */
+.sc-icon-button,
+.sc-premium-icon-button,
+.teacher-safe-screen .sc-icon-button,
+.teacher-page-shell .sc-icon-button,
+.sc-report-row .sc-icon-button,
+.sc-main-action-bar .sc-icon-button,
+button[aria-label="Settings"],
+button[aria-label="Add learner"],
+button[aria-label*="More options"] {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Remove focus ring/settle outline that appears after tapping */
+.sc-icon-button:focus,
+.sc-icon-button:focus-visible,
+.sc-icon-button:active,
+.teacher-safe-screen button:focus,
+.teacher-safe-screen button:focus-visible,
+.teacher-page-shell button:focus,
+.teacher-page-shell button:focus-visible,
+.sc-report-row button:focus,
+.sc-report-row button:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep the tap feeling soft without showing a border */
+.sc-icon-button:active,
+button[aria-label*="More options"]:active,
+button[aria-label="Settings"]:active {
+  opacity: 0.7;
+  transform: scale(0.96);
+}
+
