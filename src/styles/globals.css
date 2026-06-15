@@ -2648,3 +2648,36 @@ tbody tr:hover {
   border: none;
 }
 
+
+/* school-connect-flat-learner-list-v1 */
+
+/* Teacher report learner/student list - remove card look */
+.teacher-page-shell .sc-pressable,
+.teacher-safe-screen .sc-pressable {
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Remove rounded card feel from learner rows */
+.teacher-page-shell [class*="student"],
+.teacher-page-shell [class*="learner"],
+.teacher-safe-screen [class*="student"],
+.teacher-safe-screen [class*="learner"] {
+  box-shadow: none !important;
+}
+
+/* Keep rows clean and flat */
+.teacher-page-shell button.sc-pressable,
+.teacher-safe-screen button.sc-pressable,
+.teacher-page-shell .sc-pressable {
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+/* If learner rows are using inline white card backgrounds */
+.teacher-page-shell .sc-pressable[style],
+.teacher-safe-screen .sc-pressable[style] {
+  box-shadow: none !important;
+}
+
