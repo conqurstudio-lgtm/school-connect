@@ -360,22 +360,18 @@ export function ReportCard({ report, childName }: Props) {
               type="button"
               onClick={() => setSubjectInfoOpen(true)}
               aria-label="View subject scores"
+              className="sc-premium-icon-button"
               style={{
                 position: 'absolute',
                 top: -7,
                 right: -21,
                 width: 28,
                 height: 28,
-                borderRadius: '50%',
-                border: 'none',
-                background: '#FFFFFF',
-                color: '#202124',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 padding: 0,
-                boxShadow: '0 8px 22px rgba(0,0,0,0.12)',
                 zIndex: 8,
               }}
             >
@@ -422,14 +418,11 @@ export function ReportCard({ report, childName }: Props) {
           }}
         >
           <div
+            className="sc-premium-floating-card"
             onClick={(event) => event.stopPropagation()}
             style={{
               width: '100%',
               maxWidth: 352,
-              borderRadius: 24,
-              background: '#FFFFFF',
-              border: '1px solid rgba(32,33,36,0.08)',
-              boxShadow: '0 22px 64px rgba(0,0,0,0.14)',
               padding: '18px 18px 14px',
             }}
           >
@@ -522,19 +515,10 @@ export function ReportCard({ report, childName }: Props) {
                       </p>
                     </div>
 
-                    <span style={{
+                    <span className="sc-premium-chip" style={{
                       minWidth: 40,
                       height: 30,
-                      borderRadius: 999,
-                      background: '#F5F5F7',
-                      color: '#252525',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 12.2,
-                      fontWeight: 650,
                       fontVariantNumeric: 'tabular-nums',
-                      padding: '0 10px',
                     }}>
                       {safeScore.toFixed(1)}
                     </span>
