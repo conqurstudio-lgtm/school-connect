@@ -2850,3 +2850,43 @@ select {
   box-shadow: none !important;
 }
 
+
+/* school-connect-flat-report-row-final-v1 */
+/* Teacher report learner rows: flat list, not card rows */
+.sc-report-row,
+.sc-report-row.sc-list-row,
+.sc-report-row.sc-premium-list-row {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.sc-report-row:hover,
+.sc-report-row.sc-list-row:hover,
+.sc-report-row.sc-premium-list-row:hover {
+  background: rgba(17, 17, 17, 0.012) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.sc-report-row .sc-pill-button,
+.sc-report-row .sc-premium-chip,
+.sc-report-row .sc-icon-button,
+.sc-report-row .sc-premium-icon-button {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.sc-report-row .sc-floating-menu,
+.sc-report-row .sc-premium-menu {
+  box-shadow: none !important;
+}
+
+/* Cancel old premium list-row styles only inside teacher report rows */
+.teacher-safe-screen .teacher-page-shell .sc-report-row,
+.teacher-safe-screen .teacher-page-shell .sc-report-row * {
+  box-shadow: none !important;
+}
+
