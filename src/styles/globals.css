@@ -2292,3 +2292,99 @@ tbody tr:hover {
   border: none;
 }
 
+
+/* school-connect-premium-overlays-menus-v1 */
+.sc-premium-overlay {
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sc-premium-modal,
+.sc-premium-sheet,
+.sc-premium-menu {
+  background: #FFFFFF;
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  box-shadow: var(--sc-shadow-float, 0 22px 64px rgba(0, 0, 0, 0.14));
+}
+
+.sc-premium-modal {
+  border-radius: var(--sc-radius-xl, 28px);
+}
+
+.sc-premium-sheet {
+  border-radius: 28px 28px 0 0;
+}
+
+.sc-premium-menu {
+  border-radius: 18px;
+  padding: 6px;
+}
+
+.sc-premium-menu-item {
+  min-height: 40px;
+  border-radius: 13px;
+  color: var(--sc-ink-soft, #3F4247);
+  transition:
+    background-color 150ms var(--sc-ease, ease),
+    transform 150ms var(--sc-ease, ease),
+    color 150ms var(--sc-ease, ease);
+}
+
+.sc-premium-menu-item:hover {
+  background: #F7F7F8;
+  color: var(--sc-ink, #202124);
+}
+
+.sc-premium-menu-item:active {
+  transform: scale(0.985);
+}
+
+.sc-premium-danger {
+  color: #B42318;
+}
+
+.sc-premium-danger:hover {
+  background: rgba(180, 35, 24, 0.08);
+  color: #B42318;
+}
+
+.sc-premium-backdrop-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sc-premium-close-button {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: #F5F5F7;
+  color: #55585E;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.sc-premium-close-button:hover {
+  background: #ECEDEF;
+}
+
+.sc-premium-toolbar {
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.075);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--sc-radius-pill, 999px);
+}
+
+.sc-premium-toast {
+  background: #FFFFFF;
+  color: var(--sc-ink, #202124);
+  border: 1px solid var(--sc-line, rgba(32, 33, 36, 0.08));
+  border-radius: 18px;
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.14);
+}
+
