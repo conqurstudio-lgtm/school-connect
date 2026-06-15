@@ -783,7 +783,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
   }
 
   return (
-    <div className="teacher-safe-screen sc-screen-enter" style={{
+    <div className="teacher-safe-screen sc-screen-enter sc-teacher-workspace sc-premium-soft-page" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -815,7 +815,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
         background: T.white,
       }}>
         <div
-          className="sc-main-action-bar"
+          className="sc-main-action-bar sc-premium-toolbar"
           style={{
             minHeight: 56,
             flexShrink: 0,
@@ -1051,7 +1051,7 @@ function TeacherLearnersPage({
     : 'Weekly learner reports'
 
   return (
-    <div className="teacher-safe-screen sc-screen-enter" style={{
+    <div className="teacher-safe-screen sc-screen-enter sc-teacher-workspace sc-premium-soft-page" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1080,7 +1080,7 @@ function TeacherLearnersPage({
               type="button"
               onClick={onAdd}
               aria-label="Add learner"
-              className="sc-pressable"
+              className="sc-pressable sc-premium-lift"
               style={{
                 width: 38,
                 height: 38,
@@ -1344,7 +1344,7 @@ function TeacherReportTopBar({ title, subtitle, onBack }: any) {
 
 function TeacherReportScreenFrame({ title, subtitle, onBack, children, footer, linkedSafeArea = false }: any) {
   return (
-    <div className="teacher-safe-screen sc-screen-enter" style={{
+    <div className="teacher-safe-screen sc-screen-enter sc-teacher-workspace sc-premium-soft-page" style={{
       minHeight: '100dvh',
       height: '100dvh',
       overflow: 'hidden',
@@ -1901,7 +1901,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
           subtitle="Keep it short and helpful for the parent."
         />
         <textarea
-          className="sc-teacher-note-input-v387"
+          className="sc-teacher-note-input-v387 sc-report-note-box"
           value={comment}
           onChange={e => setComment(e.target.value)}
           rows={5}
@@ -2446,7 +2446,7 @@ function BottomSheet({ children, onClose }: any) {
 
   return createPortal(
     <div
-      className="sc-school-sheet-backdrop"
+      className="sc-school-sheet-backdrop sc-premium-overlay"
       onClick={onClose}
       style={{
         position: 'fixed',
@@ -2461,7 +2461,7 @@ function BottomSheet({ children, onClose }: any) {
       }}
     >
       <div
-        className="sc-school-sheet-panel"
+        className="sc-school-sheet-panel sc-premium-sheet"
         onClick={e => e.stopPropagation()}
         style={{
           width: 'min(520px, 100%)',
