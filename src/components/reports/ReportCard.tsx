@@ -348,7 +348,7 @@ export function ReportCard({ report, childName }: Props) {
           {formatWeek(report.week_starting)}
         </p>
 
-        <div className="sc-report-score-ring-info-v440" style={{
+        <div className="sc-report-score-info-clean-v441" style={{
           position: 'relative',
           width: 'fit-content',
           margin: '0 auto',
@@ -362,25 +362,24 @@ export function ReportCard({ report, childName }: Props) {
               aria-label="View subject scores"
               style={{
                 position: 'absolute',
-                top: -8,
-                right: -24,
-                width: 30,
-                height: 30,
+                top: -7,
+                right: -21,
+                width: 28,
+                height: 28,
                 borderRadius: '50%',
-                border: '1.5px solid #1A1A1A',
+                border: '1.4px solid #202124',
                 background: '#FFFFFF',
-                color: '#1A1A1A',
+                color: '#202124',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
                 padding: 0,
-                fontFamily: 'inherit',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                zIndex: 6,
+                boxShadow: '0 5px 14px rgba(0,0,0,0.055)',
+                zIndex: 8,
               }}
             >
-              <Info size={17} strokeWidth={2.1} />
+              <Info size={15.5} strokeWidth={2.05} />
             </button>
           )}
         </div>
@@ -413,7 +412,7 @@ export function ReportCard({ report, childName }: Props) {
             position: 'fixed',
             inset: 0,
             zIndex: 2147482500,
-            background: 'rgba(255,255,255,0.76)',
+            background: 'rgba(255,255,255,0.72)',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
             display: 'flex',
@@ -426,25 +425,25 @@ export function ReportCard({ report, childName }: Props) {
             onClick={(event) => event.stopPropagation()}
             style={{
               width: '100%',
-              maxWidth: 356,
+              maxWidth: 352,
               borderRadius: 24,
               background: '#FFFFFF',
-              border: '1px solid rgba(37,37,37,0.08)',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.14)',
-              padding: '18px 18px 16px',
+              border: '1px solid rgba(32,33,36,0.08)',
+              boxShadow: '0 22px 64px rgba(0,0,0,0.14)',
+              padding: '18px 18px 14px',
             }}
           >
             <div style={{
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'space-between',
-              gap: 12,
+              gap: 14,
               marginBottom: 10,
             }}>
               <div>
                 <p style={{
                   fontSize: 15,
-                  fontWeight: 620,
+                  fontWeight: 640,
                   color: T.ink,
                   margin: 0,
                   letterSpacing: '-0.02em',
@@ -452,12 +451,12 @@ export function ReportCard({ report, childName }: Props) {
                   Subject scores
                 </p>
                 <p style={{
-                  fontSize: 12.2,
+                  fontSize: 12.1,
                   color: '#8A8D92',
-                  margin: '3px 0 0',
+                  margin: '4px 0 0',
                   lineHeight: 1.35,
                 }}>
-                  A quick view of each subject.
+                  A simple breakdown of this report.
                 </p>
               </div>
 
@@ -471,7 +470,7 @@ export function ReportCard({ report, childName }: Props) {
                   borderRadius: '50%',
                   border: 'none',
                   background: '#F5F5F7',
-                  color: '#5F6268',
+                  color: '#55585E',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -499,21 +498,22 @@ export function ReportCard({ report, childName }: Props) {
                     gridTemplateColumns: '1fr auto',
                     gap: 14,
                     padding: '12px 0',
-                    borderTop: '1px solid rgba(37,37,37,0.06)',
+                    borderTop: '1px solid rgba(32,33,36,0.06)',
                     alignItems: 'center',
                   }}>
                     <div style={{ minWidth: 0 }}>
                       <p style={{
-                        fontSize: 13.3,
+                        fontSize: 13.2,
                         color: '#252525',
-                        fontWeight: 540,
+                        fontWeight: 560,
                         letterSpacing: '-0.01em',
                         margin: 0,
                       }}>
                         {shortenSubject(String(name))}
                       </p>
+
                       <p style={{
-                        fontSize: 12.1,
+                        fontSize: 12,
                         color: '#7C8486',
                         margin: '4px 0 0',
                         lineHeight: 1.35,
@@ -532,7 +532,7 @@ export function ReportCard({ report, childName }: Props) {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: 12.2,
-                      fontWeight: 620,
+                      fontWeight: 650,
                       fontVariantNumeric: 'tabular-nums',
                       padding: '0 10px',
                     }}>
