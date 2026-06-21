@@ -3375,3 +3375,14 @@ button[aria-label="Settings"]:active {
   }
 }
 
+
+/* school-connect-remove-info-subtext-v1 */
+/* Hide support explanation text inside the score info popup, keeping the clean subject rows */
+.sc-report-subject-panel > div:first-child > div:first-child > p:nth-child(2) {
+  display: none !important;
+}
+
+.sc-report-subject-panel .sc-report-subject-row > div:first-child > p:nth-child(2) {
+  display: none !important;
+}
+

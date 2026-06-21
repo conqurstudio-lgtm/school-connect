@@ -525,14 +525,6 @@ export function ReportCard({ report, childName }: Props) {
                 }}>
                   Subject support
                 </p>
-                <p style={{
-                  fontSize: 12.1,
-                  color: '#8A8D92',
-                  margin: '4px 0 0',
-                  lineHeight: 1.35,
-                }}>
-                  {buildParentReportMemo(childName || report.child_name, subjects)}
-                </p>
               </div>
 
               <button
@@ -561,7 +553,6 @@ export function ReportCard({ report, childName }: Props) {
                 const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
                 const previousRaw = report.previous_scores ? Number(report.previous_scores[String(name)]) : NaN
                 const previousSafeScore = Number.isFinite(previousRaw) ? Math.max(0, Math.min(5, previousRaw)) : null
-                const meaning = getSubjectParentTip(childName || report.child_name, String(name), safeScore, previousSafeScore)
 
                 return (
                   <div key={String(name)} className="sc-report-subject-row" style={{
@@ -579,15 +570,6 @@ export function ReportCard({ report, childName }: Props) {
                         margin: 0,
                       }}>
                         {shortenSubject(String(name))}
-                      </p>
-
-                      <p style={{
-                        fontSize: 12,
-                        color: '#7C8486',
-                        margin: '4px 0 0',
-                        lineHeight: 1.35,
-                      }}>
-                        {meaning}
                       </p>
                     </div>
 
