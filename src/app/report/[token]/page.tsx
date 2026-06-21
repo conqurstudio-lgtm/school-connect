@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
+import {GraduationCap, Send, Copy, Check} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
@@ -489,7 +489,7 @@ function FamilyShareButton({ token }: { token: string }) {
           padding: 0,
         }}
       >
-        <Share2 size={18} strokeWidth={2} />
+        <Send size={18} strokeWidth={2} />
       </button>
 
       {open && (
@@ -1102,7 +1102,8 @@ export default function ParentMagicReportPage() {
           </div>
         </section>
       </div>
-      <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={() => setShowMoments(true)} />
+      <ParentBottomHoverMenu token={String(token || '')} active="report" />
+      <ParentBottomHoverMenu token={String(token || '')} active="report" />
     </main>
   )
 }
