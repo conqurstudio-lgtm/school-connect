@@ -607,12 +607,6 @@ export function ReportCard({ report, childName }: Props) {
                         </div>
 
                         <div className="sc-report-subject-bar-track-v2" aria-hidden="true">
-                          {hasPrevious && (
-                            <i
-                              className="sc-report-subject-bar-previous-v2"
-                              style={{ width: `${Math.max(0, Math.min(100, (previousScore / 5) * 100))}%` }}
-                            />
-                          )}
                           <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
                         </div>
 
@@ -622,13 +616,6 @@ export function ReportCard({ report, childName }: Props) {
                       </div>
                     )
                   })}
-
-                  {report.previous_scores && (
-                    <div className="sc-report-subject-bars-legend-v2">
-                      <span><i /> This week</span>
-                      <span><b /> Previous week</span>
-                    </div>
-                  )}
                 </div>
               )}
 

@@ -3671,3 +3671,83 @@ button[aria-label="Settings"]:active {
   display: block !important;
 }
 
+
+/* school-connect-restore-subject-bars-visible-v5 */
+/* Show the compact subject bar card and hide only the old duplicate subject list */
+.sc-report-subject-bars-v2 {
+  display: flex !important;
+  margin: 16px 0 0 !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: #F7F8F8 !important;
+  flex-direction: column !important;
+  gap: 11px !important;
+}
+
+.sc-report-subject-duplicate-list-v3 {
+  display: none !important;
+}
+
+.sc-report-subject-bar-row-v2 {
+  display: grid !important;
+  grid-template-columns: minmax(92px, 1fr) minmax(105px, 1.35fr) 42px !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.sc-report-subject-bar-label-v2 {
+  min-width: 0 !important;
+}
+
+.sc-report-subject-bar-label-v2 span {
+  display: block !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 12.4px !important;
+  font-weight: 620 !important;
+  color: #3F4247 !important;
+}
+
+.sc-report-subject-bar-label-v2 strong {
+  display: none !important;
+}
+
+.sc-report-subject-bar-track-v2 {
+  position: relative !important;
+  display: block !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: #E7ECEB !important;
+  overflow: hidden !important;
+}
+
+.sc-report-subject-bar-track-v2 b {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  display: block !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: #8FA6A1 !important;
+}
+
+.sc-report-subject-bar-previous-v2,
+.sc-report-subject-bars-legend-v2 {
+  display: none !important;
+}
+
+.sc-report-subject-change-v2.is-current {
+  display: block !important;
+  color: #2E3033 !important;
+  font-size: 12.2px !important;
+  font-weight: 700 !important;
+  text-align: right !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.sc-report-subject-panel .sc-report-week-performance-explainer {
+  display: block !important;
+}
+
