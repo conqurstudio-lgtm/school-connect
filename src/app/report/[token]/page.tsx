@@ -884,6 +884,23 @@ export default function ParentMagicReportPage() {
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
   const [showMoments, setShowMoments] = useState(false)
+  const [parentViewSwitching, setParentViewSwitching] = useState<'report' | 'moments' | null>(null)
+
+  const openParentMomentsWithAnimation = () => {
+    setParentViewSwitching('moments')
+    window.setTimeout(() => {
+      setShowMoments(true)
+      setParentViewSwitching(null)
+    }, 150)
+  }
+
+  const closeParentMomentsWithAnimation = () => {
+    setParentViewSwitching('report')
+    window.setTimeout(() => {
+      setShowMoments(false)
+      setParentViewSwitching(null)
+    }, 150)
+  }
 
   useEffect(() => {
     // report-route-shell-lock-v251
@@ -961,17 +978,19 @@ export default function ParentMagicReportPage() {
   if (showMoments) {
     return (
       <>
-        <ParentMomentsPage
+        <div className={`sc-parent-view-switch-shell ${parentViewSwitching === 'report' ? 'is-leaving-to-report' : 'is-entering-moments'}`}>
+          <ParentMomentsPage
         token={token || ''}
         embedded={true}
-        onClose={() => setShowMoments(false)}
+        onClose={closeParentMomentsWithAnimation}
       />
+        </div>
 
         <ParentBottomHoverMenu
           token={String(token || '')}
           active="moments"
-          onReportClick={() => setShowMoments(false)}
-          onMomentsClick={() => setShowMoments(true)}
+          onReportClick={closeParentMomentsWithAnimation}
+          onMomentsClick={openParentMomentsWithAnimation}
         />
       </>
     )
@@ -1110,7 +1129,7 @@ export default function ParentMagicReportPage() {
           </div>
         </section>
       </div>
-      <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={() => setShowMoments(true)} />
+      <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={openParentMomentsWithAnimation} />
     </main>
   )
 }

@@ -3208,3 +3208,89 @@ button[aria-label="Settings"]:active {
   line-height: 1 !important;
 }
 
+
+/* school-connect-smooth-report-moments-switch-v7 */
+/* Smooth switch between Report and Moments from the floating bottom menu */
+.sc-parent-view-switch-shell {
+  animation: scParentMomentsEnterV7 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: center bottom;
+  min-height: 100dvh;
+}
+
+.sc-parent-view-switch-shell.is-leaving-to-report {
+  animation: scParentMomentsLeaveV7 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+[data-parent-view-switch="leaving"] {
+  animation: scParentReportLeaveV7 180ms cubic-bezier(0.4, 0, 1, 1) both;
+  transform-origin: center bottom;
+}
+
+[data-parent-view-switch="ready"] {
+  animation: scParentReportEnterV7 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: center bottom;
+}
+
+@keyframes scParentMomentsEnterV7 {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes scParentMomentsLeaveV7 {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+    filter: blur(3px);
+  }
+}
+
+@keyframes scParentReportEnterV7 {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.992);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes scParentReportLeaveV7 {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.992);
+    filter: blur(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-parent-view-switch-shell,
+  .sc-parent-view-switch-shell.is-leaving-to-report,
+  [data-parent-view-switch="leaving"],
+  [data-parent-view-switch="ready"] {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
