@@ -3751,3 +3751,14 @@ button[aria-label="Settings"]:active {
   display: block !important;
 }
 
+
+/* school-connect-previous-reports-open-v1 */
+/* Keep previous reports feeling like open sections instead of collapsed accordions */
+.sc-previous-report-flat-v278[open] > summary {
+  cursor: default !important;
+}
+
+.sc-previous-report-flat-v278[open] > summary::-webkit-details-marker {
+  display: none !important;
+}
+

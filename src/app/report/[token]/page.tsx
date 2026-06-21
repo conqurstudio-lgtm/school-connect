@@ -84,7 +84,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
   const scorePercent = score > 0 ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0
 
   return (
-    <details className="sc-previous-report-flat-v278" style={{
+    <details open className="sc-previous-report-flat-v278" style={{
       borderTop: '1px solid rgba(0,0,0,0.06)',
       background: 'transparent',
     }}>
