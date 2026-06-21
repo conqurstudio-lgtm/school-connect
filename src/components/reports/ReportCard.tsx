@@ -439,7 +439,7 @@ export function ReportCard({ report, childName }: Props) {
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
 
   return (
-    <section style={{ paddingBottom: 28 }}>
+    <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
       <div style={{ textAlign: 'center', padding: '24px 0 46px', opacity: mutedReportOpacity }}>
         <div style={{

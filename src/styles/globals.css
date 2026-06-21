@@ -3762,3 +3762,26 @@ button[aria-label="Settings"]:active {
   display: none !important;
 }
 
+
+/* school-connect-bigger-parent-report-ring-v1 */
+/* Bigger parent report score ring at the top of the report */
+.sc-parent-report-card-view {
+  --sc-parent-report-ring-size: 212px;
+}
+
+/* fallback for any classed report ring used by the component */
+.sc-parent-report-card-view .sc-report-ring,
+.sc-parent-report-card-view .sc-parent-report-ring,
+.sc-parent-report-card-view .sc-report-score-ring,
+.sc-parent-report-card-view .sc-score-ring,
+.sc-parent-report-card-view .report-score-ring {
+  width: var(--sc-parent-report-ring-size) !important;
+  height: var(--sc-parent-report-ring-size) !important;
+}
+
+@media (max-width: 420px) {
+  .sc-parent-report-card-view {
+    --sc-parent-report-ring-size: 196px;
+  }
+}
+
