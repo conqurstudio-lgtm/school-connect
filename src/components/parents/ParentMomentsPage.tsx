@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X } from 'lucide-react'
+import {ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'

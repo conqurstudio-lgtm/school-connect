@@ -3785,3 +3785,35 @@ button[aria-label="Settings"]:active {
   }
 }
 
+
+/* school-connect-parent-moments-back-icon-clean-v1 */
+/* Parent Moments back icon: no ring, same simple flow as teacher Moments */
+.sc-parent-moments-back-button-v2 {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #252525 !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+}
+
+.sc-parent-moments-back-button-v2:hover {
+  background: rgba(0, 0, 0, 0.045) !important;
+  box-shadow: none !important;
+}
+
+.sc-parent-moments-back-button-v2 svg {
+  width: 23px !important;
+  height: 23px !important;
+  stroke-width: 2.25 !important;
+}
+
