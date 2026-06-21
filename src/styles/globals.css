@@ -3817,3 +3817,56 @@ button[aria-label="Settings"]:active {
   stroke-width: 2.25 !important;
 }
 
+
+/* school-connect-force-parent-moments-back-icon-v3 */
+/* Force parent Moments top back control to match the teacher Moments simple back icon */
+.sc-parent-moments-back-button-v3,
+.sc-parent-moments-page-v3 button[aria-label*="Back"],
+.sc-parent-moments-page-v3 button[aria-label*="back"],
+.sc-parent-moments-page-v3 button[aria-label*="Close"],
+.sc-parent-moments-page-v3 button[aria-label*="close"] {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #252525 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-parent-moments-back-button-v3::before,
+.sc-parent-moments-back-button-v3::after,
+.sc-parent-moments-page-v3 button[aria-label*="Back"]::before,
+.sc-parent-moments-page-v3 button[aria-label*="Back"]::after,
+.sc-parent-moments-page-v3 button[aria-label*="Close"]::before,
+.sc-parent-moments-page-v3 button[aria-label*="Close"]::after {
+  display: none !important;
+  content: none !important;
+}
+
+.sc-parent-moments-back-button-v3:hover,
+.sc-parent-moments-page-v3 button[aria-label*="Back"]:hover,
+.sc-parent-moments-page-v3 button[aria-label*="back"]:hover,
+.sc-parent-moments-page-v3 button[aria-label*="Close"]:hover,
+.sc-parent-moments-page-v3 button[aria-label*="close"]:hover {
+  background: rgba(0, 0, 0, 0.045) !important;
+  box-shadow: none !important;
+}
+
+.sc-parent-moments-back-button-v3 svg,
+.sc-parent-moments-page-v3 button[aria-label*="Back"] svg,
+.sc-parent-moments-page-v3 button[aria-label*="back"] svg,
+.sc-parent-moments-page-v3 button[aria-label*="Close"] svg,
+.sc-parent-moments-page-v3 button[aria-label*="close"] svg {
+  width: 24px !important;
+  height: 24px !important;
+  stroke-width: 2.35 !important;
+}
+
