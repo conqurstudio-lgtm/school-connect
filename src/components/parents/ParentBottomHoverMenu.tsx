@@ -25,26 +25,15 @@ export function ParentBottomHoverMenu({ token, active, onMomentsClick }: ParentB
         <span>Report</span>
       </Link>
 
-      {onMomentsClick ? (
-        <button
-          type="button"
-          onClick={onMomentsClick}
-          className={active === 'moments' ? 'is-active' : ''}
-          aria-label="Open Moments"
-        >
-          <Sparkles size={17} strokeWidth={2.1} />
-          <span>Moments</span>
-        </button>
-      ) : (
-        <Link
-          href={`/moments/${safeToken}`}
-          className={active === 'moments' ? 'is-active' : ''}
-          aria-current={active === 'moments' ? 'page' : undefined}
-        >
-          <Sparkles size={17} strokeWidth={2.1} />
-          <span>Moments</span>
-        </Link>
-      )}
+      <button
+        type="button"
+        onClick={onMomentsClick || (() => { window.location.href = `/moments/${safeToken}` })}
+        className={active === 'moments' ? 'is-active' : ''}
+        aria-label="Open Moments"
+      >
+        <Sparkles size={17} strokeWidth={2.1} />
+        <span>Moments</span>
+      </button>
     </nav>
   )
 }

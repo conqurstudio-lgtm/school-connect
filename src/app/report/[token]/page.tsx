@@ -1035,7 +1035,6 @@ export default function ParentMagicReportPage() {
               gap: 8,
             }}>
               {!isFamilyShare && <FamilyShareButton token={token || ''} />}
-              {!isFamilyShare && <MomentBellLink token={token} onOpen={() => setShowMoments(true)} />}
             </div>
           </div>
         </header>
@@ -1103,7 +1102,6 @@ export default function ParentMagicReportPage() {
         </section>
       </div>
       <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={() => setShowMoments(true)} />
-      <ParentBottomHoverMenu token={String(token || '')} active="report" />
     </main>
   )
 }
