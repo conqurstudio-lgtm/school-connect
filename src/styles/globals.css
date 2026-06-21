@@ -3378,7 +3378,7 @@ button[aria-label="Settings"]:active {
 
 /* school-connect-remove-info-subtext-v1 */
 /* Hide support explanation text inside the score info popup, keeping the clean subject rows */
-.sc-report-subject-panel > div:first-child > div:first-child > p:nth-child(2) {
+.sc-report-subject-panel > div:first-child > div:first-child > p:nth-child(2):not(.sc-report-week-performance-explainer) {
   display: none !important;
 }
 
@@ -3537,5 +3537,23 @@ button[aria-label="Settings"]:active {
   .sc-report-subject-bars-v2 {
     padding: 10px;
   }
+}
+
+
+/* school-connect-show-subject-progress-note-v2 */
+/* Show the weekly subject progress note while still hiding old per-subject explanation text */
+.sc-report-subject-panel .sc-report-week-performance-explainer {
+  display: block !important;
+  font-size: 11.8px !important;
+  color: #7C8486 !important;
+  margin: 6px 0 0 !important;
+  line-height: 1.42 !important;
+  font-weight: 410 !important;
+  letter-spacing: -0.004em !important;
+  max-width: 285px !important;
+}
+
+.sc-report-subject-panel .sc-report-subject-row > div:first-child > p:nth-child(2) {
+  display: none !important;
 }
 
