@@ -3557,3 +3557,117 @@ button[aria-label="Settings"]:active {
   display: none !important;
 }
 
+
+/* school-connect-subject-popup-clean-current-score-v3 */
+/* Keep the subject support popup simple: note + compact bars + current score on the side */
+.sc-report-subject-bars-v2 {
+  margin: 16px 0 0 !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: #F7F8F8 !important;
+  gap: 11px !important;
+}
+
+.sc-report-subject-bar-row-v2 {
+  grid-template-columns: minmax(92px, 1fr) minmax(105px, 1.35fr) 42px !important;
+  gap: 10px !important;
+}
+
+.sc-report-subject-bar-label-v2 span {
+  font-size: 12.4px !important;
+  font-weight: 620 !important;
+  color: #3F4247 !important;
+}
+
+.sc-report-subject-bar-label-v2 strong {
+  display: none !important;
+}
+
+.sc-report-subject-bar-track-v2 {
+  height: 8px !important;
+  background: #E7ECEB !important;
+}
+
+.sc-report-subject-bar-track-v2 b {
+  background: #8FA6A1 !important;
+}
+
+.sc-report-subject-bar-previous-v2,
+.sc-report-subject-bars-legend-v2 {
+  display: none !important;
+}
+
+.sc-report-subject-change-v2.is-current {
+  color: #2E3033 !important;
+  font-size: 12.2px !important;
+  font-weight: 700 !important;
+  text-align: right !important;
+}
+
+@media (max-width: 390px) {
+  .sc-report-subject-bar-row-v2 {
+    grid-template-columns: minmax(76px, 1fr) minmax(82px, 1.1fr) 38px !important;
+    gap: 8px !important;
+  }
+
+  .sc-report-subject-bars-v2 {
+    padding: 12px !important;
+  }
+}
+
+
+/* school-connect-fix-reportcard-jsx-clean-popup-v4 */
+/* Clean subject support popup safely without deleting JSX */
+.sc-report-subject-duplicate-list-v3 {
+  display: none !important;
+}
+
+.sc-report-subject-bars-v2 {
+  margin: 16px 0 0 !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: #F7F8F8 !important;
+  gap: 11px !important;
+}
+
+.sc-report-subject-bar-row-v2 {
+  grid-template-columns: minmax(92px, 1fr) minmax(105px, 1.35fr) 42px !important;
+  gap: 10px !important;
+}
+
+.sc-report-subject-bar-label-v2 span {
+  font-size: 12.4px !important;
+  font-weight: 620 !important;
+  color: #3F4247 !important;
+}
+
+.sc-report-subject-bar-label-v2 strong {
+  display: none !important;
+}
+
+.sc-report-subject-bar-track-v2 {
+  height: 8px !important;
+  background: #E7ECEB !important;
+}
+
+.sc-report-subject-bar-track-v2 b {
+  background: #8FA6A1 !important;
+}
+
+.sc-report-subject-bar-previous-v2,
+.sc-report-subject-bars-legend-v2 {
+  display: none !important;
+}
+
+.sc-report-subject-change-v2.is-current {
+  color: #2E3033 !important;
+  font-size: 12.2px !important;
+  font-weight: 700 !important;
+  text-align: right !important;
+}
+
+/* Make sure the weekly note remains visible */
+.sc-report-subject-panel .sc-report-week-performance-explainer {
+  display: block !important;
+}
+

@@ -597,14 +597,7 @@ export function ReportCard({ report, childName }: Props) {
                   {subjects.map(([name, score]) => {
                     const numericScore = Number(score)
                     const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                    const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
-                    const hasPrevious = previousScore !== null
-                    const change = hasPrevious ? safeScore - previousScore : null
-                    const changeLabel = change === null
-                      ? 'New'
-                      : Math.abs(change) < 0.05
-                        ? 'same'
-                        : `${change > 0 ? '+' : ''}${change.toFixed(1)}`
+                    const scoreLabel = safeScore.toFixed(1)
 
                     return (
                       <div key={`chart-${String(name)}`} className="sc-report-subject-bar-row-v2">
@@ -623,8 +616,8 @@ export function ReportCard({ report, childName }: Props) {
                           <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
                         </div>
 
-                        <div className={`sc-report-subject-change-v2 ${change !== null && change > 0.05 ? 'is-up' : change !== null && change < -0.05 ? 'is-down' : 'is-same'}`}>
-                          {changeLabel}
+                        <div className="sc-report-subject-change-v2 is-current">
+                          {scoreLabel}
                         </div>
                       </div>
                     )
@@ -639,7 +632,7 @@ export function ReportCard({ report, childName }: Props) {
                 </div>
               )}
 
-            <div style={{
+            <div className="sc-report-subject-duplicate-list-v3" style={{
               display: 'flex',
               flexDirection: 'column',
             }}>
