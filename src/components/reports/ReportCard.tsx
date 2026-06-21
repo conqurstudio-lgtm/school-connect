@@ -358,6 +358,39 @@ function buildParentReportMemo(childName: string | undefined, subjects: [string,
   return `${firstName} is progressing steadily. The subject notes below show what to keep practising and encouraging.`
 }
 
+function buildWeeklyPerformanceExplainer(
+  childName: string | undefined,
+  subjects: [string, number][]
+): string {
+  const firstName = String(childName || 'The learner').split(' ')[0] || 'The learner'
+  const rows = subjects
+    .map(([name, score]) => [String(name), Number(score)] as [string, number])
+    .filter(([, score]) => Number.isFinite(score))
+
+  if (!rows.length) {
+    return `These marks give a quick view of how ${firstName} performed across the subjects covered this week.`
+  }
+
+  const average = rows.reduce((sum, [, score]) => sum + score, 0) / rows.length
+  const strongest = rows.slice().sort((a, b) => b[1] - a[1])[0]?.[0]
+  const support = rows.slice().sort((a, b) => a[1] - b[1])[0]?.[0]
+
+  if (average >= 4.3) {
+    return `${firstName} had a strong week overall. The scores below show the subjects where they are doing especially well and where steady practice should continue.`
+  }
+
+  if (average >= 3.5) {
+    return `${firstName} is making good progress this week. Use the subject scores below to see strengths and the areas that need light support at home.`
+  }
+
+  if (average >= 2.8) {
+    return `${firstName} is growing steadily this week. The scores below help show where confidence is building and where extra practice may help.`
+  }
+
+  return `${firstName} may need extra support this week. The scores below help highlight which subjects may need more attention and encouragement.`
+}
+
+
 export function ReportCard({ report, childName }: Props) {
   const [subjectInfoOpen, setSubjectInfoOpen] = useState(false)
   const scoreSource = report.scores || {}
@@ -524,6 +557,10 @@ export function ReportCard({ report, childName }: Props) {
                   letterSpacing: '-0.02em',
                 }}>
                   Subject support
+                </p>
+
+                <p className="sc-report-week-performance-explainer">
+                  {buildWeeklyPerformanceExplainer(childName || report.child_name, subjects)}
                 </p>
               </div>
 
