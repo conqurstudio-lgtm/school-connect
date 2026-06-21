@@ -358,6 +358,16 @@ function buildParentReportMemo(childName: string | undefined, subjects: [string,
   return `${firstName} is progressing steadily. The subject notes below show what to keep practising and encouraging.`
 }
 
+
+function getPreviousSubjectScore(previousScores: Record<string, number> | null | undefined, subject: string): number | null {
+  if (!previousScores) return null
+
+  const raw = Number(previousScores[subject])
+  if (!Number.isFinite(raw)) return null
+
+  return Math.max(0, Math.min(5, raw))
+}
+
 function buildWeeklyPerformanceExplainer(
   childName: string | undefined,
   subjects: [string, number][]
@@ -581,6 +591,54 @@ export function ReportCard({ report, childName }: Props) {
               </button>
             </div>
 
+
+              {subjects.length > 0 && (
+                <div className="sc-report-subject-bars-v2" aria-label="Subject score bar chart">
+                  {subjects.map(([name, score]) => {
+                    const numericScore = Number(score)
+                    const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+                    const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
+                    const hasPrevious = previousScore !== null
+                    const change = hasPrevious ? safeScore - previousScore : null
+                    const changeLabel = change === null
+                      ? 'New'
+                      : Math.abs(change) < 0.05
+                        ? 'same'
+                        : `${change > 0 ? '+' : ''}${change.toFixed(1)}`
+
+                    return (
+                      <div key={`chart-${String(name)}`} className="sc-report-subject-bar-row-v2">
+                        <div className="sc-report-subject-bar-label-v2">
+                          <span>{shortenSubject(String(name))}</span>
+                          <strong>{safeScore.toFixed(1)}</strong>
+                        </div>
+
+                        <div className="sc-report-subject-bar-track-v2" aria-hidden="true">
+                          {hasPrevious && (
+                            <i
+                              className="sc-report-subject-bar-previous-v2"
+                              style={{ width: `${Math.max(0, Math.min(100, (previousScore / 5) * 100))}%` }}
+                            />
+                          )}
+                          <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
+                        </div>
+
+                        <div className={`sc-report-subject-change-v2 ${change !== null && change > 0.05 ? 'is-up' : change !== null && change < -0.05 ? 'is-down' : 'is-same'}`}>
+                          {changeLabel}
+                        </div>
+                      </div>
+                    )
+                  })}
+
+                  {report.previous_scores && (
+                    <div className="sc-report-subject-bars-legend-v2">
+                      <span><i /> This week</span>
+                      <span><b /> Previous week</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
             <div style={{
               display: 'flex',
               flexDirection: 'column',
@@ -610,7 +668,7 @@ export function ReportCard({ report, childName }: Props) {
                       </p>
                     </div>
 
-                    <span className="sc-report-subject-chip" style={{
+                    <span className="sc-report-subject-chip sc-report-subject-chip-compare-v2" style={{
                       minWidth: 76,
                       height: 38,
                       fontVariantNumeric: 'tabular-nums',
@@ -623,16 +681,37 @@ export function ReportCard({ report, childName }: Props) {
                       }}>
                         {safeScore.toFixed(1)}
                       </strong>
-                      <em style={{
-                        fontSize: 9.7,
-                        fontStyle: 'normal',
-                        fontWeight: 560,
-                        color: '#7C8486',
-                        lineHeight: 1.05,
-                        marginTop: 3,
-                      }}>
-                        {getSubjectParentLabel(safeScore)}
-                      </em>
+                      {(() => {
+                        const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
+                        const change = previousScore === null ? null : safeScore - previousScore
+
+                        if (change === null) {
+                          return (
+                            <em style={{
+                              fontSize: 9.7,
+                              fontStyle: 'normal',
+                              fontWeight: 560,
+                              color: '#7C8486',
+                              lineHeight: 1.05,
+                              marginTop: 3,
+                            }}>
+                              {getSubjectParentLabel(safeScore)}
+                            </em>
+                          )
+                        }
+
+                        return (
+                          <em className={change > 0.05 ? 'is-up' : change < -0.05 ? 'is-down' : 'is-same'} style={{
+                            fontSize: 9.7,
+                            fontStyle: 'normal',
+                            fontWeight: 560,
+                            lineHeight: 1.05,
+                            marginTop: 3,
+                          }}>
+                            {Math.abs(change) < 0.05 ? 'same' : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
+                          </em>
+                        )
+                      })()}
                     </span>
                   </div>
                 )
