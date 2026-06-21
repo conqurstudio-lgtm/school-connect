@@ -960,11 +960,20 @@ export default function ParentMagicReportPage() {
 
   if (showMoments) {
     return (
-      <ParentMomentsPage
+      <>
+        <ParentMomentsPage
         token={token || ''}
         embedded={true}
         onClose={() => setShowMoments(false)}
       />
+
+        <ParentBottomHoverMenu
+          token={String(token || '')}
+          active="moments"
+          onReportClick={() => setShowMoments(false)}
+          onMomentsClick={() => setShowMoments(true)}
+        />
+      </>
     )
   }
 
