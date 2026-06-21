@@ -2816,3 +2816,68 @@ button[aria-label="Settings"]:active {
   max-width: 220px;
 }
 
+
+/* school-connect-parent-bottom-hover-menu-v1 */
+.sc-parent-bottom-hover-menu {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 2147482000;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(37, 37, 37, 0.08);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.sc-parent-bottom-hover-menu a {
+  min-width: 94px;
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  text-decoration: none;
+  color: #7C8486;
+  font-size: 12.4px;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.sc-parent-bottom-hover-menu a:hover {
+  background: #F4F6F5;
+  color: #252525;
+  transform: translateY(-1px);
+}
+
+.sc-parent-bottom-hover-menu a.is-active {
+  background: #8FA6A1;
+  color: #FFFFFF;
+  box-shadow: 0 7px 18px rgba(143, 166, 161, 0.24);
+}
+
+.sc-parent-bottom-hover-menu svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .sc-parent-bottom-hover-menu {
+    width: calc(100% - 32px);
+    justify-content: center;
+  }
+
+  .sc-parent-bottom-hover-menu a {
+    flex: 1;
+    min-width: 0;
+  }
+}
+

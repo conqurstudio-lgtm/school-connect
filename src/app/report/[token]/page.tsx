@@ -7,6 +7,7 @@ import { GraduationCap, Share2, Copy, Check } from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
+import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
 
 const T = {
   ink: '#1A1A1A',
@@ -1101,6 +1102,7 @@ export default function ParentMagicReportPage() {
           </div>
         </section>
       </div>
+      <ParentBottomHoverMenu token={String(token || '')} active="report" />
     </main>
   )
 }
