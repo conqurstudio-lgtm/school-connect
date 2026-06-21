@@ -1102,7 +1102,7 @@ export default function ParentMagicReportPage() {
           </div>
         </section>
       </div>
-      <ParentBottomHoverMenu token={String(token || '')} active="report" />
+      <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={() => setShowMoments(true)} />
       <ParentBottomHoverMenu token={String(token || '')} active="report" />
     </main>
   )

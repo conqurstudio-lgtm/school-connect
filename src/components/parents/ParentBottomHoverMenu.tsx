@@ -6,9 +6,10 @@ import { FileText, Sparkles } from 'lucide-react'
 type ParentBottomHoverMenuProps = {
   token: string
   active: 'report' | 'moments'
+  onMomentsClick?: () => void
 }
 
-export function ParentBottomHoverMenu({ token, active }: ParentBottomHoverMenuProps) {
+export function ParentBottomHoverMenu({ token, active, onMomentsClick }: ParentBottomHoverMenuProps) {
   const safeToken = encodeURIComponent(String(token || ''))
 
   if (!safeToken) return null
@@ -24,14 +25,26 @@ export function ParentBottomHoverMenu({ token, active }: ParentBottomHoverMenuPr
         <span>Report</span>
       </Link>
 
-      <Link
-        href={`/moments/${safeToken}`}
-        className={active === 'moments' ? 'is-active' : ''}
-        aria-current={active === 'moments' ? 'page' : undefined}
-      >
-        <Sparkles size={17} strokeWidth={2.1} />
-        <span>Moments</span>
-      </Link>
+      {onMomentsClick ? (
+        <button
+          type="button"
+          onClick={onMomentsClick}
+          className={active === 'moments' ? 'is-active' : ''}
+          aria-label="Open Moments"
+        >
+          <Sparkles size={17} strokeWidth={2.1} />
+          <span>Moments</span>
+        </button>
+      ) : (
+        <Link
+          href={`/moments/${safeToken}`}
+          className={active === 'moments' ? 'is-active' : ''}
+          aria-current={active === 'moments' ? 'page' : undefined}
+        >
+          <Sparkles size={17} strokeWidth={2.1} />
+          <span>Moments</span>
+        </Link>
+      )}
     </nav>
   )
 }
