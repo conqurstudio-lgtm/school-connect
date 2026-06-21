@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
+import { SCEmptyState, SCTopBar } from '@/components/ui'
 import SCStartupLoader from '@/components/ui/SCStartupLoader'
 
 const T = {
@@ -260,6 +260,62 @@ function ReactionBurstLayer({ bursts = [] }: any) {
 // child-class-tabs-v420
 // child-class-scope-fix-v421
 // recent-default-v424
+
+function ParentMomentsBackButton({ onClick, href, label = 'Back' }: any) {
+ const content = (
+ <span style={{
+ width: 13,
+ height: 13,
+ borderLeft: '2.6px solid currentColor',
+ borderBottom: '2.6px solid currentColor',
+ borderRadius: 1.5,
+ transform: 'rotate(45deg) translate(1px, -1px)',
+ display: 'block',
+ }} />
+ )
+
+ const sharedStyle = {
+ width: 38,
+ height: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: 'transparent',
+ color: '#252525',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ flexShrink: 0,
+ padding: 0,
+ textDecoration: 'none',
+ } as any
+
+ if (href) {
+ return (
+ <a
+ href={href}
+ aria-label={label}
+ className="sc-parent-moments-teacher-back-v4"
+ style={sharedStyle}
+ >
+ {content}
+ </a>
+ )
+ }
+
+ return (
+ <button
+ type="button"
+ onClick={onClick}
+ aria-label={label}
+ className="sc-parent-moments-teacher-back-v4"
+ style={sharedStyle}
+ >
+ {content}
+ </button>
+ )
+}
+
 export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
  const [loading, setLoading] = useState(true)
  const [child, setChild] = useState<any>(null)
@@ -441,31 +497,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  compact
  left={
  embedded ? (
- <SCIconButton label="Back" onClick={onClose} tone="quiet" size={38}>
- <ArrowLeft size={19} strokeWidth={2.05} />
- </SCIconButton>
+ <ParentMomentsBackButton onClick={onClose} label="Back" />
  ) : (
- <a
- href={`/report/${token}`}
- aria-label="Back to report"
- className="sc-icon-button"
- style={{
- width: 38,
- height: 38,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: T.ink,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- textDecoration: 'none',
- flexShrink: 0,
- padding: 0,
- }}
- >
- <ArrowLeft size={19} strokeWidth={2.05} />
- </a>
+ <ParentMomentsBackButton href={`/report/${token}`} label="Back to report" />
  )
  }
  />
@@ -573,8 +607,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  cursor: 'zoom-out',
  }}
  >
- <button className="sc-parent-moments-back-button-v3"
- type="button"
+ <button  type="button"
  aria-label="Close image preview"
  onClick={event => {
  event.stopPropagation()
@@ -600,7 +633,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  WebkitBackdropFilter: 'blur(12px)',
  }}
  >
- <ChevronLeft size={24} strokeWidth={2.35} />
+ <X size={20} strokeWidth={2.2} />
  </button>
 
  <img

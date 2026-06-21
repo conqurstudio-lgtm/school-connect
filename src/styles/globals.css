@@ -3870,3 +3870,37 @@ button[aria-label="Settings"]:active {
   stroke-width: 2.35 !important;
 }
 
+
+/* school-connect-parent-moments-teacher-back-style-v4 */
+/* Parent Moments top back button now matches teacher back style: no ring, transparent, custom chevron */
+.sc-parent-moments-teacher-back-v4 {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #252525 !important;
+  border-radius: 999px !important;
+  padding: 0 !important;
+}
+
+.sc-parent-moments-teacher-back-v4:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.sc-parent-moments-teacher-back-v4::before,
+.sc-parent-moments-teacher-back-v4::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Neutralize older broad patches that may have made the image preview close button look like a back button */
+.sc-parent-moments-back-button-v2,
+.sc-parent-moments-back-button-v3 {
+  box-shadow: none !important;
+}
+
