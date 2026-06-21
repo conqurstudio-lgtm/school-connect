@@ -891,7 +891,7 @@ export default function ParentMagicReportPage() {
     window.setTimeout(() => {
       setShowMoments(true)
       setParentViewSwitching(null)
-    }, 150)
+    }, 260)
   }
 
   const closeParentMomentsWithAnimation = () => {
@@ -899,7 +899,7 @@ export default function ParentMagicReportPage() {
     window.setTimeout(() => {
       setShowMoments(false)
       setParentViewSwitching(null)
-    }, 150)
+    }, 260)
   }
 
   useEffect(() => {
