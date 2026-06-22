@@ -62,7 +62,7 @@ const inputStyle: any = {
 const labelStyle: any = {
   display: 'block',
   fontSize: 11,
-  fontWeight: 570,
+  fontWeight: 600,
   color: T.ink3,
   textTransform: 'uppercase',
   letterSpacing: '0.06em',
@@ -262,7 +262,7 @@ function BottomSheet({ children, onClose }: any) {
           background: T.white,
           borderRadius: '28px 28px 0 0',
           padding: '18px 18px calc(18px + env(safe-area-inset-bottom, 0px))',
-          boxShadow: '0 -10px 30px rgba(20,30,28,0.075)',
+          boxShadow: '0 -10px 34px rgba(0,0,0,0.08)',
           borderTop: '1px solid rgba(0,0,0,0.04)',
           animation: 'scSheetPanelIn 240ms cubic-bezier(.2,.8,.2,1) both',
         }}
@@ -291,7 +291,7 @@ function SheetHeader({ title, subtitle, onClose }: any) {
       marginBottom: 16,
     }}>
       <div style={{ minWidth: 0 }}>
-        <h2 style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
+        <h2 style={{ fontSize: 17, fontWeight: 580, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
           {title}
         </h2>
         {subtitle && (
@@ -534,7 +534,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
         padding: 16,
       }}>
         <div style={{ textAlign: 'center', marginBottom: 14 }}>
-          <p style={{ fontSize: 16, fontWeight: 570, color: T.ink, margin: 0 }}>
+          <p style={{ fontSize: 16, fontWeight: 600, color: T.ink, margin: 0 }}>
             Adjust school logo
           </p>
           <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
@@ -581,7 +581,7 @@ function LogoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
         <div style={{ marginTop: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 570 }}>Zoom</span>
+            <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
             <button type="button" onClick={() => {
               setZoom(1.18)
               setOffset({ x: 0, y: 0 })
@@ -646,7 +646,7 @@ function SchoolLogoIntroOverlay({ school, leaving }: any) {
           color: T.accent,
           fontSize: 25,
           fontWeight: 560,
-          boxShadow: '0 12px 30px rgba(15,23,42,0.045)',
+          boxShadow: '0 14px 34px rgba(15,23,42,0.06)',
         }}
       >
         {!school?.logo_url && initialsFrom(school?.name)}
@@ -1159,7 +1159,7 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               <h1 style={{
                 fontSize: 22,
                 lineHeight: 1.08,
-                fontWeight: 560,
+                fontWeight: 580,
                 letterSpacing: '-0.04em',
                 color: T.ink,
                 margin: '0 0 7px',
