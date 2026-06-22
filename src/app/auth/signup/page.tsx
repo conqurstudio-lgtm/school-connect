@@ -17,7 +17,7 @@ const T = {
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  minHeight: 56,
+  minHeight: 58,
   padding: '14px 15px',
   fontSize: 16,
   border: `1px solid ${T.border}`,
@@ -35,8 +35,9 @@ const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 580,
   color: T.ink2,
-  marginBottom: 8,
+  marginBottom: 10,
   letterSpacing: '-0.01em',
+  marginTop: -3,
 }
 
 const primaryButton: React.CSSProperties = {
@@ -55,6 +56,7 @@ const primaryButton: React.CSSProperties = {
   justifyContent: 'center',
   gap: 8,
   letterSpacing: '-0.012em',
+  marginTop: 5,
 }
 
 const secondaryButton: React.CSSProperties = {
@@ -115,13 +117,22 @@ export default function SignupPage() {
         color: T.ink,
       }}
     >
-      <section style={{ width: '100%', maxWidth: 390 }}>
-        <AuthWelcomeHero
-          compact
-          imageSize={132}
-          title="Create your school space"
-          text="Set up a clean space for reports, teachers and parent communication."
-        />
+      <section style={{
+        width: '100%',
+        maxWidth: 390,
+        minHeight: 'calc(100dvh - 44px)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}>
+        <div style={{ marginBottom: 30 }}>
+          <AuthWelcomeHero
+            compact
+            imageSize={132}
+            title="Create your school space"
+            text="Set up a clean space for reports, teachers and parent communication."
+          />
+        </div>
 
         {error ? (
           <div style={{
@@ -133,13 +144,13 @@ export default function SignupPage() {
             fontSize: 12.8,
             lineHeight: 1.4,
             fontWeight: 520,
-            marginBottom: 14,
+            marginBottom: 18,
           }}>
             {error}
           </div>
         ) : null}
 
-        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 15 }}>
+        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 19 }}>
           {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
@@ -192,8 +203,8 @@ export default function SignupPage() {
           {step === 2 ? (
             <div style={{
               display: 'grid',
-              gap: 12,
-              padding: '2px 0 4px',
+              gap: 16,
+              padding: '6px 0 8px',
             }}>
               <div>
                 <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>School name</p>
@@ -235,7 +246,7 @@ export default function SignupPage() {
           ) : null}
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 18 }}>
+        <div style={{ textAlign: 'center', marginTop: 26 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13.2, lineHeight: 1.45 }}>
             Already have an account?{' '}
             <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
