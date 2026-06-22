@@ -3,6 +3,7 @@
 import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { JoinFlow } from '@/components/onboarding/JoinFlow'
+import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 function Inner() {
   const params = useSearchParams()
@@ -16,13 +17,12 @@ function Inner() {
         padding: 24, fontFamily: 'Inter, sans-serif',
       }}>
         <div style={{ maxWidth: 360, textAlign: 'center' }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#1A1A1A',
-                       letterSpacing: '-0.02em', margin: '0 0 8px' }}>
-            Need a school invite link
-          </h1>
-          <p style={{ fontSize: 14, color: '#9A9A9A', lineHeight: 1.5, margin: 0 }}>
-            Open the link your school admin shared with you to join.
-          </p>
+          <AuthWelcomeHero
+            compact
+            imageSize={142}
+            title="Need a school invite link"
+            text="Open the link your school admin shared with you to join."
+          />
         </div>
       </div>
     )

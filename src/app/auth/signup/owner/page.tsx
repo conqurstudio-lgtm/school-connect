@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, Check, School } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
   white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
-  ink3: '#9A9CA3',
+  ink3: '#70757C',
   border: 'rgba(0,0,0,0.07)',
   primary: '#2B2B2F',
   soft: '#F8F8F9',
@@ -105,28 +106,12 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
       }}
     >
       <div style={{ width: '100%', maxWidth: 430 }}>
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
-          <div style={{
-            width: 52,
-            height: 52,
-            borderRadius: 18,
-            background: T.soft,
-            border: `1px solid ${T.border}`,
-            color: T.ink,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 12,
-          }}>
-            <School size={24} strokeWidth={1.7} />
-          </div>
-          <p style={{ margin: 0, color: T.ink, fontSize: 23, fontWeight: 640, letterSpacing: '-0.035em' }}>
-            School Connect
-          </p>
-          <p style={{ margin: '6px 0 0', color: T.ink3, fontSize: 13, lineHeight: 1.38 }}>
-            Owner account for {schoolName || 'your school'}.
-          </p>
-        </div>
+        <AuthWelcomeHero
+          compact
+          imageSize={132}
+          title="Create owner account"
+          text={`Owner account for ${schoolName || 'your school'}.`}
+        />
 
         <section style={{
           width: '100%',

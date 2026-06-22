@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 type LoginPageProps = {
   searchParams?: {
@@ -14,9 +14,8 @@ const T = {
   white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
-  ink3: '#73777D',
-  border: 'rgba(0,0,0,0.09)',
-  soft: '#F8F9F8',
+  ink3: '#70757C',
+  border: 'rgba(0,0,0,0.12)',
   red: '#B42318',
   green: '#1F9D55',
 }
@@ -38,8 +37,8 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 12,
-  fontWeight: 560,
+  fontSize: 12.5,
+  fontWeight: 580,
   color: T.ink2,
   marginBottom: 7,
   letterSpacing: '-0.01em',
@@ -60,60 +59,18 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
       padding: '22px 18px',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
       color: T.ink,
+      boxSizing: 'border-box',
     }}>
       <section style={{
         width: '100%',
         maxWidth: 390,
-        minHeight: 'calc(100dvh - 44px)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
       }}>
-        <div style={{
-          textAlign: 'center',
-          marginBottom: 24,
-        }}>
-          <div style={{
-            width: '100%',
-            maxWidth: 270,
-            margin: '0 auto 22px',
-          }}>
-            <Image
-              src="/images/school-connect-welcome.png"
-              alt="School Connect welcome illustration"
-              width={540}
-              height={540}
-              priority
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-              }}
-            />
-          </div>
-
-          <h1 style={{
-            fontSize: 29,
-            lineHeight: 1.05,
-            fontWeight: 680,
-            letterSpacing: '-0.045em',
-            margin: 0,
-            color: T.ink,
-          }}>
-            Welcome to School Connect
-          </h1>
-
-          <p style={{
-            fontSize: 14.2,
-            color: T.ink3,
-            lineHeight: 1.48,
-            margin: '12px auto 0',
-            maxWidth: 330,
-            fontWeight: 390,
-          }}>
-            A simple space for schools, teachers and parents to stay connected through reports, updates and shared moments.
-          </p>
-        </div>
+        <AuthWelcomeHero
+          compact
+          imageSize={150}
+          title="Sign in"
+          text="Open your School Connect space and continue managing reports, teachers and parent updates."
+        />
 
         <form
           method="post"
