@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
@@ -11,9 +11,7 @@ const T = {
   ink2: '#5F6268',
   ink3: '#70757C',
   border: 'rgba(0,0,0,0.12)',
-  borderSoft: 'rgba(0,0,0,0.075)',
   primary: '#2B2B2F',
-  soft: '#F8F9F8',
   red: '#B42318',
 }
 
@@ -63,7 +61,7 @@ const secondaryButton: React.CSSProperties = {
   minHeight: 52,
   width: '100%',
   borderRadius: 18,
-  border: `1px solid ${T.borderSoft}`,
+  border: `1px solid rgba(0,0,0,0.09)`,
   background: T.white,
   color: T.ink2,
   fontSize: 14.5,
@@ -75,25 +73,6 @@ const secondaryButton: React.CSSProperties = {
   justifyContent: 'center',
   gap: 8,
   letterSpacing: '-0.01em',
-}
-
-function StepDots({ step }: { step: number }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}>
-      {[0, 1, 2].map((item) => (
-        <span
-          key={item}
-          style={{
-            width: item === step ? 28 : 7,
-            height: 7,
-            borderRadius: 999,
-            background: item <= step ? T.primary : '#E2E4E7',
-            transition: 'width 180ms ease, background 180ms ease',
-          }}
-        />
-      ))}
-    </div>
-  )
 }
 
 export default function SignupPage() {
@@ -136,7 +115,7 @@ export default function SignupPage() {
         color: T.ink,
       }}
     >
-      <section style={{ width: '100%', maxWidth: 430 }}>
+      <section style={{ width: '100%', maxWidth: 390 }}>
         <AuthWelcomeHero
           compact
           imageSize={132}
@@ -144,172 +123,117 @@ export default function SignupPage() {
           text="Set up a clean space for reports, teachers and parent communication."
         />
 
-        <section
-          style={{
-            width: '100%',
-            background: T.white,
-            border: `1px solid ${T.borderSoft}`,
-            borderRadius: 30,
-            boxShadow: '0 18px 58px rgba(20, 30, 28, 0.045)',
-            overflow: 'hidden',
-          }}
-        >
+        {error ? (
           <div style={{
-            padding: '22px 22px 15px',
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 14,
+            borderRadius: 16,
+            border: '1px solid rgba(180,35,24,0.18)',
+            background: '#FFF5F5',
+            color: T.red,
+            padding: '10px 12px',
+            fontSize: 12.8,
+            lineHeight: 1.4,
+            fontWeight: 520,
+            marginBottom: 14,
           }}>
-            <div style={{ minWidth: 0 }}>
-              <p style={{
-                margin: 0,
-                color: T.ink,
-                fontSize: 23,
-                fontWeight: 680,
-                lineHeight: 1.08,
-                letterSpacing: '-0.042em',
-              }}>
-                {step === 0 ? 'School details' : step === 1 ? 'Contact details' : 'Review details'}
-              </p>
-
-              <p style={{
-                margin: '7px 0 0',
-                color: T.ink3,
-                fontSize: 13.3,
-                lineHeight: 1.42,
-                fontWeight: 410,
-              }}>
-                {step === 0
-                  ? 'Start with the school name parents and teachers will recognise.'
-                  : step === 1
-                    ? 'Add optional contact details. You can update these later.'
-                    : 'Confirm the school details before creating the owner account.'}
-              </p>
-            </div>
-
-            <div style={{ paddingTop: 8 }}>
-              <StepDots step={step} />
-            </div>
+            {error}
           </div>
+        ) : null}
 
-          {error ? (
-            <div style={{
-              margin: '0 22px 14px',
-              borderRadius: 16,
-              border: '1px solid rgba(180,35,24,0.18)',
-              background: '#FFF5F5',
-              color: T.red,
-              padding: '10px 12px',
-              fontSize: 12.8,
-              lineHeight: 1.4,
-              fontWeight: 520,
-            }}>
-              {error}
+        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 15 }}>
+          {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
+          {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
+          {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
+
+          {step === 0 ? (
+            <div>
+              <label style={labelStyle}>School name</label>
+              <input
+                name="school_name"
+                required
+                autoComplete="organization"
+                placeholder="Demo Primary School"
+                value={schoolName}
+                onChange={(event) => setSchoolName(event.target.value)}
+                style={inputStyle}
+                autoFocus
+              />
             </div>
           ) : null}
 
-          <form method="GET" action="/auth/signup/owner" style={{ padding: '0 22px 22px', display: 'grid', gap: 15 }}>
-            {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
-            {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
-            {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
-
-            {step === 0 ? (
+          {step === 1 ? (
+            <>
               <div>
-                <label style={labelStyle}>School name</label>
+                <label style={labelStyle}>Phone optional</label>
                 <input
-                  name="school_name"
-                  required
-                  autoComplete="organization"
-                  placeholder="Demo Primary School"
-                  value={schoolName}
-                  onChange={(event) => setSchoolName(event.target.value)}
+                  name="school_phone"
+                  placeholder="011 000 0000"
+                  value={schoolPhone}
+                  onChange={(event) => setSchoolPhone(event.target.value)}
                   style={inputStyle}
-                  autoFocus
+                  inputMode="tel"
                 />
               </div>
-            ) : null}
 
-            {step === 1 ? (
-              <>
-                <div>
-                  <label style={labelStyle}>Phone optional</label>
-                  <input
-                    name="school_phone"
-                    placeholder="011 000 0000"
-                    value={schoolPhone}
-                    onChange={(event) => setSchoolPhone(event.target.value)}
-                    style={inputStyle}
-                    inputMode="tel"
-                  />
-                </div>
-
-                <div>
-                  <label style={labelStyle}>Email optional</label>
-                  <input
-                    name="school_email"
-                    type="email"
-                    placeholder="info@school.co.za"
-                    value={schoolEmail}
-                    onChange={(event) => setSchoolEmail(event.target.value)}
-                    style={inputStyle}
-                    inputMode="email"
-                  />
-                </div>
-              </>
-            ) : null}
-
-            {step === 2 ? (
-              <div style={{
-                display: 'grid',
-                gap: 10,
-                border: `1px solid ${T.borderSoft}`,
-                borderRadius: 22,
-                background: '#FAFAFA',
-                padding: 14,
-              }}>
-                <div>
-                  <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>School name</p>
-                  <p style={{ margin: '3px 0 0', fontSize: 14.5, color: T.ink, fontWeight: 570 }}>
-                    {schoolName.trim() || 'Not set'}
-                  </p>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <div>
-                    <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Phone</p>
-                    <p style={{ margin: '3px 0 0', fontSize: 13.5, color: T.ink2, fontWeight: 440 }}>
-                      {schoolPhone.trim() || 'Optional'}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Email</p>
-                    <p style={{ margin: '3px 0 0', fontSize: 13.5, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
-                      {schoolEmail.trim() || 'Optional'}
-                    </p>
-                  </div>
-                </div>
+              <div>
+                <label style={labelStyle}>Email optional</label>
+                <input
+                  name="school_email"
+                  type="email"
+                  placeholder="info@school.co.za"
+                  value={schoolEmail}
+                  onChange={(event) => setSchoolEmail(event.target.value)}
+                  style={inputStyle}
+                  inputMode="email"
+                />
               </div>
-            ) : null}
+            </>
+          ) : null}
 
-            {step < 2 ? (
-              <button type="button" className="sc-pressable" style={primaryButton} onClick={nextStep}>
-                Continue <ArrowRight size={16} />
-              </button>
-            ) : (
-              <button type="submit" className="sc-pressable" style={primaryButton}>
-                Continue to owner account <ArrowRight size={16} />
-              </button>
-            )}
+          {step === 2 ? (
+            <div style={{
+              display: 'grid',
+              gap: 12,
+              padding: '2px 0 4px',
+            }}>
+              <div>
+                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>School name</p>
+                <p style={{ margin: '3px 0 0', fontSize: 15.5, color: T.ink, fontWeight: 570 }}>
+                  {schoolName.trim() || 'Not set'}
+                </p>
+              </div>
 
-            {step > 0 ? (
-              <button type="button" className="sc-pressable" style={secondaryButton} onClick={backStep}>
-                <ArrowLeft size={15} /> Back
-              </button>
-            ) : null}
-          </form>
-        </section>
+              <div>
+                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Phone</p>
+                <p style={{ margin: '3px 0 0', fontSize: 14, color: T.ink2, fontWeight: 440 }}>
+                  {schoolPhone.trim() || 'Optional'}
+                </p>
+              </div>
+
+              <div>
+                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Email</p>
+                <p style={{ margin: '3px 0 0', fontSize: 14, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
+                  {schoolEmail.trim() || 'Optional'}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {step < 2 ? (
+            <button type="button" className="sc-pressable" style={primaryButton} onClick={nextStep}>
+              Continue <ArrowRight size={16} />
+            </button>
+          ) : (
+            <button type="submit" className="sc-pressable" style={primaryButton}>
+              Continue to owner account <ArrowRight size={16} />
+            </button>
+          )}
+
+          {step > 0 ? (
+            <button type="button" className="sc-pressable" style={secondaryButton} onClick={backStep}>
+              <ArrowLeft size={15} /> Back
+            </button>
+          ) : null}
+        </form>
 
         <div style={{ textAlign: 'center', marginTop: 18 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 13.2, lineHeight: 1.45 }}>
