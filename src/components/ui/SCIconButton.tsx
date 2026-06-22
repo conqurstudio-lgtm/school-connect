@@ -21,7 +21,7 @@ export default function SCIconButton({
   tone = 'default',
   style,
 }: SCIconButtonProps) {
-  const bg = tone === 'quiet' ? 'transparent' : 'var(--sc-soft)'
+  const bg = 'transparent'
   const color = tone === 'danger' ? 'var(--sc-danger)' : 'var(--sc-ink)'
 
   return (
@@ -34,7 +34,7 @@ export default function SCIconButton({
       style={{
         width: size,
         height: size,
-        borderRadius: 999,
+        borderRadius: 12,
         border: 'none',
         background: bg,
         color,

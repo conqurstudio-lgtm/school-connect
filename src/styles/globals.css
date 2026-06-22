@@ -3904,3 +3904,46 @@ button[aria-label="Settings"]:active {
   box-shadow: none !important;
 }
 
+
+/* school-connect-flat-icon-buttons-teacher-school-v1 */
+/* Remove unwanted rings from shared icon buttons across teacher and school pages */
+.sc-icon-button {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+}
+
+.sc-icon-button:hover {
+  background: rgba(0, 0, 0, 0.045) !important;
+  box-shadow: none !important;
+}
+
+.sc-icon-button:focus,
+.sc-icon-button:focus-visible,
+.sc-icon-button:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Teacher + school page icon buttons that use inline var(--sc-soft) should still remain flat */
+.teacher-safe-screen .sc-icon-button,
+.teacher-page-shell .sc-icon-button,
+.school-page-shell .sc-icon-button,
+.sc-school-page .sc-icon-button,
+.sc-teacher-page .sc-icon-button,
+.sc-teacher-dashboard .sc-icon-button,
+.sc-school-dashboard .sc-icon-button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+}
+
+/* Keep image/avatar/status circles intact by only targeting actual icon button classes */
+button.sc-icon-button,
+a.sc-icon-button {
+  background: transparent !important;
+}
+
