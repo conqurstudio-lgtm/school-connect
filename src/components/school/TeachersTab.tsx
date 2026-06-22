@@ -637,7 +637,7 @@ function AddTeacherSheet({ open, onClose, onCreated }: any) {
 
   return (
     <SCBottomSheet open={open} onClose={onClose} maxWidth={520}>
-      <div style={{
+      <div className="sc-clean-sheet-header-v2" style={{
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
@@ -646,8 +646,8 @@ function AddTeacherSheet({ open, onClose, onCreated }: any) {
       }}>
         <div style={{ minWidth: 0 }}>
           <h2 style={{
-            fontSize: 18,
-            fontWeight: 620,
+            fontSize: 17,
+            fontWeight: 590,
             color: 'var(--sc-ink)',
             margin: 0,
             letterSpacing: '-0.02em',
@@ -656,7 +656,7 @@ function AddTeacherSheet({ open, onClose, onCreated }: any) {
           </h2>
           <p style={{
             fontSize: 13,
-            color: 'var(--sc-ink-3)',
+            color: '#6F747A',
             lineHeight: 1.45,
             margin: '4px 0 0',
           }}>
@@ -672,10 +672,10 @@ function AddTeacherSheet({ open, onClose, onCreated }: any) {
           style={{
             width: 36,
             height: 36,
-            borderRadius: 999,
+            borderRadius: 12,
             border: 'none',
-            background: 'var(--sc-soft)',
-            color: 'var(--sc-ink-3)',
+            background: 'transparent',
+            color: '#6F747A',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -702,8 +702,8 @@ function AddTeacherSheet({ open, onClose, onCreated }: any) {
           marginTop: 2,
           padding: '12px 13px',
           borderRadius: 18,
-          background: 'var(--sc-soft)',
-          color: 'var(--sc-ink-3)',
+          background: '#F8F9F9',
+          color: '#687077',
           fontSize: 12.8,
           lineHeight: 1.45,
         }}>
@@ -892,7 +892,7 @@ function AdminTeacherMomentsScreen({ teacher, onClose }: any) {
               padding: '0 10px',
               borderRadius: 999,
               background: 'transparent',
-              color: 'var(--sc-ink-3)',
+              color: '#6F747A',
               fontSize: 11.5,
               fontWeight: 560,
               whiteSpace: 'nowrap',
@@ -1212,12 +1212,12 @@ function AdminReactionSheet({ moment, onClose }: any) {
 
   return (
     <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+      <div className="sc-clean-sheet-header-v2" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
+          <h2 style={{ fontSize: 15.5, fontWeight: 590, color: 'var(--sc-ink)', margin: 0 }}>
             Reactions
           </h2>
-          <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', margin: '3px 0 0' }}>
+          <p style={{ fontSize: 12.5, color: '#6F747A', margin: '3px 0 0' }}>
             Parents who reacted to this Moment.
           </p>
         </div>
@@ -1225,10 +1225,10 @@ function AdminReactionSheet({ moment, onClose }: any) {
         <button type="button" onClick={onClose} aria-label="Close" className="sc-icon-button" style={{
           width: 34,
           height: 34,
-          borderRadius: 999,
+          borderRadius: 12,
           border: 'none',
-          background: 'var(--sc-soft)',
-          color: 'var(--sc-ink-3)',
+          background: 'transparent',
+          color: '#6F747A',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -1283,7 +1283,7 @@ function AdminReactionSheet({ moment, onClose }: any) {
 
                 <p style={{
                   fontSize: 12.2,
-                  color: 'var(--sc-ink-3)',
+                  color: '#6F747A',
                   margin: '2px 0 0',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',

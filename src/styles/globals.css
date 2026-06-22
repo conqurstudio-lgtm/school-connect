@@ -4084,3 +4084,95 @@ button[type="submit"] {
   gap: 7px !important;
 }
 
+
+/* school-connect-school-ui-clean-pass-v2 */
+/* School area clean pass: clearer forms, softer headings, readable subtext, flatter icon buttons */
+:root {
+  --sc-school-clean-ink: #25272B;
+  --sc-school-clean-muted: #687077;
+  --sc-school-clean-muted-soft: #7C838A;
+  --sc-school-clean-line: #D6DCE0;
+  --sc-school-clean-line-soft: #E7EAED;
+  --sc-school-clean-surface: #FFFFFF;
+  --sc-school-clean-soft: #F8F9F9;
+}
+
+/* School sheets/popups */
+.sc-clean-sheet-header-v2 h1,
+.sc-clean-sheet-header-v2 h2,
+.sc-clean-sheet-header-v2 h3,
+.sc-admin-teacher-moments-screen-v418 h1,
+.sc-admin-teacher-moments-screen-v418 h2,
+.sc-admin-teacher-moments-screen-v418 h3 {
+  color: var(--sc-school-clean-ink) !important;
+  font-weight: 590 !important;
+  letter-spacing: -0.024em !important;
+}
+
+.sc-clean-sheet-header-v2 p,
+.sc-admin-teacher-moments-screen-v418 p,
+.sc-admin-teacher-moments-screen-v418 span {
+  color: var(--sc-school-clean-muted) !important;
+}
+
+/* Forms inside school popups */
+.sc-clean-sheet-header-v2 ~ div input,
+.sc-clean-sheet-header-v2 ~ div textarea,
+.sc-clean-sheet-header-v2 ~ div select,
+.sc-bottom-sheet-panel input,
+.sc-bottom-sheet-panel textarea,
+.sc-bottom-sheet-panel select {
+  border-color: var(--sc-school-clean-line) !important;
+  color: var(--sc-school-clean-ink) !important;
+  background: #FFFFFF !important;
+  font-weight: 430 !important;
+}
+
+.sc-bottom-sheet-panel input::placeholder,
+.sc-bottom-sheet-panel textarea::placeholder {
+  color: #9AA1A8 !important;
+  font-weight: 380 !important;
+}
+
+.sc-bottom-sheet-panel input:focus,
+.sc-bottom-sheet-panel textarea:focus,
+.sc-bottom-sheet-panel select:focus {
+  border-color: #AEB8B5 !important;
+  box-shadow: 0 0 0 4px rgba(143, 166, 161, 0.10) !important;
+  outline: none !important;
+}
+
+/* Close / back / add icon buttons in school area should not carry rings */
+.sc-clean-sheet-header-v2 .sc-icon-button,
+.sc-admin-teacher-moments-screen-v418 .sc-icon-button,
+.sc-admin-teacher-moments-screen-v418 button[aria-label],
+.sc-school-profile-page .sc-icon-button,
+.sc-school-page .sc-icon-button {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+}
+
+.sc-clean-sheet-header-v2 .sc-icon-button:hover,
+.sc-admin-teacher-moments-screen-v418 .sc-icon-button:hover,
+.sc-admin-teacher-moments-screen-v418 button[aria-label]:hover,
+.sc-school-profile-page .sc-icon-button:hover,
+.sc-school-page .sc-icon-button:hover {
+  background: rgba(0, 0, 0, 0.045) !important;
+  box-shadow: none !important;
+}
+
+/* Subtle but visible separators */
+.sc-admin-teacher-moments-screen-v418 [style*="borderBottom"],
+.sc-bottom-sheet-panel [style*="borderBottom"] {
+  border-color: var(--sc-school-clean-line-soft) !important;
+}
+
+/* Helper cards in sheets should look light, not disabled */
+.sc-bottom-sheet-panel [style*="background: var(--sc-soft)"] {
+  background: var(--sc-school-clean-soft) !important;
+  color: var(--sc-school-clean-muted) !important;
+}
+
