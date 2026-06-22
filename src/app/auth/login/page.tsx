@@ -1,5 +1,6 @@
+import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, LockKeyhole } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 type LoginPageProps = {
   searchParams?: {
@@ -13,9 +14,9 @@ const T = {
   white: '#FFFFFF',
   ink: '#262626',
   ink2: '#5F6268',
-  ink3: '#9A9CA3',
-  border: 'rgba(0,0,0,0.07)',
-  soft: '#F8F8F9',
+  ink3: '#73777D',
+  border: 'rgba(0,0,0,0.09)',
+  soft: '#F8F9F8',
   red: '#B42318',
   green: '#1F9D55',
 }
@@ -32,14 +33,16 @@ const inputStyle: React.CSSProperties = {
   outline: 'none',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
+  fontWeight: 430,
 }
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 12,
-  fontWeight: 650,
+  fontWeight: 560,
   color: T.ink2,
   marginBottom: 7,
+  letterSpacing: '-0.01em',
 }
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
@@ -54,39 +57,61 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px 14px',
+      padding: '22px 18px',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
       color: T.ink,
     }}>
-      <section style={{ width: '100%', maxWidth: 390 }}>
-        <div style={{ textAlign: 'center', marginBottom: 18 }}>
+      <section style={{
+        width: '100%',
+        maxWidth: 390,
+        minHeight: 'calc(100dvh - 44px)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          textAlign: 'center',
+          marginBottom: 24,
+        }}>
           <div style={{
-            width: 50,
-            height: 50,
-            borderRadius: 18,
-            background: T.soft,
-            border: `1px solid ${T.border}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 12px',
-            color: T.ink,
+            width: '100%',
+            maxWidth: 270,
+            margin: '0 auto 22px',
           }}>
-            <LockKeyhole size={24} strokeWidth={1.8} />
+            <Image
+              src="/images/school-connect-welcome.png"
+              alt="School Connect welcome illustration"
+              width={540}
+              height={540}
+              priority
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+              }}
+            />
           </div>
 
           <h1 style={{
-            fontSize: 24,
-            lineHeight: 1.1,
-            fontWeight: 650,
-            letterSpacing: '-0.04em',
+            fontSize: 29,
+            lineHeight: 1.05,
+            fontWeight: 680,
+            letterSpacing: '-0.045em',
             margin: 0,
+            color: T.ink,
           }}>
-            Sign in to School Connect
+            Welcome to School Connect
           </h1>
 
-          <p style={{ fontSize: 14, color: T.ink3, lineHeight: 1.45, margin: '7px 0 0' }}>
-            Open your school dashboard.
+          <p style={{
+            fontSize: 14.2,
+            color: T.ink3,
+            lineHeight: 1.48,
+            margin: '12px auto 0',
+            maxWidth: 330,
+            fontWeight: 390,
+          }}>
+            A simple space for schools, teachers and parents to stay connected through reports, updates and shared moments.
           </p>
         </div>
 
@@ -94,12 +119,8 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           method="post"
           action="/api/auth/login-redirect"
           style={{
-            border: `1px solid ${T.border}`,
-            borderRadius: 24,
-            padding: 16,
-            boxShadow: '0 18px 55px rgba(0,0,0,0.045)',
             display: 'grid',
-            gap: 14,
+            gap: 13,
           }}
         >
           <input type="hidden" name="redirectTo" value={redirectTo} />
@@ -113,7 +134,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               padding: '10px 12px',
               fontSize: 12.8,
               lineHeight: 1.4,
-              fontWeight: 560,
+              fontWeight: 520,
             }}>
               School created. Sign in with the owner email and password.
             </div>
@@ -128,7 +149,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               padding: '10px 12px',
               fontSize: 12.8,
               lineHeight: 1.4,
-              fontWeight: 560,
+              fontWeight: 520,
             }}>
               {error}
             </div>
@@ -162,32 +183,40 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           <button
             type="submit"
             style={{
-              minHeight: 48,
+              minHeight: 52,
               width: '100%',
-              borderRadius: 15,
+              borderRadius: 18,
               border: 'none',
               background: T.ink,
               color: T.white,
-              fontSize: 14.5,
-              fontWeight: 650,
+              fontSize: 15,
+              fontWeight: 620,
               cursor: 'pointer',
               fontFamily: 'inherit',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: 8,
-              marginTop: 2,
+              marginTop: 3,
+              letterSpacing: '-0.012em',
             }}
           >
             Sign in <ArrowRight size={16} />
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', fontSize: 13, color: T.ink3, margin: '14px 0 0' }}>
+        <p style={{
+          textAlign: 'center',
+          fontSize: 13,
+          color: T.ink3,
+          margin: '16px 0 0',
+          lineHeight: 1.45,
+        }}>
           No school account yet?{' '}
-          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 650, textDecoration: 'none' }}>
+          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 620, textDecoration: 'none' }}>
             Create one
-          </Link>&nbsp;</p>
+          </Link>
+        </p>
       </section>
     </main>
   )
