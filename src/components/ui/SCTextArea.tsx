@@ -40,7 +40,7 @@ export default function SCTextArea({ value, onChange, placeholder, rows = 4, lab
           boxSizing: 'border-box',
           padding: '12px 13px',
           borderRadius: 16,
-          border: '1px solid var(--sc-border)',
+          border: '1px solid #D8DDE1',
           background: 'var(--sc-white)',
           color: 'var(--sc-ink)',
           fontSize: 16,

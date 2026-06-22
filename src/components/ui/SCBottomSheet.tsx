@@ -39,7 +39,7 @@ export default function SCBottomSheet({ open, onClose, children, maxWidth = 430 
           animation: 'scSheetIn .22s var(--sc-ease-standard) both',
         }}
       >
-        <div style={{ width: 38, height: 4, borderRadius: 999, background: 'var(--sc-border)', margin: '0 auto 14px' }} />
+        <div style={{ width: 38, height: 4, borderRadius: 999, background: '#D8DDE1', margin: '0 auto 14px' }} />
         {children}
       </div>
     </div>,

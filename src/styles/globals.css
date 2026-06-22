@@ -3947,3 +3947,140 @@ a.sc-icon-button {
   background: transparent !important;
 }
 
+
+/* school-connect-ui-clean-forms-popups-v1 */
+/* Global polish: cleaner popups, clearer form lines, softer headings, readable subtext */
+:root {
+  --sc-clean-ink: #25272B;
+  --sc-clean-muted: #6F747A;
+  --sc-clean-soft-muted: #8B9096;
+  --sc-clean-line: #D8DDE1;
+  --sc-clean-line-soft: #E8EBEE;
+  --sc-clean-surface: #FFFFFF;
+  --sc-clean-soft: #F7F8F8;
+}
+
+/* Popup / sheet surfaces should feel flat, clean and breathable */
+.sc-bottom-sheet-panel,
+.sc-modal,
+.sc-sheet,
+.sc-dialog,
+.sc-card,
+[role="dialog"] > div {
+  border-color: var(--sc-clean-line-soft) !important;
+}
+
+/* Make form lines visible enough without feeling heavy */
+input,
+textarea,
+select,
+.sc-input,
+.sc-textarea {
+  border-color: var(--sc-clean-line) !important;
+  color: var(--sc-clean-ink) !important;
+  background: var(--sc-clean-surface) !important;
+  font-weight: 430 !important;
+  letter-spacing: -0.01em !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.sc-input::placeholder,
+.sc-textarea::placeholder {
+  color: #9CA2A8 !important;
+  font-weight: 380 !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.sc-input:focus,
+.sc-textarea:focus {
+  border-color: #AEB8B5 !important;
+  box-shadow: 0 0 0 4px rgba(143, 166, 161, 0.10) !important;
+  outline: none !important;
+}
+
+/* Labels should be clear, not heavy */
+label,
+.sc-label,
+.sc-field-label {
+  color: #3C4045 !important;
+  font-weight: 560 !important;
+  letter-spacing: -0.012em !important;
+}
+
+/* Helper / sub text: slightly darker and cleaner */
+small,
+.sc-helper,
+.sc-help,
+.sc-caption,
+.sc-subtext,
+.sc-muted,
+.sc-description,
+.sc-field-help,
+.sc-empty-subtitle {
+  color: var(--sc-clean-muted) !important;
+  font-weight: 390 !important;
+  line-height: 1.48 !important;
+  letter-spacing: -0.004em !important;
+}
+
+/* Headings inside popups/cards: less bold, more premium */
+[role="dialog"] h1,
+[role="dialog"] h2,
+[role="dialog"] h3,
+.sc-bottom-sheet-panel h1,
+.sc-bottom-sheet-panel h2,
+.sc-bottom-sheet-panel h3,
+.sc-card h1,
+.sc-card h2,
+.sc-card h3 {
+  color: var(--sc-clean-ink) !important;
+  font-weight: 620 !important;
+  letter-spacing: -0.026em !important;
+}
+
+/* Paragraph text inside popups should be readable but not too dark */
+[role="dialog"] p,
+.sc-bottom-sheet-panel p,
+.sc-card p {
+  line-height: 1.48 !important;
+}
+
+/* Divider lines: visible, soft and consistent */
+hr,
+.sc-divider,
+.sc-line {
+  border-color: var(--sc-clean-line-soft) !important;
+  background: var(--sc-clean-line-soft) !important;
+}
+
+/* Buttons: keep flat and focused */
+button {
+  letter-spacing: -0.01em;
+}
+
+.sc-button,
+button[type="submit"] {
+  font-weight: 570 !important;
+}
+
+/* Avoid overly grey disabled-looking form cards */
+.sc-bottom-sheet-panel input,
+.sc-bottom-sheet-panel textarea,
+.sc-bottom-sheet-panel select,
+[role="dialog"] input,
+[role="dialog"] textarea,
+[role="dialog"] select {
+  border: 1px solid var(--sc-clean-line) !important;
+  background: #FFFFFF !important;
+}
+
+/* Make form groups breathe better where generic gap is tight */
+.sc-form-row,
+.sc-field,
+.sc-form-field {
+  gap: 7px !important;
+}
+
