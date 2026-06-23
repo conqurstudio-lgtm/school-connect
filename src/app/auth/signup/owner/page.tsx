@@ -25,6 +25,9 @@ const inputStyle = {
   background: T.white,
   color: T.ink,
   outline: 'none',
+  boxShadow: 'none',
+  appearance: 'none' as const,
+  WebkitAppearance: 'none' as const,
   fontFamily: 'inherit',
   boxSizing: 'border-box' as const,
 }
@@ -118,7 +121,6 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           background: T.white,
           border: `1px solid ${T.border}`,
           borderRadius: 28,
-          boxShadow: '0 18px 58px rgba(33,34,45,0.045)',
           overflow: 'hidden',
         }}>
           <div style={{
