@@ -30,13 +30,18 @@ export default function HomePage() {
         <p style={{
           textAlign: 'center',
           color: '#21222D',
-          fontSize: 12.6,
-          lineHeight: 1.45,
-          margin: '0 0 14px',
+          fontSize: 11.4,
+          lineHeight: 1.42,
+          margin: '0 0 12px',
+          fontWeight: 390,
         }}>
-          By continuing, you agree to our{' '}
-          <Link href="/privacy" style={{ color: '#21222D', fontWeight: 620, textDecoration: 'none' }}>
-            Privacy & Safety Policy
+          Please read our{' '}
+          <Link href="/privacy" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
+            School Connect Privacy Policy
+          </Link>.
+          {' '}By continuing, you agree to the{' '}
+          <Link href="/terms" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
+            School Connect Terms of Service
           </Link>.
         </p>
 
