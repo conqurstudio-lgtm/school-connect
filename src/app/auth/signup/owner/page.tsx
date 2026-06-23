@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Check } from 'lucide-react'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
@@ -197,7 +196,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             </div>
 
             <button type="submit" className="sc-pressable" style={{ ...primaryButton, opacity: schoolName ? 1 : 0.55 }} disabled={!schoolName}>
-              <Check size={16} /> Create school account
+              Create school account
             </button>
 
             <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
