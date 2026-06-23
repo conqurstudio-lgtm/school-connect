@@ -1,8 +1,9 @@
 'use client'
 
+import { AuthArrow } from '@/components/auth/AuthArrow'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
@@ -56,7 +57,7 @@ const primaryButton: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 8,
+  gap: 10,
   letterSpacing: '-0.012em',
   marginTop: 8,
 }
@@ -75,7 +76,7 @@ const secondaryButton: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 8,
+  gap: 10,
   letterSpacing: '-0.01em',
 }
 
@@ -233,17 +234,17 @@ export default function SignupPage() {
 
           {step < 2 ? (
             <button type="button" className="sc-pressable" style={primaryButton} onClick={nextStep}>
-              Continue <ArrowRight size={16} />
+              Continue <AuthArrow direction="right" size={13} />
             </button>
           ) : (
             <button type="submit" className="sc-pressable" style={primaryButton}>
-              Continue to owner account <ArrowRight size={16} />
+              Continue to owner account <AuthArrow direction="right" size={13} />
             </button>
           )}
 
           {step > 0 ? (
             <button type="button" className="sc-pressable" style={secondaryButton} onClick={backStep}>
-              <ArrowLeft size={15} /> Back
+              <AuthArrow direction="left" size={13} /> Back
             </button>
           ) : null}
         </form>

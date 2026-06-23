@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { AuthArrow } from '@/components/auth/AuthArrow'
+
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 export default function HomePage() {
@@ -61,12 +62,12 @@ export default function HomePage() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 8,
+            gap: 10,
             textDecoration: 'none',
             letterSpacing: '-0.012em',
           }}
         >
-          Get started <ArrowRight size={17} />
+          Get started <AuthArrow direction="right" size={13} />
         </Link>
       </section>
     </main>

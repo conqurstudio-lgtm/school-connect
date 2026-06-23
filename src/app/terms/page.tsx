@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { AuthArrow } from '@/components/auth/AuthArrow'
+
 
 const T = {
   white: '#FFFFFF',
@@ -126,9 +127,9 @@ export default function TermsPage() {
           href="/"
           aria-label="Back to welcome"
           style={{
-            width: 38,
-            height: 38,
-            borderRadius: 12,
+            width: 36,
+            height: 36,
+            borderRadius: 10,
             color: T.ink,
             display: 'inline-flex',
             alignItems: 'center',
@@ -137,7 +138,7 @@ export default function TermsPage() {
             marginBottom: 22,
           }}
         >
-          <ArrowLeft size={20} strokeWidth={2.1} />
+          <AuthArrow direction="left" size={14} />
         </Link>
 
         <header style={{ marginBottom: 28 }}>

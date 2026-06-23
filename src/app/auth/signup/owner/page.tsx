@@ -1,6 +1,7 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
+import { AuthArrow } from '@/components/auth/AuthArrow'
 
 const T = {
   white: '#FFFFFF',
@@ -70,7 +71,7 @@ const secondaryButton = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 7,
+  gap: 10,
   textDecoration: 'none',
 }
 
@@ -201,7 +202,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             </button>
 
             <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
-              <ArrowLeft size={15} /> Back
+              <AuthArrow direction="left" size={13} /> Back
             </Link>
 
             <p style={{ margin: '0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45, textAlign: 'center' }}>

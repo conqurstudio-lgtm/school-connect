@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { AuthArrow } from '@/components/auth/AuthArrow'
+
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 type LoginPageProps = {
@@ -156,12 +157,12 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8,
+              gap: 10,
               marginTop: 8,
               letterSpacing: '-0.012em',
             }}
           >
-            Sign in <ArrowRight size={16} />
+            Sign in <AuthArrow direction="right" size={13} />
           </button>
         </form>
 
