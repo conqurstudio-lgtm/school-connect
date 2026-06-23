@@ -4,7 +4,7 @@ import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 export default function HomePage() {
   return (
-    <main style={{
+    <main className="sc-page-enter" style={{
       minHeight: '100dvh',
       background: '#FFFFFF',
       display: 'flex',

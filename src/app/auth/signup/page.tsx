@@ -158,7 +158,7 @@ export default function SignupPage() {
           {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
 
           {step === 0 ? (
-            <div>
+            <div key="school-step" className="sc-form-step-swipe">
               <label style={labelStyle}>School name</label>
               <input
                 name="school_name"
@@ -174,7 +174,7 @@ export default function SignupPage() {
           ) : null}
 
           {step === 1 ? (
-            <>
+            <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 18 }}>
               <div>
                 <label style={labelStyle}>Phone optional</label>
                 <input
@@ -199,11 +199,11 @@ export default function SignupPage() {
                   inputMode="email"
                 />
               </div>
-            </>
+            </div>
           ) : null}
 
           {step === 2 ? (
-            <div style={{
+            <div key="review-step" className="sc-form-step-swipe" style={{
               display: 'grid',
               gap: 16,
               padding: '6px 0 8px',

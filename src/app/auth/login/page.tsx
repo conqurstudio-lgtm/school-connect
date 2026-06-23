@@ -53,7 +53,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
   const redirectTo = searchParams?.redirectTo || '/school'
 
   return (
-    <main style={{
+    <main className="sc-page-enter" style={{
       minHeight: '100dvh',
       background: T.white,
       display: 'flex',
