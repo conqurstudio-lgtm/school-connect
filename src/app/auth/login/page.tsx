@@ -37,7 +37,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 12.5,
+  fontSize: 12.2,
   fontWeight: 580,
   color: T.ink2,
   marginBottom: 7,
@@ -67,9 +67,9 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
       }}>
         <AuthWelcomeHero
           compact
-          imageSize={150}
+          imageSize={132}
           title="Sign in"
-          text="Open your School Connect space and continue managing reports, teachers and parent updates."
+          text="Open your School Connect space."
         />
 
         <form
@@ -164,7 +164,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 
         <p style={{
           textAlign: 'center',
-          fontSize: 13,
+          fontSize: 12.8,
           color: T.ink3,
           margin: '16px 0 0',
           lineHeight: 1.45,
