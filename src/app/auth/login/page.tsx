@@ -14,7 +14,7 @@ const T = {
   white: '#FFFFFF',
   ink: '#21222D',
   ink2: '#545866',
-  ink3: '#6F7280',
+  ink3: '#21222D',
   border: '#DBDBE5',
   red: '#B42318',
   green: '#1F9D55',
@@ -24,7 +24,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   minHeight: 48,
   padding: '12px 14px',
-  fontSize: 16,
+  fontSize: 14.5,
   border: `1px solid ${T.border}`,
   borderRadius: 15,
   background: T.white,
@@ -37,8 +37,8 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 12.2,
-  fontWeight: 580,
+  fontSize: 11.8,
+  fontWeight: 540,
   color: T.ink2,
   marginBottom: 7,
   letterSpacing: '-0.01em',
@@ -89,7 +89,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               background: '#F2FBF6',
               color: T.green,
               padding: '10px 12px',
-              fontSize: 12.8,
+              fontSize: 12.2,
               lineHeight: 1.4,
               fontWeight: 520,
             }}>
@@ -104,7 +104,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               background: '#FFF5F5',
               color: T.red,
               padding: '10px 12px',
-              fontSize: 12.8,
+              fontSize: 12.2,
               lineHeight: 1.4,
               fontWeight: 520,
             }}>
@@ -146,8 +146,8 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               border: 'none',
               background: '#21222D',
               color: T.white,
-              fontSize: 15,
-              fontWeight: 620,
+              fontSize: 13.8,
+              fontWeight: 590,
               cursor: 'pointer',
               fontFamily: 'inherit',
               display: 'inline-flex',
@@ -164,26 +164,26 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
 
         <p style={{
           textAlign: 'center',
-          fontSize: 12.8,
+          fontSize: 12.2,
           color: T.ink3,
           margin: '16px 0 0',
           lineHeight: 1.45,
         }}>
           No school account yet?{' '}
-          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 620, textDecoration: 'none' }}>
+          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 590, textDecoration: 'none' }}>
             Create one
           </Link>
         </p>
 
         <p style={{
           textAlign: 'center',
-          fontSize: 12.2,
+          fontSize: 11.8,
           color: T.ink3,
           margin: '10px 0 0',
           lineHeight: 1.45,
         }}>
           Read our{' '}
-          <Link href="/privacy" style={{ color: T.ink, fontWeight: 620, textDecoration: 'none' }}>
+          <Link href="/privacy" style={{ color: T.ink, fontWeight: 590, textDecoration: 'none' }}>
             Privacy & Safety Policy
           </Link>
         </p>

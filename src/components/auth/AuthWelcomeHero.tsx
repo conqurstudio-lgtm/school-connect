@@ -43,10 +43,10 @@ export function AuthWelcomeHero({
 
       {title ? (
         <h1 style={{
-          fontSize: compact ? 23 : 32,
-          lineHeight: compact ? 1.08 : 1.04,
-          fontWeight: compact ? 650 : 690,
-          letterSpacing: compact ? '-0.038em' : '-0.05em',
+          fontSize: compact ? 19 : 25,
+          lineHeight: compact ? 1.12 : 1.08,
+          fontWeight: compact ? 610 : 650,
+          letterSpacing: compact ? '-0.028em' : '-0.038em',
           margin: 0,
           color: '#21222D',
         }}>
@@ -56,12 +56,12 @@ export function AuthWelcomeHero({
 
       {text ? (
         <p style={{
-          fontSize: compact ? 13.4 : 15,
-          color: '#6F7280',
+          fontSize: compact ? 12.2 : 13.2,
+          color: '#21222D',
           lineHeight: 1.5,
           margin: compact ? '7px auto 0' : '13px auto 0',
           maxWidth: compact ? 330 : 350,
-          fontWeight: 410,
+          fontWeight: 390,
           letterSpacing: '-0.006em',
         }}>
           {text}

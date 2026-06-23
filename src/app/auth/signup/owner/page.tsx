@@ -6,7 +6,7 @@ const T = {
   white: '#FFFFFF',
   ink: '#21222D',
   ink2: '#545866',
-  ink3: '#6F7280',
+  ink3: '#21222D',
   border: '#DBDBE5',
   primary: '#21222D',
   soft: '#F7F8FC',
@@ -19,7 +19,7 @@ const inputStyle = {
   width: '100%',
   minHeight: 48,
   padding: '12px 14px',
-  fontSize: 16,
+  fontSize: 12.7,
   border: `1px solid ${T.border}`,
   borderRadius: 14,
   background: T.white,
@@ -31,8 +31,8 @@ const inputStyle = {
 
 const labelStyle = {
   display: 'block',
-  fontSize: 13,
-  fontWeight: 560,
+  fontSize: 12.2,
+  fontWeight: 520,
   color: T.ink2,
   marginBottom: 7,
 }
@@ -44,8 +44,8 @@ const primaryButton = {
   border: 'none',
   background: T.primary,
   color: T.white,
-  fontSize: 14.5,
-  fontWeight: 620,
+  fontSize: 12.7,
+  fontWeight: 590,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -60,8 +60,8 @@ const secondaryButton = {
   border: `1px solid ${T.border}`,
   background: T.white,
   color: T.ink2,
-  fontSize: 14,
-  fontWeight: 580,
+  fontSize: 12.8,
+  fontWeight: 540,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -128,7 +128,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             justifyContent: 'space-between',
             gap: 12,
           }}>
-            <p style={{ margin: 0, color: T.ink, fontSize: 18, fontWeight: 640, letterSpacing: '-0.025em' }}>
+            <p style={{ margin: 0, color: T.ink, fontSize: 15.5, fontWeight: 600, letterSpacing: '-0.025em' }}>
               Owner account
             </p>
             <StepDots />
@@ -142,9 +142,9 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
                 background: T.redBg,
                 color: T.red,
                 padding: '10px 12px',
-                fontSize: 13,
+                fontSize: 12.2,
                 lineHeight: 1.45,
-                fontWeight: 560,
+                fontWeight: 520,
               }}>
                 {error}
               </div>
@@ -157,9 +157,9 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
                 background: T.redBg,
                 color: T.red,
                 padding: '10px 12px',
-                fontSize: 13,
+                fontSize: 12.2,
                 lineHeight: 1.45,
-                fontWeight: 560,
+                fontWeight: 520,
               }}>
                 School name is missing. Go back and enter school details again.
               </div>
@@ -175,8 +175,8 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
               padding: 12,
               background: T.soft,
             }}>
-              <p style={{ margin: 0, color: T.ink, fontSize: 13.5, fontWeight: 620 }}>{schoolName || 'School not set'}</p>
-              <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 12.5 }}>{schoolPhone || schoolEmail || 'School details captured'}</p>
+              <p style={{ margin: 0, color: T.ink, fontSize: 12.7, fontWeight: 590 }}>{schoolName || 'School not set'}</p>
+              <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details captured'}</p>
             </div>
 
             <div>
@@ -204,7 +204,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
 
             <p style={{ margin: '0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45, textAlign: 'center' }}>
               By creating an account, you agree to our{' '}
-              <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
+              <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
                 Privacy & Safety Policy
               </Link>.
             </p>

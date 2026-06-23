@@ -9,7 +9,7 @@ const T = {
   white: '#FFFFFF',
   ink: '#21222D',
   ink2: '#545866',
-  ink3: '#6F7280',
+  ink3: '#21222D',
   border: '#DBDBE5',
   primary: '#21222D',
   red: '#B42318',
@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   minHeight: 58,
   padding: '14px 15px',
-  fontSize: 16,
+  fontSize: 13.4,
   border: `1px solid ${T.border}`,
   borderRadius: 18,
   background: T.white,
@@ -32,8 +32,8 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 12.5,
-  fontWeight: 580,
+  fontSize: 11.8,
+  fontWeight: 540,
   color: T.ink2,
   marginBottom: 10,
   letterSpacing: '-0.01em',
@@ -46,8 +46,8 @@ const primaryButton: React.CSSProperties = {
   border: 'none',
   background: T.primary,
   color: T.white,
-  fontSize: 15,
-  fontWeight: 620,
+  fontSize: 13.8,
+  fontWeight: 590,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -65,8 +65,8 @@ const secondaryButton: React.CSSProperties = {
   border: `1px solid rgba(0,0,0,0.09)`,
   background: T.white,
   color: T.ink2,
-  fontSize: 14.5,
-  fontWeight: 580,
+  fontSize: 13.4,
+  fontWeight: 540,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -206,22 +206,22 @@ export default function SignupPage() {
               padding: '6px 0 8px',
             }}>
               <div>
-                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>School name</p>
-                <p style={{ margin: '3px 0 0', fontSize: 15.5, color: T.ink, fontWeight: 570 }}>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>School name</p>
+                <p style={{ margin: '3px 0 0', fontSize: 13.8, color: T.ink, fontWeight: 570 }}>
                   {schoolName.trim() || 'Not set'}
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Phone</p>
-                <p style={{ margin: '3px 0 0', fontSize: 14, color: T.ink2, fontWeight: 440 }}>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>Phone</p>
+                <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440 }}>
                   {schoolPhone.trim() || 'Optional'}
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: 0, fontSize: 12.2, color: T.ink3, fontWeight: 500 }}>Email</p>
-                <p style={{ margin: '3px 0 0', fontSize: 14, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>Email</p>
+                <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
                   {schoolEmail.trim() || 'Optional'}
                 </p>
               </div>
@@ -246,16 +246,16 @@ export default function SignupPage() {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 26 }}>
-          <p style={{ margin: 0, color: T.ink3, fontSize: 13.2, lineHeight: 1.45 }}>
+          <p style={{ margin: 0, color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
             Already have an account?{' '}
-            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
+            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
               Sign in
             </Link>
           </p>
 
-          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45 }}>
+          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
             By continuing, you agree to our{' '}
-            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
+            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
               Privacy & Safety Policy
             </Link>.
           </p>

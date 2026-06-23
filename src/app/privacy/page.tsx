@@ -4,8 +4,8 @@ import { ArrowLeft } from 'lucide-react'
 const T = {
   white: '#FFFFFF',
   ink: '#21222D',
-  ink2: '#545866',
-  ink3: '#6F7280',
+  ink2: '#21222D',
+  ink3: '#21222D',
   border: '#DBDBE5',
   soft: '#F7F8FC',
   accent: '#958CE8',
@@ -20,10 +20,10 @@ function Section({ title, children }: { title: string, children: React.ReactNode
       <h2 style={{
         margin: 0,
         color: T.ink,
-        fontSize: 18,
+        fontSize: 15.5,
         lineHeight: 1.2,
-        fontWeight: 650,
-        letterSpacing: '-0.03em',
+        fontWeight: 600,
+        letterSpacing: '-0.022em',
       }}>
         {title}
       </h2>
@@ -31,8 +31,8 @@ function Section({ title, children }: { title: string, children: React.ReactNode
       <div style={{
         marginTop: 9,
         color: T.ink2,
-        fontSize: 14,
-        lineHeight: 1.58,
+        fontSize: 12.7,
+        lineHeight: 1.464,
         fontWeight: 410,
       }}>
         {children}
@@ -46,8 +46,8 @@ function P({ children }: { children: React.ReactNode }) {
     <p style={{
       margin: '0 0 9px',
       color: T.ink2,
-      fontSize: 14,
-      lineHeight: 1.58,
+      fontSize: 12.7,
+      lineHeight: 1.464,
       fontWeight: 410,
     }}>
       {children}
@@ -60,9 +60,9 @@ function Label({ children }: { children: React.ReactNode }) {
     <p style={{
       margin: '12px 0 5px',
       color: T.ink,
-      fontSize: 13.5,
+      fontSize: 12.4,
       lineHeight: 1.35,
-      fontWeight: 620,
+      fontWeight: 570,
       letterSpacing: '-0.015em',
     }}>
       {children}
@@ -86,8 +86,8 @@ function Bullets({ items }: { items: string[] }) {
           gap: 9,
           alignItems: 'start',
           color: T.ink2,
-          fontSize: 14,
-          lineHeight: 1.5,
+          fontSize: 12.7,
+          lineHeight: 1.46,
           fontWeight: 410,
         }}>
           <span style={{
@@ -141,19 +141,19 @@ export default function PrivacyPolicyPage() {
           <p style={{
             margin: '0 0 10px',
             color: T.ink3,
-            fontSize: 13,
+            fontSize: 12.2,
             lineHeight: 1.4,
-            fontWeight: 520,
+            fontWeight: 470,
           }}>
             Here’s your privacy policy — plain English, one page, ready to use:
           </p>
 
           <h1 style={{
             margin: 0,
-            fontSize: 34,
+            fontSize: 25,
             lineHeight: 1.03,
-            fontWeight: 700,
-            letterSpacing: '-0.055em',
+            fontWeight: 600,
+            letterSpacing: '-0.04em',
             color: T.ink,
           }}>
             School Connect — Privacy & Safety Policy
@@ -162,8 +162,8 @@ export default function PrivacyPolicyPage() {
           <p style={{
             margin: '12px 0 0',
             color: T.ink3,
-            fontSize: 14,
-            lineHeight: 1.5,
+            fontSize: 12.7,
+            lineHeight: 1.46,
             fontWeight: 410,
           }}>
             Last updated: June 2026
@@ -338,8 +338,8 @@ export default function PrivacyPolicyPage() {
             borderTop: `1px solid ${T.border}`,
             paddingTop: 18,
             color: T.ink2,
-            fontSize: 14,
-            lineHeight: 1.58,
+            fontSize: 12.7,
+            lineHeight: 1.464,
             fontWeight: 410,
           }}>
             <P>Put this on your landing page as a dedicated Privacy Policy page. Link to it from your signup form and your pamphlet.</P>

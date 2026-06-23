@@ -29,7 +29,7 @@ export default function HomePage() {
 
         <p style={{
           textAlign: 'center',
-          color: '#6F7280',
+          color: '#21222D',
           fontSize: 12.6,
           lineHeight: 1.45,
           margin: '0 0 14px',
@@ -49,8 +49,8 @@ export default function HomePage() {
             border: 'none',
             background: '#21222D',
             color: '#FFFFFF',
-            fontSize: 15.5,
-            fontWeight: 640,
+            fontSize: 14,
+            fontWeight: 600,
             cursor: 'pointer',
             fontFamily: 'inherit',
             display: 'inline-flex',
