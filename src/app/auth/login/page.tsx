@@ -30,6 +30,9 @@ const inputStyle: React.CSSProperties = {
   background: T.white,
   color: T.ink,
   outline: 'none',
+  boxShadow: 'none',
+  appearance: 'none',
+  WebkitAppearance: 'none',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
   fontWeight: 430,
@@ -77,7 +80,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           action="/api/auth/login-redirect"
           style={{
             display: 'grid',
-            gap: 13,
+            gap: 17,
           }}
         >
           <input type="hidden" name="redirectTo" value={redirectTo} />
@@ -154,7 +157,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 8,
-              marginTop: 3,
+              marginTop: 8,
               letterSpacing: '-0.012em',
             }}
           >
@@ -166,7 +169,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           textAlign: 'center',
           fontSize: 12.2,
           color: T.ink3,
-          margin: '16px 0 0',
+          margin: '22px 0 0',
           lineHeight: 1.45,
         }}>
           No school account yet?{' '}
@@ -179,7 +182,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
           textAlign: 'center',
           fontSize: 11.8,
           color: T.ink3,
-          margin: '10px 0 0',
+          margin: '12px 0 0',
           lineHeight: 1.45,
         }}>
           Read our{' '}

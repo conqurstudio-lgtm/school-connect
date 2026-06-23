@@ -41,7 +41,7 @@ const labelStyle = {
 }
 
 const primaryButton = {
-  minHeight: 46,
+  minHeight: 50,
   width: '100%',
   borderRadius: 14,
   border: 'none',
@@ -111,7 +111,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
       <div style={{ width: '100%', maxWidth: 430 }}>
         <AuthWelcomeHero
           compact
-          imageSize={132}
+          imageSize={128}
           title="Create owner account"
           text={`Owner account for ${schoolName || 'your school'}.`}
         />
@@ -120,7 +120,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           width: '100%',
           background: T.white,
           border: `1px solid ${T.border}`,
-          borderRadius: 28,
+          borderRadius: 24,
           overflow: 'hidden',
         }}>
           <div style={{
@@ -136,7 +136,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             <StepDots />
           </div>
 
-          <form method="POST" action="/api/auth/create-school-owner-form" style={{ padding: '0 18px 18px', display: 'grid', gap: 14 }}>
+          <form method="POST" action="/api/auth/create-school-owner-form" style={{ padding: '0 18px 20px', display: 'grid', gap: 17 }}>
             {error && (
               <div style={{
                 borderRadius: 14,

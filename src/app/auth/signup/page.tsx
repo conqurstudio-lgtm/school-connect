@@ -25,6 +25,9 @@ const inputStyle: React.CSSProperties = {
   background: T.white,
   color: T.ink,
   outline: 'none',
+  boxShadow: 'none',
+  appearance: 'none',
+  WebkitAppearance: 'none',
   fontFamily: 'inherit',
   boxSizing: 'border-box',
   fontWeight: 430,
@@ -55,7 +58,7 @@ const primaryButton: React.CSSProperties = {
   justifyContent: 'center',
   gap: 8,
   letterSpacing: '-0.012em',
-  marginTop: 5,
+  marginTop: 8,
 }
 
 const secondaryButton: React.CSSProperties = {
@@ -124,7 +127,7 @@ export default function SignupPage() {
         flexDirection: 'column',
         justifyContent: 'center',
       }}>
-        <div style={{ marginBottom: 34 }}>
+        <div style={{ marginBottom: 24 }}>
           <AuthWelcomeHero
             compact
             imageSize={132}
@@ -149,7 +152,7 @@ export default function SignupPage() {
           </div>
         ) : null}
 
-        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 20 }}>
+        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 18 }}>
           {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
@@ -245,7 +248,7 @@ export default function SignupPage() {
           ) : null}
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 26 }}>
+        <div style={{ textAlign: 'center', marginTop: 22 }}>
           <p style={{ margin: 0, color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
             Already have an account?{' '}
             <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>

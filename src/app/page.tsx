@@ -32,7 +32,7 @@ export default function HomePage() {
           color: '#21222D',
           fontSize: 11.4,
           lineHeight: 1.42,
-          margin: '0 0 12px',
+          margin: '0 0 18px',
           fontWeight: 390,
         }}>
           Please read our{' '}
@@ -48,7 +48,7 @@ export default function HomePage() {
         <Link
           href="/auth/login"
           style={{
-            minHeight: 54,
+            minHeight: 52,
             width: '100%',
             borderRadius: 18,
             border: 'none',

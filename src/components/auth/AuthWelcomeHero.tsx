@@ -20,12 +20,12 @@ export function AuthWelcomeHero({
   return (
     <div style={{
       textAlign: 'center',
-      marginBottom: compact ? 18 : 26,
+      marginBottom: compact ? 24 : 30,
     }}>
       <div style={{
         width: size,
         maxWidth: '82%',
-        margin: compact ? '0 auto 12px' : '0 auto 24px',
+        margin: compact ? '0 auto 18px' : '0 auto 28px',
       }}>
         <Image
           src="/images/school-connect-welcome-palette.png"
@@ -59,7 +59,7 @@ export function AuthWelcomeHero({
           fontSize: compact ? 12.2 : 13.2,
           color: '#21222D',
           lineHeight: 1.5,
-          margin: compact ? '7px auto 0' : '13px auto 0',
+          margin: compact ? '10px auto 0' : '15px auto 0',
           maxWidth: compact ? 330 : 350,
           fontWeight: 390,
           letterSpacing: '-0.006em',
