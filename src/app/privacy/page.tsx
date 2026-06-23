@@ -4,14 +4,11 @@ import { ArrowLeft } from 'lucide-react'
 const T = {
   white: '#FFFFFF',
   ink: '#21222D',
-  ink2: '#21222D',
-  ink3: '#21222D',
   border: '#DBDBE5',
-  soft: '#F7F8FC',
   accent: '#958CE8',
 }
 
-function Section({ title, children }: { title: string, children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section style={{
       borderTop: `1px solid ${T.border}`,
@@ -30,9 +27,9 @@ function Section({ title, children }: { title: string, children: React.ReactNode
 
       <div style={{
         marginTop: 9,
-        color: T.ink2,
+        color: T.ink,
         fontSize: 12.7,
-        lineHeight: 1.464,
+        lineHeight: 1.54,
         fontWeight: 410,
       }}>
         {children}
@@ -45,9 +42,9 @@ function P({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
       margin: '0 0 9px',
-      color: T.ink2,
+      color: T.ink,
       fontSize: 12.7,
-      lineHeight: 1.464,
+      lineHeight: 1.54,
       fontWeight: 410,
     }}>
       {children}
@@ -85,9 +82,9 @@ function Bullets({ items }: { items: string[] }) {
           gridTemplateColumns: '8px 1fr',
           gap: 9,
           alignItems: 'start',
-          color: T.ink2,
+          color: T.ink,
           fontSize: 12.7,
-          lineHeight: 1.46,
+          lineHeight: 1.5,
           fontWeight: 410,
         }}>
           <span style={{
@@ -138,21 +135,11 @@ export default function PrivacyPolicyPage() {
         </Link>
 
         <header style={{ marginBottom: 28 }}>
-          <p style={{
-            margin: '0 0 10px',
-            color: T.ink3,
-            fontSize: 12.2,
-            lineHeight: 1.4,
-            fontWeight: 470,
-          }}>
-            Here’s your privacy policy — plain English, one page, ready to use:
-          </p>
-
           <h1 style={{
             margin: 0,
             fontSize: 25,
-            lineHeight: 1.03,
-            fontWeight: 600,
+            lineHeight: 1.08,
+            fontWeight: 650,
             letterSpacing: '-0.04em',
             color: T.ink,
           }}>
@@ -161,7 +148,7 @@ export default function PrivacyPolicyPage() {
 
           <p style={{
             margin: '12px 0 0',
-            color: T.ink3,
+            color: T.ink,
             fontSize: 12.7,
             lineHeight: 1.46,
             fontWeight: 410,
@@ -333,19 +320,6 @@ export default function PrivacyPolicyPage() {
               'We take child safety seriously',
             ]} />
           </Section>
-
-          <section style={{
-            borderTop: `1px solid ${T.border}`,
-            paddingTop: 18,
-            color: T.ink2,
-            fontSize: 12.7,
-            lineHeight: 1.464,
-            fontWeight: 410,
-          }}>
-            <P>Put this on your landing page as a dedicated Privacy Policy page. Link to it from your signup form and your pamphlet.</P>
-            <P>When a principal asks about safety — hand them this. It answers every question before they ask it.</P>
-            <P>Does this cover everything you need?</P>
-          </section>
         </div>
       </article>
     </main>
