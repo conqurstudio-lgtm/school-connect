@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { AuthArrow } from '@/components/auth/AuthArrow'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
@@ -40,10 +39,6 @@ export default function HomePage() {
           <Link href="/privacy" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
             School Connect Privacy Policy
           </Link>.
-          {' '}By continuing, you agree to the{' '}
-          <Link href="/terms" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
-            School Connect Terms of Service
-          </Link>.
         </p>
 
         <Link
@@ -62,12 +57,12 @@ export default function HomePage() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 10,
+            gap: 0,
             textDecoration: 'none',
             letterSpacing: '-0.012em',
           }}
         >
-          Get started <AuthArrow direction="right" size={13} />
+          Get started
         </Link>
       </section>
     </main>

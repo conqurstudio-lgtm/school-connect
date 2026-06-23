@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
-import { AuthArrow } from '@/components/auth/AuthArrow'
 
 const T = {
   white: '#FFFFFF',
@@ -55,7 +54,7 @@ const primaryButton = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 8,
+  gap: 0,
 }
 
 const secondaryButton = {
@@ -71,7 +70,7 @@ const secondaryButton = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 10,
+  gap: 0,
   textDecoration: 'none',
 }
 
@@ -202,14 +201,14 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             </button>
 
             <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
-              <AuthArrow direction="left" size={13} /> Back
+              Back
             </Link>
 
             <p style={{ margin: '0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45, textAlign: 'center' }}>
-              By creating an account, you agree to our{' '}
-              <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
-                Privacy & Safety Policy
-              </Link>.
+              Please read our{' '}
+            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
+              School Connect Privacy Policy
+            </Link>.
             </p>
           </form>
         </section>

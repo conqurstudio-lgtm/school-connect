@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { AuthArrow } from '@/components/auth/AuthArrow'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
@@ -157,12 +156,12 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 10,
+              gap: 0,
               marginTop: 8,
               letterSpacing: '-0.012em',
             }}
           >
-            Sign in <AuthArrow direction="right" size={13} />
+            Sign in
           </button>
         </form>
 

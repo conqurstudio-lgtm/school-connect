@@ -1,6 +1,5 @@
 'use client'
 
-import { AuthArrow } from '@/components/auth/AuthArrow'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
@@ -57,7 +56,7 @@ const primaryButton: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 10,
+  gap: 0,
   letterSpacing: '-0.012em',
   marginTop: 8,
 }
@@ -76,7 +75,7 @@ const secondaryButton: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 10,
+  gap: 0,
   letterSpacing: '-0.01em',
 }
 
@@ -234,17 +233,17 @@ export default function SignupPage() {
 
           {step < 2 ? (
             <button type="button" className="sc-pressable" style={primaryButton} onClick={nextStep}>
-              Continue <AuthArrow direction="right" size={13} />
+              Continue
             </button>
           ) : (
             <button type="submit" className="sc-pressable" style={primaryButton}>
-              Continue to owner account <AuthArrow direction="right" size={13} />
+              Continue to owner account
             </button>
           )}
 
           {step > 0 ? (
             <button type="button" className="sc-pressable" style={secondaryButton} onClick={backStep}>
-              <AuthArrow direction="left" size={13} /> Back
+              Back
             </button>
           ) : null}
         </form>
@@ -258,9 +257,9 @@ export default function SignupPage() {
           </p>
 
           <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
-            By continuing, you agree to our{' '}
+            Please read our{' '}
             <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
-              Privacy & Safety Policy
+              School Connect Privacy Policy
             </Link>.
           </p>
         </div>
