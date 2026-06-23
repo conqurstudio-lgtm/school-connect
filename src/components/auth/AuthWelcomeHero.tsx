@@ -1,3 +1,5 @@
+// school-connect-auth-palette-v1
+// Palette: #21222D primary, #958CE8 accent, #ACD1FD soft blue, #DBDBE5 soft grey
 import Image from 'next/image'
 
 type AuthWelcomeHeroProps = {
@@ -26,7 +28,7 @@ export function AuthWelcomeHero({
         margin: compact ? '0 auto 12px' : '0 auto 24px',
       }}>
         <Image
-          src="/images/school-connect-welcome-transparent.png"
+          src="/images/school-connect-welcome-palette.png"
           alt="School Connect welcome illustration"
           width={620}
           height={520}
@@ -46,7 +48,7 @@ export function AuthWelcomeHero({
           fontWeight: compact ? 650 : 690,
           letterSpacing: compact ? '-0.038em' : '-0.05em',
           margin: 0,
-          color: '#262626',
+          color: '#21222D',
         }}>
           {title}
         </h1>
@@ -55,7 +57,7 @@ export function AuthWelcomeHero({
       {text ? (
         <p style={{
           fontSize: compact ? 13.4 : 15,
-          color: '#70757C',
+          color: '#6F7280',
           lineHeight: 1.5,
           margin: compact ? '7px auto 0' : '13px auto 0',
           maxWidth: compact ? 330 : 350,

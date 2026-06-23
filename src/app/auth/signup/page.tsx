@@ -7,11 +7,11 @@ import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
   white: '#FFFFFF',
-  ink: '#262626',
-  ink2: '#5F6268',
-  ink3: '#70757C',
-  border: 'rgba(0,0,0,0.12)',
-  primary: '#2B2B2F',
+  ink: '#21222D',
+  ink2: '#545866',
+  ink3: '#6F7280',
+  border: '#DBDBE5',
+  primary: '#21222D',
   red: '#B42318',
 }
 
@@ -37,7 +37,6 @@ const labelStyle: React.CSSProperties = {
   color: T.ink2,
   marginBottom: 10,
   letterSpacing: '-0.01em',
-  marginTop: -3,
 }
 
 const primaryButton: React.CSSProperties = {
@@ -125,7 +124,7 @@ export default function SignupPage() {
         flexDirection: 'column',
         justifyContent: 'center',
       }}>
-        <div style={{ marginBottom: 30 }}>
+        <div style={{ marginBottom: 34 }}>
           <AuthWelcomeHero
             compact
             imageSize={132}
@@ -150,7 +149,7 @@ export default function SignupPage() {
           </div>
         ) : null}
 
-        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 19 }}>
+        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 20 }}>
           {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}

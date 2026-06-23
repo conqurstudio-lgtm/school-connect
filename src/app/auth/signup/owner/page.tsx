@@ -4,12 +4,12 @@ import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
 const T = {
   white: '#FFFFFF',
-  ink: '#262626',
-  ink2: '#5F6268',
-  ink3: '#70757C',
-  border: 'rgba(0,0,0,0.07)',
-  primary: '#2B2B2F',
-  soft: '#F8F8F9',
+  ink: '#21222D',
+  ink2: '#545866',
+  ink3: '#6F7280',
+  border: '#DBDBE5',
+  primary: '#21222D',
+  soft: '#F7F8FC',
   redBg: '#FFF1F1',
   redBorder: 'rgba(220,38,38,0.16)',
   red: '#B42318',
@@ -118,7 +118,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           background: T.white,
           border: `1px solid ${T.border}`,
           borderRadius: 28,
-          boxShadow: '0 18px 58px rgba(0,0,0,0.05)',
+          boxShadow: '0 18px 58px rgba(33,34,45,0.045)',
           overflow: 'hidden',
         }}>
           <div style={{

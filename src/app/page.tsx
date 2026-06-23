@@ -12,7 +12,7 @@ export default function HomePage() {
       justifyContent: 'center',
       padding: '24px 18px calc(24px + env(safe-area-inset-bottom, 0px))',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
-      color: '#262626',
+      color: '#21222D',
       boxSizing: 'border-box',
     }}>
       <section style={{
@@ -34,7 +34,7 @@ export default function HomePage() {
             width: '100%',
             borderRadius: 18,
             border: 'none',
-            background: '#262626',
+            background: '#21222D',
             color: '#FFFFFF',
             fontSize: 15.5,
             fontWeight: 640,

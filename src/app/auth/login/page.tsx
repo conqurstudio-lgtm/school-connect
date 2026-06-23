@@ -12,10 +12,10 @@ type LoginPageProps = {
 
 const T = {
   white: '#FFFFFF',
-  ink: '#262626',
-  ink2: '#5F6268',
-  ink3: '#70757C',
-  border: 'rgba(0,0,0,0.12)',
+  ink: '#21222D',
+  ink2: '#545866',
+  ink3: '#6F7280',
+  border: '#DBDBE5',
   red: '#B42318',
   green: '#1F9D55',
 }
@@ -144,7 +144,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               width: '100%',
               borderRadius: 18,
               border: 'none',
-              background: T.ink,
+              background: '#21222D',
               color: T.white,
               fontSize: 15,
               fontWeight: 620,
