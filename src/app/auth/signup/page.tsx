@@ -252,6 +252,13 @@ export default function SignupPage() {
               Sign in
             </Link>
           </p>
+
+          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45 }}>
+            By continuing, you agree to our{' '}
+            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
+              Privacy & Safety Policy
+            </Link>.
+          </p>
         </div>
       </section>
     </main>

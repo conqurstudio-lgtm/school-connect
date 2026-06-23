@@ -201,6 +201,13 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
               <ArrowLeft size={15} /> Back
             </Link>
+
+            <p style={{ margin: '0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45, textAlign: 'center' }}>
+              By creating an account, you agree to our{' '}
+              <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 620 }}>
+                Privacy & Safety Policy
+              </Link>.
+            </p>
           </form>
         </section>
       </div>

@@ -174,6 +174,19 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             Create one
           </Link>
         </p>
+
+        <p style={{
+          textAlign: 'center',
+          fontSize: 12.2,
+          color: T.ink3,
+          margin: '10px 0 0',
+          lineHeight: 1.45,
+        }}>
+          Read our{' '}
+          <Link href="/privacy" style={{ color: T.ink, fontWeight: 620, textDecoration: 'none' }}>
+            Privacy & Safety Policy
+          </Link>
+        </p>
       </section>
     </main>
   )

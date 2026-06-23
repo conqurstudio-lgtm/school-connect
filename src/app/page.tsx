@@ -27,6 +27,19 @@ export default function HomePage() {
           <AuthWelcomeHero />
         </div>
 
+        <p style={{
+          textAlign: 'center',
+          color: '#6F7280',
+          fontSize: 12.6,
+          lineHeight: 1.45,
+          margin: '0 0 14px',
+        }}>
+          By continuing, you agree to our{' '}
+          <Link href="/privacy" style={{ color: '#21222D', fontWeight: 620, textDecoration: 'none' }}>
+            Privacy & Safety Policy
+          </Link>.
+        </p>
+
         <Link
           href="/auth/login"
           style={{
