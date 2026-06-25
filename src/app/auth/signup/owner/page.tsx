@@ -95,8 +95,8 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           <AuthWelcomeHero
             compact
             imageSize={128}
-            title="Create owner account"
-            text={`Owner account for ${schoolName || 'your school'}.`}
+            title="Owner account"
+            text="Create your login details."
           />
         </div>
 
@@ -131,7 +131,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
                 fontWeight: 520,
               }}
             >
-              School name is missing. Go back and enter school details again.
+              School name is missing. Go back to add it.
             </div>
           ) : null}
 
@@ -148,11 +148,11 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             }}
           >
             <p style={{ margin: 0, color: T.ink, fontSize: 12.8, fontWeight: 610 }}>{schoolName || 'School not set'}</p>
-            <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details captured'}</p>
+            <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details'}</p>
           </div>
 
           <AuthFormField
-            label="Owner full name"
+            label="Full name"
             name="owner_name"
             placeholder="School Owner"
             autoComplete="name"
@@ -161,7 +161,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           />
 
           <AuthFormField
-            label="Owner email"
+            label="Email"
             name="owner_email"
             type="email"
             placeholder="owner@school.co.za"
@@ -174,14 +174,14 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             label="Password"
             name="password"
             type="password"
-            placeholder="At least 8 characters"
+            placeholder="Minimum 8 characters"
             autoComplete="new-password"
             minLength={8}
             required
           />
 
           <button type="submit" className="sc-pressable" style={{ ...primaryButton, opacity: schoolName ? 1 : 0.55 }} disabled={!schoolName}>
-            Create school account
+            Create account
           </button>
 
           <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>

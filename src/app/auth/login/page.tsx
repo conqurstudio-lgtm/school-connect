@@ -61,7 +61,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
             compact
             imageSize={132}
             title="Sign in"
-            text="Open your School Connect space."
+            text="Access your school account."
           />
         </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
               marginBottom: 18,
             }}
           >
-            School created. Sign in with the owner email and password.
+            Account created. Sign in to continue.
           </div>
         ) : null}
 
@@ -137,9 +137,9 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
 
         <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
-            No school account yet?{' '}
+            Need an account?{' '}
             <AuthTextLink href="/auth/signup">
-              Create one
+              Create school account
             </AuthTextLink>
           </AuthDetailText>
 

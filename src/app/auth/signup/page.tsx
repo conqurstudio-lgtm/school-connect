@@ -52,7 +52,7 @@ export default function SignupPage() {
     setError('')
 
     if (step === 0 && !canContinue) {
-      setError('Please enter your school name to continue.')
+      setError('Enter your school name.')
       return
     }
 
@@ -93,8 +93,8 @@ export default function SignupPage() {
           <AuthWelcomeHero
             compact
             imageSize={132}
-            title="Create your school space"
-            text="Set up a clean space for reports, teachers and parent communication."
+            title="Create school account"
+            text="Add your school details."
           />
         </div>
 
@@ -139,7 +139,7 @@ export default function SignupPage() {
           {step === 1 ? (
             <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 20 }}>
               <AuthFormField
-                label="Phone optional"
+                label="Phone"
                 name="school_phone"
                 type="tel"
                 placeholder="011 000 0000"
@@ -149,7 +149,7 @@ export default function SignupPage() {
               />
 
               <AuthFormField
-                label="Email optional"
+                label="Email"
                 name="school_email"
                 type="email"
                 placeholder="info@school.co.za"
@@ -183,14 +183,14 @@ export default function SignupPage() {
               <div>
                 <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Phone</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440 }}>
-                  {schoolPhone.trim() || 'Optional'}
+                  {schoolPhone.trim() || 'Not added'}
                 </p>
               </div>
 
               <div>
                 <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Email</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
-                  {schoolEmail.trim() || 'Optional'}
+                  {schoolEmail.trim() || 'Not added'}
                 </p>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function SignupPage() {
             </AuthSubmitButton>
           ) : (
             <AuthSubmitButton>
-              Continue to owner account
+              Create owner account
             </AuthSubmitButton>
           )}
 
@@ -215,7 +215,7 @@ export default function SignupPage() {
 
         <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
-            Already have an account?{' '}
+            Already registered?{' '}
             <AuthTextLink href="/auth/login">
               Sign in
             </AuthTextLink>

@@ -34,8 +34,8 @@ export default function WelcomePage() {
         <div style={{ marginBottom: 28 }}>
           <AuthWelcomeHero
             imageSize={174}
-            title="Welcome to School Connect"
-            text="A simple way for schools, teachers and parents to stay connected."
+            title="School Connect"
+            text="Create your school account."
           />
         </div>
 
@@ -61,7 +61,7 @@ export default function WelcomePage() {
               boxSizing: 'border-box',
             }}
           >
-            Get started
+            Create school account
           </Link>
 
           <AuthPrivacyLine />
