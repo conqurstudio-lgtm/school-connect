@@ -107,7 +107,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
           onSubmit={() => setLoading(true)}
           style={{
             display: 'grid',
-            gap: 18,
+            gap: 20,
           }}
         >
           <AuthFormField
@@ -135,7 +135,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
           </AuthSubmitButton>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
             No school account yet?{' '}
             <AuthTextLink href="/auth/signup">

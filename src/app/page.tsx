@@ -39,7 +39,7 @@ export default function WelcomePage() {
           />
         </div>
 
-        <div style={{ display: 'grid', gap: 18 }}>
+        <div style={{ display: 'grid', gap: 20 }}>
           <Link
             href="/auth/signup"
             className="sc-pressable"

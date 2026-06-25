@@ -19,8 +19,11 @@ type AuthFormFieldProps = {
 
 const T = {
   ink: '#21222D',
-  muted: 'rgba(33, 34, 45, 0.62)',
+  label: 'rgba(33, 34, 45, 0.70)',
+  eye: 'rgba(33, 34, 45, 0.42)',
   border: '#DBDBE5',
+  borderHover: 'rgba(33, 34, 45, 0.22)',
+  ring: 'rgba(149, 140, 232, 0.18)',
   accent: '#958CE8',
   white: '#FFFFFF',
 }
@@ -28,8 +31,8 @@ const T = {
 function EyeIcon({ open }: { open: boolean }) {
   return (
     <svg
-      width="19"
-      height="19"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -72,6 +75,7 @@ export function AuthFormField({
   onChange,
 }: AuthFormFieldProps) {
   const [focused, setFocused] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const isPassword = type === 'password'
@@ -83,9 +87,9 @@ export function AuthFormField({
         htmlFor={name}
         style={{
           display: 'block',
-          color: T.muted,
-          fontSize: 13,
-          fontWeight: 560,
+          color: T.label,
+          fontSize: 14,
+          fontWeight: 520,
           lineHeight: 1.2,
           letterSpacing: '-0.012em',
         }}
@@ -94,14 +98,15 @@ export function AuthFormField({
       </label>
 
       <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           position: 'relative',
-          borderRadius: 16,
-          border: `1px solid ${focused ? T.accent : T.border}`,
+          borderRadius: 12,
+          border: `1px solid ${focused ? T.accent : hovered ? T.borderHover : T.border}`,
           background: T.white,
-          boxShadow: focused ? '0 0 0 3px rgba(149, 140, 232, 0.16)' : 'none',
-          transition: 'border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease',
-          transform: focused ? 'translateY(-1px)' : 'translateY(0)',
+          boxShadow: focused ? `0 0 0 3px ${T.ring}` : 'none',
+          transition: 'border-color 180ms ease, box-shadow 180ms ease',
         }}
       >
         <input
@@ -122,9 +127,9 @@ export function AuthFormField({
           style={{
             width: '100%',
             minHeight: 52,
-            padding: isPassword ? '14px 50px 14px 15px' : '14px 15px',
+            padding: isPassword ? '14px 50px 14px 16px' : '14px 16px',
             border: 'none',
-            borderRadius: 16,
+            borderRadius: 12,
             background: 'transparent',
             color: T.ink,
             outline: 'none',
@@ -132,8 +137,8 @@ export function AuthFormField({
             appearance: 'none',
             WebkitAppearance: 'none',
             fontFamily: 'inherit',
-            fontSize: 13,
-            fontWeight: 460,
+            fontSize: 14,
+            fontWeight: 430,
             lineHeight: 1.25,
             boxSizing: 'border-box',
           }}
@@ -147,15 +152,15 @@ export function AuthFormField({
             tabIndex={-1}
             style={{
               position: 'absolute',
-              right: 10,
+              right: 12,
               top: '50%',
               transform: 'translateY(-50%)',
-              width: 34,
-              height: 34,
+              width: 32,
+              height: 32,
               border: 'none',
               borderRadius: 999,
               background: 'transparent',
-              color: 'rgba(33,34,45,0.45)',
+              color: T.eye,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',

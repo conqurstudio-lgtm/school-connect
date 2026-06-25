@@ -29,24 +29,24 @@ export function AuthSubmitButton({
       style={{
         minHeight: 52,
         width: '100%',
-        borderRadius: 16,
+        borderRadius: 12,
         border: 'none',
         background: T.primary,
         color: T.white,
-        fontSize: 13.2,
+        fontSize: 14,
         fontWeight: 650,
         cursor: inactive ? 'not-allowed' : 'pointer',
         fontFamily: 'inherit',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 9,
+        gap: 8,
         letterSpacing: '-0.012em',
         marginTop: 8,
-        opacity: inactive ? 0.72 : 1,
+        opacity: inactive ? 0.7 : 1,
         boxShadow: inactive
-          ? '0 10px 24px rgba(33,34,45,0.10)'
-          : '0 14px 28px rgba(33,34,45,0.18)',
+          ? '0 10px 22px rgba(33,34,45,0.10)'
+          : '0 14px 28px rgba(33,34,45,0.20)',
         transition: 'transform 170ms ease, opacity 170ms ease, background 170ms ease, box-shadow 170ms ease',
       }}
     >

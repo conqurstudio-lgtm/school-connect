@@ -4169,3 +4169,21 @@ input::placeholder {
 button:disabled {
   pointer-events: none;
 }
+
+/* school-connect-sample-spacing-privacy-style-v1 */
+input::placeholder {
+  color: rgba(33, 34, 45, 0.34);
+}
+
+.sc-pressable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 34px rgba(33,34,45,0.22);
+}
+
+.sc-pressable:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  pointer-events: none;
+}

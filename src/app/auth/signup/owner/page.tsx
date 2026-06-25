@@ -100,7 +100,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           />
         </div>
 
-        <form method="POST" action="/api/auth/create-school-owner-form" style={{ display: 'grid', gap: 18 }}>
+        <form method="POST" action="/api/auth/create-school-owner-form" style={{ display: 'grid', gap: 20 }}>
           {error ? (
             <div
               style={{

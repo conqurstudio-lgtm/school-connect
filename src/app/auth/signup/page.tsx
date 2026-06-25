@@ -116,7 +116,7 @@ export default function SignupPage() {
           </div>
         ) : null}
 
-        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 18 }}>
+        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 20 }}>
           {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
           {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
@@ -137,7 +137,7 @@ export default function SignupPage() {
           ) : null}
 
           {step === 1 ? (
-            <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 18 }}>
+            <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 20 }}>
               <AuthFormField
                 label="Phone optional"
                 name="school_phone"
@@ -213,7 +213,7 @@ export default function SignupPage() {
           ) : null}
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
             Already have an account?{' '}
             <AuthTextLink href="/auth/login">
