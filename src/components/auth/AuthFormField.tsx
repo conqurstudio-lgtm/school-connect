@@ -19,7 +19,7 @@ type AuthFormFieldProps = {
 
 const T = {
   ink: '#21222D',
-  ink2: '#545866',
+  muted: 'rgba(33, 34, 45, 0.62)',
   border: '#DBDBE5',
   accent: '#958CE8',
   white: '#FFFFFF',
@@ -28,12 +28,12 @@ const T = {
 function EyeIcon({ open }: { open: boolean }) {
   return (
     <svg
-      width="18"
-      height="18"
+      width="19"
+      height="19"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
@@ -42,14 +42,14 @@ function EyeIcon({ open }: { open: boolean }) {
     >
       {open ? (
         <>
-          <path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0" />
+          <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
           <circle cx="12" cy="12" r="3" />
         </>
       ) : (
         <>
-          <path d="M10.73 5.08a10.75 10.75 0 0 1 11.21 6.57 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-1.44 2.49" />
-          <path d="M14.08 14.16a3 3 0 0 1-4.24-4.24" />
-          <path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14" />
+          <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+          <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+          <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
           <path d="m2 2 20 20" />
         </>
       )}
@@ -83,9 +83,10 @@ export function AuthFormField({
         htmlFor={name}
         style={{
           display: 'block',
-          color: T.ink,
-          fontSize: 12.4,
+          color: T.muted,
+          fontSize: 13,
           fontWeight: 560,
+          lineHeight: 1.2,
           letterSpacing: '-0.012em',
         }}
       >
@@ -98,8 +99,8 @@ export function AuthFormField({
           borderRadius: 16,
           border: `1px solid ${focused ? T.accent : T.border}`,
           background: T.white,
-          boxShadow: focused ? '0 0 0 3px rgba(149, 140, 232, 0.14)' : 'none',
-          transition: 'border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease',
+          boxShadow: focused ? '0 0 0 3px rgba(149, 140, 232, 0.16)' : 'none',
+          transition: 'border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease',
           transform: focused ? 'translateY(-1px)' : 'translateY(0)',
         }}
       >
@@ -121,7 +122,7 @@ export function AuthFormField({
           style={{
             width: '100%',
             minHeight: 52,
-            padding: isPassword ? '14px 48px 14px 15px' : '14px 15px',
+            padding: isPassword ? '14px 50px 14px 15px' : '14px 15px',
             border: 'none',
             borderRadius: 16,
             background: 'transparent',
@@ -132,7 +133,8 @@ export function AuthFormField({
             WebkitAppearance: 'none',
             fontFamily: 'inherit',
             fontSize: 13,
-            fontWeight: 440,
+            fontWeight: 460,
+            lineHeight: 1.25,
             boxSizing: 'border-box',
           }}
         />
@@ -153,12 +155,13 @@ export function AuthFormField({
               border: 'none',
               borderRadius: 999,
               background: 'transparent',
-              color: T.ink2,
+              color: 'rgba(33,34,45,0.45)',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               padding: 0,
               cursor: 'pointer',
+              transition: 'color 160ms ease',
             }}
           >
             <EyeIcon open={showPassword} />

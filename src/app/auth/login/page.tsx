@@ -1,5 +1,7 @@
 'use client'
 
+import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
+
 import { useState } from 'react'
 import Link from 'next/link'
 
@@ -134,19 +136,14 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <p style={{ margin: 0, color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
+          <AuthDetailText>
             No school account yet?{' '}
-            <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
+            <AuthTextLink href="/auth/signup">
               Create one
-            </Link>
-          </p>
+            </AuthTextLink>
+          </AuthDetailText>
 
-          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
-            Please read our{' '}
-            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
-              School Connect Privacy Policy
-            </Link>.
-          </p>
+          <AuthPrivacyLine />
         </div>
       </section>
     </main>

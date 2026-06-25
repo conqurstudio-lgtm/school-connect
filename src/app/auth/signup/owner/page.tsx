@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 import { AuthFormField } from '@/components/auth/AuthFormField'
 
+import { AuthPrivacyLine } from '@/components/auth/AuthDetailText'
 const T = {
   white: '#FFFFFF',
   ink: '#21222D',
@@ -33,6 +34,8 @@ const primaryButton: React.CSSProperties = {
   justifyContent: 'center',
   letterSpacing: '-0.012em',
   marginTop: 8,
+  boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
+  transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
 }
 
 const secondaryButton: React.CSSProperties = {
@@ -43,7 +46,7 @@ const secondaryButton: React.CSSProperties = {
   background: T.white,
   color: T.ink2,
   fontSize: 13,
-  fontWeight: 560,
+  fontWeight: 590,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -185,12 +188,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             Back
           </Link>
 
-          <p style={{ margin: '0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45, textAlign: 'center' }}>
-            Please read our{' '}
-            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
-              School Connect Privacy Policy
-            </Link>.
-          </p>
+          <AuthPrivacyLine />
         </form>
       </section>
     </main>

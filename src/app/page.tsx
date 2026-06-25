@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
+import { AuthPrivacyLine } from '@/components/auth/AuthDetailText'
 export default function WelcomePage() {
   return (
     <main
@@ -15,6 +16,8 @@ export default function WelcomePage() {
         padding: 'max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
+              boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
+              transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
         color: '#21222D',
       }}
     >
@@ -61,21 +64,7 @@ export default function WelcomePage() {
             Get started
           </Link>
 
-          <p
-            style={{
-              textAlign: 'center',
-              color: '#21222D',
-              fontSize: 11.7,
-              lineHeight: 1.45,
-              margin: 0,
-              fontWeight: 390,
-            }}
-          >
-            Please read our{' '}
-            <Link href="/privacy" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
-              School Connect Privacy Policy
-            </Link>.
-          </p>
+          <AuthPrivacyLine />
         </div>
       </section>
     </main>

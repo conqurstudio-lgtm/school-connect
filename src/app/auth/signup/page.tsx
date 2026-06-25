@@ -1,5 +1,7 @@
 'use client'
 
+import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
+
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
@@ -27,7 +29,7 @@ const secondaryButton: React.CSSProperties = {
   background: T.white,
   color: T.ink2,
   fontSize: 13,
-  fontWeight: 560,
+  fontWeight: 590,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
@@ -212,19 +214,14 @@ export default function SignupPage() {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <p style={{ margin: 0, color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
+          <AuthDetailText>
             Already have an account?{' '}
-            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
+            <AuthTextLink href="/auth/login">
               Sign in
-            </Link>
-          </p>
+            </AuthTextLink>
+          </AuthDetailText>
 
-          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
-            Please read our{' '}
-            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
-              School Connect Privacy Policy
-            </Link>.
-          </p>
+          <AuthPrivacyLine />
         </div>
       </section>
     </main>
