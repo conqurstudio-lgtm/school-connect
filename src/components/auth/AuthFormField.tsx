@@ -23,8 +23,8 @@ const T = {
   eye: 'rgba(33, 34, 45, 0.42)',
   border: '#DBDBE5',
   borderHover: 'rgba(33, 34, 45, 0.22)',
-  ring: 'rgba(149, 140, 232, 0.18)',
-  accent: '#958CE8',
+  focusBorder: '#21222D',
+  accent: '#21222D',
   white: '#FFFFFF',
 }
 
@@ -103,10 +103,10 @@ export function AuthFormField({
         style={{
           position: 'relative',
           borderRadius: 12,
-          border: `1px solid ${focused ? T.accent : hovered ? T.borderHover : T.border}`,
+          border: `1px solid ${focused ? T.focusBorder : hovered ? T.borderHover : T.border}`,
           background: T.white,
-          boxShadow: focused ? `0 0 0 3px ${T.ring}` : 'none',
-          transition: 'border-color 180ms ease, box-shadow 180ms ease',
+          boxShadow: 'none',
+          transition: 'border-color 160ms ease',
         }}
       >
         <input
