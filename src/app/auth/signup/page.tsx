@@ -93,8 +93,8 @@ export default function SignupPage() {
           <AuthWelcomeHero
             compact
             imageSize={132}
-            title="Create school account"
-            text="Add your school details."
+            title="Create your school account"
+            text="Start with your school details."
           />
         </div>
 
@@ -215,7 +215,7 @@ export default function SignupPage() {
 
         <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
-            Already registered?{' '}
+            Already have an account?{' '}
             <AuthTextLink href="/auth/login">
               Sign in
             </AuthTextLink>

@@ -96,7 +96,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             compact
             imageSize={128}
             title="Owner account"
-            text="Create your login details."
+            text="Create the login for your school."
           />
         </div>
 

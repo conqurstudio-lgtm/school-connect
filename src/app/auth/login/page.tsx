@@ -60,8 +60,8 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
           <AuthWelcomeHero
             compact
             imageSize={132}
-            title="Sign in"
-            text="Access your school account."
+            title="Welcome back"
+            text="Sign in to continue where you left off."
           />
         </div>
 
@@ -137,7 +137,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
 
         <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
-            Need an account?{' '}
+            New to School Connect?{' '}
             <AuthTextLink href="/auth/signup">
               Create school account
             </AuthTextLink>
