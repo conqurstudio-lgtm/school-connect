@@ -7,23 +7,35 @@ const T = {
   ink: '#21222D',
   border: '#DBDBE5',
   accent: '#958CE8',
+  link: '#2563EB',
 }
 
-const linkStyle: React.CSSProperties = {
-  color: T.accent,
-  textDecoration: 'none',
-  fontWeight: 600,
+const webLinkStyle: React.CSSProperties = {
+  color: T.link,
+  textDecoration: 'underline',
+  textUnderlineOffset: 2,
+  textDecorationColor: 'rgba(37, 99, 235, 0.35)',
+  fontWeight: 560,
+}
+
+const contactLinkStyle: React.CSSProperties = {
+  color: T.ink,
+  textDecoration: 'underline',
+  textUnderlineOffset: 2,
+  textDecorationColor: 'rgba(33, 34, 45, 0.32)',
+  fontWeight: 520,
 }
 
 function PolicyLink({ href, children }: { href: string; children: React.ReactNode }) {
   const external = href.startsWith('http')
+  const isContact = href.startsWith('mailto:') || href.includes('wa.me') || href.startsWith('tel:')
 
   return (
     <a
       href={href}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
-      style={linkStyle}
+      style={isContact ? contactLinkStyle : webLinkStyle}
     >
       {children}
     </a>
@@ -113,7 +125,7 @@ function Bullets({ items }: { items: React.ReactNode[] }) {
             width: 5,
             height: 5,
             borderRadius: 999,
-            background: T.accent,
+            background: T.ink,
             marginTop: 8,
           }} />
           <span>{item}</span>
