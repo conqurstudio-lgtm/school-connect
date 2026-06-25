@@ -4131,3 +4131,18 @@ button[type="submit"] {
     animation: none !important;
   }
 }
+
+/* school-connect-auth-form-ui-pass-v1 */
+@keyframes scSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input::placeholder {
+  color: rgba(33, 34, 45, 0.38);
+}
+
+button:disabled {
+  pointer-events: none;
+}

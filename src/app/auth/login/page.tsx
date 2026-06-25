@@ -1,195 +1,153 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
-
-type LoginPageProps = {
-  searchParams?: {
-    error?: string
-    created?: string
-    redirectTo?: string
-  }
-}
+import { AuthFormField } from '@/components/auth/AuthFormField'
+import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
 
 const T = {
   white: '#FFFFFF',
   ink: '#21222D',
-  ink2: '#545866',
   ink3: '#21222D',
-  border: '#DBDBE5',
+  accent: '#958CE8',
+  greenBg: '#F2FBF6',
+  greenBorder: 'rgba(20,120,70,0.14)',
+  green: '#20764B',
+  redBg: '#FFF5F5',
+  redBorder: 'rgba(180,35,24,0.18)',
   red: '#B42318',
-  green: '#1F9D55',
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  minHeight: 48,
-  padding: '12px 14px',
-  fontSize: 14.5,
-  border: `1px solid ${T.border}`,
-  borderRadius: 15,
-  background: T.white,
-  color: T.ink,
-  outline: 'none',
-  boxShadow: 'none',
-  appearance: 'none',
-  WebkitAppearance: 'none',
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  fontWeight: 430,
+function first(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value || ''
 }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 11.8,
-  fontWeight: 540,
-  color: T.ink2,
-  marginBottom: 7,
-  letterSpacing: '-0.01em',
-}
-
-export default function LoginPage({ searchParams }: LoginPageProps) {
-  const error = searchParams?.error ? decodeURIComponent(String(searchParams.error)) : ''
-  const created = searchParams?.created === '1'
-  const redirectTo = searchParams?.redirectTo || '/school'
+export default function LoginPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+  const [loading, setLoading] = useState(false)
+  const created = first(searchParams.created).trim()
+  const error = first(searchParams.error).trim()
 
   return (
-    <main className="sc-page-enter" style={{
-      minHeight: '100dvh',
-      background: T.white,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '22px 18px',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
-      color: T.ink,
-      boxSizing: 'border-box',
-    }}>
-      <section style={{
-        width: '100%',
-        maxWidth: 390,
-      }}>
-        <AuthWelcomeHero
-          compact
-          imageSize={132}
-          title="Sign in"
-          text="Open your School Connect space."
-        />
+    <main
+      className="sc-page-enter"
+      style={{
+        minHeight: '100dvh',
+        background: T.white,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        boxSizing: 'border-box',
+        color: T.ink,
+      }}
+    >
+      <section
+        style={{
+          width: '100%',
+          maxWidth: 390,
+          minHeight: 'calc(100dvh - 44px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ marginBottom: 24 }}>
+          <AuthWelcomeHero
+            compact
+            imageSize={132}
+            title="Sign in"
+            text="Open your School Connect space."
+          />
+        </div>
 
-        <form
-          method="post"
-          action="/api/auth/login-redirect"
-          style={{
-            display: 'grid',
-            gap: 17,
-          }}
-        >
-          <input type="hidden" name="redirectTo" value={redirectTo} />
-
-          {created && !error && (
-            <div style={{
-              borderRadius: 14,
-              border: '1px solid rgba(31,157,85,0.18)',
-              background: '#F2FBF6',
+        {created ? (
+          <div
+            style={{
+              borderRadius: 16,
+              border: `1px solid ${T.greenBorder}`,
+              background: T.greenBg,
               color: T.green,
               padding: '10px 12px',
-              fontSize: 12.2,
+              fontSize: 12.6,
               lineHeight: 1.4,
               fontWeight: 520,
-            }}>
-              School created. Sign in with the owner email and password.
-            </div>
-          )}
-
-          {error && (
-            <div style={{
-              borderRadius: 14,
-              border: '1px solid rgba(180,35,24,0.18)',
-              background: '#FFF5F5',
-              color: T.red,
-              padding: '10px 12px',
-              fontSize: 12.2,
-              lineHeight: 1.4,
-              fontWeight: 520,
-            }}>
-              {error}
-            </div>
-          )}
-
-          <label>
-            <span style={labelStyle}>Email</span>
-            <input
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="name@example.com"
-              style={inputStyle}
-              autoFocus
-            />
-          </label>
-
-          <label>
-            <span style={labelStyle}>Password</span>
-            <input
-              name="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              placeholder="Enter password"
-              style={inputStyle}
-            />
-          </label>
-
-          <button
-            type="submit"
-            style={{
-              minHeight: 52,
-              width: '100%',
-              borderRadius: 18,
-              border: 'none',
-              background: '#21222D',
-              color: T.white,
-              fontSize: 13.8,
-              fontWeight: 590,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 0,
-              marginTop: 8,
-              letterSpacing: '-0.012em',
+              marginBottom: 18,
             }}
           >
-            Sign in
-          </button>
+            School created. Sign in with the owner email and password.
+          </div>
+        ) : null}
+
+        {error ? (
+          <div
+            style={{
+              borderRadius: 16,
+              border: `1px solid ${T.redBorder}`,
+              background: T.redBg,
+              color: T.red,
+              padding: '10px 12px',
+              fontSize: 12.6,
+              lineHeight: 1.4,
+              fontWeight: 520,
+              marginBottom: 18,
+            }}
+          >
+            {error}
+          </div>
+        ) : null}
+
+        <form
+          method="POST"
+          action="/api/auth/login-redirect"
+          onSubmit={() => setLoading(true)}
+          style={{
+            display: 'grid',
+            gap: 18,
+          }}
+        >
+          <AuthFormField
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="name@example.com"
+            autoComplete="email"
+            inputMode="email"
+            required
+            autoFocus
+          />
+
+          <AuthFormField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Enter password"
+            autoComplete="current-password"
+            required
+          />
+
+          <AuthSubmitButton loading={loading}>
+            {loading ? 'Signing in…' : 'Sign in'}
+          </AuthSubmitButton>
         </form>
 
-        <p style={{
-          textAlign: 'center',
-          fontSize: 12.2,
-          color: T.ink3,
-          margin: '22px 0 0',
-          lineHeight: 1.45,
-        }}>
-          No school account yet?{' '}
-          <Link href="/auth/signup" style={{ color: T.ink, fontWeight: 590, textDecoration: 'none' }}>
-            Create one
-          </Link>
-        </p>
+        <div style={{ textAlign: 'center', marginTop: 24 }}>
+          <p style={{ margin: 0, color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
+            No school account yet?{' '}
+            <Link href="/auth/signup" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
+              Create one
+            </Link>
+          </p>
 
-        <p style={{
-          textAlign: 'center',
-          fontSize: 11.8,
-          color: T.ink3,
-          margin: '12px 0 0',
-          lineHeight: 1.45,
-        }}>
-          Read our{' '}
-          <Link href="/privacy" style={{ color: T.ink, fontWeight: 590, textDecoration: 'none' }}>
-            Privacy & Safety Policy
-          </Link>
-        </p>
+          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
+            Please read our{' '}
+            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
+              School Connect Privacy Policy
+            </Link>.
+          </p>
+        </div>
       </section>
     </main>
   )

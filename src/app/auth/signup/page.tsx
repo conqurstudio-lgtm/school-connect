@@ -4,6 +4,8 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
+import { AuthFormField } from '@/components/auth/AuthFormField'
+import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
 
 const T = {
   white: '#FFFFFF',
@@ -11,71 +13,27 @@ const T = {
   ink2: '#545866',
   ink3: '#21222D',
   border: '#DBDBE5',
+  accent: '#958CE8',
   primary: '#21222D',
+  soft: '#F7F8FC',
   red: '#B42318',
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  minHeight: 58,
-  padding: '14px 15px',
-  fontSize: 13.4,
-  border: `1px solid ${T.border}`,
-  borderRadius: 18,
-  background: T.white,
-  color: T.ink,
-  outline: 'none',
-  boxShadow: 'none',
-  appearance: 'none',
-  WebkitAppearance: 'none',
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  fontWeight: 430,
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 11.8,
-  fontWeight: 540,
-  color: T.ink2,
-  marginBottom: 10,
-  letterSpacing: '-0.01em',
-}
-
-const primaryButton: React.CSSProperties = {
-  minHeight: 54,
-  width: '100%',
-  borderRadius: 18,
-  border: 'none',
-  background: T.primary,
-  color: T.white,
-  fontSize: 13.8,
-  fontWeight: 590,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 0,
-  letterSpacing: '-0.012em',
-  marginTop: 8,
-}
-
 const secondaryButton: React.CSSProperties = {
-  minHeight: 52,
+  minHeight: 50,
   width: '100%',
-  borderRadius: 18,
-  border: `1px solid rgba(0,0,0,0.09)`,
+  borderRadius: 16,
+  border: `1px solid ${T.border}`,
   background: T.white,
   color: T.ink2,
-  fontSize: 13.4,
-  fontWeight: 540,
+  fontSize: 13,
+  fontWeight: 560,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 0,
+  textDecoration: 'none',
   letterSpacing: '-0.01em',
 }
 
@@ -119,14 +77,16 @@ export default function SignupPage() {
         color: T.ink,
       }}
     >
-      <section style={{
-        width: '100%',
-        maxWidth: 390,
-        minHeight: 'calc(100dvh - 44px)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}>
+      <section
+        style={{
+          width: '100%',
+          maxWidth: 390,
+          minHeight: 'calc(100dvh - 44px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         <div style={{ marginBottom: 24 }}>
           <AuthWelcomeHero
             compact
@@ -137,17 +97,19 @@ export default function SignupPage() {
         </div>
 
         {error ? (
-          <div style={{
-            borderRadius: 16,
-            border: '1px solid rgba(180,35,24,0.18)',
-            background: '#FFF5F5',
-            color: T.red,
-            padding: '10px 12px',
-            fontSize: 12.8,
-            lineHeight: 1.4,
-            fontWeight: 520,
-            marginBottom: 18,
-          }}>
+          <div
+            style={{
+              borderRadius: 16,
+              border: '1px solid rgba(180,35,24,0.18)',
+              background: '#FFF5F5',
+              color: T.red,
+              padding: '10px 12px',
+              fontSize: 12.6,
+              lineHeight: 1.4,
+              fontWeight: 520,
+              marginBottom: 18,
+            }}
+          >
             {error}
           </div>
         ) : null}
@@ -159,15 +121,14 @@ export default function SignupPage() {
 
           {step === 0 ? (
             <div key="school-step" className="sc-form-step-swipe">
-              <label style={labelStyle}>School name</label>
-              <input
+              <AuthFormField
+                label="School name"
                 name="school_name"
-                required
-                autoComplete="organization"
                 placeholder="Demo Primary School"
                 value={schoolName}
                 onChange={(event) => setSchoolName(event.target.value)}
-                style={inputStyle}
+                autoComplete="organization"
+                required
                 autoFocus
               />
             </div>
@@ -175,55 +136,57 @@ export default function SignupPage() {
 
           {step === 1 ? (
             <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 18 }}>
-              <div>
-                <label style={labelStyle}>Phone optional</label>
-                <input
-                  name="school_phone"
-                  placeholder="011 000 0000"
-                  value={schoolPhone}
-                  onChange={(event) => setSchoolPhone(event.target.value)}
-                  style={inputStyle}
-                  inputMode="tel"
-                />
-              </div>
+              <AuthFormField
+                label="Phone optional"
+                name="school_phone"
+                type="tel"
+                placeholder="011 000 0000"
+                value={schoolPhone}
+                onChange={(event) => setSchoolPhone(event.target.value)}
+                inputMode="tel"
+              />
 
-              <div>
-                <label style={labelStyle}>Email optional</label>
-                <input
-                  name="school_email"
-                  type="email"
-                  placeholder="info@school.co.za"
-                  value={schoolEmail}
-                  onChange={(event) => setSchoolEmail(event.target.value)}
-                  style={inputStyle}
-                  inputMode="email"
-                />
-              </div>
+              <AuthFormField
+                label="Email optional"
+                name="school_email"
+                type="email"
+                placeholder="info@school.co.za"
+                value={schoolEmail}
+                onChange={(event) => setSchoolEmail(event.target.value)}
+                inputMode="email"
+              />
             </div>
           ) : null}
 
           {step === 2 ? (
-            <div key="review-step" className="sc-form-step-swipe" style={{
-              display: 'grid',
-              gap: 16,
-              padding: '6px 0 8px',
-            }}>
+            <div
+              key="review-step"
+              className="sc-form-step-swipe"
+              style={{
+                display: 'grid',
+                gap: 12,
+                border: `1px solid ${T.border}`,
+                borderRadius: 18,
+                padding: 14,
+                background: T.soft,
+              }}
+            >
               <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>School name</p>
-                <p style={{ margin: '3px 0 0', fontSize: 13.8, color: T.ink, fontWeight: 570 }}>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>School name</p>
+                <p style={{ margin: '3px 0 0', fontSize: 13.4, color: T.ink, fontWeight: 610 }}>
                   {schoolName.trim() || 'Not set'}
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>Phone</p>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Phone</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440 }}>
                   {schoolPhone.trim() || 'Optional'}
                 </p>
               </div>
 
               <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 500 }}>Email</p>
+                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Email</p>
                 <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
                   {schoolEmail.trim() || 'Optional'}
                 </p>
@@ -232,13 +195,13 @@ export default function SignupPage() {
           ) : null}
 
           {step < 2 ? (
-            <button type="button" className="sc-pressable" style={primaryButton} onClick={nextStep}>
+            <AuthSubmitButton type="button" onClick={nextStep}>
               Continue
-            </button>
+            </AuthSubmitButton>
           ) : (
-            <button type="submit" className="sc-pressable" style={primaryButton}>
+            <AuthSubmitButton>
               Continue to owner account
-            </button>
+            </AuthSubmitButton>
           )}
 
           {step > 0 ? (
@@ -248,17 +211,17 @@ export default function SignupPage() {
           ) : null}
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 22 }}>
-          <p style={{ margin: 0, color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
+        <div style={{ textAlign: 'center', marginTop: 24 }}>
+          <p style={{ margin: 0, color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
             Already have an account?{' '}
-            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
+            <Link href="/auth/login" style={{ color: T.ink, textDecoration: 'none', fontWeight: 600 }}>
               Sign in
             </Link>
           </p>
 
-          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.7, lineHeight: 1.45 }}>
+          <p style={{ margin: '10px 0 0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45 }}>
             Please read our{' '}
-            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
+            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
               School Connect Privacy Policy
             </Link>.
           </p>

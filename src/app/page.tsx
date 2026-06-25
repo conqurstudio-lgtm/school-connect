@@ -2,68 +2,81 @@ import Link from 'next/link'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
-export default function HomePage() {
+export default function WelcomePage() {
   return (
-    <main className="sc-page-enter" style={{
-      minHeight: '100dvh',
-      background: '#FFFFFF',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px 18px calc(24px + env(safe-area-inset-bottom, 0px))',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
-      color: '#21222D',
-      boxSizing: 'border-box',
-    }}>
-      <section style={{
-        width: '100%',
-        maxWidth: 390,
-        minHeight: 'calc(100dvh - 48px)',
+    <main
+      className="sc-page-enter"
+      style={{
+        minHeight: '100dvh',
+        background: '#FFFFFF',
         display: 'flex',
-        flexDirection: 'column',
+        alignItems: 'center',
         justifyContent: 'center',
-      }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <AuthWelcomeHero />
+        padding: 'max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom))',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        boxSizing: 'border-box',
+        color: '#21222D',
+      }}
+    >
+      <section
+        style={{
+          width: '100%',
+          maxWidth: 390,
+          minHeight: 'calc(100dvh - 48px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ marginBottom: 28 }}>
+          <AuthWelcomeHero
+            imageSize={174}
+            title="Welcome to School Connect"
+            text="A simple way for schools, teachers and parents to stay connected."
+          />
         </div>
 
-        <p style={{
-          textAlign: 'center',
-          color: '#21222D',
-          fontSize: 11.4,
-          lineHeight: 1.42,
-          margin: '0 0 18px',
-          fontWeight: 390,
-        }}>
-          Please read our{' '}
-          <Link href="/privacy" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
-            School Connect Privacy Policy
-          </Link>.
-        </p>
+        <div style={{ display: 'grid', gap: 18 }}>
+          <Link
+            href="/auth/signup"
+            className="sc-pressable"
+            style={{
+              minHeight: 52,
+              width: '100%',
+              borderRadius: 16,
+              border: 'none',
+              background: '#21222D',
+              color: '#FFFFFF',
+              fontSize: 13.2,
+              fontWeight: 610,
+              fontFamily: 'inherit',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              letterSpacing: '-0.012em',
+              boxSizing: 'border-box',
+            }}
+          >
+            Get started
+          </Link>
 
-        <Link
-          href="/auth/login"
-          style={{
-            minHeight: 52,
-            width: '100%',
-            borderRadius: 18,
-            border: 'none',
-            background: '#21222D',
-            color: '#FFFFFF',
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 0,
-            textDecoration: 'none',
-            letterSpacing: '-0.012em',
-          }}
-        >
-          Get started
-        </Link>
+          <p
+            style={{
+              textAlign: 'center',
+              color: '#21222D',
+              fontSize: 11.7,
+              lineHeight: 1.45,
+              margin: 0,
+              fontWeight: 390,
+            }}
+          >
+            Please read our{' '}
+            <Link href="/privacy" style={{ color: '#958CE8', fontWeight: 600, textDecoration: 'none' }}>
+              School Connect Privacy Policy
+            </Link>.
+          </p>
+        </div>
       </section>
     </main>
   )

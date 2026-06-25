@@ -1,5 +1,7 @@
 import Link from 'next/link'
+
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
+import { AuthFormField } from '@/components/auth/AuthFormField'
 
 const T = {
   white: '#FFFFFF',
@@ -8,79 +10,47 @@ const T = {
   ink3: '#21222D',
   border: '#DBDBE5',
   primary: '#21222D',
+  accent: '#958CE8',
   soft: '#F7F8FC',
   redBg: '#FFF1F1',
   redBorder: 'rgba(220,38,38,0.16)',
   red: '#B42318',
 }
 
-const inputStyle = {
+const primaryButton: React.CSSProperties = {
+  minHeight: 52,
   width: '100%',
-  minHeight: 48,
-  padding: '12px 14px',
-  fontSize: 12.7,
-  border: `1px solid ${T.border}`,
-  borderRadius: 14,
-  background: T.white,
-  color: T.ink,
-  outline: 'none',
-  boxShadow: 'none',
-  appearance: 'none' as const,
-  WebkitAppearance: 'none' as const,
-  fontFamily: 'inherit',
-  boxSizing: 'border-box' as const,
-}
-
-const labelStyle = {
-  display: 'block',
-  fontSize: 12.2,
-  fontWeight: 520,
-  color: T.ink2,
-  marginBottom: 7,
-}
-
-const primaryButton = {
-  minHeight: 50,
-  width: '100%',
-  borderRadius: 14,
+  borderRadius: 16,
   border: 'none',
   background: T.primary,
   color: T.white,
-  fontSize: 12.7,
-  fontWeight: 590,
+  fontSize: 13.2,
+  fontWeight: 610,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 0,
+  letterSpacing: '-0.012em',
+  marginTop: 8,
 }
 
-const secondaryButton = {
-  minHeight: 44,
-  borderRadius: 14,
+const secondaryButton: React.CSSProperties = {
+  minHeight: 50,
+  width: '100%',
+  borderRadius: 16,
   border: `1px solid ${T.border}`,
   background: T.white,
   color: T.ink2,
-  fontSize: 12.8,
-  fontWeight: 540,
+  fontSize: 13,
+  fontWeight: 560,
   cursor: 'pointer',
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: 0,
   textDecoration: 'none',
-}
-
-function StepDots() {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: T.primary }} />
-      <span style={{ width: 20, height: 6, borderRadius: 999, background: T.primary }} />
-      <span style={{ width: 6, height: 6, borderRadius: 999, background: '#E6E6EA' }} />
-    </div>
-  )
+  letterSpacing: '-0.01em',
 }
 
 function first(value: string | string[] | undefined) {
@@ -102,116 +72,127 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom))',
+        padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
+        color: T.ink,
       }}
     >
-      <div style={{ width: '100%', maxWidth: 430 }}>
-        <AuthWelcomeHero
-          compact
-          imageSize={128}
-          title="Create owner account"
-          text={`Owner account for ${schoolName || 'your school'}.`}
-        />
-
-        <section style={{
+      <section
+        style={{
           width: '100%',
-          background: T.white,
-          border: `1px solid ${T.border}`,
-          borderRadius: 24,
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            padding: '18px 18px 14px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
-            <p style={{ margin: 0, color: T.ink, fontSize: 15.5, fontWeight: 600, letterSpacing: '-0.025em' }}>
-              Owner account
-            </p>
-            <StepDots />
-          </div>
+          maxWidth: 390,
+          minHeight: 'calc(100dvh - 44px)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ marginBottom: 24 }}>
+          <AuthWelcomeHero
+            compact
+            imageSize={128}
+            title="Create owner account"
+            text={`Owner account for ${schoolName || 'your school'}.`}
+          />
+        </div>
 
-          <form method="POST" action="/api/auth/create-school-owner-form" style={{ padding: '0 18px 20px', display: 'grid', gap: 17 }}>
-            {error && (
-              <div style={{
-                borderRadius: 14,
+        <form method="POST" action="/api/auth/create-school-owner-form" style={{ display: 'grid', gap: 18 }}>
+          {error ? (
+            <div
+              style={{
+                borderRadius: 16,
                 border: `1px solid ${T.redBorder}`,
                 background: T.redBg,
                 color: T.red,
                 padding: '10px 12px',
-                fontSize: 12.2,
-                lineHeight: 1.45,
+                fontSize: 12.6,
+                lineHeight: 1.4,
                 fontWeight: 520,
-              }}>
-                {error}
-              </div>
-            )}
+              }}
+            >
+              {error}
+            </div>
+          ) : null}
 
-            {!schoolName && (
-              <div style={{
-                borderRadius: 14,
+          {!schoolName ? (
+            <div
+              style={{
+                borderRadius: 16,
                 border: `1px solid ${T.redBorder}`,
                 background: T.redBg,
                 color: T.red,
                 padding: '10px 12px',
-                fontSize: 12.2,
-                lineHeight: 1.45,
+                fontSize: 12.6,
+                lineHeight: 1.4,
                 fontWeight: 520,
-              }}>
-                School name is missing. Go back and enter school details again.
-              </div>
-            )}
+              }}
+            >
+              School name is missing. Go back and enter school details again.
+            </div>
+          ) : null}
 
-            <input type="hidden" name="school_name" value={schoolName} />
-            <input type="hidden" name="school_phone" value={schoolPhone} />
-            <input type="hidden" name="school_email" value={schoolEmail} />
+          <input type="hidden" name="school_name" value={schoolName} />
+          <input type="hidden" name="school_phone" value={schoolPhone} />
+          <input type="hidden" name="school_email" value={schoolEmail} />
 
-            <div style={{
+          <div
+            style={{
               border: `1px solid ${T.border}`,
               borderRadius: 18,
-              padding: 12,
+              padding: 14,
               background: T.soft,
-            }}>
-              <p style={{ margin: 0, color: T.ink, fontSize: 12.7, fontWeight: 590 }}>{schoolName || 'School not set'}</p>
-              <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details captured'}</p>
-            </div>
+            }}
+          >
+            <p style={{ margin: 0, color: T.ink, fontSize: 12.8, fontWeight: 610 }}>{schoolName || 'School not set'}</p>
+            <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details captured'}</p>
+          </div>
 
-            <div>
-              <label style={labelStyle}>Owner full name</label>
-              <input name="owner_name" required autoComplete="name" placeholder="School Owner" style={inputStyle} autoFocus />
-            </div>
+          <AuthFormField
+            label="Owner full name"
+            name="owner_name"
+            placeholder="School Owner"
+            autoComplete="name"
+            required
+            autoFocus
+          />
 
-            <div>
-              <label style={labelStyle}>Owner email</label>
-              <input name="owner_email" required type="email" autoComplete="email" placeholder="owner@school.co.za" style={inputStyle} />
-            </div>
+          <AuthFormField
+            label="Owner email"
+            name="owner_email"
+            type="email"
+            placeholder="owner@school.co.za"
+            autoComplete="email"
+            inputMode="email"
+            required
+          />
 
-            <div>
-              <label style={labelStyle}>Password</label>
-              <input name="password" required minLength={8} type="password" autoComplete="new-password" placeholder="At least 8 characters" style={inputStyle} />
-            </div>
+          <AuthFormField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
+            minLength={8}
+            required
+          />
 
-            <button type="submit" className="sc-pressable" style={{ ...primaryButton, opacity: schoolName ? 1 : 0.55 }} disabled={!schoolName}>
-              Create school account
-            </button>
+          <button type="submit" className="sc-pressable" style={{ ...primaryButton, opacity: schoolName ? 1 : 0.55 }} disabled={!schoolName}>
+            Create school account
+          </button>
 
-            <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
-              Back
-            </Link>
+          <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
+            Back
+          </Link>
 
-            <p style={{ margin: '0', color: T.ink3, fontSize: 12.2, lineHeight: 1.45, textAlign: 'center' }}>
-              Please read our{' '}
-            <Link href="/privacy" style={{ color: T.ink, textDecoration: 'none', fontWeight: 590 }}>
+          <p style={{ margin: '0', color: T.ink3, fontSize: 11.8, lineHeight: 1.45, textAlign: 'center' }}>
+            Please read our{' '}
+            <Link href="/privacy" style={{ color: T.accent, textDecoration: 'none', fontWeight: 600 }}>
               School Connect Privacy Policy
             </Link>.
-            </p>
-          </form>
-        </section>
-      </div>
+          </p>
+        </form>
+      </section>
     </main>
   )
 }
