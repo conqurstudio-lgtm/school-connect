@@ -1,9 +1,6 @@
 'use client'
 
-const T = {
-  primary: '#21222D',
-  white: '#FFFFFF',
-}
+import { authTheme as T } from './authTheme'
 
 export function AuthSubmitButton({
   children,
@@ -27,26 +24,24 @@ export function AuthSubmitButton({
       disabled={inactive}
       onClick={onClick}
       style={{
-        minHeight: 52,
+        minHeight: 56,
         width: '100%',
-        borderRadius: 12,
+        borderRadius: T.radius.button,
         border: 'none',
-        background: T.primary,
-        color: T.white,
-        fontSize: 14,
-        fontWeight: 650,
+        background: T.colors.ink,
+        color: T.colors.white,
+        fontSize: 15,
+        fontWeight: 680,
         cursor: inactive ? 'not-allowed' : 'pointer',
         fontFamily: 'inherit',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        letterSpacing: '-0.012em',
+        letterSpacing: '-0.014em',
         marginTop: 8,
         opacity: inactive ? 0.7 : 1,
-        boxShadow: inactive
-          ? '0 10px 22px rgba(33,34,45,0.10)'
-          : '0 14px 28px rgba(33,34,45,0.20)',
+        boxShadow: inactive ? 'none' : T.shadow.button,
         transition: 'transform 170ms ease, opacity 170ms ease, background 170ms ease, box-shadow 170ms ease',
       }}
     >
@@ -59,7 +54,7 @@ export function AuthSubmitButton({
               height: 14,
               borderRadius: 999,
               border: '2px solid rgba(255,255,255,0.38)',
-              borderTopColor: T.white,
+              borderTopColor: T.colors.white,
               display: 'inline-block',
               animation: 'scSpin 700ms linear infinite',
             }}

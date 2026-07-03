@@ -4187,3 +4187,26 @@ input::placeholder {
 button:disabled {
   pointer-events: none;
 }
+
+/* school-connect-auth-foundation-v1 */
+@keyframes scSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input::placeholder {
+  color: rgba(33, 34, 45, 0.34);
+}
+
+.sc-pressable:hover {
+  transform: translateY(-1px);
+}
+
+.sc-pressable:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  pointer-events: none;
+}

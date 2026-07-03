@@ -1,10 +1,6 @@
 import Link from 'next/link'
 
-const T = {
-  ink: '#21222D',
-  muted: 'rgba(33, 34, 45, 0.48)',
-  soft: 'rgba(33, 34, 45, 0.38)',
-}
+import { authTheme as T } from './authTheme'
 
 export function AuthDetailText({
   children,
@@ -19,12 +15,12 @@ export function AuthDetailText({
     <p
       style={{
         margin: 0,
-        color: size === 'xs' ? T.soft : T.muted,
-        fontSize: size === 'xs' ? 12 : 13,
+        color: size === 'xs' ? T.colors.faint : T.colors.muted,
+        fontSize: size === 'xs' ? 12.5 : 13,
         lineHeight: 1.5,
-        fontWeight: 420,
+        fontWeight: 430,
         textAlign: 'center',
-        letterSpacing: '-0.004em',
+        letterSpacing: '-0.006em',
         ...style,
       }}
     >
@@ -46,11 +42,11 @@ export function AuthTextLink({
     <Link
       href={href}
       style={{
-        color: underline ? 'rgba(33, 34, 45, 0.56)' : T.ink,
+        color: underline ? 'rgba(33, 34, 45, 0.58)' : T.colors.ink,
         textDecoration: underline ? 'underline' : 'none',
         textUnderlineOffset: underline ? 2 : undefined,
-        textDecorationColor: underline ? 'rgba(33, 34, 45, 0.24)' : undefined,
-        fontWeight: underline ? 520 : 650,
+        textDecorationColor: underline ? 'rgba(33, 34, 45, 0.28)' : undefined,
+        fontWeight: underline ? 560 : 680,
         transition: 'color 160ms ease, text-decoration-color 160ms ease',
       }}
     >

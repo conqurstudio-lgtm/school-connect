@@ -1,6 +1,6 @@
-// school-connect-auth-palette-v1
-// Palette: #21222D primary, #958CE8 accent, #ACD1FD soft blue, #DBDBE5 soft grey
 import Image from 'next/image'
+
+import { authTheme as T } from './authTheme'
 
 type AuthWelcomeHeroProps = {
   title?: string
@@ -10,60 +10,72 @@ type AuthWelcomeHeroProps = {
 }
 
 export function AuthWelcomeHero({
-  title = 'Welcome to School Connect',
-  text = 'A simple space for schools, teachers and parents to stay connected through reports, updates and shared moments.',
+  title = 'School Connect',
+  text = 'Keep school and home connected in one simple space.',
   compact = false,
   imageSize,
 }: AuthWelcomeHeroProps) {
-  const size = imageSize || (compact ? 136 : 250)
+  const resolvedImageSize = imageSize ?? (compact ? 132 : 168)
 
   return (
-    <div style={{
-      textAlign: 'center',
-      marginBottom: compact ? 24 : 30,
-    }}>
-      <div style={{
-        width: size,
-        maxWidth: '82%',
-        margin: compact ? '0 auto 18px' : '0 auto 28px',
-      }}>
+    <div
+      style={{
+        textAlign: 'center',
+        color: T.colors.ink,
+        marginBottom: compact ? 22 : 28,
+      }}
+    >
+      <div
+        style={{
+          width: resolvedImageSize,
+          height: resolvedImageSize,
+          margin: compact ? '0 auto 18px' : '0 auto 30px',
+          borderRadius: T.radius.image,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
         <Image
           src="/images/school-connect-welcome-palette.png"
-          alt="School Connect welcome illustration"
-          width={620}
-          height={520}
-          priority={!compact}
+          alt=""
+          width={resolvedImageSize}
+          height={resolvedImageSize}
+          priority
           style={{
             width: '100%',
-            height: 'auto',
-            display: 'block',
+            height: '100%',
+            objectFit: 'contain',
           }}
         />
       </div>
 
-      {title ? (
-        <h1 style={{
-          fontSize: compact ? 19 : 25,
-          lineHeight: compact ? 1.12 : 1.08,
-          fontWeight: compact ? 610 : 650,
-          letterSpacing: compact ? '-0.028em' : '-0.038em',
+      <h1
+        style={{
           margin: 0,
-          color: '#21222D',
-        }}>
-          {title}
-        </h1>
-      ) : null}
+          color: T.colors.ink,
+          fontSize: compact ? 22 : 30,
+          lineHeight: 1.08,
+          fontWeight: 760,
+          letterSpacing: '-0.055em',
+        }}
+      >
+        {title}
+      </h1>
 
       {text ? (
-        <p style={{
-          fontSize: compact ? 12.2 : 13.2,
-          color: '#21222D',
-          lineHeight: 1.5,
-          margin: compact ? '10px auto 0' : '15px auto 0',
-          maxWidth: compact ? 330 : 350,
-          fontWeight: 390,
-          letterSpacing: '-0.006em',
-        }}>
+        <p
+          style={{
+            margin: compact ? '12px auto 0' : '16px auto 0',
+            color: T.colors.inkSoft,
+            fontSize: compact ? 14 : 16,
+            lineHeight: 1.42,
+            fontWeight: 430,
+            maxWidth: compact ? 300 : 330,
+            letterSpacing: '-0.018em',
+          }}
+        >
           {text}
         </p>
       ) : null}

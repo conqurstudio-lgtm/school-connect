@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { authTheme as T } from './authTheme'
+
 type AuthFormFieldProps = {
   label: string
   name: string
@@ -15,17 +17,6 @@ type AuthFormFieldProps = {
   defaultValue?: string
   value?: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-}
-
-const T = {
-  ink: '#21222D',
-  label: 'rgba(33, 34, 45, 0.70)',
-  eye: 'rgba(33, 34, 45, 0.42)',
-  border: '#DBDBE5',
-  borderHover: 'rgba(33, 34, 45, 0.22)',
-  focusBorder: '#21222D',
-  accent: '#21222D',
-  white: '#FFFFFF',
 }
 
 function EyeIcon({ open }: { open: boolean }) {
@@ -87,9 +78,9 @@ export function AuthFormField({
         htmlFor={name}
         style={{
           display: 'block',
-          color: T.label,
-          fontSize: 14,
-          fontWeight: 520,
+          color: T.colors.inkSoft,
+          fontSize: 13.5,
+          fontWeight: 560,
           lineHeight: 1.2,
           letterSpacing: '-0.012em',
         }}
@@ -102,9 +93,9 @@ export function AuthFormField({
         onMouseLeave={() => setHovered(false)}
         style={{
           position: 'relative',
-          borderRadius: 12,
-          border: `1px solid ${focused ? T.focusBorder : hovered ? T.borderHover : T.border}`,
-          background: T.white,
+          borderRadius: T.radius.field,
+          border: `1px solid ${focused ? T.colors.borderDark : hovered ? 'rgba(33, 34, 45, 0.24)' : T.colors.border}`,
+          background: T.colors.white,
           boxShadow: 'none',
           transition: 'border-color 160ms ease',
         }}
@@ -129,16 +120,16 @@ export function AuthFormField({
             minHeight: 52,
             padding: isPassword ? '14px 50px 14px 16px' : '14px 16px',
             border: 'none',
-            borderRadius: 12,
+            borderRadius: T.radius.field,
             background: 'transparent',
-            color: T.ink,
+            color: T.colors.ink,
             outline: 'none',
             boxShadow: 'none',
             appearance: 'none',
             WebkitAppearance: 'none',
             fontFamily: 'inherit',
             fontSize: 14,
-            fontWeight: 430,
+            fontWeight: 450,
             lineHeight: 1.25,
             boxSizing: 'border-box',
           }}
@@ -160,7 +151,7 @@ export function AuthFormField({
               border: 'none',
               borderRadius: 999,
               background: 'transparent',
-              color: T.eye,
+              color: T.colors.faint,
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
