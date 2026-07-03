@@ -1,49 +1,38 @@
 'use client'
 
-import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
-
 import { useState } from 'react'
 import Link from 'next/link'
 
-import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
+import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
 import { AuthFormField } from '@/components/auth/AuthFormField'
 import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
+import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
-const T = {
-  white: '#FFFFFF',
-  ink: '#21222D',
-  ink3: '#21222D',
-  accent: '#958CE8',
-  greenBg: '#F2FBF6',
-  greenBorder: 'rgba(20,120,70,0.14)',
-  green: '#20764B',
-  redBg: '#FFF5F5',
-  redBorder: 'rgba(180,35,24,0.18)',
-  red: '#B42318',
-}
-
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value || ''
-}
-
-export default function LoginPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams?: {
+    created?: string
+    error?: string
+  }
+}) {
   const [loading, setLoading] = useState(false)
-  const created = first(searchParams.created).trim()
-  const error = first(searchParams.error).trim()
+
+  const created = searchParams?.created === '1'
+  const error = searchParams?.error
 
   return (
     <main
       className="sc-page-enter"
       style={{
         minHeight: '100dvh',
-        background: T.white,
+        background: '#FFFFFF',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
-        color: T.ink,
+        color: '#21222D',
       }}
     >
       <section
@@ -53,93 +42,103 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
+          padding: '44px 16px 26px',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ marginBottom: 24 }}>
+        <div />
+
+        <div>
           <AuthWelcomeHero
-            compact
-            imageSize={132}
             title="Welcome back"
             text="Sign in to continue where you left off."
+            compact
+            imageSize={132}
           />
+
+          {created ? (
+            <div
+              style={{
+                margin: '-6px 0 18px',
+                padding: '12px 14px',
+                borderRadius: 14,
+                background: '#F4F4F6',
+                color: 'rgba(33, 34, 45, 0.70)',
+                fontSize: 13,
+                lineHeight: 1.45,
+                textAlign: 'center',
+                fontWeight: 500,
+              }}
+            >
+              Account created. Sign in to continue.
+            </div>
+          ) : null}
+
+          {error ? (
+            <div
+              style={{
+                margin: '-6px 0 18px',
+                padding: '12px 14px',
+                borderRadius: 14,
+                background: '#FFF1F2',
+                color: '#9F1239',
+                fontSize: 13,
+                lineHeight: 1.45,
+                textAlign: 'center',
+                fontWeight: 500,
+              }}
+            >
+              Sign in failed. Check your details and try again.
+            </div>
+          ) : null}
+
+          <form
+            method="POST"
+            action="/api/auth/login-redirect"
+            onSubmit={() => setLoading(true)}
+            style={{
+              display: 'grid',
+              gap: 20,
+            }}
+          >
+            <AuthFormField
+              label="Email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              inputMode="email"
+              placeholder="you@school.co.za"
+              required
+              autoFocus
+            />
+
+            <AuthFormField
+              label="Password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              required
+            />
+
+            <AuthSubmitButton loading={loading}>
+              {loading ? 'Signing in…' : 'Sign in'}
+            </AuthSubmitButton>
+          </form>
         </div>
 
-        {created ? (
-          <div
-            style={{
-              borderRadius: 16,
-              border: `1px solid ${T.greenBorder}`,
-              background: T.greenBg,
-              color: T.green,
-              padding: '10px 12px',
-              fontSize: 12.6,
-              lineHeight: 1.4,
-              fontWeight: 520,
-              marginBottom: 18,
-            }}
-          >
-            Account created. Sign in to continue.
-          </div>
-        ) : null}
-
-        {error ? (
-          <div
-            style={{
-              borderRadius: 16,
-              border: `1px solid ${T.redBorder}`,
-              background: T.redBg,
-              color: T.red,
-              padding: '10px 12px',
-              fontSize: 12.6,
-              lineHeight: 1.4,
-              fontWeight: 520,
-              marginBottom: 18,
-            }}
-          >
-            {error}
-          </div>
-        ) : null}
-
-        <form
-          method="POST"
-          action="/api/auth/login-redirect"
-          onSubmit={() => setLoading(true)}
+        <div
           style={{
             display: 'grid',
-            gap: 20,
+            gap: 12,
+            textAlign: 'center',
           }}
         >
-          <AuthFormField
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="name@example.com"
-            autoComplete="email"
-            inputMode="email"
-            required
-            autoFocus
-          />
-
-          <AuthFormField
-            label="Password"
-            name="password"
-            type="password"
-            placeholder="Enter password"
-            autoComplete="current-password"
-            required
-          />
-
-          <AuthSubmitButton loading={loading}>
-            {loading ? 'Signing in…' : 'Sign in'}
-          </AuthSubmitButton>
-        </form>
-
-        <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
           <AuthDetailText>
             New to School Connect?{' '}
             <AuthTextLink href="/auth/signup">
-              Create school account
+              Get started
             </AuthTextLink>
           </AuthDetailText>
 
