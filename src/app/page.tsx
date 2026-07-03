@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
+import { AuthPrivacyLine } from '@/components/auth/AuthDetailText'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
-import { AuthPrivacyLine } from '@/components/auth/AuthDetailText'
 export default function WelcomePage() {
   return (
     <main
@@ -16,9 +16,6 @@ export default function WelcomePage() {
         padding: 'max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
-              margin: '0 auto',
-              boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
-              transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
         color: '#21222D',
       }}
     >
@@ -30,39 +27,55 @@ export default function WelcomePage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          padding: '46px 34px 36px',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ marginBottom: 28 }}>
-          <AuthWelcomeHero
-            imageSize={174}
-            title="School Connect"
-            text="Keep school and home connected in one simple space."
-          />
-        </div>
+        <AuthWelcomeHero
+          title="School Connect"
+          text="Keep school and home connected in one simple space."
+        />
 
-        <div style={{ display: 'grid', gap: 20 }}>
+        <div
+          style={{
+            display: 'grid',
+            justifyItems: 'center',
+            gap: 20,
+          }}
+        >
           <Link
             href="/auth/signup"
-            className="sc-pressable"
             style={{
-              minHeight: 52,
-              width: '100%',
-              borderRadius: 14,
-              border: 'none',
-              background: '#21222D',
-              color: '#FFFFFF',
-              fontSize: 13.2,
-              fontWeight: 610,
-              fontFamily: 'inherit',
               display: 'inline-flex',
-              alignItems: 'center',
               justifyContent: 'center',
               textDecoration: 'none',
-              letterSpacing: '-0.012em',
-              boxSizing: 'border-box',
             }}
           >
-            Get started
+            <span
+              className="sc-pressable"
+              style={{
+                width: 'fit-content',
+                minHeight: 52,
+                padding: '0 30px',
+                borderRadius: 14,
+                border: 'none',
+                background: '#21222D',
+                color: '#FFFFFF',
+                fontSize: 13.2,
+                fontWeight: 650,
+                fontFamily: 'inherit',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                letterSpacing: '-0.012em',
+                boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
+                transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+              }}
+            >
+              Get started
+            </span>
           </Link>
 
           <AuthPrivacyLine />
