@@ -13,7 +13,7 @@ export default function WelcomePage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'max(22px, env(safe-area-inset-top)) 22px max(22px, env(safe-area-inset-bottom))',
+        padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
         color: '#21222D',
@@ -22,54 +22,52 @@ export default function WelcomePage() {
       <section
         style={{
           width: '100%',
-          maxWidth: 360,
+          maxWidth: 390,
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: '26px 10px 30px',
+          padding: '28px 16px 28px',
           boxSizing: 'border-box',
         }}
       >
         <AuthWelcomeHero
           title="School Connect"
           text="Keep school and home connected in one simple space."
-          imageSize={148}
+          imageSize={168}
         />
 
         <div
           style={{
             display: 'grid',
-            justifyItems: 'center',
-            gap: 16,
-            marginTop: -4,
+            gap: 14,
+            marginTop: 10,
           }}
         >
           <Link
             href="/auth/signup"
             style={{
-              display: 'inline-flex',
-              justifyContent: 'center',
               textDecoration: 'none',
+              display: 'block',
             }}
           >
             <span
               className="sc-pressable"
               style={{
-                minHeight: 48,
-                padding: '0 28px',
-                borderRadius: 14,
+                width: '100%',
+                minHeight: 56,
+                borderRadius: 16,
                 border: 'none',
                 background: '#21222D',
                 color: '#FFFFFF',
-                fontSize: 13.4,
+                fontSize: 15,
                 fontWeight: 650,
                 fontFamily: 'inherit',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 letterSpacing: '-0.012em',
-                boxShadow: '0 12px 24px rgba(33,34,45,0.14)',
+                boxShadow: '0 14px 28px rgba(33,34,45,0.16)',
                 transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
                 boxSizing: 'border-box',
                 cursor: 'pointer',
@@ -79,28 +77,38 @@ export default function WelcomePage() {
             </span>
           </Link>
 
-          <p
+          <Link
+            href="/auth/login"
             style={{
-              margin: '2px 0 0',
-              color: 'rgba(33, 34, 45, 0.48)',
-              fontSize: 12.5,
-              lineHeight: 1.5,
-              fontWeight: 420,
-              textAlign: 'center',
+              textDecoration: 'none',
+              display: 'block',
             }}
           >
-            Already have an account?{' '}
-            <Link
-              href="/auth/login"
+            <span
+              className="sc-pressable"
               style={{
+                width: '100%',
+                minHeight: 56,
+                borderRadius: 16,
+                border: '1px solid rgba(33,34,45,0.04)',
+                background: '#F4F4F6',
                 color: '#21222D',
-                textDecoration: 'none',
+                fontSize: 15,
                 fontWeight: 650,
+                fontFamily: 'inherit',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                letterSpacing: '-0.012em',
+                boxShadow: 'none',
+                transition: 'transform 170ms ease, background 170ms ease, border-color 170ms ease',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
               }}
             >
               Sign in
-            </Link>
-          </p>
+            </span>
+          </Link>
 
           <div style={{ marginTop: 10 }}>
             <AuthPrivacyLine />
