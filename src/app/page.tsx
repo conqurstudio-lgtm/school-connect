@@ -16,6 +16,7 @@ export default function WelcomePage() {
         padding: 'max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
+              margin: '0 auto',
               boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
               transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
         color: '#21222D',
@@ -35,7 +36,7 @@ export default function WelcomePage() {
           <AuthWelcomeHero
             imageSize={174}
             title="School Connect"
-            text="A calmer way to keep school and home connected."
+            text="Keep school and home connected in one simple space."
           />
         </div>
 
@@ -46,7 +47,7 @@ export default function WelcomePage() {
             style={{
               minHeight: 52,
               width: '100%',
-              borderRadius: 16,
+              borderRadius: 14,
               border: 'none',
               background: '#21222D',
               color: '#FFFFFF',
@@ -61,7 +62,7 @@ export default function WelcomePage() {
               boxSizing: 'border-box',
             }}
           >
-            Create your school account
+            Get started
           </Link>
 
           <AuthPrivacyLine />
