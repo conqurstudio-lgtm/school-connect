@@ -1,13 +1,6 @@
+// school-connect-auth-palette-v1
+// Palette: #21222D primary, #958CE8 accent, #ACD1FD soft blue, #DBDBE5 soft grey
 import Image from 'next/image'
-
-const T = {
-  ink: '#21222D',
-  muted: 'rgba(33, 34, 45, 0.56)',
-  green: '#00733f',
-  softGrey: '#F5F6F5',
-  greenSoft: '#F1F8F4',
-  border: 'rgba(0, 115, 63, 0.12)',
-}
 
 type AuthWelcomeHeroProps = {
   title?: string
@@ -17,74 +10,60 @@ type AuthWelcomeHeroProps = {
 }
 
 export function AuthWelcomeHero({
-  title = 'School Connect',
-  text = 'A calmer way to keep school and home connected.',
+  title = 'Welcome to School Connect',
+  text = 'A simple space for schools, teachers and parents to stay connected through reports, updates and shared moments.',
   compact = false,
   imageSize,
 }: AuthWelcomeHeroProps) {
-  const resolvedImageSize = imageSize ?? (compact ? 132 : 174)
+  const size = imageSize || (compact ? 136 : 250)
 
   return (
-    <div
-      style={{
-        textAlign: 'center',
-        color: T.ink,
-        marginBottom: compact ? 24 : 30,
-      }}
-    >
-      <div
-        style={{
-          width: resolvedImageSize,
-          height: resolvedImageSize,
-          margin: compact ? '0 auto 18px' : '0 auto 28px',
-          borderRadius: compact ? 28 : 34,
-          background: `linear-gradient(180deg, ${T.greenSoft}, ${T.softGrey})`,
-          border: `1px solid ${T.border}`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          boxShadow: '0 18px 42px rgba(0, 115, 63, 0.08)',
-        }}
-      >
+    <div style={{
+      textAlign: 'center',
+      marginBottom: compact ? 24 : 30,
+    }}>
+      <div style={{
+        width: size,
+        maxWidth: '82%',
+        margin: compact ? '0 auto 18px' : '0 auto 28px',
+      }}>
         <Image
           src="/images/school-connect-welcome-palette.png"
-          alt=""
-          width={resolvedImageSize}
-          height={resolvedImageSize}
-          priority
+          alt="School Connect welcome illustration"
+          width={620}
+          height={520}
+          priority={!compact}
           style={{
-            width: '88%',
-            height: '88%',
-            objectFit: 'contain',
+            width: '100%',
+            height: 'auto',
+            display: 'block',
           }}
         />
       </div>
 
-      <h1
-        style={{
-          margin: 0,
-          color: T.ink,
+      {title ? (
+        <h1 style={{
           fontSize: compact ? 19 : 25,
-          lineHeight: 1.08,
-          fontWeight: 650,
-          letterSpacing: '-0.04em',
-        }}
-      >
-        {title}
-      </h1>
+          lineHeight: compact ? 1.12 : 1.08,
+          fontWeight: compact ? 610 : 650,
+          letterSpacing: compact ? '-0.028em' : '-0.038em',
+          margin: 0,
+          color: '#21222D',
+        }}>
+          {title}
+        </h1>
+      ) : null}
 
       {text ? (
-        <p
-          style={{
-            margin: compact ? '10px auto 0' : '15px auto 0',
-            color: T.muted,
-            fontSize: compact ? 12.6 : 13.4,
-            lineHeight: 1.45,
-            fontWeight: 420,
-            maxWidth: compact ? 290 : 320,
-          }}
-        >
+        <p style={{
+          fontSize: compact ? 12.2 : 13.2,
+          color: '#21222D',
+          lineHeight: 1.5,
+          margin: compact ? '10px auto 0' : '15px auto 0',
+          maxWidth: compact ? 330 : 350,
+          fontWeight: 390,
+          letterSpacing: '-0.006em',
+        }}>
           {text}
         </p>
       ) : null}

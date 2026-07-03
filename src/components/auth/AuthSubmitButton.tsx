@@ -1,7 +1,7 @@
 'use client'
 
 const T = {
-  primary: '#00733f',
+  primary: '#21222D',
   white: '#FFFFFF',
 }
 
@@ -45,8 +45,8 @@ export function AuthSubmitButton({
         marginTop: 8,
         opacity: inactive ? 0.7 : 1,
         boxShadow: inactive
-          ? '0 10px 22px rgba(0,115,63,0.10)'
-          : '0 14px 28px rgba(0,115,63,0.22)',
+          ? '0 10px 22px rgba(33,34,45,0.10)'
+          : '0 14px 28px rgba(33,34,45,0.20)',
         transition: 'transform 170ms ease, opacity 170ms ease, background 170ms ease, box-shadow 170ms ease',
       }}
     >
