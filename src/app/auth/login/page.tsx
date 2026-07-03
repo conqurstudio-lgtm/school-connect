@@ -36,7 +36,7 @@ export default function LoginPage({ searchParams }: { searchParams: Record<strin
       className="sc-page-enter"
       style={{
         minHeight: '100dvh',
-        background: T.white,
+        background: '#F5F6F5',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

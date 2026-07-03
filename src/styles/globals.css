@@ -4187,3 +4187,13 @@ input::placeholder {
 button:disabled {
   pointer-events: none;
 }
+
+/* school-connect-green-auth-pass-v1 */
+.sc-pressable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 34px rgba(0,115,63,0.26);
+}
+
+.sc-pressable:active {
+  transform: translateY(0);
+}

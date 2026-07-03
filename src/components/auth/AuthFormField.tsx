@@ -23,7 +23,7 @@ const T = {
   eye: 'rgba(33, 34, 45, 0.42)',
   border: '#DBDBE5',
   borderHover: 'rgba(33, 34, 45, 0.22)',
-  focusBorder: '#21222D',
+  focusBorder: '#00733f',
   accent: '#21222D',
   white: '#FFFFFF',
 }

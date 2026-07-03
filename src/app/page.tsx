@@ -9,14 +9,14 @@ export default function WelcomePage() {
       className="sc-page-enter"
       style={{
         minHeight: '100dvh',
-        background: '#FFFFFF',
+        background: '#F5F6F5',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 'max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
-              boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
+              boxShadow: '0 14px 28px rgba(0,115,63,0.22)',
               transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
         color: '#21222D',
       }}
@@ -48,7 +48,7 @@ export default function WelcomePage() {
               width: '100%',
               borderRadius: 16,
               border: 'none',
-              background: '#21222D',
+              background: '#00733f',
               color: '#FFFFFF',
               fontSize: 13.2,
               fontWeight: 610,
