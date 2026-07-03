@@ -11,7 +11,6 @@ export default function WelcomePage() {
         minHeight: '100dvh',
         background: '#FFFFFF',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -26,11 +25,13 @@ export default function WelcomePage() {
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '28px 16px 28px',
+          justifyContent: 'space-between',
+          padding: '64px 16px 26px',
           boxSizing: 'border-box',
         }}
       >
+        <div />
+
         <AuthWelcomeHero
           title="School Connect"
           text="Keep school and home connected in one simple space."
@@ -41,7 +42,6 @@ export default function WelcomePage() {
           style={{
             display: 'grid',
             gap: 14,
-            marginTop: 10,
           }}
         >
           <Link
