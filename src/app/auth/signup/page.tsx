@@ -1,67 +1,72 @@
 'use client'
 
-import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
-
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 
-import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
+import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
 import { AuthFormField } from '@/components/auth/AuthFormField'
 import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
+import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
-const T = {
-  white: '#FFFFFF',
-  ink: '#21222D',
-  ink2: '#545866',
-  ink3: '#21222D',
-  border: '#DBDBE5',
-  accent: '#958CE8',
-  primary: '#21222D',
-  soft: '#F7F8FC',
-  red: '#B42318',
+type SchoolForm = {
+  schoolName: string
+  schoolPhone: string
+  schoolEmail: string
 }
 
-const secondaryButton: React.CSSProperties = {
-  minHeight: 50,
+const primaryButtonStyle: React.CSSProperties = {
   width: '100%',
+  minHeight: 56,
   borderRadius: 16,
-  border: `1px solid ${T.border}`,
-  background: T.white,
-  color: T.ink2,
-  fontSize: 13,
-  fontWeight: 590,
-  cursor: 'pointer',
+  border: 'none',
+  background: '#21222D',
+  color: '#FFFFFF',
+  fontSize: 15,
+  fontWeight: 680,
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  textDecoration: 'none',
-  letterSpacing: '-0.01em',
+  letterSpacing: '-0.014em',
+  boxShadow: '0 14px 28px rgba(33,34,45,0.16)',
+  transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
+  boxSizing: 'border-box',
+  cursor: 'pointer',
 }
 
-export default function SignupPage() {
-  const [step, setStep] = useState(0)
-  const [schoolName, setSchoolName] = useState('')
-  const [schoolPhone, setSchoolPhone] = useState('')
-  const [schoolEmail, setSchoolEmail] = useState('')
-  const [error, setError] = useState('')
+export default function SchoolSignupPage() {
+  const [step, setStep] = useState<1 | 2>(1)
+  const [form, setForm] = useState<SchoolForm>({
+    schoolName: '',
+    schoolPhone: '',
+    schoolEmail: '',
+  })
 
-  const canContinue = useMemo(() => schoolName.trim().length >= 2, [schoolName])
+  const ownerHref = useMemo(() => {
+    const params = new URLSearchParams()
 
-  const nextStep = () => {
-    setError('')
+    if (form.schoolName.trim()) params.set('schoolName', form.schoolName.trim())
+    if (form.schoolPhone.trim()) params.set('schoolPhone', form.schoolPhone.trim())
+    if (form.schoolEmail.trim()) params.set('schoolEmail', form.schoolEmail.trim())
 
-    if (step === 0 && !canContinue) {
-      setError('Enter your school name.')
+    const query = params.toString()
+    return query ? `/auth/signup/owner?${query}` : '/auth/signup/owner'
+  }, [form.schoolEmail, form.schoolName, form.schoolPhone])
+
+  function updateField(name: keyof SchoolForm, value: string) {
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }))
+  }
+
+  function goNext() {
+    if (!form.schoolName.trim()) {
+      alert('Enter your school name.')
       return
     }
 
-    setStep((value) => Math.min(value + 1, 2))
-  }
-
-  const backStep = () => {
-    setError('')
-    setStep((value) => Math.max(value - 1, 0))
+    setStep(2)
   }
 
   return (
@@ -69,14 +74,13 @@ export default function SignupPage() {
       className="sc-page-enter"
       style={{
         minHeight: '100dvh',
-        background: T.white,
+        background: '#FFFFFF',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
-        color: T.ink,
+        color: '#21222D',
       }}
     >
       <section
@@ -86,134 +90,162 @@ export default function SignupPage() {
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
+          padding: '38px 16px 26px',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ marginBottom: 24 }}>
+        <div />
+
+        <div>
           <AuthWelcomeHero
+            title="Create school account"
+            text="Start with your school details."
             compact
             imageSize={132}
-            title="Create your school account"
-            text="Start with your school details."
           />
-        </div>
 
-        {error ? (
           <div
+            aria-label="Signup progress"
             style={{
-              borderRadius: 16,
-              border: '1px solid rgba(180,35,24,0.18)',
-              background: '#FFF5F5',
-              color: T.red,
-              padding: '10px 12px',
-              fontSize: 12.6,
-              lineHeight: 1.4,
-              fontWeight: 520,
-              marginBottom: 18,
+              display: 'flex',
+              justifyContent: 'center',
+              gap: 7,
+              margin: '-6px 0 22px',
             }}
           >
-            {error}
+            <span
+              style={{
+                width: step === 1 ? 18 : 7,
+                height: 7,
+                borderRadius: 999,
+                background: '#21222D',
+                transition: 'width 180ms ease',
+              }}
+            />
+            <span
+              style={{
+                width: step === 2 ? 18 : 7,
+                height: 7,
+                borderRadius: 999,
+                background: step === 2 ? '#21222D' : '#DBDBE5',
+                transition: 'width 180ms ease, background 180ms ease',
+              }}
+            />
           </div>
-        ) : null}
-
-        <form method="GET" action="/auth/signup/owner" style={{ display: 'grid', gap: 20 }}>
-          {step !== 0 ? <input type="hidden" name="school_name" value={schoolName.trim()} /> : null}
-          {step !== 1 ? <input type="hidden" name="school_phone" value={schoolPhone.trim()} /> : null}
-          {step !== 1 ? <input type="hidden" name="school_email" value={schoolEmail.trim()} /> : null}
-
-          {step === 0 ? (
-            <div key="school-step" className="sc-form-step-swipe">
-              <AuthFormField
-                label="School name"
-                name="school_name"
-                placeholder="Demo Primary School"
-                value={schoolName}
-                onChange={(event) => setSchoolName(event.target.value)}
-                autoComplete="organization"
-                required
-                autoFocus
-              />
-            </div>
-          ) : null}
 
           {step === 1 ? (
-            <div key="contact-step" className="sc-form-step-swipe" style={{ display: 'grid', gap: 20 }}>
+            <div style={{ display: 'grid', gap: 20 }}>
+              <AuthFormField
+                label="School name"
+                name="schoolName"
+                type="text"
+                placeholder="School name"
+                required
+                autoFocus
+                value={form.schoolName}
+                onChange={(event) => updateField('schoolName', event.target.value)}
+              />
+
               <AuthFormField
                 label="Phone"
-                name="school_phone"
+                name="schoolPhone"
                 type="tel"
-                placeholder="011 000 0000"
-                value={schoolPhone}
-                onChange={(event) => setSchoolPhone(event.target.value)}
                 inputMode="tel"
+                placeholder="Phone number"
+                value={form.schoolPhone}
+                onChange={(event) => updateField('schoolPhone', event.target.value)}
               />
 
               <AuthFormField
                 label="Email"
-                name="school_email"
+                name="schoolEmail"
                 type="email"
-                placeholder="info@school.co.za"
-                value={schoolEmail}
-                onChange={(event) => setSchoolEmail(event.target.value)}
                 inputMode="email"
+                autoComplete="email"
+                placeholder="school@email.co.za"
+                value={form.schoolEmail}
+                onChange={(event) => updateField('schoolEmail', event.target.value)}
               />
+
+              <AuthSubmitButton type="button" onClick={goNext}>
+                Next
+              </AuthSubmitButton>
             </div>
-          ) : null}
-
-          {step === 2 ? (
-            <div
-              key="review-step"
-              className="sc-form-step-swipe"
-              style={{
-                display: 'grid',
-                gap: 12,
-                border: `1px solid ${T.border}`,
-                borderRadius: 18,
-                padding: 14,
-                background: T.soft,
-              }}
-            >
-              <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>School name</p>
-                <p style={{ margin: '3px 0 0', fontSize: 13.4, color: T.ink, fontWeight: 610 }}>
-                  {schoolName.trim() || 'Not set'}
-                </p>
-              </div>
-
-              <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Phone</p>
-                <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440 }}>
-                  {schoolPhone.trim() || 'Not added'}
-                </p>
-              </div>
-
-              <div>
-                <p style={{ margin: 0, fontSize: 11.7, color: T.ink3, fontWeight: 560 }}>Email</p>
-                <p style={{ margin: '3px 0 0', fontSize: 12.8, color: T.ink2, fontWeight: 440, overflowWrap: 'anywhere' }}>
-                  {schoolEmail.trim() || 'Not added'}
-                </p>
-              </div>
-            </div>
-          ) : null}
-
-          {step < 2 ? (
-            <AuthSubmitButton type="button" onClick={nextStep}>
-              Continue
-            </AuthSubmitButton>
           ) : (
-            <AuthSubmitButton>
-              Create owner account
-            </AuthSubmitButton>
+            <div style={{ display: 'grid', gap: 18 }}>
+              <div
+                style={{
+                  borderRadius: 18,
+                  background: '#F4F4F6',
+                  padding: 18,
+                  display: 'grid',
+                  gap: 12,
+                }}
+              >
+                <div>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: 'rgba(33,34,45,0.48)',
+                      fontSize: 12.5,
+                      lineHeight: 1.3,
+                      fontWeight: 520,
+                    }}
+                  >
+                    School
+                  </p>
+                  <p
+                    style={{
+                      margin: '4px 0 0',
+                      color: '#21222D',
+                      fontSize: 15,
+                      lineHeight: 1.35,
+                      fontWeight: 680,
+                    }}
+                  >
+                    {form.schoolName.trim()}
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gap: 8 }}>
+                  <p style={{ margin: 0, color: 'rgba(33,34,45,0.62)', fontSize: 13, lineHeight: 1.35 }}>
+                    Phone: {form.schoolPhone.trim() || 'Not added'}
+                  </p>
+                  <p style={{ margin: 0, color: 'rgba(33,34,45,0.62)', fontSize: 13, lineHeight: 1.35 }}>
+                    Email: {form.schoolEmail.trim() || 'Not added'}
+                  </p>
+                </div>
+              </div>
+
+              <Link href={ownerHref} style={{ textDecoration: 'none', display: 'block' }}>
+                <span className="sc-pressable" style={primaryButtonStyle}>
+                  Create owner account
+                </span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                style={{
+                  minHeight: 48,
+                  borderRadius: 16,
+                  border: '1px solid rgba(33,34,45,0.06)',
+                  background: '#F4F4F6',
+                  color: '#21222D',
+                  fontSize: 14,
+                  fontWeight: 650,
+                  fontFamily: 'inherit',
+                  cursor: 'pointer',
+                }}
+              >
+                Back
+              </button>
+            </div>
           )}
+        </div>
 
-          {step > 0 ? (
-            <button type="button" className="sc-pressable" style={secondaryButton} onClick={backStep}>
-              Back
-            </button>
-          ) : null}
-        </form>
-
-        <div style={{ textAlign: 'center', marginTop: 32, display: 'grid', gap: 12 }}>
+        <div style={{ display: 'grid', gap: 12, textAlign: 'center' }}>
           <AuthDetailText>
             Already have an account?{' '}
             <AuthTextLink href="/auth/login">
