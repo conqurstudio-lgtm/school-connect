@@ -261,6 +261,9 @@ function reportTeacherInitials(name: any) {
 }
 
 function ReportTeacherActionAvatar({ teacher, school, child }: any) {
+  /* school-connect-hide-teacher-action-avatar */
+  return null
+
   const [open, setOpen] = useState(false)
 
   const teacherName = teacher?.name || 'Teacher'
@@ -402,6 +405,93 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
   )
 }
 
+
+
+function ReportTeacherInfoCard({ teacher, school, child }: any) {
+  const teacherName = teacher?.name || 'Teacher'
+  const teacherPhoto =
+    teacher?.photo_url ||
+    teacher?.avatar_url ||
+    teacher?.image_url ||
+    ''
+
+  const childName = child?.name || child?.first_name || 'Your child'
+  const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
+  const childTeacherLabel = childFirstName === 'Your child'
+    ? 'Your child’s teacher'
+    : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
+
+  const schoolName = school?.name || teacher?.school_name || ''
+
+  return (
+    <section
+      aria-label="Teacher information"
+      style={{
+        marginTop: 14,
+        borderRadius: 24,
+        background: '#FFFFFF',
+        border: '1px solid rgba(37,37,37,0.06)',
+        boxShadow: '0 18px 45px rgba(0,0,0,0.055)',
+        padding: 16,
+      }}
+    >
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+      }}>
+        <div style={{
+          width: 46,
+          height: 46,
+          borderRadius: '50%',
+          background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+          color: '#5F6268',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 13,
+          fontWeight: 640,
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}>
+          {!teacherPhoto && reportTeacherInitials(teacherName)}
+        </div>
+
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <p style={{
+            fontSize: 14.5,
+            fontWeight: 650,
+            color: '#252525',
+            letterSpacing: '-0.02em',
+            margin: '0 0 4px',
+          }}>
+            {teacherName}
+          </p>
+
+          <p style={{
+            fontSize: 12.8,
+            color: '#5F6268',
+            lineHeight: 1.35,
+            margin: 0,
+          }}>
+            {childTeacherLabel}
+          </p>
+
+          {schoolName ? (
+            <p style={{
+              fontSize: 12.4,
+              color: '#7C8486',
+              lineHeight: 1.35,
+              margin: '8px 0 0',
+            }}>
+              {schoolName}
+            </p>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 function FamilyShareButton({ token }: { token: string }) {
   const [open, setOpen] = useState(false)
@@ -980,23 +1070,11 @@ export default function ParentMagicReportPage() {
 
   if (showMoments) {
     return (
-      <>
-        <div style={{ display: "none" }}
-          className={`sc-parent-view-switch-shell ${parentViewSwitching === 'report' ? 'is-leaving-to-report' : 'is-entering-moments'}`}>
-          <ParentMomentsPage
+      <ParentMomentsPage
         token={token || ''}
         embedded={true}
         onClose={closeParentMomentsWithAnimation}
       />
-        </div>
-
-        <ParentBottomHoverMenu
-          token={String(token || '')}
-          active="moments"
-          onReportClick={closeParentMomentsWithAnimation}
-          onMomentsClick={openParentMomentsWithAnimation}
-        />
-      </>
     )
   }
 
@@ -1103,6 +1181,8 @@ export default function ParentMagicReportPage() {
                   report={reports[0]}
                   childName={childName}
                 />
+
+                <ReportTeacherInfoCard teacher={payload.teacher} school={school} child={payload.child} />
               </div>
             )}
             {reports.length > 1 && (
@@ -1133,8 +1213,7 @@ export default function ParentMagicReportPage() {
           </div>
         </section>
       </div>
-      <ParentBottomHoverMenu token={String(token || '')} active="report" onMomentsClick={openParentMomentsWithAnimation} />
-    </main>
+</main>
   )
 }
 
