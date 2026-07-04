@@ -127,6 +127,15 @@ function getScoreEmoji(score: number): string {
   return '🌱'                    // needs work / growing
 }
 
+function getSubjectScoreEmoji(score: number): string {
+  if (score >= 4.5) return '🏆'
+  if (score >= 4) return '✨'
+  if (score >= 3.5) return '⭐'
+  if (score >= 3) return '👍'
+  if (score >= 2.5) return '🌱'
+  return '💪'
+}
+
 function formatWeek(date: string): string {
   const d = new Date(date)
   const end = new Date(d); end.setDate(d.getDate() + 4)
@@ -601,107 +610,39 @@ export function ReportCard({ report, childName }: Props) {
               boxShadow: 'none',
             }}
           >
-            <div className="sc-report-subject-bars-v2" aria-label="Subject score bar chart">
+            <div className="sc-report-subject-slider-v1" aria-label="Subject score cards">
               {subjects.map(([name, score]) => {
                 const numericScore = Number(score)
                 const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const scoreLabel = safeScore.toFixed(1)
+                const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
+                const change = previousScore === null ? null : safeScore - previousScore
 
                 return (
-                  <div key={`chart-${String(name)}`} className="sc-report-subject-bar-row-v2">
-                    <div className="sc-report-subject-bar-label-v2">
-                      <span>{shortenSubject(String(name))}</span>
-                      <strong>{safeScore.toFixed(1)}</strong>
+                  <article key={String(name)} className="sc-report-subject-slide-card-v1">
+                    <div className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
+                      {getSubjectScoreEmoji(safeScore)}
                     </div>
 
-                    <div className="sc-report-subject-bar-track-v2" aria-hidden="true">
-                      <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
+                    <p className="sc-report-subject-slide-name-v1">
+                      {shortenSubject(String(name))}
+                    </p>
+
+                    <div className="sc-report-subject-slide-score-v1">
+                      {safeScore.toFixed(1)}
                     </div>
 
-                    <div className="sc-report-subject-change-v2 is-current">
-                      {scoreLabel}
-                    </div>
-                  </div>
+                    <p className="sc-report-subject-slide-caption-v1">
+                      {change === null
+                        ? getSubjectParentLabel(safeScore)
+                        : Math.abs(change) < 0.05
+                          ? 'same as last week'
+                          : `${change > 0 ? '+' : ''}${change.toFixed(1)} from last week`}
+                    </p>
+                  </article>
                 )
               })}
             </div>
 
-            <div className="sc-report-subject-duplicate-list-v3" style={{
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-              {subjects.map(([name, score]) => {
-                const numericScore = Number(score)
-                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-
-                return (
-                  <div key={String(name)} className="sc-report-subject-row" style={{
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto',
-                    gap: 14,
-                    alignItems: 'center',
-                  }}>
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{
-                        fontSize: 13.2,
-                        color: '#252525',
-                        fontWeight: 560,
-                        letterSpacing: '-0.01em',
-                        margin: 0,
-                      }}>
-                        {shortenSubject(String(name))}
-                      </p>
-                    </div>
-
-                    <span className="sc-report-subject-chip sc-report-subject-chip-compare-v2" style={{
-                      minWidth: 76,
-                      height: 38,
-                      fontVariantNumeric: 'tabular-nums',
-                    }}>
-                      <strong style={{
-                        fontSize: 12.8,
-                        fontWeight: 680,
-                        lineHeight: 1,
-                        color: '#252525',
-                      }}>
-                        {safeScore.toFixed(1)}
-                      </strong>
-                      {(() => {
-                        const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
-                        const change = previousScore === null ? null : safeScore - previousScore
-
-                        if (change === null) {
-                          return (
-                            <em style={{
-                              fontSize: 9.7,
-                              fontStyle: 'normal',
-                              fontWeight: 560,
-                              color: '#7C8486',
-                              lineHeight: 1.05,
-                              marginTop: 3,
-                            }}>
-                              {getSubjectParentLabel(safeScore)}
-                            </em>
-                          )
-                        }
-
-                        return (
-                          <em className={change > 0.05 ? 'is-up' : change < -0.05 ? 'is-down' : 'is-same'} style={{
-                            fontSize: 9.7,
-                            fontStyle: 'normal',
-                            fontWeight: 560,
-                            lineHeight: 1.05,
-                            marginTop: 3,
-                          }}>
-                            {Math.abs(change) < 0.05 ? 'same' : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
-                          </em>
-                        )
-                      })()}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
           </section>
         </>
       )}
