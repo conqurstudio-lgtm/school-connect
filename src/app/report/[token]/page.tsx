@@ -9,6 +9,7 @@ import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
 
+import { ParentMomentsBell } from '@/components/parent/ParentMomentsBell'
 const T = {
   ink: '#1A1A1A',
   ink2: '#5F6268',
@@ -549,6 +550,7 @@ function FamilyShareButton({ token }: { token: string }) {
               {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? 'Copied' : 'Copy'}
             </button>
+              <ParentMomentsBell token={token} />
 
             <button
               type="button"
