@@ -25,6 +25,30 @@ const SUBJECT_GRAPH = {
   text: '#51615E',
 }
 
+const REPORT_SECTION_HEADING_STYLE: any = {
+  maxWidth: 370,
+  margin: '18px auto 8px',
+  padding: '0 2px',
+  fontSize: 13,
+  fontWeight: 650,
+  color: '#252525',
+  letterSpacing: '-0.015em',
+  lineHeight: 1.2,
+  textAlign: 'left',
+}
+
+const REPORT_SECTION_SUBTEXT_STYLE: any = {
+  maxWidth: 370,
+  margin: '-4px auto 10px',
+  padding: '0 2px',
+  fontSize: 12.2,
+  fontWeight: 420,
+  color: '#7C8486',
+  letterSpacing: '-0.004em',
+  lineHeight: 1.35,
+  textAlign: 'left',
+}
+
 function subjectGraphOpacity(score: number): number {
   const value = Number(score)
   if (!Number.isFinite(value)) return 0.35
@@ -502,143 +526,87 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
-          maxWidth: 370,
-          margin: '16px auto 0',
-          padding: 16,
-          textAlign: 'left',
-          borderRadius: 22,
-          background: '#FFFFFF',
-          border: '1px solid rgba(37,37,37,0.06)',
-          boxShadow: 'none',
-        }}>
-          <p className="sc-teacher-comment-card-label-v1" style={{
-            fontSize: 11,
-            fontWeight: 650,
-            color: '#9A9A9A',
-            textTransform: 'uppercase',
-            letterSpacing: '0.055em',
-            margin: '0 0 8px',
-          }}>
+        <>
+          <h3 className="sc-report-external-heading-comment-v1" style={REPORT_SECTION_HEADING_STYLE}>
             Teacher comment
-          </p>
+          </h3>
 
-          <p style={{
-            fontSize: 12.7,
-            color: '#3F4247',
-            margin: 0,
-            lineHeight: 1.72,
-            letterSpacing: '-0.004em',
-            fontWeight: 380,
-            textAlign: 'left',
-          }}>
-            {report.comment}
-          </p>
-
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-            marginTop: 14,
-          }}>
-            <div style={{
-              width: 22,
-              height: 22,
-              borderRadius: '50%',
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
-              color: '#7A7D82',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 8.5,
-              fontWeight: 620,
-              letterSpacing: '-0.01em',
-              overflow: 'hidden',
-              flexShrink: 0,
+          <section
+            className="sc-parent-report-teacher-note-avatar-line-v437"
+            style={{
+              maxWidth: 370,
+              margin: '0 auto',
+              padding: 14,
+              textAlign: 'left',
+              borderRadius: 16,
+              background: '#FFFFFF',
+              border: '1px solid rgba(37,37,37,0.07)',
+              boxShadow: 'none',
+            }}
+          >
+            <p style={{
+              fontSize: 12.7,
+              color: '#3F4247',
+              margin: 0,
+              lineHeight: 1.72,
+              letterSpacing: '-0.004em',
+              fontWeight: 380,
+              textAlign: 'left',
             }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <span style={{
-              fontSize: 11,
-              color: '#9A9CA3',
-              lineHeight: 1.2,
-              fontWeight: 500,
-              letterSpacing: '-0.002em',
-            }}>
-              From {teacherName}
-            </span>
-          </div>
-        </section>
+              {report.comment}
+            </p>
+          </section>
+        </>
       )}
 
       {subjects.length > 0 && (
-        <section
-          className="sc-report-subject-panel sc-report-subject-panel-inline"
-          aria-label="Subject support"
-          style={{
-            width: '100%',
-            maxWidth: 370,
-            margin: '12px auto 0',
-            padding: 16,
-            borderRadius: 22,
-            background: '#FFFFFF',
-            border: '1px solid rgba(37,37,37,0.06)',
-            boxShadow: 'none',
-          }}
-        >
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              gap: 14,
-              marginBottom: 10,
-            }}>
-              <div>
-                <p style={{
-                  fontSize: 15,
-                  fontWeight: 640,
-                  color: T.ink,
-                  margin: 0,
-                  letterSpacing: '-0.02em',
-                }}>
-                  Subject support
-                </p>
+        <>
+          <h3 className="sc-report-external-heading-subjects-v1" style={REPORT_SECTION_HEADING_STYLE}>
+            Subjects
+          </h3>
 
-                <p className="sc-report-week-performance-explainer">
-                  {buildWeeklyPerformanceExplainer(childName || report.child_name, subjects)}
-                </p>
-              </div>
+          <p className="sc-report-external-subtext-subjects-v1" style={REPORT_SECTION_SUBTEXT_STYLE}>
+            Subject performance for this report.
+          </p>
+
+          <section
+            className="sc-report-subject-panel sc-report-subject-panel-inline"
+            aria-label="Subject support"
+            style={{
+              width: '100%',
+              maxWidth: 370,
+              margin: '0 auto',
+              padding: 14,
+              borderRadius: 16,
+              background: '#FFFFFF',
+              border: '1px solid rgba(37,37,37,0.07)',
+              boxShadow: 'none',
+            }}
+          >
+            <div className="sc-report-subject-bars-v2" aria-label="Subject score bar chart">
+              {subjects.map(([name, score]) => {
+                const numericScore = Number(score)
+                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+                const scoreLabel = safeScore.toFixed(1)
+
+                return (
+                  <div key={`chart-${String(name)}`} className="sc-report-subject-bar-row-v2">
+                    <div className="sc-report-subject-bar-label-v2">
+                      <span>{shortenSubject(String(name))}</span>
+                      <strong>{safeScore.toFixed(1)}</strong>
+                    </div>
+
+                    <div className="sc-report-subject-bar-track-v2" aria-hidden="true">
+                      <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
+                    </div>
+
+                    <div className="sc-report-subject-change-v2 is-current">
+                      {scoreLabel}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-
-
-              {subjects.length > 0 && (
-                <div className="sc-report-subject-bars-v2" aria-label="Subject score bar chart">
-                  {subjects.map(([name, score]) => {
-                    const numericScore = Number(score)
-                    const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                    const scoreLabel = safeScore.toFixed(1)
-
-                    return (
-                      <div key={`chart-${String(name)}`} className="sc-report-subject-bar-row-v2">
-                        <div className="sc-report-subject-bar-label-v2">
-                          <span>{shortenSubject(String(name))}</span>
-                          <strong>{safeScore.toFixed(1)}</strong>
-                        </div>
-
-                        <div className="sc-report-subject-bar-track-v2" aria-hidden="true">
-                          <b style={{ width: `${Math.max(0, Math.min(100, (safeScore / 5) * 100))}%` }} />
-                        </div>
-
-                        <div className="sc-report-subject-change-v2 is-current">
-                          {scoreLabel}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
 
             <div className="sc-report-subject-duplicate-list-v3" style={{
               display: 'flex',
@@ -647,8 +615,6 @@ export function ReportCard({ report, childName }: Props) {
               {subjects.map(([name, score]) => {
                 const numericScore = Number(score)
                 const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const previousRaw = report.previous_scores ? Number(report.previous_scores[String(name)]) : NaN
-                const previousSafeScore = Number.isFinite(previousRaw) ? Math.max(0, Math.min(5, previousRaw)) : null
 
                 return (
                   <div key={String(name)} className="sc-report-subject-row" style={{
@@ -718,7 +684,8 @@ export function ReportCard({ report, childName }: Props) {
                 )
               })}
             </div>
-        </section>
+          </section>
+        </>
       )}
 
       {/* Subjects moved to score info popup */}

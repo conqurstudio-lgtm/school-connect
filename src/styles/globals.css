@@ -4340,3 +4340,69 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-panel-inline .sc-report-subject-duplicate-list-v3 {
   box-shadow: none !important;
 }
+
+
+/* school-connect-simple-report-cards-external-headers-v1 */
+.sc-report-external-heading-comment-v1,
+.sc-report-external-heading-subjects-v1 {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.015em !important;
+  color: #252525 !important;
+  line-height: 1.2 !important;
+}
+
+.sc-report-external-subtext-subjects-v1 {
+  font-family: inherit !important;
+  font-size: 12.2px !important;
+  font-weight: 420 !important;
+  color: #7C8486 !important;
+}
+
+.sc-parent-report-teacher-note-avatar-line-v437,
+.sc-report-subject-panel-inline {
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(37,37,37,0.07) !important;
+  background: #FFFFFF !important;
+}
+
+.sc-report-subject-panel-inline .sc-report-subject-bars-v2,
+.sc-report-subject-panel-inline .sc-report-subject-duplicate-list-v3,
+.sc-report-subject-panel-inline .sc-report-subject-row {
+  box-shadow: none !important;
+}
+
+
+/* school-connect-fix-simple-report-cards-syntax-v1 */
+.sc-report-external-heading-comment-v1,
+.sc-report-external-heading-subjects-v1 {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.015em !important;
+  color: #252525 !important;
+  line-height: 1.2 !important;
+}
+
+.sc-report-external-subtext-subjects-v1 {
+  font-family: inherit !important;
+  font-size: 12.2px !important;
+  font-weight: 420 !important;
+  color: #7C8486 !important;
+}
+
+.sc-parent-report-teacher-note-avatar-line-v437,
+.sc-report-subject-panel-inline {
+  box-shadow: none !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(37,37,37,0.07) !important;
+  background: #FFFFFF !important;
+}
+
+.sc-report-subject-panel-inline .sc-report-subject-bars-v2,
+.sc-report-subject-panel-inline .sc-report-subject-duplicate-list-v3,
+.sc-report-subject-panel-inline .sc-report-subject-row {
+  box-shadow: none !important;
+}
