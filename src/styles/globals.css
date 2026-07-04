@@ -4632,3 +4632,40 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 21px !important;
   }
 }
+
+
+/* school-connect-subjects-above-comment-emoji-top-v1 */
+.sc-report-subject-slide-card-v1 {
+  min-height: 104px !important;
+}
+
+.sc-report-subject-slide-top-v2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin-bottom: 8px !important;
+}
+
+.sc-report-subject-slide-emoji-v1 {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 999px !important;
+  font-size: 15px !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.sc-report-subject-slide-name-v1 {
+  max-width: 100% !important;
+  min-height: 26px !important;
+  margin: 0 !important;
+}
+
+.sc-report-subject-slide-score-v1 {
+  margin-top: 8px !important;
+}
+
+.sc-report-subject-slide-bottom-v2 {
+  display: contents !important;
+}

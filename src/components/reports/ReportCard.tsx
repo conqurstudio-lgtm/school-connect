@@ -542,6 +542,64 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
+      {subjects.length > 0 && (
+        <>
+<section
+            className="sc-report-subject-panel sc-report-subject-panel-inline"
+            aria-label="Subject support"
+            style={{
+              width: '100%',
+              maxWidth: 370,
+              margin: '18px auto 0',
+              padding: 0,
+              borderRadius: 0,
+              background: 'transparent',
+              border: 'none',
+              boxShadow: 'none',
+            }}
+          >
+            <div className="sc-report-subject-slider-v1" aria-label="Subject score cards">
+              {subjects.map(([name, score]) => {
+                const numericScore = Number(score)
+                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+                const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
+                const change = previousScore === null ? null : safeScore - previousScore
+
+                return (
+                  <article key={String(name)} className="sc-report-subject-slide-card-v1">
+                    <div className="sc-report-subject-slide-top-v2">
+                      <span className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
+                        {getSubjectScoreEmoji(safeScore)}
+                      </span>
+
+                      <span
+                        className="sc-report-subject-slide-tag-v2"
+                        style={getSubjectScoreTagStyle(safeScore)}
+                      >
+                        {change === null
+                          ? getSubjectParentLabel(safeScore)
+                          : Math.abs(change) < 0.05
+                            ? 'same'
+                            : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
+                      </span>
+                    </div>
+
+                    <p className="sc-report-subject-slide-name-v1">
+                      {shortenSubject(String(name))}
+                    </p>
+
+                    <div className="sc-report-subject-slide-score-v1">
+                      {safeScore.toFixed(1)}
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+
+          </section>
+        </>
+      )}
+
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <section
@@ -601,66 +659,6 @@ export function ReportCard({ report, childName }: Props) {
             </p>
           </div>
         </section>
-      )}
-
-      {subjects.length > 0 && (
-        <>
-<section
-            className="sc-report-subject-panel sc-report-subject-panel-inline"
-            aria-label="Subject support"
-            style={{
-              width: '100%',
-              maxWidth: 370,
-              margin: '18px auto 0',
-              padding: 0,
-              borderRadius: 0,
-              background: 'transparent',
-              border: 'none',
-              boxShadow: 'none',
-            }}
-          >
-            <div className="sc-report-subject-slider-v1" aria-label="Subject score cards">
-              {subjects.map(([name, score]) => {
-                const numericScore = Number(score)
-                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
-                const change = previousScore === null ? null : safeScore - previousScore
-
-                return (
-                  <article key={String(name)} className="sc-report-subject-slide-card-v1">
-                    <div className="sc-report-subject-slide-top-v2">
-                      <p className="sc-report-subject-slide-name-v1">
-                        {shortenSubject(String(name))}
-                      </p>
-
-                      <span
-                        className="sc-report-subject-slide-tag-v2"
-                        style={getSubjectScoreTagStyle(safeScore)}
-                      >
-                        {change === null
-                          ? getSubjectParentLabel(safeScore)
-                          : Math.abs(change) < 0.05
-                            ? 'same'
-                            : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
-                      </span>
-                    </div>
-
-                    <div className="sc-report-subject-slide-bottom-v2">
-                      <span className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
-                        {getSubjectScoreEmoji(safeScore)}
-                      </span>
-
-                      <div className="sc-report-subject-slide-score-v1">
-                        {safeScore.toFixed(1)}
-                      </div>
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
-
-          </section>
-        </>
       )}
 
       {/* Subjects moved to score info popup */}
