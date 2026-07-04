@@ -500,32 +500,75 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-      {subjects.length > 0 && (
-        <div
-          className="sc-report-subject-overlay-removed"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Subject support"
-          onClick={() => {}}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2147482500,
-            display: 'flex',
+      {/* ── Teacher's note ─────────────────── */}
+      {report.comment && (
+        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
+          maxWidth: 370,
+          margin: '8px auto 46px',
+          padding: '0 18px',
+          textAlign: 'center',
+        }}>
+          <p style={{
+            fontSize: 12.7,
+            color: '#3F4247',
+            margin: 0,
+            lineHeight: 1.72,
+            letterSpacing: '-0.004em',
+            fontWeight: 380,
+            textAlign: 'center',
+          }}>
+            {report.comment}
+          </p>
+
+          <div style={{
+            display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 22,
+            gap: 7,
+            marginTop: 14,
+          }}>
+            <div style={{
+              width: 22,
+              height: 22,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+              color: '#7A7D82',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 8.5,
+              fontWeight: 620,
+              letterSpacing: '-0.01em',
+              overflow: 'hidden',
+              flexShrink: 0,
+            }}>
+              {!teacherPhoto && teacherInitials}
+            </div>
+
+            <span style={{
+              fontSize: 11,
+              color: '#9A9CA3',
+              lineHeight: 1.2,
+              fontWeight: 500,
+              letterSpacing: '-0.002em',
+            }}>
+              From {teacherName}
+            </span>
+          </div>
+        </section>
+      )}
+
+      {subjects.length > 0 && (
+        <section
+          className="sc-report-subject-panel sc-report-subject-panel-inline"
+          aria-label="Subject support"
+          style={{
+            width: '100%',
+            maxWidth: 370,
+            margin: '16px auto 0',
+            padding: '18px 18px 14px',
           }}
         >
-          <div
-            className="sc-report-subject-panel"
-            onClick={(event) => event.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: 352,
-              padding: '18px 18px 14px',
-            }}
-          >
             <div style={{
               display: 'flex',
               alignItems: 'flex-start',
@@ -548,22 +591,6 @@ export function ReportCard({ report, childName }: Props) {
                   {buildWeeklyPerformanceExplainer(childName || report.child_name, subjects)}
                 </p>
               </div>
-
-              <button
-                className="sc-report-subject-close"
-                type="button"
-                onClick={() => {}}
-                aria-label="Close subject support"
-                style={{
-                  width: 30,
-                  height: 30,
-                  cursor: 'pointer',
-                  padding: 0,
-                  flexShrink: 0,
-                }}
-              >
-                <X size={16} strokeWidth={2} />
-              </button>
             </div>
 
 
@@ -672,65 +699,6 @@ export function ReportCard({ report, childName }: Props) {
                 )
               })}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Teacher's note ─────────────────── */}
-      {report.comment && (
-        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
-          maxWidth: 370,
-          margin: '8px auto 46px',
-          padding: '0 18px',
-          textAlign: 'center',
-        }}>
-          <p style={{
-            fontSize: 12.7,
-            color: '#3F4247',
-            margin: 0,
-            lineHeight: 1.72,
-            letterSpacing: '-0.004em',
-            fontWeight: 380,
-            textAlign: 'center',
-          }}>
-            {report.comment}
-          </p>
-
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-            marginTop: 14,
-          }}>
-            <div style={{
-              width: 22,
-              height: 22,
-              borderRadius: '50%',
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
-              color: '#7A7D82',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 8.5,
-              fontWeight: 620,
-              letterSpacing: '-0.01em',
-              overflow: 'hidden',
-              flexShrink: 0,
-            }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
-
-            <span style={{
-              fontSize: 11,
-              color: '#9A9CA3',
-              lineHeight: 1.2,
-              fontWeight: 500,
-              letterSpacing: '-0.002em',
-            }}>
-              From {teacherName}
-            </span>
-          </div>
         </section>
       )}
 

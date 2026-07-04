@@ -4303,3 +4303,21 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-close {
   display: none !important;
 }
+
+
+/* school-connect-fixed-inline-subjects-page-v2 */
+.sc-report-subject-panel-inline {
+  position: static !important;
+  width: 100% !important;
+  max-width: 370px !important;
+  max-height: none !important;
+  transform: none !important;
+  inset: auto !important;
+  overflow: visible !important;
+  margin-top: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.sc-report-subject-panel-inline .sc-report-subject-close {
+  display: none !important;
+}
