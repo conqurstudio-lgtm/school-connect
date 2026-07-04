@@ -4669,3 +4669,40 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-slide-bottom-v2 {
   display: contents !important;
 }
+
+
+/* school-connect-subject-score-small-edge-v1 */
+.sc-report-subject-slide-name-score-row-v3 {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.sc-report-subject-slide-name-score-row-v3 .sc-report-subject-slide-name-v1 {
+  flex: 1 1 auto !important;
+  max-width: 62px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+.sc-report-subject-slide-name-score-row-v3 .sc-report-subject-slide-score-v1 {
+  flex-shrink: 0 !important;
+  font-size: 16px !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  text-align: right !important;
+}
+
+@media (max-width: 380px) {
+  .sc-report-subject-slide-name-score-row-v3 .sc-report-subject-slide-name-v1 {
+    max-width: 58px !important;
+  }
+
+  .sc-report-subject-slide-name-score-row-v3 .sc-report-subject-slide-score-v1 {
+    font-size: 15px !important;
+  }
+}

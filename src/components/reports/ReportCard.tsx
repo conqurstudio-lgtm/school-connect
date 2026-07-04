@@ -584,12 +584,14 @@ export function ReportCard({ report, childName }: Props) {
                       </span>
                     </div>
 
-                    <p className="sc-report-subject-slide-name-v1">
-                      {shortenSubject(String(name))}
-                    </p>
+                    <div className="sc-report-subject-slide-name-score-row-v3">
+                      <p className="sc-report-subject-slide-name-v1">
+                        {shortenSubject(String(name))}
+                      </p>
 
-                    <div className="sc-report-subject-slide-score-v1">
-                      {safeScore.toFixed(1)}
+                      <div className="sc-report-subject-slide-score-v1">
+                        {safeScore.toFixed(1)}
+                      </div>
                     </div>
                   </article>
                 )
