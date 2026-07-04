@@ -526,37 +526,61 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <>
-          <h3 className="sc-report-external-heading-comment-v1" style={REPORT_SECTION_HEADING_STYLE}>
-            Teacher comment
-          </h3>
+        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
+          maxWidth: 370,
+          margin: '18px auto 0',
+          padding: '0 18px',
+          textAlign: 'center',
+          background: 'transparent',
+          border: 'none',
+          boxShadow: 'none',
+        }}>
+          <p style={{
+            fontSize: 12.7,
+            color: '#3F4247',
+            margin: 0,
+            lineHeight: 1.72,
+            letterSpacing: '-0.004em',
+            fontWeight: 380,
+            textAlign: 'center',
+          }}>
+            {report.comment}
+          </p>
 
-          <section
-            className="sc-parent-report-teacher-note-avatar-line-v437"
-            style={{
-              maxWidth: 370,
-              margin: '0 auto',
-              padding: 14,
-              textAlign: 'left',
-              borderRadius: 16,
-              background: '#FFFFFF',
-              border: '1px solid rgba(37,37,37,0.07)',
-              boxShadow: 'none',
-            }}
-          >
-            <p style={{
-              fontSize: 12.7,
-              color: '#3F4247',
-              margin: 0,
-              lineHeight: 1.72,
-              letterSpacing: '-0.004em',
-              fontWeight: 380,
-              textAlign: 'left',
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            marginTop: 14,
+          }}>
+            <div style={{
+              width: 30,
+              height: 30,
+              borderRadius: '50%',
+              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
+              color: '#5F6268',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 10.5,
+              fontWeight: 650,
+              overflow: 'hidden',
+              flexShrink: 0,
             }}>
-              {report.comment}
-            </p>
-          </section>
-        </>
+              {!teacherPhoto && teacherInitials}
+            </div>
+
+            <span style={{
+              fontSize: 12.2,
+              color: '#7C8486',
+              fontWeight: 470,
+              letterSpacing: '-0.004em',
+            }}>
+              {teacherName}
+            </span>
+          </div>
+        </section>
       )}
 
       {subjects.length > 0 && (

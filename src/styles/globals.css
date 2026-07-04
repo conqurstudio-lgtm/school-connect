@@ -4406,3 +4406,16 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-panel-inline .sc-report-subject-row {
   box-shadow: none !important;
 }
+
+
+/* school-connect-restore-teacher-comment-inline-v1 */
+.sc-parent-report-teacher-note-avatar-line-v437 {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+
+.sc-report-external-heading-comment-v1 {
+  display: none !important;
+}
