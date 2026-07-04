@@ -4252,3 +4252,12 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-floating-button {
   display: none !important;
 }
+
+/* school-connect-hide-report-card-subject-popup-trigger-v1 */
+/* The subjects are now shown open below the report, so hide the old subject info trigger when present. */
+button[aria-label*="subject" i],
+button[aria-label*="subjects" i],
+button[title*="subject" i],
+button[title*="subjects" i] {
+  display: none !important;
+}

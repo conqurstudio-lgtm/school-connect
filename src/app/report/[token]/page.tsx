@@ -261,8 +261,6 @@ function reportTeacherInitials(name: any) {
 }
 
 function ReportTeacherActionAvatar({ teacher, school, child }: any) {
-  /* school-connect-hide-teacher-action-avatar */
-  return null
 
   const [open, setOpen] = useState(false)
 
@@ -407,25 +405,76 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 
 
 
-function ReportTeacherInfoCard({ teacher, school, child }: any) {
-  const teacherName = teacher?.name || 'Teacher'
-  const teacherPhoto =
-    teacher?.photo_url ||
-    teacher?.avatar_url ||
-    teacher?.image_url ||
+
+
+function getReportSubjectsForOpenCard(report: any) {
+  const possibleLists = [
+    report?.subjects,
+    report?.subject_results,
+    report?.subjectResults,
+    report?.subject_reports,
+    report?.subjectReports,
+    report?.results,
+    report?.marks,
+  ]
+
+  for (const list of possibleLists) {
+    if (Array.isArray(list) && list.length) return list
+  }
+
+  return []
+}
+
+function getSubjectNameForOpenCard(subject: any, index: number) {
+  return (
+    subject?.subject ||
+    subject?.name ||
+    subject?.title ||
+    subject?.subject_name ||
+    subject?.label ||
+    `Subject ${index + 1}`
+  )
+}
+
+function getSubjectValueForOpenCard(subject: any) {
+  const value =
+    subject?.percentage ??
+    subject?.score ??
+    subject?.mark ??
+    subject?.result ??
+    subject?.rating ??
+    subject?.level ??
+    subject?.grade
+
+  if (value === null || value === undefined || value === '') return ''
+
+  if (typeof value === 'number') {
+    return value <= 1 ? `${Math.round(value * 100)}%` : `${value}%`
+  }
+
+  return String(value)
+}
+
+function getSubjectCommentForOpenCard(subject: any) {
+  return (
+    subject?.comment ||
+    subject?.teacher_comment ||
+    subject?.teacherComment ||
+    subject?.note ||
+    subject?.notes ||
+    subject?.description ||
     ''
+  )
+}
 
-  const childName = child?.name || child?.first_name || 'Your child'
-  const childFirstName = String(childName || '').trim().split(/\s+/)[0] || 'Your child'
-  const childTeacherLabel = childFirstName === 'Your child'
-    ? 'Your child’s teacher'
-    : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
+function ReportOpenSubjectsCard({ report }: { report: any }) {
+  const subjects = getReportSubjectsForOpenCard(report)
 
-  const schoolName = school?.name || teacher?.school_name || ''
+  if (!subjects.length) return null
 
   return (
     <section
-      aria-label="Teacher information"
+      aria-label="Subjects"
       style={{
         marginTop: 14,
         borderRadius: 24,
@@ -438,56 +487,91 @@ function ReportTeacherInfoCard({ teacher, school, child }: any) {
       <div style={{
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'space-between',
         gap: 12,
+        marginBottom: 12,
       }}>
-        <div style={{
-          width: 46,
-          height: 46,
-          borderRadius: '50%',
-          background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
-          color: '#5F6268',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 13,
-          fontWeight: 640,
-          flexShrink: 0,
-          overflow: 'hidden',
-        }}>
-          {!teacherPhoto && reportTeacherInitials(teacherName)}
-        </div>
-
-        <div style={{ minWidth: 0, flex: 1 }}>
+        <div>
           <p style={{
+            margin: 0,
             fontSize: 14.5,
-            fontWeight: 650,
+            fontWeight: 680,
             color: '#252525',
             letterSpacing: '-0.02em',
-            margin: '0 0 4px',
           }}>
-            {teacherName}
+            Subjects
           </p>
 
           <p style={{
-            fontSize: 12.8,
-            color: '#5F6268',
+            margin: '4px 0 0',
+            fontSize: 12.5,
             lineHeight: 1.35,
-            margin: 0,
+            color: '#7C8486',
           }}>
-            {childTeacherLabel}
+            Subject performance for this report.
           </p>
-
-          {schoolName ? (
-            <p style={{
-              fontSize: 12.4,
-              color: '#7C8486',
-              lineHeight: 1.35,
-              margin: '8px 0 0',
-            }}>
-              {schoolName}
-            </p>
-          ) : null}
         </div>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gap: 10,
+      }}>
+        {subjects.map((subject: any, index: number) => {
+          const value = getSubjectValueForOpenCard(subject)
+          const comment = getSubjectCommentForOpenCard(subject)
+
+          return (
+            <div
+              key={subject?.id || subject?._id || subject?.subject_id || index}
+              style={{
+                borderRadius: 18,
+                background: '#F7F7F6',
+                padding: 13,
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 10,
+              }}>
+                <p style={{
+                  margin: 0,
+                  color: '#252525',
+                  fontSize: 13.5,
+                  fontWeight: 650,
+                  lineHeight: 1.35,
+                }}>
+                  {getSubjectNameForOpenCard(subject, index)}
+                </p>
+
+                {value ? (
+                  <span style={{
+                    flexShrink: 0,
+                    color: '#252525',
+                    fontSize: 12.6,
+                    fontWeight: 650,
+                    lineHeight: 1,
+                  }}>
+                    {value}
+                  </span>
+                ) : null}
+              </div>
+
+              {comment ? (
+                <p style={{
+                  margin: '8px 0 0',
+                  color: '#5F6268',
+                  fontSize: 12.5,
+                  lineHeight: 1.45,
+                }}>
+                  {comment}
+                </p>
+              ) : null}
+            </div>
+          )
+        })}
       </div>
     </section>
   )
@@ -1182,8 +1266,8 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
 
-                <ReportTeacherInfoCard teacher={payload.teacher} school={school} child={payload.child} />
-              </div>
+                <ReportOpenSubjectsCard report={report} />
+</div>
             )}
             {reports.length > 1 && (
               <section style={{
