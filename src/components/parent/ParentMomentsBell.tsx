@@ -124,7 +124,7 @@ export function ParentMomentsBell({
         width: 38,
         height: 38,
         borderRadius: 999,
-        border: '1px solid rgba(33,34,45,0.08)',
+        border: 'none',
         background: '#FFFFFF',
         color: '#21222D',
         display: 'inline-flex',

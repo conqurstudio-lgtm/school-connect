@@ -4210,3 +4210,18 @@ input::placeholder {
 button:disabled {
   pointer-events: none;
 }
+
+/* school-connect-hide-parent-report-floating-buttons-v1 */
+/* Hide old floating parent report action buttons. The visible top action icons remain. */
+a[href*="/moments/"][style*="position: fixed"],
+a[href*="/moments/"][style*="position:fixed"],
+button[aria-label*="moment" i][style*="position: fixed"],
+button[title*="moment" i][style*="position: fixed"],
+.sc-parent-floating-actions,
+.sc-parent-floating-button,
+.sc-parent-view-switch-floating,
+.sc-parent-view-switch-fab,
+.sc-report-floating-actions,
+.sc-report-floating-button {
+  display: none !important;
+}
