@@ -981,7 +981,8 @@ export default function ParentMagicReportPage() {
   if (showMoments) {
     return (
       <>
-        <div className={`sc-parent-view-switch-shell ${parentViewSwitching === 'report' ? 'is-leaving-to-report' : 'is-entering-moments'}`}>
+        <div style={{ display: "none" }}
+          className={`sc-parent-view-switch-shell ${parentViewSwitching === 'report' ? 'is-leaving-to-report' : 'is-entering-moments'}`}>
           <ParentMomentsPage
         token={token || ''}
         embedded={true}

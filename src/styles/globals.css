@@ -4225,3 +4225,17 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-floating-button {
   display: none !important;
 }
+
+/* school-connect-remove-parent-view-switch-floating-v1 */
+/* Remove the old floating Report / Moments switch from both parent report and moments views. */
+.sc-parent-view-switch-shell,
+.sc-parent-view-switch-floating,
+.sc-parent-view-switch-fab,
+.sc-parent-view-switch-button,
+.sc-parent-view-switch-actions,
+.sc-parent-floating-actions,
+.sc-parent-floating-button,
+.sc-report-floating-actions,
+.sc-report-floating-button {
+  display: none !important;
+}
