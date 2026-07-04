@@ -4253,11 +4253,20 @@ button[title*="moment" i][style*="position: fixed"],
   display: none !important;
 }
 
-/* school-connect-hide-report-card-subject-popup-trigger-v1 */
-/* The subjects are now shown open below the report, so hide the old subject info trigger when present. */
-button[aria-label*="subject" i],
-button[aria-label*="subjects" i],
-button[title*="subject" i],
-button[title*="subjects" i] {
-  display: none !important;
+
+
+/* school-connect-report-inline-subject-panel-v1 */
+.sc-report-subject-panel-inline {
+  position: static !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-top: 16px !important;
+  transform: none !important;
+  inset: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.sc-report-subject-overlay-removed {
+  display: contents !important;
 }

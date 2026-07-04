@@ -402,7 +402,6 @@ function buildWeeklyPerformanceExplainer(
 
 
 export function ReportCard({ report, childName }: Props) {
-  const [subjectInfoOpen, setSubjectInfoOpen] = useState(false)
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
@@ -481,30 +480,6 @@ export function ReportCard({ report, childName }: Props) {
           margin: '0 auto',
         }}>
           <ScoreRing score={overall} compact={!isLatestReport} />
-
-          {subjects.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setSubjectInfoOpen(true)}
-              aria-label="View subject support"
-              className="sc-report-info-button sc-report-info-button-restored"
-              style={{
-                position: 'absolute',
-                top: -7,
-                right: -21,
-                width: 28,
-                height: 28,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-                zIndex: 8,
-              }}
-            >
-              <Info size={15.5} strokeWidth={2.05} />
-            </button>
-          )}
         </div>
 
         <div style={{ marginTop: 24 }}>
@@ -527,7 +502,7 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {subjectInfoOpen && (
         <div
-          className="sc-report-subject-overlay"
+          className="sc-report-subject-overlay-removed"
           role="dialog"
           aria-modal="true"
           aria-label="Subject support"
