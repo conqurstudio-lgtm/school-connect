@@ -4441,3 +4441,21 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-panel-inline .sc-report-subject-chip {
   box-shadow: none !important;
 }
+
+
+/* school-connect-teacher-comment-tip-card-v1 */
+.sc-parent-report-teacher-tip-card-v1 {
+  border-radius: 34px !important;
+  box-shadow: none !important;
+}
+
+.sc-parent-report-teacher-tip-card-v1 strong {
+  font-weight: 700 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-teacher-tip-card-v1 {
+    border-radius: 30px !important;
+    padding: 16px !important;
+  }
+}

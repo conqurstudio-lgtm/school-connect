@@ -526,59 +526,61 @@ export function ReportCard({ report, childName }: Props) {
       </div>
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
-        <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
-          maxWidth: 370,
-          margin: '18px auto 0',
-          padding: '0 18px',
-          textAlign: 'center',
-          background: 'transparent',
-          border: 'none',
-          boxShadow: 'none',
-        }}>
-          <p style={{
-            fontSize: 12.7,
-            color: '#3F4247',
-            margin: 0,
-            lineHeight: 1.72,
-            letterSpacing: '-0.004em',
-            fontWeight: 380,
-            textAlign: 'center',
-          }}>
-            {report.comment}
-          </p>
-
+        <section
+          className="sc-parent-report-teacher-note-avatar-line-v437 sc-parent-report-teacher-tip-card-v1"
+          aria-label="Teacher comment"
+          style={{
+            maxWidth: 370,
+            margin: '18px auto 0',
+            padding: '18px 18px',
+            textAlign: 'left',
+            background: '#FFFFFF',
+            border: '1px solid rgba(37,37,37,0.07)',
+            borderRadius: 34,
+            boxShadow: 'none',
+          }}
+        >
           <div style={{
-            display: 'inline-flex',
+            display: 'grid',
+            gridTemplateColumns: '48px 1fr',
+            gap: 14,
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            marginTop: 14,
           }}>
             <div style={{
-              width: 30,
-              height: 30,
+              width: 48,
+              height: 48,
               borderRadius: '50%',
               background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
               color: '#5F6268',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 10.5,
+              fontSize: 13,
               fontWeight: 650,
               overflow: 'hidden',
               flexShrink: 0,
+              border: '1px solid rgba(37,37,37,0.06)',
             }}>
               {!teacherPhoto && teacherInitials}
             </div>
 
-            <span style={{
-              fontSize: 12.2,
-              color: '#7C8486',
-              fontWeight: 470,
-              letterSpacing: '-0.004em',
+            <p style={{
+              fontSize: 14.2,
+              color: '#2F3338',
+              margin: 0,
+              lineHeight: 1.55,
+              letterSpacing: '-0.012em',
+              fontWeight: 400,
+              textAlign: 'left',
             }}>
-              {teacherName}
-            </span>
+              <strong style={{
+                fontWeight: 700,
+                color: '#252525',
+              }}>
+                Teacher comment:
+              </strong>{' '}
+              {report.comment}
+            </p>
           </div>
         </section>
       )}
