@@ -500,13 +500,13 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-      {subjectInfoOpen && (
+      {subjects.length > 0 && (
         <div
           className="sc-report-subject-overlay-removed"
           role="dialog"
           aria-modal="true"
           aria-label="Subject support"
-          onClick={() => setSubjectInfoOpen(false)}
+          onClick={() => {}}
           style={{
             position: 'fixed',
             inset: 0,
@@ -552,7 +552,7 @@ export function ReportCard({ report, childName }: Props) {
               <button
                 className="sc-report-subject-close"
                 type="button"
-                onClick={() => setSubjectInfoOpen(false)}
+                onClick={() => {}}
                 aria-label="Close subject support"
                 style={{
                   width: 30,

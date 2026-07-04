@@ -4270,3 +4270,36 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-overlay-removed {
   display: contents !important;
 }
+
+
+/* school-connect-force-inline-subjects-open-v1 */
+.sc-report-subject-overlay-removed {
+  position: static !important;
+  display: block !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 16px 0 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  z-index: auto !important;
+}
+
+.sc-report-subject-overlay-removed .sc-report-subject-panel,
+.sc-report-subject-panel-inline,
+.sc-report-subject-panel {
+  position: static !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: none !important;
+  inset: auto !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+.sc-report-subject-close {
+  display: none !important;
+}
