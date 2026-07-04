@@ -493,6 +493,8 @@ function FamilyShareButton({ token }: { token: string }) {
         <Send size={18} strokeWidth={2} />
       </button>
 
+      <ParentMomentsBell token={token} />
+
       {open && (
         <div style={{
           position: 'absolute',
@@ -550,7 +552,6 @@ function FamilyShareButton({ token }: { token: string }) {
               {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? 'Copied' : 'Copy'}
             </button>
-              <ParentMomentsBell token={token} />
 
             <button
               type="button"
