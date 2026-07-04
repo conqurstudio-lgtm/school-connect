@@ -136,6 +136,15 @@ function getSubjectScoreEmoji(score: number): string {
   return '💪'
 }
 
+function getSubjectScoreTagStyle(score: number): any {
+  if (score >= 4.5) return { background: '#EAF8EF', color: '#15803D', borderColor: 'rgba(21,128,61,0.16)' }
+  if (score >= 4) return { background: '#EEF6FF', color: '#2563EB', borderColor: 'rgba(37,99,235,0.16)' }
+  if (score >= 3.5) return { background: '#FFF7E6', color: '#B45309', borderColor: 'rgba(180,83,9,0.16)' }
+  if (score >= 3) return { background: '#F5F3FF', color: '#6D28D9', borderColor: 'rgba(109,40,217,0.16)' }
+  if (score >= 2.5) return { background: '#FFF1F2', color: '#BE123C', borderColor: 'rgba(190,18,60,0.16)' }
+  return { background: '#FEF2F2', color: '#B91C1C', borderColor: 'rgba(185,28,28,0.16)' }
+}
+
 function formatWeek(date: string): string {
   const d = new Date(date)
   const end = new Date(d); end.setDate(d.getDate() + 4)
@@ -619,25 +628,32 @@ export function ReportCard({ report, childName }: Props) {
 
                 return (
                   <article key={String(name)} className="sc-report-subject-slide-card-v1">
-                    <div className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
-                      {getSubjectScoreEmoji(safeScore)}
+                    <div className="sc-report-subject-slide-top-v2">
+                      <p className="sc-report-subject-slide-name-v1">
+                        {shortenSubject(String(name))}
+                      </p>
+
+                      <span
+                        className="sc-report-subject-slide-tag-v2"
+                        style={getSubjectScoreTagStyle(safeScore)}
+                      >
+                        {change === null
+                          ? getSubjectParentLabel(safeScore)
+                          : Math.abs(change) < 0.05
+                            ? 'same'
+                            : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
+                      </span>
                     </div>
 
-                    <p className="sc-report-subject-slide-name-v1">
-                      {shortenSubject(String(name))}
-                    </p>
+                    <div className="sc-report-subject-slide-bottom-v2">
+                      <span className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
+                        {getSubjectScoreEmoji(safeScore)}
+                      </span>
 
-                    <div className="sc-report-subject-slide-score-v1">
-                      {safeScore.toFixed(1)}
+                      <div className="sc-report-subject-slide-score-v1">
+                        {safeScore.toFixed(1)}
+                      </div>
                     </div>
-
-                    <p className="sc-report-subject-slide-caption-v1">
-                      {change === null
-                        ? getSubjectParentLabel(safeScore)
-                        : Math.abs(change) < 0.05
-                          ? 'same as last week'
-                          : `${change > 0 ? '+' : ''}${change.toFixed(1)} from last week`}
-                    </p>
                   </article>
                 )
               })}
