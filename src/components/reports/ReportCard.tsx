@@ -585,25 +585,17 @@ export function ReportCard({ report, childName }: Props) {
 
       {subjects.length > 0 && (
         <>
-          <h3 className="sc-report-external-heading-subjects-v1" style={REPORT_SECTION_HEADING_STYLE}>
-            Subjects
-          </h3>
-
-          <p className="sc-report-external-subtext-subjects-v1" style={REPORT_SECTION_SUBTEXT_STYLE}>
-            Subject performance for this report.
-          </p>
-
-          <section
+<section
             className="sc-report-subject-panel sc-report-subject-panel-inline"
             aria-label="Subject support"
             style={{
               width: '100%',
               maxWidth: 370,
-              margin: '0 auto',
-              padding: 14,
-              borderRadius: 16,
-              background: '#FFFFFF',
-              border: '1px solid rgba(37,37,37,0.07)',
+              margin: '18px auto 0',
+              padding: 0,
+              borderRadius: 0,
+              background: 'transparent',
+              border: 'none',
               boxShadow: 'none',
             }}
           >

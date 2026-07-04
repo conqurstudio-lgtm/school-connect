@@ -4419,3 +4419,25 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-external-heading-comment-v1 {
   display: none !important;
 }
+
+
+/* school-connect-report-flat-subjects-v1 */
+.sc-report-external-heading-subjects-v1,
+.sc-report-external-subtext-subjects-v1 {
+  display: none !important;
+}
+
+.sc-report-subject-panel-inline {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.sc-report-subject-panel-inline .sc-report-subject-bars-v2,
+.sc-report-subject-panel-inline .sc-report-subject-duplicate-list-v3,
+.sc-report-subject-panel-inline .sc-report-subject-row,
+.sc-report-subject-panel-inline .sc-report-subject-chip {
+  box-shadow: none !important;
+}
