@@ -4321,3 +4321,22 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-panel-inline .sc-report-subject-close {
   display: none !important;
 }
+
+
+/* school-connect-plain-report-cards-v1 */
+.sc-parent-report-teacher-note-avatar-line-v437,
+.sc-report-subject-panel-inline,
+.sc-report-subject-panel {
+  box-shadow: none !important;
+}
+
+.sc-report-subject-panel-inline {
+  background: #FFFFFF !important;
+  border: 1px solid rgba(37,37,37,0.06) !important;
+  border-radius: 22px !important;
+}
+
+.sc-report-subject-panel-inline .sc-report-subject-bars-v2,
+.sc-report-subject-panel-inline .sc-report-subject-duplicate-list-v3 {
+  box-shadow: none !important;
+}

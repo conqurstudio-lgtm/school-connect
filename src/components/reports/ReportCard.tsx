@@ -504,10 +504,25 @@ export function ReportCard({ report, childName }: Props) {
       {report.comment && (
         <section className="sc-parent-report-teacher-note-avatar-line-v437" style={{
           maxWidth: 370,
-          margin: '8px auto 46px',
-          padding: '0 18px',
-          textAlign: 'center',
+          margin: '16px auto 0',
+          padding: 16,
+          textAlign: 'left',
+          borderRadius: 22,
+          background: '#FFFFFF',
+          border: '1px solid rgba(37,37,37,0.06)',
+          boxShadow: 'none',
         }}>
+          <p className="sc-teacher-comment-card-label-v1" style={{
+            fontSize: 11,
+            fontWeight: 650,
+            color: '#9A9A9A',
+            textTransform: 'uppercase',
+            letterSpacing: '0.055em',
+            margin: '0 0 8px',
+          }}>
+            Teacher comment
+          </p>
+
           <p style={{
             fontSize: 12.7,
             color: '#3F4247',
@@ -515,7 +530,7 @@ export function ReportCard({ report, childName }: Props) {
             lineHeight: 1.72,
             letterSpacing: '-0.004em',
             fontWeight: 380,
-            textAlign: 'center',
+            textAlign: 'left',
           }}>
             {report.comment}
           </p>
@@ -565,8 +580,12 @@ export function ReportCard({ report, childName }: Props) {
           style={{
             width: '100%',
             maxWidth: 370,
-            margin: '16px auto 0',
-            padding: '18px 18px 14px',
+            margin: '12px auto 0',
+            padding: 16,
+            borderRadius: 22,
+            background: '#FFFFFF',
+            border: '1px solid rgba(37,37,37,0.06)',
+            boxShadow: 'none',
           }}
         >
             <div style={{
