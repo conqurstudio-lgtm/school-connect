@@ -5067,7 +5067,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-subject-card-v1,
 .sc-clean-subject-card-v2,
 .sc-report-subject-slide-card-v1 {
-  background: #E5E5E5 !important;
+  background: #FAFAFA !important;
   border: none !important;
   box-shadow: none !important;
 }
@@ -5088,4 +5088,15 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-score-circle-v2 > div > div:last-child {
   margin-top: 0 !important;
   line-height: 1.05 !important;
+}
+
+
+/* school-connect-subject-cards-light-fill-v1 */
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  background: #FAFAFA !important;
+  border: none !important;
+  box-shadow: none !important;
 }
