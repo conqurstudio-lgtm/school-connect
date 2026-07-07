@@ -127,14 +127,6 @@ function getScoreEmoji(score: number): string {
   return '🌱'                    // needs work / growing
 }
 
-function getSubjectScoreEmoji(score: number): string {
-  if (score >= 4.5) return '🏆'
-  if (score >= 4) return '✨'
-  if (score >= 3.5) return '⭐'
-  if (score >= 3) return '👍'
-  if (score >= 2.5) return '🌱'
-  return '💪'
-}
 
 function getSubjectScoreTagStyle(score: number): any {
   if (score >= 4.5) return { background: '#EAF8EF', color: '#15803D', borderColor: 'rgba(21,128,61,0.16)' }
@@ -169,100 +161,89 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size   = compact ? 196 : 214
-  const stroke = compact ? 8 : 9
-  const radius = (size - stroke) / 2
-  const circ   = 2 * Math.PI * radius
-  const targetPct = score / max
-  const reactId = useId().replace(/:/g, '')
-  const gradId = `ring-grad-${reactId}`
-
-  // Animated value — counts from 0 to score over ~900ms
-  const [displayScore, setDisplayScore] = useState(0)
-  const [pct, setPct] = useState(0)
-
-  useEffect(() => {
-    const duration = 900
-    const start = performance.now()
-    let raf = 0
-    const tick = (now: number) => {
-      const elapsed = now - start
-      const t = Math.min(1, elapsed / duration)
-      // ease-out-quint for that soft landing
-      const eased = 1 - Math.pow(1 - t, 5)
-      setDisplayScore(score * eased)
-      setPct(targetPct * eased)
-      if (t < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [score, targetPct])
+  const size = compact ? 196 : 220
+  const stroke = compact ? 4 : 4.5
+  const radius = (size - stroke - 10) / 2
+  const center = size / 2
+  const circ = 2 * Math.PI * radius
+  const pct = Math.max(0, Math.min(1, Number(score) / max))
+  const progress = circ * pct
+  const angle = -90 + (360 * pct)
+  const knobX = center + radius * Math.cos((angle * Math.PI) / 180)
+  const knobY = center + radius * Math.sin((angle * Math.PI) / 180)
 
   return (
-    <div style={{ position: 'relative', width: size, height: size, margin: '0 auto' }}>
-      <svg width={size} height={size} style={{
-        position: 'absolute', inset: 0,
-        transform: 'rotate(135deg)',
-      }}>
-        <defs>
-          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%"   stopColor="#EF4444" />
-            <stop offset="35%"  stopColor="#F59E0B" />
-            <stop offset="70%"  stopColor="#78A6FE" />
-            <stop offset="100%" stopColor="#22C55E" />
-          </linearGradient>
-        </defs>
-        {/* Track */}
+    <div className="sc-clean-score-circle-v2" style={{
+      position: 'relative',
+      width: size,
+      height: size,
+      margin: '0 auto',
+    }}>
+      <svg width={size} height={size} style={{ display: 'block' }}>
         <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke={T.trackBg} strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={`${circ * 0.75} ${circ}`}
-          strokeDashoffset={0}
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="rgba(17,17,17,0.12)"
+          strokeWidth={stroke}
         />
-        {/* Progress — animated by rAF in parent */}
+
         <circle
-          cx={size / 2} cy={size / 2} r={radius}
-          fill="none" stroke={`url(#${gradId})`} strokeWidth={stroke}
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="#111111"
+          strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${(circ * 0.75) * pct} ${circ}`}
+          strokeDasharray={`${progress} ${circ}`}
           strokeDashoffset={0}
+          transform={`rotate(-90 ${center} ${center})`}
+        />
+
+        <circle
+          cx={knobX}
+          cy={knobY}
+          r={compact ? 10 : 11}
+          fill="#FFFFFF"
+          stroke="#111111"
+          strokeWidth={stroke}
         />
       </svg>
 
       <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: compact ? 34 : 38,
+        textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 46 : 52, fontWeight: 600, color: T.ink,
-          letterSpacing: '-0.04em', lineHeight: 1,
+          fontSize: compact ? 35 : 42,
+          fontWeight: 430,
+          color: '#111111',
+          letterSpacing: '-0.06em',
+          lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>
-          {displayScore.toFixed(1)}
+          {score.toFixed(1)}
         </div>
+
         <div style={{
-          fontSize: 13, color: '#5F6268', fontWeight: 500,
-          marginTop: 6, letterSpacing: '-0.005em',
+          fontSize: 12,
+          color: '#8E8E93',
+          fontWeight: 430,
+          marginTop: 7,
+          letterSpacing: '-0.01em',
         }}>
           out of {max}
         </div>
       </div>
-
-      {/* Emoji — sits below the ring, near the bottom edge */}
-      <div style={{
-        position: 'absolute',
-        left: 0, right: 0,
-        bottom: -10,
-        textAlign: 'center',
-        fontSize: 38, lineHeight: 1,
-      }}>
-        {getScoreEmoji(score)}
-      </div>
     </div>
   )
 }
+
 
 function TeacherNameTag({ name }: { name?: string | null }) {
   if (!name) return null
@@ -542,123 +523,98 @@ export function ReportCard({ report, childName }: Props) {
           )}
         </div>
       </div>
-      {subjects.length > 0 && (
-        <>
-<section
-            className="sc-report-subject-panel sc-report-subject-panel-inline"
-            aria-label="Subject support"
-            style={{
-              width: '100%',
-              maxWidth: 370,
-              margin: '18px auto 0',
-              padding: 0,
-              borderRadius: 0,
-              background: 'transparent',
-              border: 'none',
-              boxShadow: 'none',
-            }}
-          >
-            <div className="sc-report-subject-slider-v1" aria-label="Subject score cards">
-              {subjects.map(([name, score]) => {
-                const numericScore = Number(score)
-                const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
-                const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
-                const change = previousScore === null ? null : safeScore - previousScore
 
-                return (
-                  <article key={String(name)} className="sc-report-subject-slide-card-v1">
-                    <div className="sc-report-subject-slide-top-v2">
-                      <span className="sc-report-subject-slide-emoji-v1" aria-hidden="true">
-                        {getSubjectScoreEmoji(safeScore)}
-                      </span>
-
-                      <span
-                        className="sc-report-subject-slide-tag-v2"
-                        style={getSubjectScoreTagStyle(safeScore)}
-                      >
-                        {change === null
-                          ? getSubjectParentLabel(safeScore)
-                          : Math.abs(change) < 0.05
-                            ? 'same'
-                            : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
-                      </span>
-                    </div>
-
-                    <div className="sc-report-subject-slide-name-score-row-v3">
-                      <p className="sc-report-subject-slide-name-v1">
-                        {shortenSubject(String(name))}
-                      </p>
-
-                      <div className="sc-report-subject-slide-score-v1">
-                        {safeScore.toFixed(1)}
-                      </div>
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
-
-          </section>
-        </>
-      )}
+      {/* ── Teacher's note ─────────────────── */}
 
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <section
-          className="sc-parent-report-teacher-note-avatar-line-v437 sc-parent-report-teacher-tip-card-v1"
+          className="sc-parent-report-teacher-note-avatar-line-v437 sc-clean-teacher-comment-v2"
           aria-label="Teacher comment"
           style={{
-            maxWidth: 370,
+            maxWidth: 330,
             margin: '18px auto 0',
-            padding: '18px 18px',
-            textAlign: 'left',
-            background: '#FFFFFF',
-            border: '1px solid rgba(37,37,37,0.07)',
-            borderRadius: 34,
+            padding: '0 18px',
+            textAlign: 'center',
+            background: 'transparent',
+            border: 'none',
             boxShadow: 'none',
           }}
         >
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '48px 1fr',
-            gap: 14,
-            alignItems: 'center',
+          <p style={{
+            fontSize: 12.4,
+            color: '#6F7378',
+            margin: 0,
+            lineHeight: 1.58,
+            letterSpacing: '-0.006em',
+            fontWeight: 390,
+            textAlign: 'center',
           }}>
-            <div style={{
-              width: 48,
-              height: 48,
-              borderRadius: '50%',
-              background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : '#F4F4F5',
-              color: '#5F6268',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 13,
-              fontWeight: 650,
-              overflow: 'hidden',
-              flexShrink: 0,
-              border: '1px solid rgba(37,37,37,0.06)',
-            }}>
-              {!teacherPhoto && teacherInitials}
-            </div>
+            {report.comment}
+          </p>
 
+          {teacherName ? (
             <p style={{
-              fontSize: 14.2,
-              color: '#2F3338',
-              margin: 0,
-              lineHeight: 1.55,
-              letterSpacing: '-0.012em',
-              fontWeight: 400,
-              textAlign: 'left',
+              margin: '8px 0 0',
+              fontSize: 11.2,
+              color: '#A0A0A4',
+              fontWeight: 450,
+              letterSpacing: '-0.004em',
+              textAlign: 'center',
             }}>
-              <strong style={{
-                fontWeight: 700,
-                color: '#252525',
-              }}>
-                Teacher comment:
-              </strong>{' '}
-              {report.comment}
+              {teacherName}
             </p>
+          ) : null}
+        </section>
+      )}
+
+      {subjects.length > 0 && (
+        <section
+          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2"
+          aria-label="Subject scores"
+          style={{
+            width: '100%',
+            maxWidth: 370,
+            margin: '22px auto 0',
+            padding: 0,
+            borderRadius: 0,
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+          }}
+        >
+          <div className="sc-report-subject-slider-v1 sc-clean-subject-slider-v2" aria-label="Subject score cards">
+            {subjects.map(([name, score]) => {
+              const numericScore = Number(score)
+              const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
+              const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
+              const change = previousScore === null ? null : safeScore - previousScore
+
+              return (
+                <article key={String(name)} className="sc-report-subject-slide-card-v1 sc-clean-subject-card-v2">
+                  <div className="sc-clean-subject-row-v2">
+                    <p className="sc-clean-subject-name-v2">
+                      {shortenSubject(String(name))}
+                    </p>
+
+                    <span
+                      className="sc-clean-subject-tag-v2"
+                      style={getSubjectScoreTagStyle(safeScore)}
+                    >
+                      {change === null
+                        ? getSubjectParentLabel(safeScore)
+                        : Math.abs(change) < 0.05
+                          ? 'same'
+                          : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
+                    </span>
+                  </div>
+
+                  <div className="sc-clean-subject-score-v2">
+                    {safeScore.toFixed(1)}
+                  </div>
+                </article>
+              )
+            })}
           </div>
         </section>
       )}
