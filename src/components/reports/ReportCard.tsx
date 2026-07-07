@@ -626,52 +626,21 @@ export function ReportCard({ report, childName }: Props) {
                       {shortenSubject(String(name))}
                     </p>
                     <div
-                      className={`sc-subject-mini-trend-v1 ${
-                        previousScore === null || Math.abs(change || 0) < 0.05
-                          ? 'is-flat'
-                          : safeScore > previousScore
-                            ? 'is-up'
-                            : 'is-down'
-                      }`}
-                      aria-label={
-                        previousScore === null
-                          ? 'No previous score trend yet'
-                          : Math.abs(change || 0) < 0.05
-                            ? 'Same as last week'
-                            : safeScore > previousScore
-                              ? 'Improved from last week'
-                              : 'Lower than last week'
-                      }
-                      title={
-                        previousScore === null
-                          ? 'No previous score trend yet'
-                          : Math.abs(change || 0) < 0.05
-                            ? 'Same as last week'
-                            : safeScore > previousScore
-                              ? 'Improved from last week'
-                              : 'Lower than last week'
-                      }
+                      className="sc-subject-score-progress-v1"
+                      aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
+                      title={`Score progress ${safeScore.toFixed(1)} out of 5`}
                     >
-                      <svg viewBox="0 0 42 22" aria-hidden="true" focusable="false">
+                      <svg viewBox="0 0 46 18" aria-hidden="true" focusable="false">
+                        <path className="sc-subject-progress-track-v1" d="M4 9 H42" />
                         <path
-                          d={
-                            previousScore === null || Math.abs(change || 0) < 0.05
-                              ? 'M4 12 C12 12 17 12 24 12 S34 12 38 12'
-                              : safeScore > previousScore
-                                ? 'M4 15 C12 14 17 10 24 11 S34 5 38 6'
-                                : 'M4 7 C12 8 17 12 24 11 S34 17 38 16'
-                          }
+                          className="sc-subject-progress-fill-v1"
+                          d={`M4 9 H${4 + (38 * safeScore) / 5}`}
                         />
                         <circle
-                          cx="38"
-                          cy={
-                            previousScore === null || Math.abs(change || 0) < 0.05
-                              ? 12
-                              : safeScore > previousScore
-                                ? 6
-                                : 16
-                          }
-                          r="2.4"
+                          className="sc-subject-progress-dot-v1"
+                          cx={4 + (38 * safeScore) / 5}
+                          cy="9"
+                          r="2.6"
                         />
                       </svg>
                     </div>

@@ -5921,3 +5921,69 @@ button[title*="moment" i][style*="position: fixed"],
     width: 28px !important;
   }
 }
+
+
+/* school-connect-subject-score-progress-line-v1 */
+.sc-subject-grid-score-v1 {
+  font-weight: 520 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.sc-subject-score-progress-v1 {
+  position: absolute !important;
+  top: 15px !important;
+  right: 14px !important;
+  width: 46px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.92 !important;
+}
+
+.sc-subject-score-progress-v1 svg {
+  width: 46px !important;
+  height: 18px !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.sc-subject-progress-track-v1 {
+  fill: none !important;
+  stroke: rgba(17, 17, 17, 0.12) !important;
+  stroke-width: 2.4 !important;
+  stroke-linecap: round !important;
+}
+
+.sc-subject-progress-fill-v1 {
+  fill: none !important;
+  stroke: rgba(17, 17, 17, 0.52) !important;
+  stroke-width: 2.4 !important;
+  stroke-linecap: round !important;
+}
+
+.sc-subject-progress-dot-v1 {
+  fill: #FFFFFF !important;
+  stroke: rgba(17, 17, 17, 0.52) !important;
+  stroke-width: 1.9 !important;
+}
+
+.sc-subject-mini-trend-v1 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-grid-score-v1 {
+    font-weight: 520 !important;
+  }
+
+  .sc-subject-score-progress-v1 {
+    top: 14px !important;
+    right: 13px !important;
+    width: 42px !important;
+  }
+
+  .sc-subject-score-progress-v1 svg {
+    width: 42px !important;
+  }
+}
