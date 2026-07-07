@@ -4814,3 +4814,13 @@ button[title*="moment" i][style*="position: fixed"],
     max-width: 56px !important;
   }
 }
+
+
+/* school-connect-open-gap-score-circle-v1 */
+.sc-open-gap-score-circle-v1 {
+  filter: none !important;
+}
+
+.sc-open-gap-score-circle-v1 svg circle {
+  transition: stroke 180ms ease;
+}

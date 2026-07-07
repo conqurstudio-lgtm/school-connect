@@ -162,31 +162,68 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
   const size = compact ? 196 : 220
-  const stroke = compact ? 4 : 4.5
-  const radius = (size - stroke - 10) / 2
+  const stroke = compact ? 4.2 : 4.6
   const center = size / 2
-  const circ = 2 * Math.PI * radius
-  const pct = Math.max(0, Math.min(1, Number(score) / max))
-  const progress = circ * pct
-  const angle = -90 + (360 * pct)
-  const knobX = center + radius * Math.cos((angle * Math.PI) / 180)
-  const knobY = center + radius * Math.sin((angle * Math.PI) / 180)
+  const radius = (size - stroke - 14) / 2
+  const circumference = 2 * Math.PI * radius
+
+  // Open gap at the bottom, like the reference image.
+  const arcRatio = 0.82
+  const arcLength = circumference * arcRatio
+  const gapLength = circumference - arcLength
+  const targetPct = Math.max(0, Math.min(1, Number(score) / max))
+
+  const [displayScore, setDisplayScore] = useState(0)
+  const [displayPct, setDisplayPct] = useState(0)
+
+  useEffect(() => {
+    const duration = 950
+    const start = performance.now()
+    let raf = 0
+
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const t = Math.min(1, elapsed / duration)
+      const eased = 1 - Math.pow(1 - t, 4)
+
+      setDisplayScore(Number(score) * eased)
+      setDisplayPct(targetPct * eased)
+
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [score, targetPct])
+
+  const progressLength = arcLength * displayPct
+
+  // The visible arc starts at bottom-left and ends at bottom-right, leaving the gap below.
+  const rotation = 128
+
+  const knobAngle = rotation + 360 * arcRatio * displayPct
+  const knobX = center + radius * Math.cos((knobAngle * Math.PI) / 180)
+  const knobY = center + radius * Math.sin((knobAngle * Math.PI) / 180)
 
   return (
-    <div className="sc-clean-score-circle-v2" style={{
+    <div className="sc-open-gap-score-circle-v1" style={{
       position: 'relative',
       width: size,
       height: size,
       margin: '0 auto',
     }}>
-      <svg width={size} height={size} style={{ display: 'block' }}>
+      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.12)"
+          stroke="rgba(17,17,17,0.14)"
           strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
         />
 
         <circle
@@ -197,9 +234,9 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke="#111111"
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${progress} ${circ}`}
+          strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
-          transform={`rotate(-90 ${center} ${center})`}
+          transform={`rotate(${rotation} ${center} ${center})`}
         />
 
         <circle
@@ -216,18 +253,18 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 34 : 38,
+        bottom: compact ? 22 : 24,
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 35 : 42,
-          fontWeight: 430,
+          fontSize: compact ? 34 : 40,
+          fontWeight: 420,
           color: '#111111',
-          letterSpacing: '-0.06em',
+          letterSpacing: '-0.065em',
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>
-          {score.toFixed(1)}
+          {displayScore.toFixed(1)}
         </div>
 
         <div style={{
