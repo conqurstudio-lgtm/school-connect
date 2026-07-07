@@ -5060,3 +5060,14 @@ button[title*="moment" i][style*="position: fixed"],
     border-radius: 10px !important;
   }
 }
+
+
+/* school-connect-subject-cards-grey-fill-v1 */
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  background: #E5E5E5 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
