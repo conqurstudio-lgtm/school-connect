@@ -446,7 +446,7 @@ function buildWeeklyPerformanceExplainer(
     .filter(([, score]) => Number.isFinite(score))
 
   if (!rows.length) {
-    return `These marks give a quick view of how ${firstName} performed across the subjects covered this week.`
+    return `These marks give a quick view of how ${firstName} performed across the subjects covered .`
   }
 
   const average = rows.reduce((sum, [, score]) => sum + score, 0) / rows.length
@@ -458,14 +458,14 @@ function buildWeeklyPerformanceExplainer(
   }
 
   if (average >= 3.5) {
-    return `${firstName} is making good progress this week. Use the subject scores below to see strengths and the areas that need light support at home.`
+    return `${firstName} is making good progress . Use the subject scores below to see strengths and the areas that need light support at home.`
   }
 
   if (average >= 2.8) {
-    return `${firstName} is growing steadily this week. The scores below help show where confidence is building and where extra practice may help.`
+    return `${firstName} is growing steadily . The scores below help show where confidence is building and where extra practice may help.`
   }
 
-  return `${firstName} may need extra support this week. The scores below help highlight which subjects may need more attention and encouragement.`
+  return `${firstName} may need extra support . The scores below help highlight which subjects may need more attention and encouragement.`
 }
 
 
@@ -479,7 +479,7 @@ export function ReportCard({ report, childName }: Props) {
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   const isLatestReport = report.display_position !== 'previous'
-  const reportStatusLabel = isLatestReport ? 'This week' : 'Previous report'
+  const reportStatusLabel = isLatestReport ? '' : 'Previous report'
   const mutedReportOpacity = isLatestReport ? 1 : 0.82
 
   const teacherName = report.teacher_name || 'Teacher'

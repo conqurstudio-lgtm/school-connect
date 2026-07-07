@@ -6015,3 +6015,16 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-parent-report-current-week-pill {
   display: none !important;
 }
+
+
+/* school-connect-remove-current-week-pill-v1 */
+.sc-report-this-week-tag,
+.sc-parent-report-this-week-tag,
+.sc-report-current-week-pill,
+.sc-parent-report-current-week-pill,
+.sc-report-week-pill,
+.sc-parent-report-week-pill,
+.sc-current-week-pill,
+.sc-this-week-pill {
+  display: none !important;
+}
