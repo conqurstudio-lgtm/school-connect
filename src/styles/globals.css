@@ -5067,7 +5067,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-subject-card-v1,
 .sc-clean-subject-card-v2,
 .sc-report-subject-slide-card-v1 {
-  background: #FAFAFA !important;
+  background: rgba(17, 17, 17, 0.025) !important;
   border: none !important;
   box-shadow: none !important;
 }
@@ -5096,7 +5096,35 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-subject-card-v1,
 .sc-clean-subject-card-v2,
 .sc-report-subject-slide-card-v1 {
-  background: #FAFAFA !important;
+  background: rgba(17, 17, 17, 0.025) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* school-connect-subject-cards-soft-transparent-v1 */
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  background: rgba(17, 17, 17, 0.025) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subject-grid-v1 {
+  gap: 10px !important;
+}
+
+.sc-subject-grid-tag-v1,
+.sc-clean-subject-tag-v1,
+.sc-clean-subject-tag-v2 {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: none !important;
+}
+
+.sc-subject-grid-view-all-v1 {
+  background: rgba(17, 17, 17, 0.025) !important;
   border: none !important;
   box-shadow: none !important;
 }
