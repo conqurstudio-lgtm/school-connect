@@ -5569,3 +5569,112 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 12.3px !important;
   }
 }
+
+
+/* school-connect-teacher-dashed-bubble-name-inline-v1 */
+.sc-teacher-comment-overlap-card-v1 {
+  position: relative !important;
+  width: calc(100% - 62px) !important;
+  max-width: 330px !important;
+  margin: 22px auto 0 !important;
+  transform: translateX(24px) !important;
+  padding: 17px 18px 16px 20px !important;
+  border-radius: 22px !important;
+  background: transparent !important;
+  border: 2px dashed rgba(17, 17, 17, 0.28) !important;
+  box-shadow: none !important;
+  text-align: left !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -8px !important;
+  top: 18px !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: #FFFFFF !important;
+  border-left: 2px dashed rgba(17, 17, 17, 0.28) !important;
+  border-bottom: 2px dashed rgba(17, 17, 17, 0.28) !important;
+  border-radius: 0 0 0 5px !important;
+  transform: rotate(45deg) !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  position: absolute !important;
+  top: -2px !important;
+  left: -62px !important;
+  right: auto !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 3px solid #FFFFFF !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2 !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-photo-v1 span {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  background: rgba(17, 17, 17, 0.045) !important;
+  color: #252525 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #252525 !important;
+  font-size: 13.4px !important;
+  font-weight: 390 !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.01em !important;
+  text-align: left !important;
+}
+
+.sc-teacher-comment-text-v1 strong {
+  color: #252525 !important;
+  font-weight: 760 !important;
+}
+
+.sc-teacher-comment-name-v1 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-teacher-comment-overlap-card-v1 {
+    width: calc(100% - 56px) !important;
+    max-width: 304px !important;
+    transform: translateX(23px) !important;
+    padding: 15px 16px 15px 18px !important;
+    border-radius: 20px !important;
+  }
+
+  .sc-teacher-comment-photo-v1 {
+    left: -56px !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    font-size: 12.8px !important;
+  }
+}
