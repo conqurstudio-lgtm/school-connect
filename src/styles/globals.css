@@ -5042,3 +5042,21 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 16px !important;
   }
 }
+
+
+/* school-connect-subject-card-small-radius-v1 */
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  border-radius: 12px !important;
+}
+
+@media (max-width: 380px) {
+  .sc-report-subject-grid-card-v1,
+  .sc-clean-subject-card-v1,
+  .sc-clean-subject-card-v2,
+  .sc-report-subject-slide-card-v1 {
+    border-radius: 10px !important;
+  }
+}
