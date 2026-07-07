@@ -6068,3 +6068,33 @@ button[title*="moment" i][style*="position: fixed"],
     margin-top: -30px !important;
   }
 }
+
+
+/* school-connect-remove-week-pill-border-lift-v1 */
+.sc-report-this-week-tag,
+.sc-parent-report-this-week-tag,
+.sc-report-current-week-pill,
+.sc-parent-report-current-week-pill,
+.sc-report-week-pill,
+.sc-parent-report-week-pill,
+.sc-current-week-pill,
+.sc-this-week-pill,
+[class*="this-week"],
+[class*="current-week"],
+[class*="week-pill"] {
+  display: none !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.sc-parent-report-card-view {
+  padding-top: 0 !important;
+}
+
+.sc-parent-report-card-view > div:first-child {
+  padding-top: 6px !important;
+}
