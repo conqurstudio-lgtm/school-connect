@@ -5793,3 +5793,10 @@ button[title*="moment" i][style*="position: fixed"],
     margin-bottom: 26px !important;
   }
 }
+
+
+/* school-connect-score-ring-gradient-color-v1 */
+.sc-open-gap-score-circle-v1 svg circle,
+.sc-clean-score-circle-v2 svg circle {
+  transition: stroke 180ms ease, filter 180ms ease !important;
+}

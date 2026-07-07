@@ -161,6 +161,7 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
+  const scoreGradientId = useId()
   const size = compact ? 196 : 220
   const stroke = compact ? 4.2 : 4.6
   const center = size / 2
@@ -213,6 +214,13 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       margin: '0 auto',
     }}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+        <defs>
+          <linearGradient id={scoreGradientId} x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#22C55E" />
+            <stop offset="48%" stopColor="#3B82F6" />
+            <stop offset="100%" stopColor="#8B5CF6" />
+          </linearGradient>
+        </defs>
         <circle
           cx={center}
           cy={center}
@@ -231,7 +239,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke="#111111"
+          stroke={`url(#${scoreGradientId})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
@@ -244,7 +252,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={knobY}
           r={compact ? 10 : 11}
           fill="#FFFFFF"
-          stroke="#111111"
+          stroke={`url(#${scoreGradientId})`}
           strokeWidth={stroke}
         />
       </svg>
