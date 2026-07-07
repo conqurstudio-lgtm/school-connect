@@ -168,7 +168,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const circumference = 2 * Math.PI * radius
 
   // Open gap at the bottom, like the reference image.
-  const arcRatio = 0.82
+  const arcRatio = 0.74
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
@@ -199,7 +199,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const progressLength = arcLength * displayPct
 
   // The visible arc starts at bottom-left and ends at bottom-right, leaving the gap below.
-  const rotation = 128
+  const rotation = 136
 
   const knobAngle = rotation + 360 * arcRatio * displayPct
   const knobX = center + radius * Math.cos((knobAngle * Math.PI) / 180)
@@ -253,11 +253,11 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 12 : 14,
+        bottom: compact ? 26 : 29,
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 34 : 40,
+          fontSize: compact ? 32 : 37,
           fontWeight: 420,
           color: '#111111',
           letterSpacing: '-0.065em',
@@ -268,10 +268,10 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         </div>
 
         <div style={{
-          fontSize: 12,
+          fontSize: 11.2,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 7,
+          marginTop: 2,
           letterSpacing: '-0.01em',
         }}>
           out of {max}

@@ -4841,3 +4841,21 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-parent-report-card-view .sc-clean-subjects-v1 {
   margin-top: 14px !important;
 }
+
+
+/* school-connect-score-gap-breathing-content-v1 */
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  bottom: 29px !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:first-child,
+.sc-clean-score-circle-v2 > div > div:first-child {
+  font-size: 37px !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:last-child,
+.sc-clean-score-circle-v2 > div > div:last-child {
+  margin-top: 2px !important;
+  font-size: 11.2px !important;
+}
