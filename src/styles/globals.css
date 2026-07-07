@@ -6028,3 +6028,43 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-this-week-pill {
   display: none !important;
 }
+
+
+/* school-connect-score-middle-label-up-v1 */
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:first-child,
+.sc-clean-score-circle-v2 > div > div:first-child {
+  font-size: 42px !important;
+  font-weight: 420 !important;
+  line-height: 1 !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:last-child,
+.sc-clean-score-circle-v2 > div > div:last-child {
+  margin-top: 2px !important;
+  font-size: 11.2px !important;
+  line-height: 1.1 !important;
+}
+
+.sc-score-comment-up-v1 {
+  margin-top: -34px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-open-gap-score-circle-v1 > div > div:first-child,
+  .sc-clean-score-circle-v2 > div > div:first-child {
+    font-size: 38px !important;
+  }
+
+  .sc-score-comment-up-v1 {
+    margin-top: -30px !important;
+  }
+}
