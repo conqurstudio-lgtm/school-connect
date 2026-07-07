@@ -253,7 +253,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 26 : 29,
+        bottom: compact ? 16 : 18,
         textAlign: 'center',
       }}>
         <div style={{
@@ -271,7 +271,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           fontSize: 11.2,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 2,
+          marginTop: 0,
           letterSpacing: '-0.01em',
         }}>
           out of {max}
