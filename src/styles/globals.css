@@ -4347,7 +4347,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-external-heading-subjects-v1 {
   font-family: inherit !important;
   font-size: 13px !important;
-  font-weight: 650 !important;
+  font-weight: 520 !important;
   letter-spacing: -0.015em !important;
   color: #252525 !important;
   line-height: 1.2 !important;
@@ -4380,7 +4380,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-external-heading-subjects-v1 {
   font-family: inherit !important;
   font-size: 13px !important;
-  font-weight: 650 !important;
+  font-weight: 520 !important;
   letter-spacing: -0.015em !important;
   color: #252525 !important;
   line-height: 1.2 !important;
@@ -4565,7 +4565,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-slide-name-v1 {
   font-size: 11.3px !important;
   line-height: 1.15 !important;
-  font-weight: 650 !important;
+  font-weight: 520 !important;
   min-height: 28px !important;
   max-width: 58px !important;
   margin: 0 !important;
@@ -4606,7 +4606,7 @@ button[title*="moment" i][style*="position: fixed"],
 
 .sc-report-subject-slide-score-v1 {
   font-size: 23px !important;
-  font-weight: 760 !important;
+  font-weight: 520 !important;
   line-height: 0.92 !important;
   margin: 0 !important;
 }
@@ -4690,7 +4690,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-report-subject-slide-name-score-row-v3 .sc-report-subject-slide-score-v1 {
   flex-shrink: 0 !important;
   font-size: 16px !important;
-  font-weight: 760 !important;
+  font-weight: 520 !important;
   letter-spacing: -0.04em !important;
   line-height: 1 !important;
   margin: 0 !important;
@@ -4790,7 +4790,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-subject-score-v2 {
   color: #111111 !important;
   font-size: 18px !important;
-  font-weight: 650 !important;
+  font-weight: 520 !important;
   line-height: 1 !important;
   letter-spacing: -0.045em !important;
   margin-top: 12px !important;
@@ -4921,7 +4921,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-subject-grid-score-v1 {
   color: #111111 !important;
   font-size: 15px !important;
-  font-weight: 650 !important;
+  font-weight: 520 !important;
   line-height: 1 !important;
   letter-spacing: -0.04em !important;
   margin-top: 10px !important;
@@ -5652,7 +5652,7 @@ button[title*="moment" i][style*="position: fixed"],
 
 .sc-teacher-comment-text-v1 strong {
   color: #252525 !important;
-  font-weight: 760 !important;
+  font-weight: 520 !important;
 }
 
 .sc-teacher-comment-name-v1 {
@@ -5832,7 +5832,7 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-subject-grid-score-v1 {
   color: #111111 !important;
   font-size: 26px !important;
-  font-weight: 760 !important;
+  font-weight: 520 !important;
   line-height: 1 !important;
   letter-spacing: -0.055em !important;
   margin-top: 22px !important;
