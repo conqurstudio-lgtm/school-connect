@@ -579,14 +579,13 @@ export function ReportCard({ report, childName }: Props) {
           </div>
 
           <p className="sc-teacher-comment-text-v1">
+            {teacherName ? (
+              <>
+                <strong>{teacherName}:</strong>{' '}
+              </>
+            ) : null}
             {report.comment}
           </p>
-
-          {teacherName ? (
-            <p className="sc-teacher-comment-name-v1">
-              {teacherName}
-            </p>
-          ) : null}
         </section>
       )}
 

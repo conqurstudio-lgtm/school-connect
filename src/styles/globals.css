@@ -5481,3 +5481,91 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 12.2px !important;
   }
 }
+
+
+/* school-connect-teacher-message-bubble-name-v1 */
+.sc-teacher-comment-overlap-card-v1 {
+  position: relative !important;
+  width: calc(100% - 56px) !important;
+  max-width: 330px !important;
+  margin: 20px auto 0 !important;
+  transform: translateX(23px) !important;
+  padding: 14px 16px 14px 17px !important;
+  border-radius: 18px 18px 18px 6px !important;
+  background: rgba(17, 17, 17, 0.025) !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: left !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -5px !important;
+  bottom: 12px !important;
+  top: auto !important;
+  width: 13px !important;
+  height: 13px !important;
+  background: rgba(17, 17, 17, 0.025) !important;
+  border-radius: 3px !important;
+  transform: rotate(45deg) !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 2px !important;
+  left: -52px !important;
+  right: auto !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2 !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #4F545A !important;
+  font-size: 12.7px !important;
+  font-weight: 390 !important;
+  line-height: 1.58 !important;
+  letter-spacing: -0.006em !important;
+  text-align: left !important;
+}
+
+.sc-teacher-comment-text-v1 strong {
+  color: #252525 !important;
+  font-weight: 720 !important;
+}
+
+.sc-teacher-comment-name-v1 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-teacher-comment-overlap-card-v1 {
+    width: calc(100% - 52px) !important;
+    max-width: 306px !important;
+    transform: translateX(22px) !important;
+    padding: 13px 15px 13px 16px !important;
+    border-radius: 17px 17px 17px 6px !important;
+  }
+
+  .sc-teacher-comment-photo-v1 {
+    left: -48px !important;
+    width: 39px !important;
+    height: 39px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    font-size: 12.3px !important;
+  }
+}
