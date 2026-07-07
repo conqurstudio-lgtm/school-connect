@@ -30,7 +30,7 @@ const REPORT_SECTION_HEADING_STYLE: any = {
   margin: '18px auto 8px',
   padding: '0 2px',
   fontSize: 13,
-  fontWeight: 650,
+  fontWeight: 420,
   color: '#252525',
   letterSpacing: '-0.015em',
   lineHeight: 1.2,
@@ -530,7 +530,7 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <h2 style={{
-          fontSize: 26.5, fontWeight: 650, color: T.ink,
+          fontSize: 26.5, fontWeight: 420, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
           margin: '0 0 8px',
         }}>

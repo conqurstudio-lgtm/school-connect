@@ -5987,3 +5987,22 @@ button[title*="moment" i][style*="position: fixed"],
     width: 42px !important;
   }
 }
+
+
+/* school-connect-subject-score-extra-thin-v1 */
+.sc-subject-grid-score-v1,
+.sc-clean-subject-score-v1,
+.sc-clean-subject-score-v2,
+.sc-report-subject-slide-score-v1 {
+  font-weight: 420 !important;
+  letter-spacing: -0.04em !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-grid-score-v1,
+  .sc-clean-subject-score-v1,
+  .sc-clean-subject-score-v2,
+  .sc-report-subject-slide-score-v1 {
+    font-weight: 420 !important;
+  }
+}
