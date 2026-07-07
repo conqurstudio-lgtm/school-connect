@@ -6006,3 +6006,12 @@ button[title*="moment" i][style*="position: fixed"],
     font-weight: 420 !important;
   }
 }
+
+
+/* school-connect-remove-this-week-tag-v1 */
+.sc-report-this-week-tag,
+.sc-parent-report-this-week-tag,
+.sc-report-current-week-pill,
+.sc-parent-report-current-week-pill {
+  display: none !important;
+}
