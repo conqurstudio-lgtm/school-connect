@@ -465,6 +465,7 @@ export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
+  const [showAllSubjects, setShowAllSubjects] = useState(false)
 
   const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
@@ -620,22 +621,22 @@ export function ReportCard({ report, childName }: Props) {
             boxShadow: 'none',
           }}
         >
-          <div className="sc-report-subject-slider-v1 sc-clean-subject-slider-v2" aria-label="Subject score cards">
-            {subjects.map(([name, score]) => {
+          <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
+            {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
               const change = previousScore === null ? null : safeScore - previousScore
 
               return (
-                <article key={String(name)} className="sc-report-subject-slide-card-v1 sc-clean-subject-card-v2">
-                  <div className="sc-clean-subject-row-v2">
-                    <p className="sc-clean-subject-name-v2">
+                <article key={String(name)} className="sc-report-subject-grid-card-v1">
+                  <div className="sc-subject-grid-row-v1">
+                    <p className="sc-subject-grid-name-v1">
                       {shortenSubject(String(name))}
                     </p>
 
                     <span
-                      className="sc-clean-subject-tag-v2"
+                      className="sc-subject-grid-tag-v1"
                       style={getSubjectScoreTagStyle(safeScore)}
                     >
                       {change === null
@@ -646,13 +647,23 @@ export function ReportCard({ report, childName }: Props) {
                     </span>
                   </div>
 
-                  <div className="sc-clean-subject-score-v2">
+                  <div className="sc-subject-grid-score-v1">
                     {safeScore.toFixed(1)}
                   </div>
                 </article>
               )
             })}
           </div>
+
+          {subjects.length > 4 && (
+            <button
+              type="button"
+              className="sc-subject-grid-view-all-v1"
+              onClick={() => setShowAllSubjects(value => !value)}
+            >
+              {showAllSubjects ? 'Show less' : `View all ${subjects.length} subjects`}
+            </button>
+          )}
         </section>
       )}
 
