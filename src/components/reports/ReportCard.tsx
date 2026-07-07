@@ -618,17 +618,56 @@ export function ReportCard({ report, childName }: Props) {
                     <p className="sc-subject-grid-name-v1">
                       {shortenSubject(String(name))}
                     </p>
-
-                    <span
-                      className="sc-subject-grid-tag-v1"
-                      style={getSubjectScoreTagStyle(safeScore)}
+                    <div
+                      className={`sc-subject-mini-trend-v1 ${
+                        previousScore === null || Math.abs(change || 0) < 0.05
+                          ? 'is-flat'
+                          : safeScore > previousScore
+                            ? 'is-up'
+                            : 'is-down'
+                      }`}
+                      aria-label={
+                        previousScore === null
+                          ? 'No previous score trend yet'
+                          : Math.abs(change || 0) < 0.05
+                            ? 'Same as last week'
+                            : safeScore > previousScore
+                              ? 'Improved from last week'
+                              : 'Lower than last week'
+                      }
+                      title={
+                        previousScore === null
+                          ? 'No previous score trend yet'
+                          : Math.abs(change || 0) < 0.05
+                            ? 'Same as last week'
+                            : safeScore > previousScore
+                              ? 'Improved from last week'
+                              : 'Lower than last week'
+                      }
                     >
-                      {change === null
-                        ? getSubjectParentLabel(safeScore)
-                        : Math.abs(change) < 0.05
-                          ? 'same'
-                          : `${change > 0 ? '+' : ''}${change.toFixed(1)}`}
-                    </span>
+                      <svg viewBox="0 0 42 22" aria-hidden="true" focusable="false">
+                        <path
+                          d={
+                            previousScore === null || Math.abs(change || 0) < 0.05
+                              ? 'M4 12 C12 12 17 12 24 12 S34 12 38 12'
+                              : safeScore > previousScore
+                                ? 'M4 15 C12 14 17 10 24 11 S34 5 38 6'
+                                : 'M4 7 C12 8 17 12 24 11 S34 17 38 16'
+                          }
+                        />
+                        <circle
+                          cx="38"
+                          cy={
+                            previousScore === null || Math.abs(change || 0) < 0.05
+                              ? 12
+                              : safeScore > previousScore
+                                ? 6
+                                : 16
+                          }
+                          r="2.4"
+                        />
+                      </svg>
+                    </div>
                   </div>
 
                   <div className="sc-subject-grid-score-v1">
