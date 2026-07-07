@@ -5800,3 +5800,124 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-clean-score-circle-v2 svg circle {
   transition: stroke 180ms ease, filter 180ms ease !important;
 }
+
+
+/* school-connect-subject-premium-trend-stroke-v1 */
+.sc-report-subject-grid-card-v1 {
+  position: relative !important;
+  min-height: 92px !important;
+  padding: 14px 14px 13px !important;
+  background: rgba(17, 17, 17, 0.022) !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 13px !important;
+  overflow: hidden !important;
+}
+
+.sc-subject-grid-row-v1 {
+  display: block !important;
+  min-height: 20px !important;
+}
+
+.sc-subject-grid-name-v1 {
+  max-width: calc(100% - 42px) !important;
+  color: #252525 !important;
+  font-size: 13px !important;
+  font-weight: 720 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.018em !important;
+  margin: 0 !important;
+}
+
+.sc-subject-grid-score-v1 {
+  color: #111111 !important;
+  font-size: 26px !important;
+  font-weight: 760 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.055em !important;
+  margin-top: 22px !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.sc-subject-mini-trend-v1 {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 30px !important;
+  height: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.78 !important;
+}
+
+.sc-subject-mini-trend-v1 svg {
+  width: 30px !important;
+  height: 16px !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.sc-subject-mini-trend-v1 path {
+  fill: none !important;
+  stroke: rgba(17, 17, 17, 0.25) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.sc-subject-mini-trend-v1 circle {
+  fill: #FFFFFF !important;
+  stroke: rgba(17, 17, 17, 0.25) !important;
+  stroke-width: 1.7 !important;
+}
+
+.sc-subject-mini-trend-v1.is-up path,
+.sc-subject-mini-trend-v1.is-up circle {
+  stroke: rgba(39, 174, 96, 0.72) !important;
+}
+
+.sc-subject-mini-trend-v1.is-down path,
+.sc-subject-mini-trend-v1.is-down circle {
+  stroke: rgba(89, 131, 234, 0.72) !important;
+}
+
+.sc-subject-mini-trend-v1.is-flat path,
+.sc-subject-mini-trend-v1.is-flat circle {
+  stroke: rgba(17, 17, 17, 0.22) !important;
+}
+
+.sc-subject-grid-tag-v1,
+.sc-clean-subject-tag-v1,
+.sc-clean-subject-tag-v2,
+.sc-report-subject-slide-tag-v2 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-report-subject-grid-card-v1 {
+    min-height: 88px !important;
+    padding: 13px 13px 12px !important;
+    border-radius: 12px !important;
+  }
+
+  .sc-subject-grid-name-v1 {
+    font-size: 12.4px !important;
+    max-width: calc(100% - 38px) !important;
+  }
+
+  .sc-subject-grid-score-v1 {
+    font-size: 24px !important;
+    margin-top: 20px !important;
+  }
+
+  .sc-subject-mini-trend-v1 {
+    top: 13px !important;
+    right: 13px !important;
+    width: 28px !important;
+  }
+
+  .sc-subject-mini-trend-v1 svg {
+    width: 28px !important;
+  }
+}
