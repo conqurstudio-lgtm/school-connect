@@ -567,39 +567,23 @@ export function ReportCard({ report, childName }: Props) {
       {/* ── Teacher's note ─────────────────── */}
       {report.comment && (
         <section
-          className="sc-parent-report-teacher-note-avatar-line-v437 sc-clean-teacher-comment-v2"
+          className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1"
           aria-label="Teacher comment"
-          style={{
-            maxWidth: 330,
-            margin: '8px auto 0',
-            padding: '0 18px',
-            textAlign: 'center',
-            background: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-          }}
         >
-          <p style={{
-            fontSize: 12.4,
-            color: '#6F7378',
-            margin: 0,
-            lineHeight: 1.58,
-            letterSpacing: '-0.006em',
-            fontWeight: 390,
-            textAlign: 'center',
-          }}>
+          <div className="sc-teacher-comment-photo-v1" aria-hidden="true">
+            {teacherPhoto ? (
+              <img src={teacherPhoto} alt="" />
+            ) : (
+              <span>{teacherInitials}</span>
+            )}
+          </div>
+
+          <p className="sc-teacher-comment-text-v1">
             {report.comment}
           </p>
 
           {teacherName ? (
-            <p style={{
-              margin: '8px 0 0',
-              fontSize: 11.2,
-              color: '#A0A0A4',
-              fontWeight: 450,
-              letterSpacing: '-0.004em',
-              textAlign: 'center',
-            }}>
+            <p className="sc-teacher-comment-name-v1">
               {teacherName}
             </p>
           ) : null}

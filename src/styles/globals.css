@@ -5128,3 +5128,95 @@ button[title*="moment" i][style*="position: fixed"],
   border: none !important;
   box-shadow: none !important;
 }
+
+
+/* school-connect-teacher-comment-overlap-card-v1 */
+.sc-teacher-comment-overlap-card-v1 {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 370px !important;
+  margin: 18px auto 0 !important;
+  padding: 22px 18px 16px !important;
+  border-radius: 14px !important;
+  background: rgba(17, 17, 17, 0.025) !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  position: absolute !important;
+  top: -15px !important;
+  right: 16px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 3px solid #FFFFFF !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-photo-v1 span {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  background: rgba(17, 17, 17, 0.045) !important;
+  color: #252525 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  margin: 0 !important;
+  padding: 0 34px 0 4px !important;
+  color: #565B61 !important;
+  font-size: 12.4px !important;
+  font-weight: 390 !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.006em !important;
+  text-align: center !important;
+}
+
+.sc-teacher-comment-name-v1 {
+  margin: 8px 0 0 !important;
+  padding-right: 34px !important;
+  color: #9A9DA2 !important;
+  font-size: 11.2px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.004em !important;
+  text-align: center !important;
+}
+
+@media (max-width: 380px) {
+  .sc-teacher-comment-overlap-card-v1 {
+    border-radius: 12px !important;
+    padding: 21px 15px 15px !important;
+  }
+
+  .sc-teacher-comment-photo-v1 {
+    right: 13px !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    padding-right: 32px !important;
+    font-size: 12px !important;
+  }
+}
