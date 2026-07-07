@@ -253,7 +253,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 22 : 24,
+        bottom: compact ? 12 : 14,
         textAlign: 'center',
       }}>
         <div style={{
@@ -500,7 +500,7 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '24px 0 46px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '22px 0 24px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -528,7 +528,7 @@ export function ReportCard({ report, childName }: Props) {
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
         <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 32px',
+          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 18px',
           letterSpacing: '0.002em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -542,7 +542,7 @@ export function ReportCard({ report, childName }: Props) {
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div style={{ marginTop: 24 }}>
+        <div style={{ marginTop: 8 }}>
           <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
@@ -570,7 +570,7 @@ export function ReportCard({ report, childName }: Props) {
           aria-label="Teacher comment"
           style={{
             maxWidth: 330,
-            margin: '18px auto 0',
+            margin: '8px auto 0',
             padding: '0 18px',
             textAlign: 'center',
             background: 'transparent',
@@ -612,7 +612,7 @@ export function ReportCard({ report, childName }: Props) {
           style={{
             width: '100%',
             maxWidth: 370,
-            margin: '22px auto 0',
+            margin: '14px auto 0',
             padding: 0,
             borderRadius: 0,
             background: 'transparent',

@@ -4824,3 +4824,20 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-open-gap-score-circle-v1 svg circle {
   transition: stroke 180ms ease;
 }
+
+
+/* school-connect-lower-score-ring-content-v1 */
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  bottom: 14px !important;
+}
+
+.sc-parent-report-card-view .sc-clean-teacher-comment-v2,
+.sc-parent-report-card-view .sc-clean-teacher-comment-v1 {
+  margin-top: 8px !important;
+}
+
+.sc-parent-report-card-view .sc-clean-subjects-v2,
+.sc-parent-report-card-view .sc-clean-subjects-v1 {
+  margin-top: 14px !important;
+}
