@@ -4975,3 +4975,70 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 14px !important;
   }
 }
+
+
+/* school-connect-subjects-grid-2x2-v1 */
+.sc-report-subject-grid-v1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.sc-report-subject-grid-card-v1 {
+  min-height: 88px !important;
+  border-radius: 22px !important;
+  padding: 12px !important;
+  background: transparent !important;
+  border: 1px solid rgba(37,37,37,0.10) !important;
+  box-shadow: none !important;
+}
+
+.sc-subject-grid-name-v1 {
+  max-width: 82px !important;
+  font-size: 11.6px !important;
+  line-height: 1.18 !important;
+}
+
+.sc-subject-grid-score-v1 {
+  font-size: 17px !important;
+  margin-top: 12px !important;
+}
+
+.sc-subject-grid-tag-v1 {
+  height: 18px !important;
+  font-size: 8.6px !important;
+}
+
+.sc-subject-grid-view-all-v1 {
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 12px 0 0 !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(37,37,37,0.10) !important;
+  background: transparent !important;
+  color: #252525 !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 620 !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 380px) {
+  .sc-report-subject-grid-v1 {
+    gap: 8px !important;
+  }
+
+  .sc-report-subject-grid-card-v1 {
+    min-height: 84px !important;
+    border-radius: 20px !important;
+    padding: 10px !important;
+  }
+
+  .sc-subject-grid-name-v1 {
+    max-width: 70px !important;
+    font-size: 11px !important;
+  }
+
+  .sc-subject-grid-score-v1 {
+    font-size: 16px !important;
+  }
+}

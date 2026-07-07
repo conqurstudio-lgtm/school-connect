@@ -661,7 +661,7 @@ export function ReportCard({ report, childName }: Props) {
               className="sc-subject-grid-view-all-v1"
               onClick={() => setShowAllSubjects(value => !value)}
             >
-              {showAllSubjects ? 'Show less' : `View all ${subjects.length} subjects`}
+              {showAllSubjects ? 'Show less' : `View more`}
             </button>
           )}
         </section>
