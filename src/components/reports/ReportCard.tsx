@@ -545,7 +545,7 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
-<p style={{
+          <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
           }}>
