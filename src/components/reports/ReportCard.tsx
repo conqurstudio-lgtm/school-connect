@@ -592,47 +592,39 @@ export function ReportCard({ report, childName }: Props) {
             boxShadow: 'none',
           }}
         >
-          <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
+          <div className="sc-report-subject-lines-v1" aria-label="Subject score progress lines">
             {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
-              const change = previousScore === null ? null : safeScore - previousScore
+              const hasPreviousScore = previousScore !== null
+              const progressPercent = Math.max(0, Math.min(100, (safeScore / 5) * 100))
 
               return (
-                <article key={String(name)} className="sc-report-subject-grid-card-v1">
-                  <div className="sc-subject-grid-row-v1">
-                    <p className="sc-subject-grid-name-v1">
+                <article key={String(name)} className="sc-subject-line-row-v1">
+                  <div className="sc-subject-line-top-v1">
+                    <p className="sc-subject-line-name-v1">
                       {shortenSubject(String(name))}
                     </p>
 
-                    {change !== null && (
-                      <div
-                        className={`sc-subject-card-delta-v1 ${
-                          Math.abs(change) < 0.1 ? 'is-same' : change > 0 ? 'is-up' : 'is-down'
-                        }`}
-                        aria-label={`${
-                          Math.abs(change) < 0.1
-                            ? 'No change'
-                            : change > 0
-                              ? 'Improved'
-                              : 'Dropped'
-                        } from previous report`}
-                        title={`${
-                          Math.abs(change) < 0.1
-                            ? 'No change'
-                            : change > 0
-                              ? 'Improved'
-                              : 'Dropped'
-                        } from previous report`}
-                      >
-                        <Delta value={change} size={12} />
-                      </div>
-                    )}
+                    <div className="sc-subject-line-score-wrap-v1">
+                      <span className="sc-subject-line-score-v1">
+                        {safeScore.toFixed(1)}
+                      </span>
+
+                      {hasPreviousScore ? (
+                        <span className="sc-subject-line-previous-dot-v1" aria-label="Compared with previous report">
+                          ·
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
 
-                  <div className="sc-subject-grid-score-v1">
-                    {safeScore.toFixed(1)}
+                  <div
+                    className="sc-subject-line-progress-v1"
+                    aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
+                  >
+                    <span style={{ width: `${progressPercent}%` }} />
                   </div>
                 </article>
               )
