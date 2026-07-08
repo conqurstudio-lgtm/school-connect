@@ -620,6 +620,29 @@ export function ReportCard({ report, childName }: Props) {
                       {shortenSubject(String(name))}
                     </p>
 
+                    {change !== null && (
+                      <div
+                        className={`sc-subject-card-delta-v1 ${
+                          Math.abs(change) < 0.1 ? 'is-same' : change > 0 ? 'is-up' : 'is-down'
+                        }`}
+                        aria-label={`${
+                          Math.abs(change) < 0.1
+                            ? 'No change'
+                            : change > 0
+                              ? 'Improved'
+                              : 'Dropped'
+                        } from previous report`}
+                        title={`${
+                          Math.abs(change) < 0.1
+                            ? 'No change'
+                            : change > 0
+                              ? 'Improved'
+                              : 'Dropped'
+                        } from previous report`}
+                      >
+                        <Delta value={change} size={12} />
+                      </div>
+                    )}
                   </div>
 
                   <div className="sc-subject-grid-score-v1">
