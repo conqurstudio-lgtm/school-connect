@@ -614,10 +614,17 @@ export function ReportCard({ report, childName }: Props) {
 
               return (
                 <article key={String(name)} className="sc-subject-line-row-v1">
-                  <div className="sc-subject-line-top-v1">
+                  <div className="sc-subject-line-inline-v2">
                     <p className="sc-subject-line-name-v1">
                       {shortenSubject(String(name))}
                     </p>
+
+                    <div
+                      className="sc-subject-line-progress-v1 sc-subject-line-progress-inline-v2"
+                      aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
+                    >
+                      <span style={{ width: `${progressPercent}%` }} />
+                    </div>
 
                     <div className="sc-subject-line-score-wrap-v1">
                       <span className="sc-subject-line-score-v1">
@@ -630,13 +637,6 @@ export function ReportCard({ report, childName }: Props) {
                         </span>
                       ) : null}
                     </div>
-                  </div>
-
-                  <div
-                    className="sc-subject-line-progress-v1"
-                    aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
-                  >
-                    <span style={{ width: `${progressPercent}%` }} />
                   </div>
                 </article>
               )

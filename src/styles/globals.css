@@ -7330,3 +7330,90 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-main-report-score-emoji-v1 span {
   display: inline-flex;
 }
+
+
+/* school-connect-subject-lines-bar-between-v1
+   Subject layout:
+   subject name | thin progress bar | score
+*/
+.sc-report-subject-lines-v1 {
+  gap: 14px !important;
+}
+
+.sc-subject-line-row-v1 {
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sc-subject-line-inline-v2 {
+  display: grid !important;
+  grid-template-columns: minmax(96px, 1fr) minmax(72px, 118px) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.sc-subject-line-name-v1 {
+  min-width: 0 !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+  line-height: 1.15 !important;
+  color: #222222 !important;
+}
+
+.sc-subject-line-progress-inline-v2 {
+  width: 100% !important;
+  min-width: 64px !important;
+  height: 3px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(17, 17, 17, 0.085) !important;
+}
+
+.sc-subject-line-progress-inline-v2 span {
+  display: block !important;
+  height: 100% !important;
+  min-width: 2px !important;
+  border-radius: inherit !important;
+  background: rgba(17, 17, 17, 0.48) !important;
+}
+
+.sc-subject-line-score-wrap-v1 {
+  min-width: 34px !important;
+  justify-content: flex-end !important;
+}
+
+.sc-subject-line-score-v1 {
+  font-size: 13px !important;
+  font-weight: 620 !important;
+  color: rgba(17, 17, 17, 0.78) !important;
+}
+
+/* Hide old below-row progress spacing rules from earlier compact-line patch. */
+.sc-subject-line-top-v1 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-line-inline-v2 {
+    grid-template-columns: minmax(84px, 1fr) minmax(54px, 92px) auto !important;
+    gap: 8px !important;
+  }
+
+  .sc-subject-line-progress-inline-v2 {
+    height: 2.5px !important;
+    min-width: 50px !important;
+  }
+
+  .sc-subject-line-name-v1 {
+    font-size: 12.6px !important;
+  }
+
+  .sc-subject-line-score-v1 {
+    font-size: 12.4px !important;
+  }
+}
