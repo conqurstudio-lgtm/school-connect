@@ -617,56 +617,7 @@ export function ReportCard({ report, childName }: Props) {
                     <p className="sc-subject-grid-name-v1">
                       {shortenSubject(String(name))}
                     </p>
-                    <div
-                      className={`sc-subject-report-trendline-v1 ${
-                        previousScore === null || Math.abs(change || 0) < 0.05
-                          ? 'is-flat'
-                          : safeScore > previousScore
-                            ? 'is-up'
-                            : 'is-down'
-                      }`}
-                      aria-label={
-                        previousScore === null
-                          ? 'No previous report comparison yet'
-                          : Math.abs(change || 0) < 0.05
-                            ? 'Same as previous report'
-                            : safeScore > previousScore
-                              ? 'Improved from previous report'
-                              : 'Lower than previous report'
-                      }
-                      title={
-                        previousScore === null
-                          ? 'No previous report comparison yet'
-                          : Math.abs(change || 0) < 0.05
-                            ? 'Same as previous report'
-                            : safeScore > previousScore
-                              ? 'Improved from previous report'
-                              : 'Lower than previous report'
-                      }
-                    >
-                      <svg viewBox="0 0 44 20" aria-hidden="true" focusable="false">
-                        <path
-                          d={
-                            previousScore === null || Math.abs(change || 0) < 0.05
-                              ? 'M4 11 C12 11 17 11 24 11 S35 11 40 11'
-                              : safeScore > previousScore
-                                ? 'M4 15 C12 15 16 10 23 11 S34 5 40 6'
-                                : 'M4 6 C12 6 16 11 23 10 S34 16 40 15'
-                          }
-                        />
-                        <circle
-                          cx="40"
-                          cy={
-                            previousScore === null || Math.abs(change || 0) < 0.05
-                              ? 11
-                              : safeScore > previousScore
-                                ? 6
-                                : 15
-                          }
-                          r="2.4"
-                        />
-                      </svg>
-                    </div>
+
                   </div>
 
                   <div className="sc-subject-grid-score-v1">

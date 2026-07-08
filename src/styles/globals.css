@@ -6298,3 +6298,41 @@ button[title*="moment" i][style*="position: fixed"],
     width: 34px !important;
   }
 }
+
+
+/* school-connect-remove-subject-card-charts-v1 */
+
+/* Remove mini charts from subject cards for a cleaner premium card layout. */
+.sc-subject-report-trendline-v1,
+.sc-subject-score-progress-v1,
+.sc-subject-mini-trend-v1,
+.sc-subject-progress-track-v1,
+.sc-subject-progress-fill-v1,
+.sc-subject-progress-dot-v1 {
+  display: none !important;
+}
+
+/* Let subject names and scores breathe once the chart is removed. */
+.sc-subject-grid-name-v1,
+.sc-clean-subject-name-v1,
+.sc-clean-subject-name-v2,
+.sc-report-subject-slide-name-v1 {
+  max-width: 100% !important;
+  padding-right: 0 !important;
+}
+
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  min-height: 92px !important;
+  padding: 16px 16px 14px !important;
+}
+
+.sc-subject-grid-score-v1,
+.sc-clean-subject-score-v1,
+.sc-clean-subject-score-v2,
+.sc-report-subject-slide-score-v1 {
+  margin-top: 24px !important;
+  font-weight: 420 !important;
+}
