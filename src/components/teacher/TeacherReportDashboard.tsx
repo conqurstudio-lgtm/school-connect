@@ -1710,7 +1710,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  week_starting: week,
  scores,
  previous_scores: previousScoresForPreview,
- comment: comment.trim() || generateComment(scores),
+ comment: comment.trim() || generateComment(scores, child?.name || 'Learner'),
  display_position: 'latest',
  }
 
@@ -1728,7 +1728,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  child_id: child.id,
  week_starting: week,
  scores,
- comment: comment.trim() || generateComment(scores),
+ comment: comment.trim() || generateComment(scores, child?.name || 'Learner'),
  }),
  })
 

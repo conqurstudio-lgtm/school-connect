@@ -37,10 +37,12 @@ function joinSubjects(names: string[]): string {
   return `${clean.slice(0, -1).join(', ')} and ${clean[clean.length - 1]}`
 }
 
-export function generateComment(scores: Record<string, number>): string {
+export function generateComment(scores: Record<string, number>, childName?: string): string {
   const entries = Object.entries(scores)
     .map(([name, score]) => [shortSubjectName(name), Number(score)] as [string, number])
     .filter(([, score]) => Number.isFinite(score))
+
+  const firstName = String(childName || 'The learner').trim().split(/\s+/)[0] || 'The learner'
 
   if (entries.length === 0) return ''
 
@@ -65,7 +67,7 @@ export function generateComment(scores: Record<string, number>): string {
   const supportText = joinSubjects(support)
 
   if (avg >= 4.5) {
-    return `A beautiful week of learning. The learner is excelling across the report, with a lovely strength showing in ${best[0]}. Please keep encouraging this confidence at home.`
+    return `A beautiful week of learning. ${firstName} is excelling across the report, with a lovely strength showing in ${best[0]}. Please keep encouraging this confidence at home.`
   }
 
   if (avg >= 3.8) {
@@ -73,7 +75,7 @@ export function generateComment(scores: Record<string, number>): string {
       return `A strong week overall, especially in ${strongestText || best[0]}. A little light support in ${supportText} will help keep the progress balanced.`
     }
 
-    return `A strong and positive week. The learner is showing confidence, especially in ${strongestText || best[0]}. Keep celebrating this progress and encouraging steady practice.`
+    return `A strong and positive week. ${firstName} is showing confidence, especially in ${strongestText || best[0]}. Keep celebrating this progress and encouraging steady practice.`
   }
 
   if (avg >= 3) {
@@ -82,14 +84,14 @@ export function generateComment(scores: Record<string, number>): string {
     }
 
     if (supportText) {
-      return `The learner is making steady progress. This week, ${supportText} needs a little extra attention and encouragement so confidence can keep growing.`
+      return `${firstName} is making steady progress. This week, ${supportText} needs a little extra attention and encouragement so confidence can keep growing.`
     }
 
-    return `A steady week of learning. The learner is progressing across the subjects, and regular encouragement at home will help build even more confidence.`
+    return `A steady week of learning. ${firstName} is progressing across the subjects, and regular encouragement at home will help build even more confidence.`
   }
 
   if (avg >= 2) {
-    return `The learner needs gentle support this week, especially in ${supportText || lowest[0]}. Let’s focus on small, consistent practice and celebrate each improvement.`
+    return `${firstName} needs gentle support this week, especially in ${supportText || lowest[0]}. Let’s focus on small, consistent practice and celebrate each improvement.`
   }
 
   return `This week needs focused support, especially in ${supportText || lowest[0]}. Please connect with the teacher so we can support the learner one small step at a time.`
