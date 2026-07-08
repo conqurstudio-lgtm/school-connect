@@ -501,25 +501,27 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '0 0 20px', opacity: mutedReportOpacity }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 22,
-          padding: '0 9px',
-          borderRadius: 999,
-          border: '1px solid rgba(0,0,0,0.045)',
-          color: isLatestReport ? '#252525' : '#7C8486',
-          background: 'transparent',
-          fontSize: 10.5,
-          fontWeight: 470,
-          letterSpacing: '0.045em',
-          textTransform: 'uppercase',
-          marginBottom: 12,
-        }}>
-          {reportStatusLabel}
-        </div>
+      <div style={{ textAlign: 'center', padding: '0 0 18px', opacity: mutedReportOpacity }}>
+        {reportStatusLabel ? (
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 22,
+            padding: '0 9px',
+            borderRadius: 999,
+            border: '1px solid rgba(0,0,0,0.045)',
+            color: '#7C8486',
+            background: 'transparent',
+            fontSize: 10.5,
+            fontWeight: 470,
+            letterSpacing: '0.045em',
+            textTransform: 'uppercase',
+            marginBottom: 12,
+          }}>
+            {reportStatusLabel}
+          </div>
+        ) : null}
 
         <h2 style={{
           fontSize: 26.5, fontWeight: 420, color: T.ink,

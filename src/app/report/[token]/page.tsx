@@ -1072,7 +1072,7 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '4px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+          padding: '0 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
           <div style={{
@@ -1087,7 +1087,7 @@ export default function ParentMagicReportPage() {
               <div className="sc-main-report-card-v292" style={{
                 background: '#FFFFFF',
                 borderRadius: 28,
-                padding: '14px 10px 16px',
+                padding: '6px 10px 16px',
                 border: 'none',
                 overflow: 'hidden',
               }}>
