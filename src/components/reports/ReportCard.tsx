@@ -161,11 +161,16 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 210 : 248
-  const stroke = compact ? 7 : 8
+  const size = compact ? 214 : 244
+  const stroke = compact ? 2.1 : 2.35
   const center = size / 2
-  const radius = (size - stroke - 12) / 2
+  const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
+
+  // Thin open ring with the same clean style as the sample.
+  const arcRatio = 0.76
+  const arcLength = circumference * arcRatio
+  const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
 
   const [displayScore, setDisplayScore] = useState(0)
@@ -191,10 +196,11 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
-  const progressLength = circumference * displayPct
+  const progressLength = arcLength * displayPct
+  const rotation = 132
 
   return (
-    <div className="sc-old-score-ring-preview-v1" style={{
+    <div className="sc-thin-clean-score-ring-v1" style={{
       position: 'relative',
       width: size,
       height: size,
@@ -206,8 +212,12 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.10)"
+          stroke="rgba(17,17,17,0.14)"
           strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
         />
 
         <circle
@@ -220,7 +230,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
-          transform={`rotate(-90 ${center} ${center})`}
+          transform={`rotate(${rotation} ${center} ${center})`}
         />
       </svg>
 
@@ -228,26 +238,25 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        top: '50%',
-        transform: 'translateY(-50%)',
+        bottom: compact ? 20 : 23,
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 42 : 54,
-          fontWeight: 420,
+          fontSize: compact ? 42 : 50,
+          fontWeight: 390,
           color: '#111111',
           letterSpacing: '-0.07em',
-          lineHeight: 1,
+          lineHeight: 0.95,
           fontVariantNumeric: 'tabular-nums',
         }}>
           {displayScore.toFixed(1)}
         </div>
 
         <div style={{
-          fontSize: compact ? 11.5 : 12.6,
+          fontSize: compact ? 11.8 : 12.4,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 1,
+          marginTop: 2,
           letterSpacing: '-0.01em',
         }}>
           out of {max}

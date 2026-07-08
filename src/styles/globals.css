@@ -6616,3 +6616,69 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-score-comment-up-v1 {
   margin-top: 10px !important;
 }
+
+
+/* school-connect-thin-clean-score-ring-v1 */
+/* Thin clean report score ring, matching the approved sample. */
+.sc-thin-clean-score-ring-v1 {
+  width: 244px !important;
+  height: 244px !important;
+  margin-top: 4px !important;
+  margin-bottom: 2px !important;
+}
+
+.sc-thin-clean-score-ring-v1 svg {
+  width: 244px !important;
+  height: 244px !important;
+  overflow: visible !important;
+}
+
+.sc-thin-clean-score-ring-v1 svg circle {
+  filter: none !important;
+}
+
+.sc-thin-clean-score-ring-v1 > div {
+  top: auto !important;
+  bottom: 23px !important;
+  transform: none !important;
+}
+
+.sc-thin-clean-score-ring-v1 > div > div:first-child {
+  font-size: 50px !important;
+  font-weight: 390 !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.07em !important;
+}
+
+.sc-thin-clean-score-ring-v1 > div > div:last-child {
+  font-size: 12.4px !important;
+  line-height: 1.05 !important;
+  margin-top: 2px !important;
+}
+
+/* Disable older score-ring override classes so they don't fight this one. */
+.sc-open-gap-score-circle-v1,
+.sc-old-score-ring-preview-v1 {
+  width: 244px !important;
+  height: 244px !important;
+}
+
+.sc-score-comment-up-v1 {
+  margin-top: 8px !important;
+}
+
+@media (max-width: 380px) {
+  .sc-thin-clean-score-ring-v1,
+  .sc-thin-clean-score-ring-v1 svg {
+    width: 226px !important;
+    height: 226px !important;
+  }
+
+  .sc-thin-clean-score-ring-v1 > div {
+    bottom: 20px !important;
+  }
+
+  .sc-thin-clean-score-ring-v1 > div > div:first-child {
+    font-size: 45px !important;
+  }
+}
