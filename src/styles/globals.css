@@ -6145,3 +6145,61 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-parent-report-card-view h2:first-of-type {
   margin-top: 0 !important;
 }
+
+
+/* school-connect-score-back-bottom-comment-up-v1 */
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  top: auto !important;
+  bottom: 12px !important;
+  transform: none !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:first-child,
+.sc-clean-score-circle-v2 > div > div:first-child {
+  font-size: 38px !important;
+  font-weight: 420 !important;
+  line-height: 1 !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:last-child,
+.sc-clean-score-circle-v2 > div > div:last-child {
+  margin-top: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.05 !important;
+}
+
+.sc-score-comment-up-v1 {
+  margin-top: -10px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-open-gap-score-circle-v1 > div,
+  .sc-clean-score-circle-v2 > div {
+    bottom: 10px !important;
+  }
+
+  .sc-open-gap-score-circle-v1 > div > div:first-child,
+  .sc-clean-score-circle-v2 > div > div:first-child {
+    font-size: 35px !important;
+  }
+
+  .sc-score-comment-up-v1 {
+    margin-top: -8px !important;
+  }
+}
+
+
+/* school-connect-score-back-bottom-comment-up-final-override */
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  top: auto !important;
+  bottom: 12px !important;
+  transform: none !important;
+}
+
+.sc-score-comment-up-v1 {
+  margin-top: -10px !important;
+}
