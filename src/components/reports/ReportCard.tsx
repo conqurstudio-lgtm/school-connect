@@ -585,7 +585,7 @@ export function ReportCard({ report, childName }: Props) {
                 <strong>{teacherName}:</strong>{' '}
               </>
             ) : null}
-            {report.comment}
+            <span className="sc-teacher-comment-message-v1">{report.comment}</span>
           </p>
         </section>
       )}
