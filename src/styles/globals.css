@@ -6538,3 +6538,65 @@ button[title*="moment" i][style*="position: fixed"],
     max-width: calc(100% - 48px) !important;
   }
 }
+
+
+/* school-connect-bigger-score-ring-number-v1 */
+
+/* Bigger main score ring and score number. */
+.sc-open-gap-score-circle-v1 {
+  width: 250px !important;
+  height: 250px !important;
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+}
+
+.sc-open-gap-score-circle-v1 > svg,
+.sc-open-gap-score-circle-v1 svg {
+  width: 250px !important;
+  height: 250px !important;
+}
+
+.sc-open-gap-score-circle-v1 > div,
+.sc-clean-score-circle-v2 > div {
+  top: auto !important;
+  bottom: 16px !important;
+  transform: none !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:first-child,
+.sc-clean-score-circle-v2 > div > div:first-child {
+  font-size: 48px !important;
+  font-weight: 420 !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.07em !important;
+}
+
+.sc-open-gap-score-circle-v1 > div > div:last-child,
+.sc-clean-score-circle-v2 > div > div:last-child {
+  font-size: 12.2px !important;
+  line-height: 1.05 !important;
+  margin-top: 1px !important;
+}
+
+@media (max-width: 380px) {
+  .sc-open-gap-score-circle-v1 {
+    width: 232px !important;
+    height: 232px !important;
+  }
+
+  .sc-open-gap-score-circle-v1 > svg,
+  .sc-open-gap-score-circle-v1 svg {
+    width: 232px !important;
+    height: 232px !important;
+  }
+
+  .sc-open-gap-score-circle-v1 > div,
+  .sc-clean-score-circle-v2 > div {
+    bottom: 14px !important;
+  }
+
+  .sc-open-gap-score-circle-v1 > div > div:first-child,
+  .sc-clean-score-circle-v2 > div > div:first-child {
+    font-size: 43px !important;
+  }
+}

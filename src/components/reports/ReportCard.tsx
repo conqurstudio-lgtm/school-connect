@@ -161,8 +161,8 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 196 : 220
-  const stroke = compact ? 4.2 : 4.6
+  const size = compact ? 216 : 250
+  const stroke = compact ? 5.0 : 5.4
   const center = size / 2
   const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
@@ -253,11 +253,11 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 10 : 12,
+        bottom: compact ? 14 : 16,
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 32 : 37,
+          fontSize: compact ? 39 : 48,
           fontWeight: 420,
           color: '#111111',
           letterSpacing: '-0.065em',
@@ -268,7 +268,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         </div>
 
         <div style={{
-          fontSize: 11.2,
+          fontSize: 12.2,
           color: '#8E8E93',
           fontWeight: 430,
           marginTop: 0,
