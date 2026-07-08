@@ -7797,3 +7797,211 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 12.3px !important;
   }
 }
+
+
+/* school-connect-revert-subject-cards-teacher-bubble-v1 */
+.sc-report-subject-lines-v1,
+.sc-subject-line-row-v1,
+.sc-subject-line-inline-v2 {
+  display: none !important;
+}
+
+.sc-report-subject-grid-v1 {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.sc-report-subject-grid-card-v1 {
+  display: block !important;
+  background: rgba(17, 17, 17, 0.024) !important;
+  border: 1px solid rgba(17, 17, 17, 0.018) !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+  min-height: 98px !important;
+  padding: 17px 17px 15px !important;
+  position: relative !important;
+}
+
+.sc-subject-grid-row-v1 {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.sc-subject-grid-name-v1 {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 56px) !important;
+  margin: 0 !important;
+  color: #222222 !important;
+  font-size: 13.2px !important;
+  font-weight: 720 !important;
+  line-height: 1.14 !important;
+  letter-spacing: -0.035em !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+  hyphens: auto !important;
+}
+
+.sc-subject-grid-score-v1 {
+  color: #111111 !important;
+  font-size: 27px !important;
+  font-weight: 430 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.045em !important;
+  margin-top: 22px !important;
+}
+
+.sc-subject-card-delta-v1 {
+  flex: 0 0 48px !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  justify-content: flex-end !important;
+  text-align: right !important;
+  margin-top: 0 !important;
+  display: inline-flex !important;
+}
+
+.sc-subject-card-delta-v1,
+.sc-subject-card-delta-v1 span,
+.sc-subject-card-delta-v1 svg,
+.sc-subject-card-delta-v1 svg *,
+.sc-subject-card-delta-v1.is-up,
+.sc-subject-card-delta-v1.is-up span,
+.sc-subject-card-delta-v1.is-up svg *,
+.sc-subject-card-delta-v1.is-down,
+.sc-subject-card-delta-v1.is-down span,
+.sc-subject-card-delta-v1.is-down svg *,
+.sc-subject-card-delta-v1.is-same,
+.sc-subject-card-delta-v1.is-same span,
+.sc-subject-card-delta-v1.is-same svg * {
+  color: rgba(17, 17, 17, 0.34) !important;
+  stroke: rgba(17, 17, 17, 0.34) !important;
+}
+
+/* Teacher comment: earlier left-avatar dashed speech bubble layout. */
+.sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+.sc-teacher-comment-overlap-card-v1 {
+  max-width: 370px !important;
+  margin: 22px auto 28px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  text-align: left !important;
+  position: relative !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before,
+.sc-teacher-comment-overlap-card-v1::after {
+  display: none !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  position: relative !important;
+  flex: 0 0 38px !important;
+  width: 38px !important;
+  height: 38px !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.10) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  position: relative !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  border: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #64676D !important;
+  font-size: 13.2px !important;
+  font-weight: 400 !important;
+  line-height: 1.46 !important;
+  letter-spacing: -0.012em !important;
+  text-align: left !important;
+}
+
+.sc-teacher-comment-text-v1::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -7px !important;
+  top: 18px !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-left: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  border-bottom: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  transform: rotate(45deg) !important;
+  border-radius: 2px !important;
+}
+
+.sc-teacher-comment-text-v1 strong,
+.sc-teacher-comment-overlap-card-v1 .sc-teacher-comment-text-v1 strong {
+  color: #242424 !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-report-subject-grid-v1 {
+    gap: 10px !important;
+  }
+
+  .sc-report-subject-grid-card-v1 {
+    min-height: 94px !important;
+    padding: 15px 15px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .sc-subject-grid-name-v1 {
+    max-width: calc(100% - 50px) !important;
+    font-size: 12.7px !important;
+  }
+
+  .sc-subject-card-delta-v1 {
+    flex-basis: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .sc-subject-grid-score-v1 {
+    font-size: 25px !important;
+    margin-top: 21px !important;
+  }
+
+  .sc-teacher-comment-overlap-card-v1 {
+    gap: 10px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    padding: 13px 14px !important;
+    font-size: 12.9px !important;
+  }
+}
