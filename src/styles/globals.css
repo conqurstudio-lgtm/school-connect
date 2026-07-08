@@ -7417,3 +7417,19 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 12.4px !important;
   }
 }
+
+
+/* school-connect-subject-lines-bar-between-final-override */
+.sc-subject-line-inline-v2 {
+  display: grid !important;
+  grid-template-columns: minmax(96px, 1fr) minmax(72px, 118px) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.sc-subject-line-progress-inline-v2 {
+  height: 3px !important;
+  background: rgba(17, 17, 17, 0.085) !important;
+}
+.sc-subject-line-progress-inline-v2 span {
+  background: rgba(17, 17, 17, 0.48) !important;
+}
