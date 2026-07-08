@@ -6098,3 +6098,50 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-parent-report-card-view > div:first-child {
   padding-top: 6px !important;
 }
+
+
+/* school-connect-force-remove-report-pill-space-v1 */
+
+/* Hide any leftover empty pill/border element from the removed THIS WEEK label. */
+.sc-parent-report-card-view span:empty,
+.sc-parent-report-card-view p:empty,
+.sc-parent-report-card-view button:empty {
+  display: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.sc-parent-report-card-view [class*="week"],
+.sc-parent-report-card-view [class*="Week"],
+.sc-parent-report-card-view [class*="pill"],
+.sc-parent-report-card-view [class*="Pill"],
+.sc-parent-report-card-view [class*="badge"],
+.sc-parent-report-card-view [class*="Badge"] {
+  display: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Move the report header upward into the removed tag space. */
+.sc-parent-report-card-view {
+  padding-top: 0 !important;
+}
+
+.sc-parent-report-card-view > div:first-child {
+  padding-top: 0 !important;
+  margin-top: -18px !important;
+}
+
+.sc-parent-report-card-view h1:first-of-type,
+.sc-parent-report-card-view h2:first-of-type {
+  margin-top: 0 !important;
+}

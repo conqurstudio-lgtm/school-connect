@@ -510,7 +510,7 @@ export function ReportCard({ report, childName }: Props) {
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '6px 0 24px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '0 0 20px', opacity: mutedReportOpacity }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
