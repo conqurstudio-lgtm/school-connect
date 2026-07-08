@@ -414,6 +414,15 @@ function getPreviousSubjectScore(previousScores: Record<string, number> | null |
   return Math.max(0, Math.min(5, raw))
 }
 
+
+function getReportScoreEmoji(score: number) {
+  if (score >= 4.5) return '🏆'
+  if (score >= 3.5) return '✨'
+  if (score >= 2.5) return '🙂'
+  if (score >= 1.5) return '🌱'
+  return '💛'
+}
+
 function buildWeeklyPerformanceExplainer(
   childName: string | undefined,
   subjects: [string, number][]
@@ -532,6 +541,9 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
+          <div className="sc-main-report-score-emoji-v1" aria-hidden="true">
+            {getReportScoreEmoji(overall)}
+          </div>
           <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
