@@ -234,6 +234,10 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         />
       </svg>
 
+      <div className="sc-ring-gap-score-emoji-v1" aria-hidden="true">
+        {getReportScoreEmoji(Number(score))}
+      </div>
+
       <div style={{
         position: 'absolute',
         left: 0,
@@ -541,10 +545,7 @@ export function ReportCard({ report, childName }: Props) {
         </div>
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
-          <div className="sc-main-report-score-emoji-v1" aria-hidden="true">
-            {getReportScoreEmoji(overall)}
-          </div>
-          <p style={{
+<p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,
           }}>

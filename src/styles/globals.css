@@ -7433,3 +7433,40 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-subject-line-progress-inline-v2 span {
   background: rgba(17, 17, 17, 0.48) !important;
 }
+
+
+/* school-connect-score-emoji-inside-ring-gap-v1
+   Move the report emoji into the open gap of the score ring.
+*/
+.sc-main-report-score-emoji-v1 {
+  display: none !important;
+}
+
+.sc-ring-gap-score-emoji-v1 {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 18px !important;
+  transform: translateX(-50%) !important;
+  z-index: 3 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+  filter: none !important;
+}
+
+/* If the ring is smaller in previous reports, keep the emoji slightly smaller. */
+.sc-parent-report-card-view .sc-combined-score-ring-v1[style*="214"] .sc-ring-gap-score-emoji-v1,
+.sc-parent-report-card-view .sc-thin-clean-score-ring-v1[style*="214"] .sc-ring-gap-score-emoji-v1 {
+  bottom: 16px !important;
+  font-size: 21px !important;
+}
+
+/* Keep the score label closer now that emoji is inside the ring. */
+.sc-score-comment-up-v1 {
+  margin-top: 4px !important;
+}
