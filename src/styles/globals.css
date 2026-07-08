@@ -7470,3 +7470,96 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-score-comment-up-v1 {
   margin-top: 4px !important;
 }
+
+
+/* school-connect-restore-teacher-comment-layout-v1
+   Restore the teacher comment layout to the cleaner previous style:
+   - light/transparent card
+   - dashed outline feel
+   - avatar overlapping at the top
+   - normal text weight
+   - only subtle color hierarchy
+*/
+.sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+.sc-teacher-comment-overlap-card-v1 {
+  position: relative !important;
+  max-width: 370px !important;
+  margin: 20px auto 26px !important;
+  padding: 28px 18px 18px !important;
+  border-radius: 24px !important;
+  background: transparent !important;
+  border: 1px dashed rgba(17, 17, 17, 0.22) !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before,
+.sc-teacher-comment-overlap-card-v1::after {
+  display: none !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  position: absolute !important;
+  top: -19px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 8px 20px rgba(17, 17, 17, 0.10) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-photo-v1 span {
+  color: #222222 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  margin: 0 !important;
+  color: #64676D !important;
+  font-size: 13.2px !important;
+  font-weight: 400 !important;
+  line-height: 1.48 !important;
+  letter-spacing: -0.012em !important;
+}
+
+.sc-teacher-comment-text-v1 strong,
+.sc-teacher-comment-overlap-card-v1 .sc-teacher-comment-text-v1 strong {
+  color: #242424 !important;
+  font-weight: 600 !important;
+}
+
+/* Remove heavier color-cleanup effects from previous patches. */
+.sc-teacher-comment-overlap-card-v1 * {
+  text-shadow: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+  .sc-teacher-comment-overlap-card-v1 {
+    max-width: 100% !important;
+    margin-top: 20px !important;
+    padding: 27px 16px 17px !important;
+    border-radius: 22px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    font-size: 12.9px !important;
+    line-height: 1.46 !important;
+  }
+}
