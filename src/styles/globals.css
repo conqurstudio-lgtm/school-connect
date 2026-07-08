@@ -7563,3 +7563,32 @@ button[title*="moment" i][style*="position: fixed"],
     line-height: 1.46 !important;
   }
 }
+
+
+/* school-connect-move-score-emoji-to-gap-v1 */
+.sc-open-gap-score-circle-v1 .sc-score-gap-emoji-v2,
+.sc-clean-score-circle-v2 .sc-score-gap-emoji-v2,
+.sc-old-score-ring-preview-v1 .sc-score-gap-emoji-v2 {
+  display: block !important;
+  z-index: 3 !important;
+  color: #111111 !important;
+  filter: saturate(0.96);
+}
+
+.sc-open-gap-score-circle-v1 .sc-score-gap-emoji-v2 {
+  bottom: 14px !important;
+}
+
+.sc-clean-score-circle-v2 .sc-score-gap-emoji-v2,
+.sc-old-score-ring-preview-v1 .sc-score-gap-emoji-v2 {
+  bottom: 14px !important;
+}
+
+@media (max-width: 420px) {
+  .sc-open-gap-score-circle-v1 .sc-score-gap-emoji-v2,
+  .sc-clean-score-circle-v2 .sc-score-gap-emoji-v2,
+  .sc-old-score-ring-preview-v1 .sc-score-gap-emoji-v2 {
+    bottom: 12px !important;
+    font-size: 24px !important;
+  }
+}
