@@ -1728,7 +1728,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  child_id: child.id,
  week_starting: week,
  scores,
- comment: comment.trim(),
+ comment: comment.trim() || generateComment(scores),
  }),
  })
 
