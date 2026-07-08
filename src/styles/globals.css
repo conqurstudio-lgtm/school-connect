@@ -7295,3 +7295,23 @@ button[title*="moment" i][style*="position: fixed"],
     height: 5.5px !important;
   }
 }
+
+
+/* school-connect-teacher-comment-restore-weight-v1
+   Keep the softer color hierarchy, but restore the teacher comment font weights
+   to the lighter style used before the color cleanup.
+*/
+.sc-teacher-comment-text-v1 {
+  color: #74777C !important;
+  font-weight: 400 !important;
+}
+
+.sc-teacher-comment-text-v1 strong {
+  color: #171717 !important;
+  font-weight: 650 !important;
+}
+
+/* Prevent older visual hierarchy overrides from making the teacher name too bold. */
+.sc-teacher-comment-overlap-card-v1 .sc-teacher-comment-text-v1 strong {
+  font-weight: 650 !important;
+}
