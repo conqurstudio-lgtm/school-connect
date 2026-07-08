@@ -6223,3 +6223,78 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-score-comment-up-v1 {
   margin-top: 8px !important;
 }
+
+
+/* school-connect-remove-gradient-restore-subject-trend-v1 */
+
+/* Keep the new score ring shape, but return the ring color to the original clean dark stroke. */
+.sc-open-gap-score-circle-v1 svg circle,
+.sc-clean-score-circle-v2 svg circle {
+  filter: none !important;
+}
+
+/* Hide the score-progress line version if it remains from the previous patch. */
+.sc-subject-score-progress-v1 {
+  display: none !important;
+}
+
+/* Subject trend line: same idea as the report comparison icon, but small and premium. */
+.sc-subject-report-trendline-v1 {
+  position: absolute !important;
+  top: 15px !important;
+  right: 14px !important;
+  width: 36px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.82 !important;
+}
+
+.sc-subject-report-trendline-v1 svg {
+  width: 36px !important;
+  height: 18px !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.sc-subject-report-trendline-v1 path {
+  fill: none !important;
+  stroke: rgba(17, 17, 17, 0.32) !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.sc-subject-report-trendline-v1 circle {
+  fill: #FFFFFF !important;
+  stroke: rgba(17, 17, 17, 0.32) !important;
+  stroke-width: 1.7 !important;
+}
+
+.sc-subject-report-trendline-v1.is-up path,
+.sc-subject-report-trendline-v1.is-up circle {
+  stroke: rgba(34, 197, 94, 0.72) !important;
+}
+
+.sc-subject-report-trendline-v1.is-down path,
+.sc-subject-report-trendline-v1.is-down circle {
+  stroke: rgba(37, 99, 235, 0.68) !important;
+}
+
+.sc-subject-report-trendline-v1.is-flat path,
+.sc-subject-report-trendline-v1.is-flat circle {
+  stroke: rgba(17, 17, 17, 0.24) !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-report-trendline-v1 {
+    top: 14px !important;
+    right: 13px !important;
+    width: 34px !important;
+  }
+
+  .sc-subject-report-trendline-v1 svg {
+    width: 34px !important;
+  }
+}

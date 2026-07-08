@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useEffect, useId } from 'react'
+import { useState, useEffect } from 'react'
 import { TrendingUp, TrendingDown, Minus, Info, X } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
@@ -161,7 +161,6 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const scoreGradientId = useId()
   const size = compact ? 196 : 220
   const stroke = compact ? 4.2 : 4.6
   const center = size / 2
@@ -214,14 +213,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       margin: '0 auto',
     }}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
-        <defs>
-          <linearGradient id={scoreGradientId} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22C55E" />
-            <stop offset="48%" stopColor="#3B82F6" />
-            <stop offset="100%" stopColor="#8B5CF6" />
-          </linearGradient>
-        </defs>
-        <circle
+<circle
           cx={center}
           cy={center}
           r={radius}
@@ -239,7 +231,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke={`url(#${scoreGradientId})`}
+          stroke="#111111"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
@@ -252,7 +244,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={knobY}
           r={compact ? 10 : 11}
           fill="#FFFFFF"
-          stroke={`url(#${scoreGradientId})`}
+          stroke="#111111"
           strokeWidth={stroke}
         />
       </svg>
@@ -626,21 +618,52 @@ export function ReportCard({ report, childName }: Props) {
                       {shortenSubject(String(name))}
                     </p>
                     <div
-                      className="sc-subject-score-progress-v1"
-                      aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
-                      title={`Score progress ${safeScore.toFixed(1)} out of 5`}
+                      className={`sc-subject-report-trendline-v1 ${
+                        previousScore === null || Math.abs(change || 0) < 0.05
+                          ? 'is-flat'
+                          : safeScore > previousScore
+                            ? 'is-up'
+                            : 'is-down'
+                      }`}
+                      aria-label={
+                        previousScore === null
+                          ? 'No previous report comparison yet'
+                          : Math.abs(change || 0) < 0.05
+                            ? 'Same as previous report'
+                            : safeScore > previousScore
+                              ? 'Improved from previous report'
+                              : 'Lower than previous report'
+                      }
+                      title={
+                        previousScore === null
+                          ? 'No previous report comparison yet'
+                          : Math.abs(change || 0) < 0.05
+                            ? 'Same as previous report'
+                            : safeScore > previousScore
+                              ? 'Improved from previous report'
+                              : 'Lower than previous report'
+                      }
                     >
-                      <svg viewBox="0 0 46 18" aria-hidden="true" focusable="false">
-                        <path className="sc-subject-progress-track-v1" d="M4 9 H42" />
+                      <svg viewBox="0 0 44 20" aria-hidden="true" focusable="false">
                         <path
-                          className="sc-subject-progress-fill-v1"
-                          d={`M4 9 H${4 + (38 * safeScore) / 5}`}
+                          d={
+                            previousScore === null || Math.abs(change || 0) < 0.05
+                              ? 'M4 11 C12 11 17 11 24 11 S35 11 40 11'
+                              : safeScore > previousScore
+                                ? 'M4 15 C12 15 16 10 23 11 S34 5 40 6'
+                                : 'M4 6 C12 6 16 11 23 10 S34 16 40 15'
+                          }
                         />
                         <circle
-                          className="sc-subject-progress-dot-v1"
-                          cx={4 + (38 * safeScore) / 5}
-                          cy="9"
-                          r="2.6"
+                          cx="40"
+                          cy={
+                            previousScore === null || Math.abs(change || 0) < 0.05
+                              ? 11
+                              : safeScore > previousScore
+                                ? 6
+                                : 15
+                          }
+                          r="2.4"
                         />
                       </svg>
                     </div>
