@@ -234,7 +234,27 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         />
       </svg>
 
-      <div className="sc-ring-gap-score-emoji-v1" aria-hidden="true">
+      <div
+        className="sc-ring-gap-score-emoji-v1"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: '50%',
+          right: 'auto',
+          top: 'auto',
+          bottom: compact ? 16 : 18,
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          height: 'auto',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: compact ? 21 : 24,
+          lineHeight: 1,
+          zIndex: 5,
+          pointerEvents: 'none',
+        }}
+      >
         {getReportScoreEmoji(Number(score))}
       </div>
 

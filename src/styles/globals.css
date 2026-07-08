@@ -8447,3 +8447,54 @@ button[title*="moment" i][style*="position: fixed"],
     line-height: 1.43 !important;
   }
 }
+
+
+/* school-connect-score-emoji-gap-final-v1
+   Strong final override: emoji must sit in the bottom gap of the score ring,
+   while the score number remains centered in the ring.
+*/
+.sc-combined-score-ring-v1 > .sc-ring-gap-score-emoji-v1 {
+  position: absolute !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: 18px !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  z-index: 9 !important;
+  pointer-events: none !important;
+}
+
+/* Older rules targeted every direct div in the ring. This prevents them from
+   treating the emoji as the score-number wrapper. */
+.sc-combined-score-ring-v1 > .sc-ring-gap-score-emoji-v1,
+.sc-combined-score-ring-v1 > .sc-ring-gap-score-emoji-v1:not(.anything) {
+  top: auto !important;
+  bottom: 18px !important;
+  transform: translateX(-50%) !important;
+  text-align: center !important;
+}
+
+/* Only the non-emoji div should control the score number placement. */
+.sc-combined-score-ring-v1 > div:not(.sc-ring-gap-score-emoji-v1) {
+  top: 55% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+@media (max-width: 380px) {
+  .sc-combined-score-ring-v1 > .sc-ring-gap-score-emoji-v1 {
+    bottom: 16px !important;
+    font-size: 22px !important;
+  }
+}
