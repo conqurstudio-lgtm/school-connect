@@ -7592,3 +7592,96 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 24px !important;
   }
 }
+
+
+/* school-connect-subject-bars-current-and-previous-v1
+   Subject row bar:
+   - light grey track = full 5.0 range
+   - dark fill = current score
+   - small dark tick = previous score position, when available
+*/
+.sc-subject-line-inline-v2 {
+  display: grid !important;
+  grid-template-columns: minmax(100px, 1fr) minmax(96px, 150px) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.sc-subject-line-progress-inline-v2,
+.sc-subject-line-progress-v1 {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 86px !important;
+  height: 4px !important;
+  border-radius: 999px !important;
+  overflow: visible !important;
+  background: rgba(17, 17, 17, 0.085) !important;
+}
+
+.sc-subject-line-progress-inline-v2 .sc-subject-line-progress-fill-v2,
+.sc-subject-line-progress-v1 .sc-subject-line-progress-fill-v2,
+.sc-subject-line-progress-v1 > span:first-child {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  display: block !important;
+  height: 100% !important;
+  min-width: 3px !important;
+  border-radius: 999px !important;
+  background: #171717 !important;
+  opacity: 0.86 !important;
+}
+
+/* Previous score position: a small tick sitting on the same line. */
+.sc-subject-line-previous-marker-v2 {
+  position: absolute !important;
+  top: 50% !important;
+  width: 2px !important;
+  height: 10px !important;
+  border-radius: 999px !important;
+  background: rgba(17, 17, 17, 0.36) !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2 !important;
+}
+
+/* Keep all states grey/black, not red or green, but still connected to movement through the previous marker. */
+.sc-subject-line-progress-inline-v2.is-up .sc-subject-line-progress-fill-v2,
+.sc-subject-line-progress-inline-v2.is-down .sc-subject-line-progress-fill-v2,
+.sc-subject-line-progress-inline-v2.is-same .sc-subject-line-progress-fill-v2,
+.sc-subject-line-progress-inline-v2.is-new .sc-subject-line-progress-fill-v2 {
+  background: #171717 !important;
+}
+
+.sc-subject-line-score-wrap-v1 {
+  min-width: 38px !important;
+}
+
+.sc-subject-line-score-v1 {
+  color: #34363A !important;
+  font-size: 13px !important;
+  font-weight: 620 !important;
+}
+
+/* Hide the old score dot because the previous-score indicator now sits on the bar. */
+.sc-subject-line-previous-dot-v1 {
+  display: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-line-inline-v2 {
+    grid-template-columns: minmax(82px, 1fr) minmax(66px, 104px) auto !important;
+    gap: 9px !important;
+  }
+
+  .sc-subject-line-progress-inline-v2,
+  .sc-subject-line-progress-v1 {
+    min-width: 62px !important;
+    height: 3.5px !important;
+  }
+
+  .sc-subject-line-previous-marker-v2 {
+    height: 9px !important;
+  }
+}

@@ -611,6 +611,8 @@ export function ReportCard({ report, childName }: Props) {
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
               const hasPreviousScore = previousScore !== null
+              const previousPercent = hasPreviousScore ? Math.max(0, Math.min(100, (Number(previousScore) / 5) * 100)) : null
+              const change = hasPreviousScore ? safeScore - Number(previousScore) : null
               const progressPercent = Math.max(0, Math.min(100, (safeScore / 5) * 100))
 
               return (
@@ -621,22 +623,29 @@ export function ReportCard({ report, childName }: Props) {
                     </p>
 
                     <div
-                      className="sc-subject-line-progress-v1 sc-subject-line-progress-inline-v2"
+                      className={`sc-subject-line-progress-v1 sc-subject-line-progress-inline-v2 ${
+                        change === null ? 'is-new' : change > 0.05 ? 'is-up' : change < -0.05 ? 'is-down' : 'is-same'
+                      }`}
                       aria-label={`Score progress ${safeScore.toFixed(1)} out of 5`}
                     >
-                      <span style={{ width: `${progressPercent}%` }} />
+                      <span
+                        className="sc-subject-line-progress-fill-v2"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+
+                      {previousPercent !== null ? (
+                        <span
+                          className="sc-subject-line-previous-marker-v2"
+                          style={{ left: `${previousPercent}%` }}
+                          aria-hidden="true"
+                        />
+                      ) : null}
                     </div>
 
                     <div className="sc-subject-line-score-wrap-v1">
                       <span className="sc-subject-line-score-v1">
                         {safeScore.toFixed(1)}
                       </span>
-
-                      {hasPreviousScore ? (
-                        <span className="sc-subject-line-previous-dot-v1" aria-label="Compared with previous report">
-                          ·
-                        </span>
-                      ) : null}
                     </div>
                   </div>
                 </article>
