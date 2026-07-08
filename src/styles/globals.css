@@ -8498,3 +8498,262 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 22px !important;
   }
 }
+
+
+/* school-connect-match-reference-teacher-subjects-v1
+   Match the uploaded reference:
+   - teacher avatar left of dashed speech bubble
+   - comment message normal weight
+   - subject cards are large, soft, 2-column cards
+*/
+
+/* TEACHER COMMENT — side avatar + dashed bubble, like the screenshot */
+.sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+.sc-teacher-comment-overlap-card-v1 {
+  width: 100% !important;
+  max-width: 370px !important;
+  margin: 22px auto 28px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  align-items: center !important;
+  column-gap: 12px !important;
+  text-align: left !important;
+  position: relative !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before,
+.sc-teacher-comment-overlap-card-v1::after {
+  display: none !important;
+  content: none !important;
+}
+
+.sc-teacher-comment-photo-v1 {
+  grid-column: 1 !important;
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 10px 22px rgba(17, 17, 17, 0.10) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+  z-index: 3 !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  grid-column: 2 !important;
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 14px 16px !important;
+  border: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #53565C !important;
+  font-size: 13.2px !important;
+  font-weight: 400 !important;
+  line-height: 1.44 !important;
+  letter-spacing: -0.012em !important;
+  text-align: left !important;
+  box-shadow: none !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+.sc-teacher-comment-text-v1::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -7px !important;
+  top: 50% !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-left: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  border-bottom: 1px dashed rgba(17, 17, 17, 0.24) !important;
+  transform: translateY(-50%) rotate(45deg) !important;
+  border-radius: 2px !important;
+}
+
+.sc-teacher-comment-message-v1,
+.sc-teacher-comment-text-v1 > span {
+  color: #53565C !important;
+  font-weight: 400 !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+.sc-teacher-comment-text-v1 strong,
+.sc-teacher-comment-overlap-card-v1 .sc-teacher-comment-text-v1 strong {
+  color: #202124 !important;
+  font-weight: 700 !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+/* SUBJECT CARDS — same card feel as the reference */
+.sc-report-subject-panel.sc-clean-subjects-v2,
+.sc-report-subject-panel {
+  width: 100% !important;
+  max-width: 370px !important;
+  margin: 20px auto 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.sc-report-subject-lines-v1,
+.sc-subject-line-row-v1,
+.sc-subject-line-inline-v2 {
+  display: none !important;
+}
+
+.sc-report-subject-grid-v1 {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 13px !important;
+  width: 100% !important;
+}
+
+.sc-report-subject-grid-card-v1 {
+  display: block !important;
+  position: relative !important;
+  min-height: 108px !important;
+  padding: 17px 17px 16px !important;
+  border-radius: 18px !important;
+  background: rgba(17, 17, 17, 0.025) !important;
+  border: 1px solid rgba(17, 17, 17, 0.018) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.sc-subject-grid-row-v1 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.sc-subject-grid-name-v1 {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  color: #202124 !important;
+  font-size: 13.25px !important;
+  font-weight: 720 !important;
+  line-height: 1.13 !important;
+  letter-spacing: -0.035em !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+}
+
+.sc-subject-card-delta-v1 {
+  width: auto !important;
+  min-width: 34px !important;
+  display: inline-flex !important;
+  justify-content: flex-end !important;
+  text-align: right !important;
+  margin-top: 0 !important;
+}
+
+.sc-subject-card-delta-v1,
+.sc-subject-card-delta-v1 span,
+.sc-subject-card-delta-v1 svg,
+.sc-subject-card-delta-v1 svg *,
+.sc-subject-card-delta-v1.is-up,
+.sc-subject-card-delta-v1.is-up span,
+.sc-subject-card-delta-v1.is-up svg *,
+.sc-subject-card-delta-v1.is-down,
+.sc-subject-card-delta-v1.is-down span,
+.sc-subject-card-delta-v1.is-down svg *,
+.sc-subject-card-delta-v1.is-same,
+.sc-subject-card-delta-v1.is-same span,
+.sc-subject-card-delta-v1.is-same svg * {
+  color: rgba(17, 17, 17, 0.36) !important;
+  stroke: rgba(17, 17, 17, 0.36) !important;
+}
+
+.sc-subject-grid-score-v1 {
+  color: #111111 !important;
+  font-size: 32px !important;
+  font-weight: 420 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.055em !important;
+  margin-top: 28px !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* spacing after subject cards before previous reports */
+.sc-report-subject-panel + * {
+  margin-top: 28px !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+  .sc-teacher-comment-overlap-card-v1 {
+    grid-template-columns: 42px minmax(0, 1fr) !important;
+    column-gap: 10px !important;
+    margin-top: 20px !important;
+    margin-bottom: 26px !important;
+  }
+
+  .sc-teacher-comment-photo-v1 {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+  }
+
+  .sc-teacher-comment-text-v1 {
+    padding: 13px 14px !important;
+    font-size: 12.9px !important;
+    line-height: 1.43 !important;
+  }
+
+  .sc-report-subject-grid-v1 {
+    gap: 11px !important;
+  }
+
+  .sc-report-subject-grid-card-v1 {
+    min-height: 104px !important;
+    padding: 16px 15px 15px !important;
+    border-radius: 17px !important;
+  }
+
+  .sc-subject-grid-name-v1 {
+    font-size: 12.8px !important;
+  }
+
+  .sc-subject-grid-score-v1 {
+    font-size: 30px !important;
+    margin-top: 27px !important;
+  }
+
+  .sc-subject-card-delta-v1 {
+    min-width: 30px !important;
+  }
+}

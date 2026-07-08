@@ -116,6 +116,7 @@ function shortenSubject(name: string): string {
     'Physical Education':                     'PE',
     'Sport Science':                          'Sport Sci',
   }
+  if (name === 'Mathematics') return 'Maths'
   return map[name] ?? name
 }
 
