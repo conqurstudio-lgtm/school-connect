@@ -162,12 +162,12 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
   const size = compact ? 214 : 244
-  const stroke = compact ? 2.1 : 2.35
+  const stroke = compact ? 2.15 : 2.35
   const center = size / 2
   const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
 
-  // Thin open ring with the same clean style as the sample.
+  // Premium thin open ring: emotional like the old score moment, but cleaner.
   const arcRatio = 0.76
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
@@ -200,7 +200,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const rotation = 132
 
   return (
-    <div className="sc-thin-clean-score-ring-v1" style={{
+    <div className="sc-combined-score-ring-v1" style={{
       position: 'relative',
       width: size,
       height: size,
@@ -212,7 +212,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.14)"
+          stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -238,25 +238,26 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 20 : 23,
+        top: '55%',
+        transform: 'translateY(-50%)',
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 42 : 50,
-          fontWeight: 390,
+          fontSize: compact ? 45 : 56,
+          fontWeight: 420,
           color: '#111111',
-          letterSpacing: '-0.07em',
-          lineHeight: 0.95,
+          letterSpacing: '-0.075em',
+          lineHeight: 0.92,
           fontVariantNumeric: 'tabular-nums',
         }}>
           {displayScore.toFixed(1)}
         </div>
 
         <div style={{
-          fontSize: compact ? 11.8 : 12.4,
+          fontSize: compact ? 11.8 : 12.8,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 2,
+          marginTop: 4,
           letterSpacing: '-0.01em',
         }}>
           out of {max}

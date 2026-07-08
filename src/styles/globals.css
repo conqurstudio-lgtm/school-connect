@@ -6917,3 +6917,254 @@ button[title*="moment" i][style*="position: fixed"],
   color: #202124 !important;
   opacity: 0.92 !important;
 }
+
+
+/* school-connect-combined-clean-emotional-report-ui-v1
+   Final direction:
+   - Keep the useful first UI structure.
+   - Add the emotional score focus from the second UI.
+   - Important content dark, support content grey.
+   - Subjects remain visible and useful.
+*/
+
+/* Main score moment */
+.sc-combined-score-ring-v1 {
+  width: 244px !important;
+  height: 244px !important;
+  margin-top: 2px !important;
+  margin-bottom: 4px !important;
+}
+
+.sc-combined-score-ring-v1 svg {
+  width: 244px !important;
+  height: 244px !important;
+  overflow: visible !important;
+}
+
+.sc-combined-score-ring-v1 svg circle {
+  filter: none !important;
+}
+
+.sc-combined-score-ring-v1 svg circle:first-child {
+  stroke: rgba(17, 17, 17, 0.12) !important;
+}
+
+.sc-combined-score-ring-v1 svg circle:nth-child(2) {
+  stroke: #111111 !important;
+}
+
+.sc-combined-score-ring-v1 > div {
+  top: 55% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+.sc-combined-score-ring-v1 > div > div:first-child {
+  font-size: 56px !important;
+  font-weight: 420 !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.075em !important;
+  color: #111111 !important;
+}
+
+.sc-combined-score-ring-v1 > div > div:last-child {
+  font-size: 12.8px !important;
+  color: #8E8E93 !important;
+  margin-top: 4px !important;
+}
+
+/* One emotional badge for excellent reports only. */
+.sc-report-score-badge-v1 {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 34px !important;
+  line-height: 1 !important;
+  margin: -2px auto 8px !important;
+}
+
+/* Disable old ring layout overrides from previous patch passes. */
+.sc-open-gap-score-circle-v1,
+.sc-old-score-ring-preview-v1,
+.sc-thin-clean-score-ring-v1 {
+  width: 244px !important;
+  height: 244px !important;
+}
+
+/* Keep score label and comparison close and clear. */
+.sc-score-comment-up-v1 {
+  margin-top: 8px !important;
+}
+
+/* Teacher bubble: teacher name dark, message softer. */
+.sc-teacher-comment-overlap-card-v1 {
+  border-color: rgba(17, 17, 17, 0.22) !important;
+  background: rgba(255, 255, 255, 0.74) !important;
+  margin-bottom: 30px !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before {
+  border-color: rgba(17, 17, 17, 0.22) !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  color: #74777C !important;
+}
+
+.sc-teacher-comment-text-v1 strong {
+  color: #171717 !important;
+  font-weight: 760 !important;
+}
+
+/* Subjects: still visible, but calm. */
+.sc-report-subject-grid-v1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  background: rgba(17, 17, 17, 0.024) !important;
+  border: 1px solid rgba(17, 17, 17, 0.018) !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+  min-height: 98px !important;
+  padding: 17px 17px 15px !important;
+  position: relative !important;
+}
+
+.sc-subject-grid-row-v1 {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.sc-subject-grid-name-v1,
+.sc-clean-subject-name-v1,
+.sc-clean-subject-name-v2,
+.sc-report-subject-slide-name-v1 {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: calc(100% - 56px) !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  display: block !important;
+  color: #222222 !important;
+  font-size: 13.2px !important;
+  font-weight: 720 !important;
+  line-height: 1.14 !important;
+  letter-spacing: -0.035em !important;
+  overflow-wrap: anywhere !important;
+  hyphens: auto !important;
+}
+
+.sc-subject-grid-score-v1,
+.sc-clean-subject-score-v1,
+.sc-clean-subject-score-v2,
+.sc-report-subject-slide-score-v1 {
+  color: #111111 !important;
+  font-size: 27px !important;
+  font-weight: 430 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.045em !important;
+  margin-top: 22px !important;
+}
+
+/* Subject comparison: use one light grey, never red/green. */
+.sc-subject-card-delta-v1 {
+  flex: 0 0 48px !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  justify-content: flex-end !important;
+  text-align: right !important;
+  margin-top: 0 !important;
+  display: inline-flex !important;
+}
+
+.sc-subject-card-delta-v1,
+.sc-subject-card-delta-v1 span,
+.sc-subject-card-delta-v1 svg,
+.sc-subject-card-delta-v1 svg *,
+.sc-subject-card-delta-v1.is-up,
+.sc-subject-card-delta-v1.is-up span,
+.sc-subject-card-delta-v1.is-up svg *,
+.sc-subject-card-delta-v1.is-down,
+.sc-subject-card-delta-v1.is-down span,
+.sc-subject-card-delta-v1.is-down svg *,
+.sc-subject-card-delta-v1.is-same,
+.sc-subject-card-delta-v1.is-same span,
+.sc-subject-card-delta-v1.is-same svg * {
+  color: rgba(17, 17, 17, 0.34) !important;
+  stroke: rgba(17, 17, 17, 0.34) !important;
+}
+
+/* Hide abandoned mini chart experiments. */
+.sc-subject-report-trendline-v1,
+.sc-subject-score-progress-v1,
+.sc-subject-mini-trend-v1,
+.sc-subject-progress-track-v1,
+.sc-subject-progress-fill-v1,
+.sc-subject-progress-dot-v1 {
+  display: none !important;
+}
+
+/* Previous reports stay quiet so the current report is the focus. */
+.sc-parent-report-page details summary p,
+.sc-parent-report-page details summary span {
+  color: #8E8E93 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-combined-score-ring-v1,
+  .sc-combined-score-ring-v1 svg {
+    width: 226px !important;
+    height: 226px !important;
+  }
+
+  .sc-combined-score-ring-v1 > div > div:first-child {
+    font-size: 50px !important;
+  }
+
+  .sc-report-score-badge-v1 {
+    font-size: 30px !important;
+  }
+
+  .sc-report-subject-grid-v1 {
+    gap: 10px !important;
+  }
+
+  .sc-report-subject-grid-card-v1,
+  .sc-clean-subject-card-v1,
+  .sc-clean-subject-card-v2,
+  .sc-report-subject-slide-card-v1 {
+    min-height: 94px !important;
+    padding: 15px 15px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .sc-subject-grid-name-v1,
+  .sc-clean-subject-name-v1,
+  .sc-clean-subject-name-v2,
+  .sc-report-subject-slide-name-v1 {
+    max-width: calc(100% - 50px) !important;
+    font-size: 12.7px !important;
+  }
+
+  .sc-subject-card-delta-v1 {
+    flex-basis: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .sc-subject-grid-score-v1,
+  .sc-clean-subject-score-v1,
+  .sc-clean-subject-score-v2,
+  .sc-report-subject-slide-score-v1 {
+    font-size: 25px !important;
+    margin-top: 21px !important;
+  }
+}
