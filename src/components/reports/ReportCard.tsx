@@ -551,7 +551,7 @@ export function ReportCard({ report, childName }: Props) {
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div className="sc-score-comment-up-v1" style={{ marginTop: -10 }}>
+        <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
           <p style={{
             fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
             letterSpacing: '-0.02em', margin: 0,

@@ -6203,3 +6203,23 @@ button[title*="moment" i][style*="position: fixed"],
 .sc-score-comment-up-v1 {
   margin-top: -10px !important;
 }
+
+
+/* school-connect-score-details-normal-spacing-v1 */
+.sc-score-comment-up-v1 {
+  margin-top: 8px !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-score-comment-up-v1 {
+    margin-top: 7px !important;
+  }
+}
+
+
+/* school-connect-score-details-normal-spacing-final-override */
+.sc-score-comment-up-v1 {
+  margin-top: 8px !important;
+}
