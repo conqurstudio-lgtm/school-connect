@@ -161,16 +161,11 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 216 : 250
-  const stroke = compact ? 5.0 : 5.4
+  const size = compact ? 210 : 248
+  const stroke = compact ? 7 : 8
   const center = size / 2
-  const radius = (size - stroke - 14) / 2
+  const radius = (size - stroke - 12) / 2
   const circumference = 2 * Math.PI * radius
-
-  // Open gap at the bottom, like the reference image.
-  const arcRatio = 0.74
-  const arcLength = circumference * arcRatio
-  const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
 
   const [displayScore, setDisplayScore] = useState(0)
@@ -196,34 +191,23 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
-  const progressLength = arcLength * displayPct
-
-  // The visible arc starts at bottom-left and ends at bottom-right, leaving the gap below.
-  const rotation = 136
-
-  const knobAngle = rotation + 360 * arcRatio * displayPct
-  const knobX = center + radius * Math.cos((knobAngle * Math.PI) / 180)
-  const knobY = center + radius * Math.sin((knobAngle * Math.PI) / 180)
+  const progressLength = circumference * displayPct
 
   return (
-    <div className="sc-open-gap-score-circle-v1" style={{
+    <div className="sc-old-score-ring-preview-v1" style={{
       position: 'relative',
       width: size,
       height: size,
       margin: '0 auto',
     }}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
-<circle
+        <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.14)"
+          stroke="rgba(17,17,17,0.10)"
           strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={`${arcLength} ${gapLength}`}
-          strokeDashoffset={0}
-          transform={`rotate(${rotation} ${center} ${center})`}
         />
 
         <circle
@@ -236,16 +220,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
-          transform={`rotate(${rotation} ${center} ${center})`}
-        />
-
-        <circle
-          cx={knobX}
-          cy={knobY}
-          r={compact ? 10 : 11}
-          fill="#FFFFFF"
-          stroke="#111111"
-          strokeWidth={stroke}
+          transform={`rotate(-90 ${center} ${center})`}
         />
       </svg>
 
@@ -253,14 +228,15 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: compact ? 14 : 16,
+        top: '50%',
+        transform: 'translateY(-50%)',
         textAlign: 'center',
       }}>
         <div style={{
-          fontSize: compact ? 39 : 48,
+          fontSize: compact ? 42 : 54,
           fontWeight: 420,
           color: '#111111',
-          letterSpacing: '-0.065em',
+          letterSpacing: '-0.07em',
           lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
         }}>
@@ -268,10 +244,10 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         </div>
 
         <div style={{
-          fontSize: 12.2,
+          fontSize: compact ? 11.5 : 12.6,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 0,
+          marginTop: 1,
           letterSpacing: '-0.01em',
         }}>
           out of {max}

@@ -6600,3 +6600,19 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 43px !important;
   }
 }
+
+
+/* school-connect-preview-old-score-ring-v1 */
+/* Preview of the older closed score ring style. */
+.sc-old-score-ring-preview-v1 {
+  margin-top: 6px !important;
+  margin-bottom: 8px !important;
+}
+
+.sc-old-score-ring-preview-v1 svg circle {
+  filter: none !important;
+}
+
+.sc-score-comment-up-v1 {
+  margin-top: 10px !important;
+}
