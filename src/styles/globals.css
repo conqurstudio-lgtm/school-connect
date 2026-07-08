@@ -6781,3 +6781,139 @@ button[title*="moment" i][style*="position: fixed"],
     min-width: 44px !important;
   }
 }
+
+
+/* school-connect-report-visual-hierarchy-colors-v1
+   Purpose:
+   - Important content stays dark.
+   - Supporting content moves to soft grey.
+   - Subject cards feel calmer, but scores remain clear.
+   - Teacher bubble keeps focus without looking heavy.
+*/
+
+/* Main score ring: cleaner contrast. */
+.sc-thin-clean-score-ring-v1 svg circle:first-child,
+.sc-open-gap-score-circle-v1 svg circle:first-child,
+.sc-old-score-ring-preview-v1 svg circle:first-child {
+  stroke: rgba(17, 17, 17, 0.115) !important;
+}
+
+.sc-thin-clean-score-ring-v1 svg circle:nth-child(2),
+.sc-open-gap-score-circle-v1 svg circle:nth-child(2),
+.sc-old-score-ring-preview-v1 svg circle:nth-child(2) {
+  stroke: #151515 !important;
+}
+
+.sc-thin-clean-score-ring-v1 > div > div:first-child,
+.sc-open-gap-score-circle-v1 > div > div:first-child,
+.sc-old-score-ring-preview-v1 > div > div:first-child {
+  color: #111111 !important;
+}
+
+.sc-thin-clean-score-ring-v1 > div > div:last-child,
+.sc-open-gap-score-circle-v1 > div > div:last-child,
+.sc-old-score-ring-preview-v1 > div > div:last-child {
+  color: #8E8E93 !important;
+}
+
+/* Score label and comparison line hierarchy. */
+.sc-parent-report-card-view h3,
+.sc-parent-report-card-view [data-score-label] {
+  color: #171717 !important;
+}
+
+/* Softer non-critical report text. */
+.sc-parent-report-card-view p,
+.sc-parent-report-card-view span {
+  text-rendering: geometricPrecision;
+}
+
+/* Teacher comment: name important, message supporting. */
+.sc-teacher-comment-overlap-card-v1 {
+  border-color: rgba(17, 17, 17, 0.22) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before {
+  border-color: rgba(17, 17, 17, 0.22) !important;
+}
+
+.sc-teacher-comment-text-v1 {
+  color: #77797E !important;
+}
+
+.sc-teacher-comment-text-v1 strong {
+  color: #171717 !important;
+  font-weight: 760 !important;
+}
+
+/* Subject cards: softer surfaces, clear subject names, scores as key content. */
+.sc-report-subject-grid-card-v1,
+.sc-clean-subject-card-v1,
+.sc-clean-subject-card-v2,
+.sc-report-subject-slide-card-v1 {
+  background: rgba(17, 17, 17, 0.022) !important;
+  border: 1px solid rgba(17, 17, 17, 0.018) !important;
+  box-shadow: none !important;
+}
+
+.sc-subject-grid-name-v1,
+.sc-clean-subject-name-v1,
+.sc-clean-subject-name-v2,
+.sc-report-subject-slide-name-v1 {
+  color: #222222 !important;
+  font-weight: 720 !important;
+}
+
+.sc-subject-grid-score-v1,
+.sc-clean-subject-score-v1,
+.sc-clean-subject-score-v2,
+.sc-report-subject-slide-score-v1 {
+  color: #111111 !important;
+  font-weight: 430 !important;
+}
+
+/* Subject comparison indicators are supporting info, so keep them light grey. */
+.sc-subject-card-delta-v1,
+.sc-subject-card-delta-v1 span,
+.sc-subject-card-delta-v1 svg,
+.sc-subject-card-delta-v1 svg *,
+.sc-subject-card-delta-v1.is-up,
+.sc-subject-card-delta-v1.is-up span,
+.sc-subject-card-delta-v1.is-up svg *,
+.sc-subject-card-delta-v1.is-down,
+.sc-subject-card-delta-v1.is-down span,
+.sc-subject-card-delta-v1.is-down svg *,
+.sc-subject-card-delta-v1.is-same,
+.sc-subject-card-delta-v1.is-same span,
+.sc-subject-card-delta-v1.is-same svg * {
+  color: rgba(17, 17, 17, 0.34) !important;
+  stroke: rgba(17, 17, 17, 0.34) !important;
+}
+
+/* Previous reports: make the section quieter than the current report. */
+.sc-parent-report-page details,
+.sc-previous-report-open-body-v288 {
+  color: #5F6268 !important;
+}
+
+.sc-parent-report-page details summary {
+  color: #252525 !important;
+}
+
+.sc-parent-report-page details summary p,
+.sc-parent-report-page details summary span {
+  color: #8E8E93 !important;
+}
+
+/* Section heading should be visible but not compete with the main report. */
+.sc-parent-report-page section > p {
+  color: #9A9A9A !important;
+  font-weight: 620 !important;
+}
+
+/* Top action icons stay clear but not too bold. */
+.sc-parent-report-page header button {
+  color: #202124 !important;
+  opacity: 0.92 !important;
+}
