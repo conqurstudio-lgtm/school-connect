@@ -128,7 +128,6 @@ function getScoreEmoji(score: number): string {
   return '🌱'                    // needs work / growing
 }
 
-
 function getSubjectScoreTagStyle(score: number): any {
   if (score >= 4.5) return { background: '#EAF8EF', color: '#15803D', borderColor: 'rgba(21,128,61,0.16)' }
   if (score >= 4) return { background: '#EEF6FF', color: '#2563EB', borderColor: 'rgba(37,99,235,0.16)' }
@@ -151,7 +150,6 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
   }
   const up = value > 0
   const color = up ? T.up : T.down
-
 
 return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2,
@@ -201,6 +199,8 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
+
+  const teacherCommentCanExpand = String(report.comment || '').length > 145
 
   return (
     <div className="sc-combined-score-ring-v1" style={{
@@ -294,7 +294,6 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   )
 }
 
-
 function TeacherNameTag({ name }: { name?: string | null }) {
   if (!name) return null
 
@@ -337,8 +336,6 @@ function TeacherNameTag({ name }: { name?: string | null }) {
   )
 }
 
-
-
 function getSubjectDetailComment(score: number) {
   if (score >= 4.5) return 'Excellent progress'
   if (score >= 4) return 'Doing very well'
@@ -346,8 +343,6 @@ function getSubjectDetailComment(score: number) {
   if (score >= 2) return 'Needs gentle support'
   return 'Seeking extra help'
 }
-
-
 
 function getSubjectParentLabel(score: number): string {
   if (score >= 4.3) return 'Excellent'
@@ -431,7 +426,6 @@ function buildParentReportMemo(childName: string | undefined, subjects: [string,
   return `${firstName} is progressing steadily. The subject notes below show what to keep practising and encouraging.`
 }
 
-
 function getPreviousSubjectScore(previousScores: Record<string, number> | null | undefined, subject: string): number | null {
   if (!previousScores) return null
 
@@ -440,7 +434,6 @@ function getPreviousSubjectScore(previousScores: Record<string, number> | null |
 
   return Math.max(0, Math.min(5, raw))
 }
-
 
 function getReportScoreEmoji(score: number) {
   if (score >= 4.5) return '🏆'
@@ -482,13 +475,16 @@ function buildWeeklyPerformanceExplainer(
   return `${firstName} may need extra support . The scores below help highlight which subjects may need more attention and encouragement.`
 }
 
-
 export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
+
+  useEffect(() => {
+    setShowFullTeacherComment(false)
+  }, [report.comment])
 const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
@@ -589,6 +585,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
       {/* ── Teacher's note ─────────────────── */}
 
       {/* ── Teacher's note ─────────────────── */}
+
       {report.comment && (
         <section
           className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1"
