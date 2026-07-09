@@ -479,9 +479,9 @@ export function ReportCard({ report, childName }: Props) {
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
   const teacherCommentText = String(report.comment || '')
-  const teacherCommentNeedsMore = teacherCommentText.length > 125
+  const teacherCommentNeedsMore = teacherCommentText.length > 92
   const teacherCommentPreview = teacherCommentNeedsMore
-    ? `${teacherCommentText.slice(0, 122).trim().replace(/[.,;:!?\-]+$/, '')}...`
+    ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
     : teacherCommentText
 
 

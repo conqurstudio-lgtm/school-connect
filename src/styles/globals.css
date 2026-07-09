@@ -9544,3 +9544,45 @@ button[title*="moment" i][style*="position: fixed"],
     line-height: 1.36 !important;
   }
 }
+
+
+/* school-connect-teacher-two-lines-subject-color-v1
+   Small polish:
+   - teacher preview is shortened to about 2 lines
+   - inline "more" remains connected to the preview text
+   - subject cards use #f6f6f6
+*/
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1,
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+  font-size: 12.05px !important;
+  line-height: 1.38 !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-read-more-v1,
+.sc-teacher-comment-read-more-v1 {
+  display: inline !important;
+  position: static !important;
+  margin-left: 1px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  color: rgba(17, 17, 17, 0.74) !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: 650 !important;
+  text-transform: lowercase !important;
+  vertical-align: baseline !important;
+}
+
+.sc-parent-report-card-view .sc-report-subject-grid-card-v1,
+.sc-report-subject-grid-card-v1 {
+  background: #f6f6f6 !important;
+  border-color: #f6f6f6 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1,
+  .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+    font-size: 11.85px !important;
+    line-height: 1.36 !important;
+  }
+}
