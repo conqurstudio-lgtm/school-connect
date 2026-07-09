@@ -206,7 +206,9 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       width: size,
       height: size,
       margin: '0 auto',
-    }}>
+      '--score-tone': tone.text,
+      '--score-ring-tone': tone.ring,
+    } as React.CSSProperties}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
         <circle
           cx={center}
@@ -229,6 +231,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
+          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
@@ -267,7 +270,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         transform: 'translateY(-50%)',
         textAlign: 'center',
       }}>
-        <div style={{
+        <div className="sc-main-score-number-tone-v1" style={{
           fontSize: compact ? 45 : 56,
           fontWeight: 420,
           color: tone.text,
@@ -443,75 +446,22 @@ function getReportScoreEmoji(score: number) {
 
 function getScoreTone(score: number) {
   if (score <= 1.9) {
-    return {
-      ring: '#C44B3D',
-      text: '#B84538',
-      soft: 'rgba(196, 75, 61, 0.12)',
-    }
+    return { ring: '#C24132', text: '#B33427' }
   }
 
   if (score <= 2.9) {
-    return {
-      ring: '#D9822B',
-      text: '#B76518',
-      soft: 'rgba(217, 130, 43, 0.13)',
-    }
+    return { ring: '#D97706', text: '#B65F00' }
   }
 
   if (score <= 3.9) {
-    return {
-      ring: '#C2A83E',
-      text: '#8F7A22',
-      soft: 'rgba(194, 168, 62, 0.13)',
-    }
+    return { ring: '#B89412', text: '#8A6F0A' }
   }
 
   if (score <= 4.4) {
-    return {
-      ring: '#2B8C7E',
-      text: '#24796D',
-      soft: 'rgba(43, 140, 126, 0.12)',
-    }
+    return { ring: '#0F8B7F', text: '#087568' }
   }
 
-  return {
-    ring: '#145C43',
-    text: '#145C43',
-    soft: 'rgba(20, 92, 67, 0.12)',
-  }
-}
-
-
-function buildWeeklyPerformanceExplainer(
-  childName: string | undefined,
-  subjects: [string, number][]
-): string {
-  const firstName = String(childName || 'The learner').split(' ')[0] || 'The learner'
-  const rows = subjects
-    .map(([name, score]) => [String(name), Number(score)] as [string, number])
-    .filter(([, score]) => Number.isFinite(score))
-
-  if (!rows.length) {
-    return `These marks give a quick view of how ${firstName} performed across the subjects covered .`
-  }
-
-  const average = rows.reduce((sum, [, score]) => sum + score, 0) / rows.length
-  const strongest = rows.slice().sort((a, b) => b[1] - a[1])[0]?.[0]
-  const support = rows.slice().sort((a, b) => a[1] - b[1])[0]?.[0]
-
-  if (average >= 4.3) {
-    return `${firstName} had a strong week overall. The scores below show the subjects where they are doing especially well and where steady practice should continue.`
-  }
-
-  if (average >= 3.5) {
-    return `${firstName} is making good progress . Use the subject scores below to see strengths and the areas that need light support at home.`
-  }
-
-  if (average >= 2.8) {
-    return `${firstName} is growing steadily . The scores below help show where confidence is building and where extra practice may help.`
-  }
-
-  return `${firstName} may need extra support . The scores below help highlight which subjects may need more attention and encouragement.`
+  return { ring: '#0F6B45', text: '#0F6B45' }
 }
 
 export function ReportCard({ report, childName }: Props) {
@@ -715,9 +665,15 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
                     )}
                   </div>
 
-                  <div className="sc-subject-grid-score-v1">
-                    {safeScore.toFixed(1)}
-                  </div>
+                  <div
+                      className="sc-subject-grid-score-v1"
+                      style={{
+                        color: getScoreTone(safeScore).text,
+                        '--subject-score-tone': getScoreTone(safeScore).text,
+                      } as React.CSSProperties}
+                    >
+                      {safeScore.toFixed(1)}
+                    </div>
                 </article>
               )
             })}

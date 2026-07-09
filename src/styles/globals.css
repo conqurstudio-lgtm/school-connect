@@ -9615,3 +9615,30 @@ button[title*="moment" i][style*="position: fixed"],
   background: #fafafa !important;
   border-color: #fafafa !important;
 }
+
+
+/* school-connect-score-colors-final-current-file-v1
+   Final visible score colours for the current report file.
+   Uses CSS variables with !important because older report CSS overrides score colours.
+*/
+.sc-parent-report-card-view .sc-combined-score-ring-v1 .sc-score-ring-progress-tone-v1,
+.sc-combined-score-ring-v1 .sc-score-ring-progress-tone-v1 {
+  stroke: var(--score-ring-tone) !important;
+}
+
+.sc-parent-report-card-view .sc-combined-score-ring-v1 .sc-main-score-number-tone-v1,
+.sc-combined-score-ring-v1 .sc-main-score-number-tone-v1 {
+  color: var(--score-tone) !important;
+}
+
+.sc-parent-report-card-view .sc-subject-grid-score-v1,
+.sc-subject-grid-score-v1 {
+  color: var(--subject-score-tone, #111111) !important;
+  transition: color 260ms ease !important;
+}
+
+.sc-parent-report-card-view .sc-report-subject-grid-card-v1,
+.sc-report-subject-grid-card-v1 {
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+}
