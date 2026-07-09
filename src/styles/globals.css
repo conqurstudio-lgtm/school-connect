@@ -10220,3 +10220,136 @@ button[title*="moment" i][style*="position: fixed"],
     margin-bottom: 28px !important;
   }
 }
+
+/* school-connect-subject-modal-exact-structure-v1 */
+.sc-parent-report-card-view .sc-subject-card-growth-v1,
+.sc-subject-card-growth-v1 {
+  cursor: pointer !important;
+}
+
+.sc-parent-report-card-view .sc-subject-card-growth-v1:focus-visible,
+.sc-subject-card-growth-v1:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(15, 107, 69, 0.12) !important;
+}
+
+.sc-subject-detail-modal-shell-v2 {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 22px !important;
+  background: rgba(17, 17, 17, 0.22) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.sc-subject-detail-modal-card-v2 {
+  position: relative !important;
+  width: min(360px, 100%) !important;
+  border-radius: 28px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(17, 17, 17, 0.06) !important;
+  box-shadow: 0 24px 70px rgba(17, 17, 17, 0.18) !important;
+  padding: 22px !important;
+}
+
+.sc-subject-detail-modal-close-v2 {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+  background: #f6f6f6 !important;
+  color: #202124 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  font-weight: 300 !important;
+}
+
+.sc-subject-detail-modal-head-v2 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding-right: 36px !important;
+}
+
+.sc-subject-detail-modal-head-v2 .sc-subject-mini-ring-v1 {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 46px !important;
+}
+
+.sc-subject-detail-modal-head-v2 .sc-subject-mini-ring-v1 svg {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+.sc-subject-detail-modal-head-v2 .sc-subject-mini-ring-v1 span {
+  font-size: 14.8px !important;
+}
+
+.sc-subject-detail-modal-title-v2 {
+  margin: 0 !important;
+  color: #202124 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.012em !important;
+}
+
+.sc-subject-detail-modal-status-v2 {
+  margin: 5px 0 0 !important;
+  color: #666A70 !important;
+  font-size: 12.05px !important;
+  font-weight: 400 !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.006em !important;
+}
+
+.sc-subject-detail-modal-body-v2 {
+  margin-top: 20px !important;
+}
+
+.sc-subject-detail-modal-body-v2 p {
+  margin: 0 !important;
+  color: #51555B !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.006em !important;
+}
+
+.sc-subject-detail-modal-activity-v2 {
+  margin-top: 14px !important;
+  padding: 13px 14px !important;
+  border-radius: 18px !important;
+  background: #fafafa !important;
+  color: #666A70 !important;
+  font-size: 12.3px !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  letter-spacing: -0.006em !important;
+}
+
+@media (max-width: 380px) {
+  .sc-subject-detail-modal-shell-v2 {
+    padding: 16px !important;
+  }
+
+  .sc-subject-detail-modal-card-v2 {
+    border-radius: 24px !important;
+    padding: 20px !important;
+  }
+}
