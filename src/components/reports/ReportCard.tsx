@@ -199,9 +199,6 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
-
-  const teacherCommentCanExpand = String(report.comment || '').length > 145
-
   return (
     <div className="sc-combined-score-ring-v1" style={{
       position: 'relative',
@@ -613,7 +610,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               </span>
             </p>
 
-            {teacherCommentCanExpand && (
+            {String(report.comment || '').length > 145 && (
               <button
                 type="button"
                 className="sc-teacher-comment-read-more-v1"
