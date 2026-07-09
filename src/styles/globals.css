@@ -10196,3 +10196,27 @@ button[title*="moment" i][style*="position: fixed"],
     margin-top: 4px !important;
   }
 }
+
+/* school-connect-move-teacher-comment-up-v1
+   Small spacing polish:
+   - teacher comment moves slightly closer to the score section
+   - subject cards start a little lower, creating cleaner breathing room below comment
+*/
+.sc-parent-report-card-view .sc-teacher-comment-overlap-card-v1,
+.sc-parent-report-card-view .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1 {
+  margin-top: 16px !important;
+  margin-bottom: 30px !important;
+}
+
+.sc-parent-report-card-view .sc-report-subject-panel,
+.sc-parent-report-card-view .sc-report-subject-panel.sc-clean-subjects-v2 {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-teacher-comment-overlap-card-v1,
+  .sc-parent-report-card-view .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1 {
+    margin-top: 14px !important;
+    margin-bottom: 28px !important;
+  }
+}
