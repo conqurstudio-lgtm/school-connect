@@ -9008,3 +9008,188 @@ button[title*="moment" i][style*="position: fixed"],
     margin-top: 22px !important;
   }
 }
+
+
+/* school-connect-teacher-comment-read-more-align-v1
+   Teacher comment:
+   - image aligns with content/card edge rhythm
+   - text is clamped to 3 lines
+   - Read more appears only when measured overflow exists
+*/
+.sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+.sc-teacher-comment-overlap-card-v1 {
+  width: 100% !important;
+  max-width: 370px !important;
+  margin: 20px auto 24px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
+  align-items: start !important;
+  column-gap: 12px !important;
+  text-align: left !important;
+  position: relative !important;
+}
+
+.sc-teacher-comment-overlap-card-v1::before,
+.sc-teacher-comment-overlap-card-v1::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Align teacher image to the top content edge instead of floating in the middle. */
+.sc-teacher-comment-photo-v1 {
+  grid-column: 1 !important;
+  position: relative !important;
+  left: auto !important;
+  top: 6px !important;
+  transform: none !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 9px 20px rgba(17, 17, 17, 0.10) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: start !important;
+  z-index: 3 !important;
+}
+
+.sc-teacher-comment-photo-v1 img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.sc-teacher-comment-bubble-v2 {
+  grid-column: 2 !important;
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border: 1px dashed rgba(17, 17, 17, 0.22) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: none !important;
+}
+
+.sc-teacher-comment-bubble-v2::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -7px !important;
+  top: 20px !important;
+  width: 12px !important;
+  height: 12px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-left: 1px dashed rgba(17, 17, 17, 0.22) !important;
+  border-bottom: 1px dashed rgba(17, 17, 17, 0.22) !important;
+  transform: rotate(45deg) !important;
+  border-radius: 2px !important;
+}
+
+/* Move border/background from old p to the new bubble wrapper. */
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #666A70 !important;
+  font-size: 12.05px !important;
+  font-weight: 400 !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.006em !important;
+  text-align: left !important;
+  box-shadow: none !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1::before {
+  display: none !important;
+  content: none !important;
+}
+
+.sc-teacher-comment-message-v1 {
+  color: #666A70 !important;
+  font-size: inherit !important;
+  font-weight: 400 !important;
+  line-height: inherit !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+/* Clamp message to 3 lines until Read more is clicked. */
+.sc-teacher-comment-message-v1.is-collapsed {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.sc-teacher-comment-message-v1.is-expanded {
+  display: inline !important;
+  overflow: visible !important;
+}
+
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 strong,
+.sc-teacher-comment-overlap-card-v1 .sc-teacher-comment-text-v1 strong {
+  color: #202124 !important;
+  font-weight: 600 !important;
+}
+
+.sc-teacher-comment-read-more-v1 {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 6px 0 0 !important;
+  margin: 0 !important;
+  color: rgba(17, 17, 17, 0.58) !important;
+  font-size: 11.4px !important;
+  font-weight: 560 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em !important;
+  cursor: pointer !important;
+}
+
+.sc-teacher-comment-read-more-v1:hover {
+  color: rgba(17, 17, 17, 0.86) !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+  .sc-teacher-comment-overlap-card-v1 {
+    grid-template-columns: 37px minmax(0, 1fr) !important;
+    column-gap: 10px !important;
+    margin-top: 18px !important;
+    margin-bottom: 22px !important;
+  }
+
+  .sc-teacher-comment-photo-v1 {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    top: 6px !important;
+  }
+
+  .sc-teacher-comment-bubble-v2 {
+    padding: 11px 13px !important;
+    border-radius: 19px !important;
+  }
+
+  .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+    font-size: 11.85px !important;
+    line-height: 1.36 !important;
+  }
+}

@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { TrendingUp, TrendingDown, Minus, Info, X } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
@@ -151,6 +151,35 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
   }
   const up = value > 0
   const color = up ? T.up : T.down
+
+  useEffect(() => {
+    setShowFullTeacherComment(false)
+  }, [report.id, report.comment])
+
+  useEffect(() => {
+    const measure = () => {
+      const el = teacherCommentMessageRef.current
+      if (!el) {
+        setTeacherCommentCanExpand(false)
+        return
+      }
+
+      const shouldExpand = el.scrollHeight > el.clientHeight + 2
+      setTeacherCommentCanExpand(shouldExpand)
+    }
+
+    measure()
+
+    if (typeof window !== 'undefined') {
+      const timer = window.setTimeout(measure, 80)
+      window.addEventListener('resize', measure)
+      return () => {
+        window.clearTimeout(timer)
+        window.removeEventListener('resize', measure)
+      }
+    }
+  }, [report.comment, showFullTeacherComment])
+
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2,
                    fontSize: size, color, fontWeight: 600 }}>
@@ -486,6 +515,10 @@ export function ReportCard({ report, childName }: Props) {
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
   const [showAllSubjects, setShowAllSubjects] = useState(false)
+  const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
+  const [teacherCommentCanExpand, setTeacherCommentCanExpand] = useState(false)
+  const teacherCommentMessageRef = useRef<HTMLSpanElement | null>(null)
+
 
   const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
@@ -600,14 +633,31 @@ export function ReportCard({ report, childName }: Props) {
             )}
           </div>
 
-          <p className="sc-teacher-comment-text-v1">
-            {teacherName ? (
-              <>
-                <strong>{teacherName}:</strong>{' '}
-              </>
-            ) : null}
-            <span className="sc-teacher-comment-message-v1">{report.comment}</span>
-          </p>
+          <div className="sc-teacher-comment-bubble-v2">
+            <p className="sc-teacher-comment-text-v1">
+              {teacherName ? (
+                <>
+                  <strong>{teacherName}:</strong>{' '}
+                </>
+              ) : null}
+              <span
+                ref={teacherCommentMessageRef}
+                className={`sc-teacher-comment-message-v1 ${showFullTeacherComment ? 'is-expanded' : 'is-collapsed'}`}
+              >
+                {report.comment}
+              </span>
+            </p>
+
+            {teacherCommentCanExpand && (
+              <button
+                type="button"
+                className="sc-teacher-comment-read-more-v1"
+                onClick={() => setShowFullTeacherComment(value => !value)}
+              >
+                {showFullTeacherComment ? 'Show less' : 'Read more'}
+              </button>
+            )}
+          </div>
         </section>
       )}
 
