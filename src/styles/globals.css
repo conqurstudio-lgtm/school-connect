@@ -9224,3 +9224,102 @@ button[title*="moment" i][style*="position: fixed"],
   letter-spacing: -0.01em !important;
   cursor: pointer !important;
 }
+
+/* school-connect-align-teacher-comment-with-subjects-v1
+   Align the teacher comment row to the exact same outer edges as the subject cards.
+   The avatar now sits on the left content edge, and the bubble fills the rest.
+*/
+.sc-parent-report-card-view .sc-teacher-comment-overlap-card-v1,
+.sc-parent-report-card-view .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1 {
+  width: 100% !important;
+  max-width: 370px !important;
+  margin: 20px auto 24px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  column-gap: 12px !important;
+  align-items: start !important;
+  justify-content: stretch !important;
+  justify-items: stretch !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-photo-v1 {
+  grid-column: 1 !important;
+  justify-self: start !important;
+  align-self: start !important;
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  top: 8px !important;
+  transform: none !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  margin: 0 !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2 {
+  grid-column: 2 !important;
+  justify-self: stretch !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border-radius: 20px !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2::before {
+  top: 22px !important;
+}
+
+/* Keep the subject panel using the same width reference. */
+.sc-parent-report-card-view .sc-report-subject-panel,
+.sc-parent-report-card-view .sc-report-subject-panel.sc-clean-subjects-v2 {
+  width: 100% !important;
+  max-width: 370px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* The older p-style bubble must not add another width or border inside the bubble wrapper. */
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-teacher-comment-overlap-card-v1,
+  .sc-parent-report-card-view .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1,
+  .sc-parent-report-card-view .sc-report-subject-panel,
+  .sc-parent-report-card-view .sc-report-subject-panel.sc-clean-subjects-v2 {
+    max-width: calc(100vw - 40px) !important;
+  }
+
+  .sc-parent-report-card-view .sc-teacher-comment-overlap-card-v1,
+  .sc-parent-report-card-view .sc-parent-report-teacher-note-avatar-line-v437.sc-teacher-comment-overlap-card-v1 {
+    grid-template-columns: 38px minmax(0, 1fr) !important;
+    column-gap: 10px !important;
+  }
+
+  .sc-parent-report-card-view .sc-teacher-comment-photo-v1 {
+    width: 37px !important;
+    height: 37px !important;
+    min-width: 37px !important;
+    top: 7px !important;
+  }
+}
