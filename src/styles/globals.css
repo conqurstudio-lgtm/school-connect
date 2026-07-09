@@ -9323,3 +9323,29 @@ button[title*="moment" i][style*="position: fixed"],
     top: 7px !important;
   }
 }
+
+
+/* school-connect-teacher-name-comment-together-v1
+   Keep teacher name and comment together as: Name: comment.
+*/
+.sc-parent-report-card-view .sc-teacher-comment-message-v1 strong,
+.sc-teacher-comment-message-v1 strong {
+  display: inline !important;
+  color: #202124 !important;
+  font-weight: 600 !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-expanded,
+.sc-teacher-comment-message-v1.is-expanded {
+  display: inline !important;
+  overflow: visible !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-collapsed,
+.sc-teacher-comment-message-v1.is-collapsed {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}

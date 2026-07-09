@@ -598,14 +598,14 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
           <div className="sc-teacher-comment-bubble-v2">
             <p className="sc-teacher-comment-text-v1">
-              {teacherName ? (
-                <>
-                  <strong>{teacherName}:</strong>{' '}
-                </>
-              ) : null}
               <span
                 className={`sc-teacher-comment-message-v1 ${showFullTeacherComment ? 'is-expanded' : 'is-collapsed'}`}
               >
+                {teacherName ? (
+                  <>
+                    <strong>{teacherName}:</strong>{' '}
+                  </>
+                ) : null}
                 {report.comment}
               </span>
             </p>
