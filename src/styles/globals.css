@@ -9460,3 +9460,87 @@ button[title*="moment" i][style*="position: fixed"],
     font-size: 11.25px !important;
   }
 }
+
+
+/* school-connect-teacher-inline-more-current-file-v1
+   Uses real preview text so it reads: Teacher Name: comment ending...more.
+   No CSS clamp, no separate button below, and no "less".
+*/
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2,
+.sc-teacher-comment-bubble-v2 {
+  position: relative !important;
+  overflow: visible !important;
+  padding: 12px 14px !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1,
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #666A70 !important;
+  font-size: 12.05px !important;
+  line-height: 1.38 !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.006em !important;
+  text-align: left !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-message-v1,
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-collapsed,
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-expanded,
+.sc-teacher-comment-message-v1,
+.sc-teacher-comment-message-v1.is-collapsed,
+.sc-teacher-comment-message-v1.is-expanded {
+  display: inline !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-right: 0 !important;
+  color: #666A70 !important;
+  font-weight: 400 !important;
+  line-height: inherit !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-message-v1 strong,
+.sc-teacher-comment-message-v1 strong {
+  display: inline !important;
+  color: #202124 !important;
+  font-weight: 600 !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-read-more-v1,
+.sc-teacher-comment-read-more-v1 {
+  position: static !important;
+  display: inline !important;
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 0 0 1px !important;
+  color: rgba(17, 17, 17, 0.74) !important;
+  font-size: inherit !important;
+  font-weight: 650 !important;
+  line-height: inherit !important;
+  letter-spacing: -0.01em !important;
+  text-transform: lowercase !important;
+  cursor: pointer !important;
+  vertical-align: baseline !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-read-more-v1::before,
+.sc-teacher-comment-read-more-v1::before {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1,
+  .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+    font-size: 11.85px !important;
+    line-height: 1.36 !important;
+  }
+}

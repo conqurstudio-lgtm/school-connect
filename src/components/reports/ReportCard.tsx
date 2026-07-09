@@ -478,6 +478,12 @@ export function ReportCard({ report, childName }: Props) {
   const subjects = Object.entries(scoreSource)
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
+  const teacherCommentText = String(report.comment || '')
+  const teacherCommentNeedsMore = teacherCommentText.length > 125
+  const teacherCommentPreview = teacherCommentNeedsMore
+    ? `${teacherCommentText.slice(0, 122).trim().replace(/[.,;:!?\-]+$/, '')}...`
+    : teacherCommentText
+
 
   useEffect(() => {
     setShowFullTeacherComment(false)
@@ -598,27 +604,24 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
           <div className="sc-teacher-comment-bubble-v2">
             <p className="sc-teacher-comment-text-v1">
-              <span
-                className={`sc-teacher-comment-message-v1 ${showFullTeacherComment ? 'is-expanded' : 'is-collapsed'}`}
-              >
+              <span className="sc-teacher-comment-message-v1">
                 {teacherName ? (
                   <>
                     <strong>{teacherName}:</strong>{' '}
                   </>
                 ) : null}
-                {report.comment}
+                {showFullTeacherComment ? teacherCommentText : teacherCommentPreview}
+                {!showFullTeacherComment && teacherCommentNeedsMore && (
+                  <button
+                    type="button"
+                    className="sc-teacher-comment-read-more-v1"
+                    onClick={() => setShowFullTeacherComment(true)}
+                  >
+                    more
+                  </button>
+                )}
               </span>
             </p>
-
-            {!showFullTeacherComment && String(report.comment || '').length > 95 && (
-              <button
-                type="button"
-                className="sc-teacher-comment-read-more-v1"
-                onClick={() => setShowFullTeacherComment(value => !value)}
-              >
-                more
-              </button>
-            )}
           </div>
         </section>
       )}
