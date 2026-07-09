@@ -610,7 +610,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               </span>
             </p>
 
-            {String(report.comment || '').length > 145 && (
+            {String(report.comment || '').length > 95 && (
               <button
                 type="button"
                 className="sc-teacher-comment-read-more-v1"

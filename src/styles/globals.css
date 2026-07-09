@@ -9349,3 +9349,114 @@ button[title*="moment" i][style*="position: fixed"],
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
 }
+
+
+/* school-connect-teacher-read-more-inline-third-line-v1
+   Read more appears visually at the end of the third line.
+   The teacher name stays connected with the comment as: Name: comment.
+*/
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2,
+.sc-teacher-comment-bubble-v2 {
+  position: relative !important;
+  padding: 12px 14px !important;
+}
+
+/* The p should only hold the text flow. */
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1,
+.sc-teacher-comment-bubble-v2 .sc-teacher-comment-text-v1 {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 12.05px !important;
+  line-height: 1.38 !important;
+  font-weight: 400 !important;
+}
+
+/* Clamp to exactly 3 lines. Leave space on the last line for the read-more chip. */
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-collapsed,
+.sc-teacher-comment-message-v1.is-collapsed {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  padding-right: 68px !important;
+  color: #666A70 !important;
+  font-weight: 400 !important;
+}
+
+/* Expanded state returns to normal flowing copy. */
+.sc-parent-report-card-view .sc-teacher-comment-message-v1.is-expanded,
+.sc-teacher-comment-message-v1.is-expanded {
+  display: inline !important;
+  overflow: visible !important;
+  padding-right: 0 !important;
+  color: #666A70 !important;
+  font-weight: 400 !important;
+}
+
+.sc-parent-report-card-view .sc-teacher-comment-message-v1 strong,
+.sc-teacher-comment-message-v1 strong {
+  display: inline !important;
+  color: #202124 !important;
+  font-weight: 600 !important;
+}
+
+/* Place the button at the visual end of the third line, not below the bubble. */
+.sc-parent-report-card-view .sc-teacher-comment-read-more-v1,
+.sc-teacher-comment-read-more-v1 {
+  position: absolute !important;
+  right: 14px !important;
+  bottom: 12px !important;
+  z-index: 4 !important;
+  appearance: none !important;
+  border: 0 !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  padding: 0 0 0 6px !important;
+  margin: 0 !important;
+  color: rgba(17, 17, 17, 0.72) !important;
+  font-size: 11.55px !important;
+  font-weight: 650 !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.01em !important;
+  cursor: pointer !important;
+}
+
+/* When expanded, keep Show less as a small action at the bottom. */
+.sc-teacher-comment-message-v1.is-expanded + .sc-teacher-comment-read-more-v1,
+.sc-teacher-comment-bubble-v2:has(.sc-teacher-comment-message-v1.is-expanded) .sc-teacher-comment-read-more-v1 {
+  position: static !important;
+  display: inline-flex !important;
+  margin-top: 7px !important;
+  padding-left: 0 !important;
+  background: transparent !important;
+}
+
+/* Add a soft white fade before Read more to make the cut feel intentional. */
+.sc-parent-report-card-view .sc-teacher-comment-bubble-v2:has(.sc-teacher-comment-message-v1.is-collapsed) .sc-teacher-comment-read-more-v1::before,
+.sc-teacher-comment-bubble-v2:has(.sc-teacher-comment-message-v1.is-collapsed) .sc-teacher-comment-read-more-v1::before {
+  content: "" !important;
+  position: absolute !important;
+  left: -22px !important;
+  top: 0 !important;
+  width: 22px !important;
+  height: 100% !important;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.92)) !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-teacher-comment-message-v1.is-collapsed,
+  .sc-teacher-comment-message-v1.is-collapsed {
+    padding-right: 64px !important;
+  }
+
+  .sc-parent-report-card-view .sc-teacher-comment-read-more-v1,
+  .sc-teacher-comment-read-more-v1 {
+    right: 13px !important;
+    bottom: 11px !important;
+    font-size: 11.25px !important;
+  }
+}
