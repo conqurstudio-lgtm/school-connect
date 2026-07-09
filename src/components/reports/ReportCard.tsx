@@ -173,6 +173,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
+  const tone = getScoreTone(Number(score))
 
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
@@ -225,7 +226,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke="#111111"
+          stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
@@ -269,7 +270,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         <div style={{
           fontSize: compact ? 45 : 56,
           fontWeight: 420,
-          color: '#111111',
+          color: tone.text,
           letterSpacing: '-0.075em',
           lineHeight: 0.92,
           fontVariantNumeric: 'tabular-nums',
@@ -439,6 +440,47 @@ function getReportScoreEmoji(score: number) {
   if (score >= 1.5) return '🌱'
   return '💛'
 }
+
+function getScoreTone(score: number) {
+  if (score <= 1.9) {
+    return {
+      ring: '#C44B3D',
+      text: '#B84538',
+      soft: 'rgba(196, 75, 61, 0.12)',
+    }
+  }
+
+  if (score <= 2.9) {
+    return {
+      ring: '#D9822B',
+      text: '#B76518',
+      soft: 'rgba(217, 130, 43, 0.13)',
+    }
+  }
+
+  if (score <= 3.9) {
+    return {
+      ring: '#C2A83E',
+      text: '#8F7A22',
+      soft: 'rgba(194, 168, 62, 0.13)',
+    }
+  }
+
+  if (score <= 4.4) {
+    return {
+      ring: '#2B8C7E',
+      text: '#24796D',
+      soft: 'rgba(43, 140, 126, 0.12)',
+    }
+  }
+
+  return {
+    ring: '#145C43',
+    text: '#145C43',
+    soft: 'rgba(20, 92, 67, 0.12)',
+  }
+}
+
 
 function buildWeeklyPerformanceExplainer(
   childName: string | undefined,
