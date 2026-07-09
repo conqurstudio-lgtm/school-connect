@@ -9586,3 +9586,32 @@ button[title*="moment" i][style*="position: fixed"],
     line-height: 1.36 !important;
   }
 }
+
+
+/* school-connect-color-coded-scores-v1
+   Subtle score-based colour accents only.
+   Layout, spacing, subject-card shape, teacher comment, and report structure remain unchanged.
+*/
+.sc-parent-report-card-view .sc-combined-score-ring-v1 svg circle,
+.sc-combined-score-ring-v1 svg circle {
+  transition: stroke 260ms ease !important;
+}
+
+.sc-parent-report-card-view .sc-subject-grid-score-v1,
+.sc-subject-grid-score-v1 {
+  transition: color 260ms ease !important;
+}
+
+/* Keep subject-card background exactly as requested. */
+.sc-parent-report-card-view .sc-report-subject-grid-card-v1,
+.sc-report-subject-grid-card-v1 {
+  background: #f6f6f6 !important;
+  border-color: #f6f6f6 !important;
+}
+
+/* school-connect-subject-card-fafafa-v1 */
+.sc-parent-report-card-view .sc-report-subject-grid-card-v1,
+.sc-report-subject-grid-card-v1 {
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+}
