@@ -10047,3 +10047,107 @@ button[title*="moment" i][style*="position: fixed"],
     margin-top: 5px !important;
   }
 }
+
+/* school-connect-subject-cards-taller-smaller-ring-v1
+   Fine-tune the approved subject card layout:
+   - slightly taller cards
+   - smaller score ring
+   - larger gap between top score ring and lower subject text
+*/
+.sc-parent-report-card-view .sc-report-subject-grid-card-v1.sc-subject-card-growth-v1,
+.sc-report-subject-grid-card-v1.sc-subject-card-growth-v1 {
+  min-height: 112px !important;
+  padding: 15px 15px 15px !important;
+  border-radius: 18px !important;
+  background: #fafafa !important;
+  border-color: #fafafa !important;
+}
+
+/* Smaller ring, still top-right. */
+.sc-parent-report-card-view .sc-subject-mini-ring-v1,
+.sc-subject-mini-ring-v1 {
+  top: 14px !important;
+  right: 16px !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.sc-parent-report-card-view .sc-subject-mini-ring-v1 svg,
+.sc-subject-mini-ring-v1 svg {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.sc-parent-report-card-view .sc-subject-mini-ring-v1 span,
+.sc-subject-mini-ring-v1 span {
+  font-size: 12.6px !important;
+  font-weight: 430 !important;
+  letter-spacing: -0.045em !important;
+}
+
+/* Push the subject copy lower to create the same spacious feel as the sample. */
+.sc-parent-report-card-view .sc-subject-card-copy-v1,
+.sc-subject-card-copy-v1 {
+  left: 15px !important;
+  right: 15px !important;
+  bottom: 16px !important;
+}
+
+.sc-parent-report-card-view .sc-subject-card-growth-v1 .sc-subject-grid-name-v1,
+.sc-subject-card-growth-v1 .sc-subject-grid-name-v1 {
+  font-size: 12.9px !important;
+  line-height: 1.12 !important;
+}
+
+.sc-parent-report-card-view .sc-subject-growth-word-v1,
+.sc-subject-growth-word-v1 {
+  margin-top: 6px !important;
+  font-size: 11.9px !important;
+  line-height: 1.14 !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-report-subject-grid-card-v1.sc-subject-card-growth-v1,
+  .sc-report-subject-grid-card-v1.sc-subject-card-growth-v1 {
+    min-height: 104px !important;
+    padding: 14px 14px 14px !important;
+    border-radius: 17px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-mini-ring-v1,
+  .sc-subject-mini-ring-v1 {
+    top: 13px !important;
+    right: 14px !important;
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-mini-ring-v1 svg,
+  .sc-subject-mini-ring-v1 svg {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-mini-ring-v1 span,
+  .sc-subject-mini-ring-v1 span {
+    font-size: 12px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-card-copy-v1,
+  .sc-subject-card-copy-v1 {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-card-growth-v1 .sc-subject-grid-name-v1,
+  .sc-subject-card-growth-v1 .sc-subject-grid-name-v1 {
+    font-size: 12.35px !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-growth-word-v1,
+  .sc-subject-growth-word-v1 {
+    font-size: 11.45px !important;
+    margin-top: 5px !important;
+  }
+}
