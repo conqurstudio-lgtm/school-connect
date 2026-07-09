@@ -160,6 +160,65 @@ return (
   )
 }
 
+function getStableIndex(seed: string, count: number) {
+  let total = 0
+  for (let i = 0; i < seed.length; i += 1) {
+    total = (total + seed.charCodeAt(i) * (i + 1)) % 100000
+  }
+  return total % count
+}
+
+function getSubjectGrowthMessage(subject: string, score: number, change: number | null) {
+  const improved = [
+    `${subject} is showing encouraging growth this week. We are seeing better confidence and positive movement in class.`,
+    `There has been lovely progress in ${subject}. We will keep building on this momentum step by step.`,
+    `${subject} is moving in a good direction. The effort is showing, and we will continue supporting steady growth.`,
+  ]
+
+  const strong = [
+    `${subject} is looking strong. This is a lovely area of confidence, and we will keep encouraging the same positive habits.`,
+    `There is strong progress in ${subject}. The consistency shown here is encouraging and worth celebrating.`,
+    `${subject} is going well. We are seeing confidence, focus, and good participation in this area.`,
+  ]
+
+  const steady = [
+    `${subject} is steady this week. We are supporting consistency and helping this area continue to grow calmly.`,
+    `${subject} is developing at a steady pace. We will keep encouraging confidence and participation in class.`,
+    `There is steady movement in ${subject}. This is part of the learning journey, and we will keep supporting it.`,
+  ]
+
+  const support = [
+    `${subject} needs a little more support at the moment, but there is no need for worry. We are working on it gently in class.`,
+    `${subject} was a bit more challenging this week. We will keep supporting confidence and progress step by step.`,
+    `We are giving ${subject} extra encouragement in class. Growth can take time, and we will keep building it calmly.`,
+  ]
+
+  let bank = steady
+  if (change !== null && change >= 0.2) bank = improved
+  else if (change !== null && change <= -0.2) bank = support
+  else if (score >= 4) bank = strong
+  else if (score < 2.5) bank = support
+
+  return bank[getStableIndex(`${subject}-${score}-${change ?? 'none'}-message`, bank.length)]
+}
+
+function getSubjectOptionalActivity(subject: string, score: number) {
+  const gentle = [
+    `Optional at home: notice one small moment where confidence shows, and celebrate it warmly.`,
+    `Optional at home: ask one simple question about what felt good in class this week.`,
+    `Optional at home: let the child explain one small thing they enjoyed learning or doing.`,
+  ]
+
+  const support = [
+    `Optional at home: keep it light — a short conversation about the day is enough.`,
+    `Optional at home: encourage one small try, without pressure to get it perfect.`,
+    `Optional at home: praise effort first, even when the answer or task is not complete yet.`,
+  ]
+
+  const bank = score < 3 ? support : gentle
+  return bank[getStableIndex(`${subject}-${score}-activity`, bank.length)]
+}
+
 function SubjectMiniRing({ score }: { score: number }) {
   const size = 54
   const stroke = 2.35
@@ -528,6 +587,7 @@ export function ReportCard({ report, childName }: Props) {
   const subjects = Object.entries(scoreSource)
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
+  const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<null | { name: string; score: number; change: number | null }>(null)
   const teacherCommentText = String(report.comment || '')
   const teacherCommentNeedsMore = teacherCommentText.length > 92
   const teacherCommentPreview = teacherCommentNeedsMore
@@ -702,6 +762,15 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
                                 <article
                   key={String(name)}
                   className="sc-report-subject-grid-card-v1 sc-subject-card-growth-v1"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
+                    }
+                  }}
                 >
                   <SubjectMiniRing score={safeScore} />
 
@@ -728,6 +797,61 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
             </button>
           )}
         </section>
+
+      {selectedSubjectDetail && (
+        <div
+          className="sc-subject-detail-modal-shell-v1"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${shortenSubject(selectedSubjectDetail.name)} details`}
+          onClick={() => setSelectedSubjectDetail(null)}
+        >
+          <div
+            className="sc-subject-detail-modal-card-v1"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="sc-subject-detail-modal-close-v1"
+              aria-label="Close subject details"
+              onClick={() => setSelectedSubjectDetail(null)}
+            >
+              ×
+            </button>
+
+            <div className="sc-subject-detail-modal-head-v1">
+              <SubjectMiniRing score={selectedSubjectDetail.score} />
+              <div>
+                <p className="sc-subject-detail-modal-title-v1">
+                  {shortenSubject(selectedSubjectDetail.name)}
+                </p>
+                <p className="sc-subject-detail-modal-status-v1">
+                  {getSubjectGrowthWord(selectedSubjectDetail.score, selectedSubjectDetail.change)}
+                </p>
+              </div>
+            </div>
+
+            <div className="sc-subject-detail-modal-body-v1">
+              <p>
+                {getSubjectGrowthMessage(
+                  shortenSubject(selectedSubjectDetail.name),
+                  selectedSubjectDetail.score,
+                  selectedSubjectDetail.change
+                )}
+              </p>
+
+              <div className="sc-subject-detail-modal-activity-v1">
+                {getSubjectOptionalActivity(
+                  shortenSubject(selectedSubjectDetail.name),
+                  selectedSubjectDetail.score
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       )}
 
       {/* Subjects moved to score info popup */}
