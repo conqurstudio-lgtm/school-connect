@@ -10151,3 +10151,48 @@ button[title*="moment" i][style*="position: fixed"],
     margin-top: 5px !important;
   }
 }
+
+/* school-connect-subject-font-match-teacher-comment-v1
+   Match subject-card text structure to the teacher comment:
+   - subject name uses the teacher-name feel: slightly bold, clean, dark
+   - subject sub-comment uses the teacher-comment feel: thinner, grey, calm
+   - no global font-family change
+*/
+.sc-parent-report-card-view .sc-subject-card-growth-v1 .sc-subject-grid-name-v1,
+.sc-subject-card-growth-v1 .sc-subject-grid-name-v1 {
+  color: #202124 !important;
+  font-size: 12.7px !important;
+  font-weight: 600 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.012em !important;
+  margin: 0 !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+.sc-parent-report-card-view .sc-subject-growth-word-v1,
+.sc-subject-growth-word-v1 {
+  color: #666A70 !important;
+  font-size: 12.05px !important;
+  font-weight: 400 !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.006em !important;
+  margin: 5px 0 0 !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-synthesis-weight: none !important;
+}
+
+@media (max-width: 380px) {
+  .sc-parent-report-card-view .sc-subject-card-growth-v1 .sc-subject-grid-name-v1,
+  .sc-subject-card-growth-v1 .sc-subject-grid-name-v1 {
+    font-size: 12.25px !important;
+    line-height: 1.17 !important;
+  }
+
+  .sc-parent-report-card-view .sc-subject-growth-word-v1,
+  .sc-subject-growth-word-v1 {
+    font-size: 11.85px !important;
+    line-height: 1.36 !important;
+    margin-top: 4px !important;
+  }
+}
