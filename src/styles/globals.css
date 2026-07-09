@@ -9193,3 +9193,34 @@ button[title*="moment" i][style*="position: fixed"],
     line-height: 1.36 !important;
   }
 }
+
+
+/* school-connect-fix-report-client-error-read-more-v1
+   Safer read-more styling after removing DOM measuring logic.
+*/
+.sc-teacher-comment-message-v1.is-collapsed {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.sc-teacher-comment-message-v1.is-expanded {
+  display: inline !important;
+  overflow: visible !important;
+}
+
+.sc-teacher-comment-read-more-v1 {
+  appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 6px 0 0 !important;
+  margin: 0 !important;
+  color: rgba(17, 17, 17, 0.58) !important;
+  font-size: 11.4px !important;
+  font-weight: 560 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em !important;
+  cursor: pointer !important;
+}

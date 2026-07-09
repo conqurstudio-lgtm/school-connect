@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { TrendingUp, TrendingDown, Minus, Info, X } from 'lucide-react'
 import { getOverallScore, getScoreColor, getScoreLabel } from '@/lib/reports'
 
@@ -152,35 +152,8 @@ function Delta({ value, size = 12 }: { value: number; size?: number }) {
   const up = value > 0
   const color = up ? T.up : T.down
 
-  useEffect(() => {
-    setShowFullTeacherComment(false)
-  }, [report.id, report.comment])
 
-  useEffect(() => {
-    const measure = () => {
-      const el = teacherCommentMessageRef.current
-      if (!el) {
-        setTeacherCommentCanExpand(false)
-        return
-      }
-
-      const shouldExpand = el.scrollHeight > el.clientHeight + 2
-      setTeacherCommentCanExpand(shouldExpand)
-    }
-
-    measure()
-
-    if (typeof window !== 'undefined') {
-      const timer = window.setTimeout(measure, 80)
-      window.addEventListener('resize', measure)
-      return () => {
-        window.clearTimeout(timer)
-        window.removeEventListener('resize', measure)
-      }
-    }
-  }, [report.comment, showFullTeacherComment])
-
-  return (
+return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2,
                    fontSize: size, color, fontWeight: 600 }}>
       {up ? <TrendingUp size={size} strokeWidth={2.4} /> : <TrendingDown size={size} strokeWidth={2.4} />}
@@ -516,11 +489,7 @@ export function ReportCard({ report, childName }: Props) {
   const subjects = Object.entries(scoreSource)
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
-  const [teacherCommentCanExpand, setTeacherCommentCanExpand] = useState(false)
-  const teacherCommentMessageRef = useRef<HTMLSpanElement | null>(null)
-
-
-  const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
+const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   const isLatestReport = report.display_position !== 'previous'
@@ -641,7 +610,6 @@ export function ReportCard({ report, childName }: Props) {
                 </>
               ) : null}
               <span
-                ref={teacherCommentMessageRef}
                 className={`sc-teacher-comment-message-v1 ${showFullTeacherComment ? 'is-expanded' : 'is-collapsed'}`}
               >
                 {report.comment}
