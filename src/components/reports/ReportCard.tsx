@@ -160,6 +160,51 @@ return (
   )
 }
 
+function SubjectMiniRing({ score }: { score: number }) {
+  const size = 54
+  const stroke = 2.35
+  const center = size / 2
+  const radius = (size - stroke - 5) / 2
+  const circumference = 2 * Math.PI * radius
+  const progress = Math.max(0, Math.min(1, Number(score) / 5))
+  const tone = getScoreTone(score)
+
+  return (
+    <div
+      className="sc-subject-mini-ring-v1"
+      style={{
+        '--subject-ring-tone': tone.ring,
+        '--subject-score-tone': tone.text,
+      } as React.CSSProperties}
+      aria-label={`Score ${score.toFixed(1)} out of 5`}
+    >
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="rgba(17,17,17,0.22)"
+          strokeWidth={stroke}
+        />
+        <circle
+          className="sc-subject-mini-ring-progress-v1"
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={tone.ring}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${circumference * progress} ${circumference}`}
+          transform={`rotate(-90 ${center} ${center})`}
+        />
+      </svg>
+      <span>{score.toFixed(1)}</span>
+    </div>
+  )
+}
+
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
   const size = compact ? 214 : 244
@@ -464,6 +509,19 @@ function getScoreTone(score: number) {
   return { ring: '#0F6B45', text: '#0F6B45' }
 }
 
+function getSubjectGrowthWord(score: number, change: number | null) {
+  if (change !== null && change >= 0.6) return 'Great growth'
+  if (change !== null && change >= 0.2) return 'Improved'
+  if (change !== null && change <= -0.6) return 'Needs support'
+  if (change !== null && change <= -0.2) return 'Watch area'
+
+  if (score >= 4.6) return 'Excellent'
+  if (score >= 4) return 'Progress'
+  if (score >= 3.2) return 'Steady'
+  if (score >= 2.4) return 'Building'
+  return 'Supported'
+}
+
 export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
@@ -641,39 +699,20 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               const change = previousScore === null ? null : safeScore - previousScore
 
               return (
-                <article key={String(name)} className="sc-report-subject-grid-card-v1">
-                  <div className="sc-subject-grid-row-v1">
+                                <article
+                  key={String(name)}
+                  className="sc-report-subject-grid-card-v1 sc-subject-card-growth-v1"
+                >
+                  <SubjectMiniRing score={safeScore} />
+
+                  <div className="sc-subject-card-copy-v1">
                     <p className="sc-subject-grid-name-v1">
                       {shortenSubject(String(name))}
                     </p>
-
-                    {change !== null && (
-                      <div
-                        className={`sc-subject-card-delta-v1 ${
-                          Math.abs(change) < 0.1 ? 'is-same' : change > 0 ? 'is-up' : 'is-down'
-                        }`}
-                        aria-label={`${
-                          Math.abs(change) < 0.1
-                            ? 'No change'
-                            : change > 0
-                              ? 'Improved'
-                              : 'Dropped'
-                        } from previous report`}
-                      >
-                        <Delta value={change} size={12} />
-                      </div>
-                    )}
+                    <p className="sc-subject-growth-word-v1">
+                      {getSubjectGrowthWord(safeScore, change)}
+                    </p>
                   </div>
-
-                  <div
-                      className="sc-subject-grid-score-v1"
-                      style={{
-                        color: getScoreTone(safeScore).text,
-                        '--subject-score-tone': getScoreTone(safeScore).text,
-                      } as React.CSSProperties}
-                    >
-                      {safeScore.toFixed(1)}
-                    </div>
                 </article>
               )
             })}
