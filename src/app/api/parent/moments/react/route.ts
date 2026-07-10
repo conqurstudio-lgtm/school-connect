@@ -129,7 +129,11 @@ export async function POST(req: NextRequest) {
   if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 })
 
   const child = await resolveChildFromToken(sb, token)
-  childId = child?.id || childId
+
+  // Prefer the child_id sent by the parent Moments UI.
+  // The report token can sometimes resolve through an older lookup path,
+  // but the loaded Moment already belongs to the child in this view.
+  childId = childId || child?.id || ''
 
   if (!childId) return NextResponse.json({ error: 'missing child' }, { status: 400 })
 
