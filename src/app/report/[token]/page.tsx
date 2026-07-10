@@ -1042,6 +1042,7 @@ export default function ParentMagicReportPage() {
               alignItems: 'center',
               gap: 8,
             }}>
+              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
               {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             </div>
           </div>
