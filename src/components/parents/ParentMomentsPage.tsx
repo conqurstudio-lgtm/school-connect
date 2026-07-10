@@ -1038,11 +1038,15 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  <div style={{
  display: 'flex',
  // parent-reactions-left-align-v432
- marginLeft: -48,
- width: 'calc(100% + 48px)',
+ // Keep reactions inside the card so the first button/heart has a full tap area.
+ marginLeft: 0,
+ width: '100%',
  alignItems: 'center',
  gap: 8,
  marginTop: 13,
+ position: 'relative',
+ zIndex: 30,
+ pointerEvents: 'auto',
  }}>
  {[
  ['heart', Heart],
@@ -1076,6 +1080,9 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  fontWeight: 560,
  transition: 'color 160ms ease, transform 160ms ease, opacity 160ms ease',
  transform: active ? 'translateY(-1px) scale(1.04)' : 'none',
+ position: 'relative',
+ zIndex: 40,
+ pointerEvents: 'auto',
  }}
  >
  <Icon
