@@ -2,9 +2,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import {GraduationCap, Send, Copy, Check} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
+import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
 
@@ -196,7 +197,7 @@ function MomentBellLink({ token }: { token: string }) {
   return (
     <button
       type="button"
-      onClick={() => { window.location.href = `/moments/${encodeURIComponent(token)}` }}
+      onClick={() => { window.location.href = `/report/${encodeURIComponent(token)}?view=moments` }}
       aria-label="View Moments"
       style={{
         position: 'relative',
@@ -868,6 +869,7 @@ export default function ParentMagicReportPage() {
   const params = useParams<{ token: string }>()
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
+  const parentView = searchParams.get('view') || 'report'
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -945,6 +947,21 @@ export default function ParentMagicReportPage() {
   }, [token])
   if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
+
+
+  const openReportView = () => {
+    window.location.href = `/report/${encodeURIComponent(token || '')}`
+  }
+
+  if (parentView === 'moments') {
+    return (
+      <ParentMomentsPage
+        token={token || ''}
+        embedded={true}
+        onClose={openReportView}
+      />
+    )
+  }
 
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
