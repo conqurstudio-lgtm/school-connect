@@ -316,8 +316,9 @@ function ParentMomentsBackButton({ onClick, href, label = 'Back' }: any) {
  )
 }
 
-export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
+export function ParentMomentsPage({ token, embedded = false, onClose, shellless = false }: { token: string, embedded?: boolean, onClose?: () => void, shellless?: boolean }) {
  useEffect(() => {
+ if (shellless) return
  const html = document.documentElement
  const body = document.body
 
@@ -350,7 +351,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  body.style.background = previous.bodyBackground
  body.style.touchAction = previous.bodyTouchAction
  }
- }, [])
+ }, [shellless])
 
  const [loading, setLoading] = useState(true)
  const [child, setChild] = useState<any>(null)
@@ -503,9 +504,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: '100dvh',
- height: '100dvh',
- overflow: 'hidden',
+ minHeight: shellless ? 'auto' : '100dvh',
+ height: shellless ? 'auto' : '100dvh',
+ overflow: shellless ? 'visible' : 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
  color: T.ink,
@@ -520,7 +521,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
  <div style={{
  maxWidth: 520,
- height: '100dvh',
+ height: shellless ? 'auto' : '100dvh',
+ minHeight: shellless ? '100dvh' : undefined,
  margin: '0 auto',
  display: 'flex',
  flexDirection: 'column',
@@ -545,7 +547,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  overflowY: 'auto',
  overflowX: 'hidden',
  WebkitOverflowScrolling: 'touch',
- padding: '12px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+ padding: shellless ? '12px 16px 18px' : '12px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
  {true && (
