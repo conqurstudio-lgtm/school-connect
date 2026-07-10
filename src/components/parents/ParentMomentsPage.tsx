@@ -472,6 +472,19 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
  const json = await res.json().catch(() => ({}))
  if (!res.ok) throw new Error(json.error || 'Could not react')
+
+ if (json.reaction_counts) {
+ setMoments(current => current.map(item => {
+ if (item.id !== moment.id) return item
+
+ return {
+ ...item,
+ reaction,
+ reaction_counts: json.reaction_counts,
+ reaction_count: Number(json.reaction_count || 0),
+ }
+ }))
+ }
  } catch (error: any) {
  setMoments(previousMomentsSnapshot)
  toast.error(error.message || 'Could not react')

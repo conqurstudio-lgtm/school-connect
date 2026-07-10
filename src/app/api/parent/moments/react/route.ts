@@ -116,7 +116,7 @@ async function resolveChildFromToken(sb: any, token: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}))
-  let childId = ''
+  let childId = String(body.child_id || '').trim()
   const token = String(body.token || '').trim()
   const momentId = String(body.moment_id || '').trim()
   const reaction = String(body.reaction || '').trim()
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
   if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 })
 
   const child = await resolveChildFromToken(sb, token)
-  childId = child?.id || ''
+  childId = child?.id || childId
 
   if (!childId) return NextResponse.json({ error: 'missing child' }, { status: 400 })
 
@@ -163,5 +163,22 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ reaction: data })
+
+  const { data: latestReactions } = await sb
+    .from('moment_reactions')
+    .select('reaction')
+    .eq('moment_id', momentId)
+
+  const reactionCounts = { heart: 0, like: 0, smile: 0 }
+  for (const row of latestReactions || []) {
+    if (row?.reaction && reactionCounts[row.reaction as keyof typeof reactionCounts] !== undefined) {
+      reactionCounts[row.reaction as keyof typeof reactionCounts] += 1
+    }
+  }
+
+  return NextResponse.json({
+    reaction: data,
+    reaction_counts: reactionCounts,
+    reaction_count: reactionCounts.heart + reactionCounts.like + reactionCounts.smile,
+  })
 }
