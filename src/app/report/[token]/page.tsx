@@ -869,7 +869,7 @@ export default function ParentMagicReportPage() {
   const params = useParams<{ token: string }>()
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
-  const parentView = searchParams.get('view') || 'report'
+  const parentView = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('view') || 'report') : 'report'
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
