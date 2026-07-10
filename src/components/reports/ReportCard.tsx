@@ -510,6 +510,62 @@ function getScoreTone(score: number) {
   return { ring: '#0F6B45', text: '#0F6B45' }
 }
 
+
+function getTeacherCommentIndex(seed: string, count: number) {
+  let total = 0
+  for (let i = 0; i < seed.length; i += 1) {
+    total = (total + seed.charCodeAt(i) * (i + 1)) % 100000
+  }
+  return total % count
+}
+
+function getWarmTeacherComment(childName: string, averageScore: number, overallChange: number | null) {
+  const name = childName || 'Your child'
+
+  const improved = [
+    `${name} is showing encouraging improvement this week. It is lovely to see the effort growing, and we will keep building on this progress in class.`,
+    `${name} has made positive movement since the last report. We are seeing growing confidence, and we will continue supporting this momentum.`,
+    `${name} is moving in a good direction. The progress may be step by step, but the growth is clear and worth celebrating.`,
+    `${name} has shown a brighter week of progress. We will keep encouraging the same effort and confidence in class.`,
+  ]
+
+  const strong = [
+    `${name} has had a lovely week and is showing strong progress across learning. The confidence and effort shown in class are encouraging.`,
+    `${name} is doing well and continues to show good focus, confidence, and positive classroom habits. We will keep building on this strength.`,
+    `${name} is showing strong consistency this week. It is wonderful to see this confidence growing in class.`,
+    `${name} has shown excellent effort and steady confidence. This is a positive report, and we will keep encouraging the same growth.`,
+  ]
+
+  const steady = [
+    `${name} is making steady progress this week. We are seeing good effort in class and will continue supporting confidence and consistency.`,
+    `${name} is growing at a steady pace. We will keep encouraging participation, confidence, and calm progress in class.`,
+    `${name} has had a steady week. There is positive effort, and we will keep supporting the small steps that build confidence.`,
+    `${name} is settling into a good rhythm. We are supporting consistency and encouraging continued growth in class.`,
+  ]
+
+  const support = [
+    `${name} had a more challenging week, but there is no need for worry. We are supporting each step calmly and will keep encouraging growth in class.`,
+    `${name} needs a little more support at the moment, and that is okay. We will continue guiding confidence and progress step by step.`,
+    `${name} found some areas challenging this week, but this is part of the learning journey. We are here to support and encourage steady growth.`,
+    `${name} is still building confidence in some areas. We will keep working gently in class and celebrate the small wins along the way.`,
+  ]
+
+  const dip = [
+    `${name} had a quieter week compared to the last report, but there is no concern. We will keep supporting confidence and help rebuild momentum.`,
+    `${name} had a small dip this week, which can happen. We are supporting the next steps calmly and will keep encouraging progress in class.`,
+    `${name} found this week a bit more challenging than before, but we will keep guiding the learning journey with patience and support.`,
+    `${name} may need a little encouragement this week. We will keep things steady in class and support confidence step by step.`,
+  ]
+
+  let bank = steady
+  if (overallChange !== null && overallChange >= 0.2) bank = improved
+  else if (overallChange !== null && overallChange <= -0.2) bank = dip
+  else if (averageScore >= 4) bank = strong
+  else if (averageScore < 2.7) bank = support
+
+  return bank[getTeacherCommentIndex(`${name}-${averageScore.toFixed(1)}-${overallChange ?? 'none'}-teacher`, bank.length)]
+}
+
 function getSubjectGrowthWord(score: number, change: number | null) {
   if (change !== null && change >= 0.6) return 'Great growth'
   if (change !== null && change >= 0.2) return 'Improved'
@@ -590,7 +646,7 @@ export function ReportCard({ report, childName }: Props) {
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
   const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<null | { name: string; score: number; change: number | null }>(null)
-  const teacherCommentText = String(report.comment || '')
+  const teacherCommentText = String(warmTeacherComment || report.comment || '')
   const teacherCommentNeedsMore = teacherCommentText.length > 92
   const teacherCommentPreview = teacherCommentNeedsMore
     ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
@@ -606,6 +662,20 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   const isLatestReport = report.display_position !== 'previous'
   const reportStatusLabel = isLatestReport ? '' : 'Previous report'
   const mutedReportOpacity = isLatestReport ? 1 : 0.82
+
+  const currentSubjectAverage = subjects.length
+    ? subjects.reduce((sum, subject) => sum + Math.max(0, Math.min(5, Number(subject.score) || 0)), 0) / subjects.length
+    : Math.max(0, Math.min(5, Number(report.overallScore) || 0))
+
+  const previousSubjectAverage = previousScores.length
+    ? subjects.reduce((sum, subject) => {
+        const previous = previousScores.find(item => item.name === subject.name)
+        return sum + (previous ? Math.max(0, Math.min(5, Number(previous.score) || 0)) : Math.max(0, Math.min(5, Number(subject.score) || 0)))
+      }, 0) / subjects.length
+    : null
+
+  const overallSubjectChange = previousSubjectAverage === null ? null : currentSubjectAverage - previousSubjectAverage
+  const warmTeacherComment = getWarmTeacherComment(childFirstName, currentSubjectAverage, overallSubjectChange)
 
   const teacherName = report.teacher_name || 'Teacher'
   const teacherInitials = String(teacherName || 'T')
