@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import {GraduationCap, Send, Copy, Check} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
-import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
 
@@ -22,16 +21,6 @@ const T = {
   accent: '#8FA6A1',
   accentSoft: '#EEF3F1',
 }
-
-
-
-
-
-
-
-
-
-
 
 
 function getReportScore(report: any) {
@@ -176,8 +165,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 }
 
 
-
-function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
+function MomentBellLink({ token }: { token: string }) {
   const [hasNew, setHasNew] = useState(false)
 
   useEffect(() => {
@@ -208,7 +196,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
   return (
     <button
       type="button"
-      onClick={onOpen}
+      onClick={() => { window.location.href = `/moments/${encodeURIComponent(token)}` }}
       aria-label="View Moments"
       style={{
         position: 'relative',
@@ -245,9 +233,6 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
     </button>
   )
 }
-
-
-
 
 
 function reportTeacherInitials(name: any) {
@@ -402,10 +387,6 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
     </div>
   )
 }
-
-
-
-
 
 
 function FamilyShareButton({ token }: { token: string }) {
@@ -891,24 +872,6 @@ export default function ParentMagicReportPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
-  const [showMoments, setShowMoments] = useState(false)
-  const [parentViewSwitching, setParentViewSwitching] = useState<'report' | 'moments' | null>(null)
-
-  const openParentMomentsWithAnimation = () => {
-    setParentViewSwitching('moments')
-    window.setTimeout(() => {
-      setShowMoments(true)
-      setParentViewSwitching(null)
-    }, 260)
-  }
-
-  const closeParentMomentsWithAnimation = () => {
-    setParentViewSwitching('report')
-    window.setTimeout(() => {
-      setShowMoments(false)
-      setParentViewSwitching(null)
-    }, 260)
-  }
 
   useEffect(() => {
     // report-route-shell-lock-v251
@@ -982,16 +945,6 @@ export default function ParentMagicReportPage() {
   }, [token])
   if (loading) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
-
-  if (showMoments) {
-    return (
-      <ParentMomentsPage
-        token={token || ''}
-        embedded={true}
-        onClose={closeParentMomentsWithAnimation}
-      />
-    )
-  }
 
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
