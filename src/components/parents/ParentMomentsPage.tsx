@@ -427,11 +427,13 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  }
 
  const react = async (moment: any, reaction: string) => {
+ if (!moment?.id || reacting === moment.id) return
+
  const previousMomentsSnapshot = moments
 
  addReactionBurst(moment.id, reaction)
 
- setMoments(current => current.map(item => {
+ const optimisticApply = (current: any[]) => current.map(item => {
  if (item.id !== moment.id) return item
 
  const previousReaction = item.reaction || null
@@ -459,38 +461,55 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  reaction_counts: nextCounts,
  reaction_count: reactionTotal,
  }
- }))
+ })
 
+ setMoments(optimisticApply)
  setReacting(moment.id)
 
  try {
  const res = await fetch('/api/parent/moments/react', {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ token, child_id: child?.id, moment_id: moment.id, reaction }),
+ body: JSON.stringify({
+ token,
+ child_id: child?.id || moment?.child_id || moment?.recipient?.child_id || '',
+ moment_id: moment.id,
+ reaction,
+ }),
  })
 
  const json = await res.json().catch(() => ({}))
- if (!res.ok) throw new Error(json.error || 'Could not react')
 
- if (json.reaction_counts) {
+ if (!res.ok || json?.error) {
+ throw new Error(json?.error || 'Could not react')
+ }
+
+ const serverCounts = json?.reaction_counts || null
+
+ if (serverCounts) {
  setMoments(current => current.map(item => {
  if (item.id !== moment.id) return item
+
+ const nextCounts = {
+ heart: Number(serverCounts.heart || 0),
+ like: Number(serverCounts.like || 0),
+ smile: Number(serverCounts.smile || 0),
+ }
 
  return {
  ...item,
  reaction,
- reaction_counts: json.reaction_counts,
- reaction_count: Number(json.reaction_count || 0),
+ reaction_counts: nextCounts,
+ reaction_count: Number(json.reaction_count ?? (nextCounts.heart + nextCounts.like + nextCounts.smile)),
  }
  }))
  }
  } catch (error: any) {
  setMoments(previousMomentsSnapshot)
- toast.error(error.message || 'Could not react')
- }
-
+ toast.error(error?.message || 'Could not react')
+ } finally {
  setReacting('')
+ }
  }
 
 

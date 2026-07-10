@@ -115,74 +115,101 @@ async function resolveChildFromToken(sb: any, token: string) {
 
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => ({}))
-  let childId = String(body.child_id || '').trim()
-  const token = String(body.token || '').trim()
-  const momentId = String(body.moment_id || '').trim()
-  const reaction = String(body.reaction || '').trim()
+  try {
+    const body = await req.json().catch(() => ({}))
 
-  if (!momentId) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
-  if (!allowed.includes(reaction)) return NextResponse.json({ error: 'invalid reaction' }, { status: 400 })
+    const token = String(body.token || '').trim()
+    const momentId = String(body.moment_id || '').trim()
+    const requestedChildId = String(body.child_id || '').trim()
+    const reaction = String(body.reaction || '').trim()
 
-  const sb = adminClient()
+    if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 })
+    if (!momentId) return NextResponse.json({ error: 'missing moment' }, { status: 400 })
+    if (!allowed.includes(reaction)) return NextResponse.json({ error: 'invalid reaction' }, { status: 400 })
 
-  if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 })
+    const sb = adminClient()
 
-  const child = await resolveChildFromToken(sb, token)
+    const resolvedChild = await resolveChildFromToken(sb, token)
+    const candidateChildIds = Array.from(new Set([
+      requestedChildId,
+      resolvedChild?.id || '',
+    ].filter(Boolean)))
 
-  // Prefer the child_id sent by the parent Moments UI.
-  // The report token can sometimes resolve through an older lookup path,
-  // but the loaded Moment already belongs to the child in this view.
-  childId = childId || child?.id || ''
-
-  if (!childId) return NextResponse.json({ error: 'missing child' }, { status: 400 })
-
-  const { data: recipient } = await sb
-    .from('moment_recipients')
-    .select('id')
-    .eq('moment_id', momentId)
-    .eq('child_id', childId)
-    .maybeSingle()
-
-  if (!recipient) return NextResponse.json({ error: 'not allowed' }, { status: 403 })
-
-  // reaction-animation-v275
-  // Keep one reaction per child per Moment, even if the DB unique constraint
-  // is missing or duplicate rows already exist.
-  await sb
-    .from('moment_reactions')
-    .delete()
-    .eq('moment_id', momentId)
-    .eq('child_id', childId)
-
-  const { data, error } = await sb
-    .from('moment_reactions')
-    .insert({
-      moment_id: momentId,
-      child_id: childId,
-      reaction,
-      created_at: new Date().toISOString(),
-    })
-    .select('*')
-    .single()
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  const { data: latestReactions } = await sb
-    .from('moment_reactions')
-    .select('reaction')
-    .eq('moment_id', momentId)
-
-  const reactionCounts = { heart: 0, like: 0, smile: 0 }
-  for (const row of latestReactions || []) {
-    if (row?.reaction && reactionCounts[row.reaction as keyof typeof reactionCounts] !== undefined) {
-      reactionCounts[row.reaction as keyof typeof reactionCounts] += 1
+    if (!candidateChildIds.length) {
+      return NextResponse.json({ error: 'missing child' }, { status: 400 })
     }
-  }
 
-  return NextResponse.json({
-    reaction: data,
-    reaction_counts: reactionCounts,
-    reaction_count: reactionCounts.heart + reactionCounts.like + reactionCounts.smile,
-  })
+    let recipient: any = null
+    let childId = ''
+
+    for (const id of candidateChildIds) {
+      const { data, error } = await sb
+        .from('moment_recipients')
+        .select('id, child_id, moment_id')
+        .eq('moment_id', momentId)
+        .eq('child_id', id)
+        .maybeSingle()
+
+      if (!error && data?.child_id) {
+        recipient = data
+        childId = String(data.child_id)
+        break
+      }
+    }
+
+    if (!recipient || !childId) {
+      return NextResponse.json({ error: 'not allowed' }, { status: 403 })
+    }
+
+    await sb
+      .from('moment_reactions')
+      .delete()
+      .eq('moment_id', momentId)
+      .eq('child_id', childId)
+
+    const { data: savedReaction, error: saveError } = await sb
+      .from('moment_reactions')
+      .insert({
+        moment_id: momentId,
+        child_id: childId,
+        reaction,
+        created_at: new Date().toISOString(),
+      })
+      .select('*')
+      .single()
+
+    if (saveError) {
+      return NextResponse.json({ error: saveError.message || 'could not save reaction' }, { status: 500 })
+    }
+
+    const { data: latestReactions, error: countsError } = await sb
+      .from('moment_reactions')
+      .select('reaction')
+      .eq('moment_id', momentId)
+
+    const reactionCounts: Record<string, number> = { heart: 0, like: 0, smile: 0 }
+
+    if (!countsError) {
+      for (const row of latestReactions || []) {
+        const key = String(row?.reaction || '')
+        if (Object.prototype.hasOwnProperty.call(reactionCounts, key)) {
+          reactionCounts[key] += 1
+        }
+      }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      reaction: savedReaction,
+      child_id: childId,
+      reaction_counts: reactionCounts,
+      reaction_count: reactionCounts.heart + reactionCounts.like + reactionCounts.smile,
+    })
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error?.message || 'Could not react' },
+      { status: 500 }
+    )
+  }
 }
+
