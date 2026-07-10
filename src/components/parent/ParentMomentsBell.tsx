@@ -69,7 +69,7 @@ export function ParentMomentsBell({
   const [latestMarker, setLatestMarker] = useState('')
   const [hasNewMoments, setHasNewMoments] = useState(false)
 
-  const momentsHref = href || `/moments/${encodeURIComponent(token)}`
+  const momentsHref = href || `/report/${encodeURIComponent(token)}?view=moments`
   const storageKey = useMemo(() => `school-connect-moments-last-seen-${token}`, [token])
 
   const refreshMoments = useCallback(async () => {

@@ -45,7 +45,7 @@ export function ParentBottomHoverMenu({
 
       <button
         type="button"
-        onClick={onMomentsClick || (() => { window.location.href = `/moments/${safeToken}` })}
+        onClick={onMomentsClick || (() => { window.location.href = `/report/${safeToken}?view=moments` })}
         className={active === 'moments' ? 'is-active' : ''}
         aria-label="Open Moments"
       >

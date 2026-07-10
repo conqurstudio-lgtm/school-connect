@@ -1,5 +1,6 @@
-import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
+import { redirect } from 'next/navigation'
 
 export default function MomentsPage({ params }: { params: { token: string } }) {
-  return <ParentMomentsPage token={params.token || ''} />
+  const token = encodeURIComponent(params.token || '')
+  redirect(`/report/${token}?view=moments`)
 }
