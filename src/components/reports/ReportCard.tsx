@@ -631,13 +631,6 @@ export function ReportCard({ report, childName }: Props) {
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
   const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<null | { name: string; score: number; change: number | null }>(null)
-  const teacherCommentText = String(report.comment || getSafeWarmTeacherFallback('', Number(report.overallScore) || 0))
-  const teacherCommentNeedsMore = teacherCommentText.length > 92
-  const teacherCommentPreview = teacherCommentNeedsMore
-    ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
-    : teacherCommentText
-
-
   useEffect(() => {
     setShowFullTeacherComment(false)
   }, [report.comment])
@@ -671,6 +664,13 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   const childTeacherLabel = childFirstName === 'Your child'
     ? 'Your child’s teacher'
     : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
+
+  const teacherCommentText = String(report.comment || getSafeWarmTeacherFallback(childFirstName, Number(report.overallScore) || overall || 0))
+  const teacherCommentNeedsMore = teacherCommentText.length > 92
+  const teacherCommentPreview = teacherCommentNeedsMore
+    ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
+    : teacherCommentText
+
 
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
@@ -740,9 +740,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {/* ── Teacher's note ─────────────────── */}
 
-      {/* ── Teacher's note ─────────────────── */}
-
-      {report.comment && (
+      {teacherCommentText && (
         <section
           className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1"
           aria-label="Teacher comment"
