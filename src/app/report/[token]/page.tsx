@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import {GraduationCap, Send, Copy, Check} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
@@ -166,7 +166,7 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 }
 
 
-function MomentBellLink({ token }: { token: string }) {
+function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
 
   useEffect(() => {
@@ -197,7 +197,7 @@ function MomentBellLink({ token }: { token: string }) {
   return (
     <button
       type="button"
-      onClick={() => { window.location.href = `/report/${encodeURIComponent(token)}?view=moments` }}
+      onClick={onOpen}
       aria-label="View Moments"
       style={{
         position: 'relative',
@@ -869,7 +869,20 @@ export default function ParentMagicReportPage() {
   const params = useParams<{ token: string }>()
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
-  const parentView = typeof window !== 'undefined' ? (new URLSearchParams(window.location.search).get('view') || 'report') : 'report'
+  const [parentView, setParentView] = useState<'report' | 'moments'>(() => {
+    if (typeof window === 'undefined') return 'report'
+    return new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report'
+  })
+
+  useEffect(() => {
+    const syncParentViewFromUrl = () => {
+      const nextView = new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report'
+      setParentView(nextView)
+    }
+
+    window.addEventListener('popstate', syncParentViewFromUrl)
+    return () => window.removeEventListener('popstate', syncParentViewFromUrl)
+  }, [])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -950,7 +963,17 @@ export default function ParentMagicReportPage() {
 
 
   const openReportView = () => {
-    window.location.href = `/report/${encodeURIComponent(token || '')}`
+    setParentView('report')
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}`)
+    }
+  }
+
+  const openMomentsView = () => {
+    setParentView('moments')
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}?view=moments`)
+    }
   }
 
   if (parentView === 'moments') {
