@@ -225,7 +225,7 @@ function parentMomentScope(moment: any): 'child' | 'class' {
  return 'child'
 }
 
-function ReactionBurstLayer({ bursts = [] }: any) {
+function ReactionBurstLayer({ bursts = [], insideReportShell = false }: any) {
  if (!bursts.length) return null
 
  return (
@@ -650,6 +650,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  reacting={reacting === moment.id}
  imageIndex={index}
  bursts={reactionBursts.filter(item => item.momentId === moment.id)}
+ insideReportShell={insideReportShell}
  />
  ))}
  </div>
@@ -727,7 +728,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  )
 }
 
-function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], imageIndex = 0 }: any) {
+function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], imageIndex = 0, insideReportShell = false }: any) {
  const teacherName = moment.teacher?.name || 'Teacher'
  const isPrivate = moment.share_mode === 'child'
  const isImage = moment.file_type === 'image'
@@ -1032,7 +1033,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  </div>
  </a>
  )}
- <ReactionBurstLayer bursts={bursts} />
+ <ReactionBurstLayer bursts={bursts} insideReportShell={insideReportShell} />
  </div>
  <div style={{
  display: 'flex',
