@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef} from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -709,6 +709,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  src={openImage}
  alt=""
  decoding="async"
+ loading={imageIndex < 2 ? "eager" : "lazy"}
+ fetchPriority={imageIndex < 2 ? "high" : "auto"}
  onClick={event => event.stopPropagation()}
  style={{
  maxWidth: '100%',
@@ -727,6 +729,224 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  </main>
  )
 }
+
+
+function ParentReactionFXButton({
+ moment,
+ reactionKey,
+ Icon,
+ active,
+ count,
+ reacting,
+ onReact,
+}: any) {
+ const [animKey, setAnimKey] = useState(0)
+ const [particles, setParticles] = useState<any[]>([])
+ const [rings, setRings] = useState<number[]>([])
+ const [score, setScore] = useState<number | null>(null)
+ const idRef = useRef(0)
+
+ const color = reactionTone(reactionKey)
+ const particle = reactionKey === 'heart' ? '💗' : reactionKey === 'like' ? '👍' : '😊'
+
+ const burst = () => {
+ const uid = ++idRef.current
+
+ setAnimKey(value => value + 1)
+ setScore(1)
+ setRings(current => [...current, uid])
+ setParticles(current => [
+ ...current,
+ ...Array.from({ length: 3 }).map((_, index) => ({
+ id: uid * 10 + index,
+ dx: (Math.random() - 0.5) * 44,
+ emoji: particle,
+ })),
+ ])
+
+ window.setTimeout(() => {
+ setScore(null)
+ setRings(current => current.filter(item => item !== uid))
+ setParticles(current => current.filter(item => Math.floor(item.id / 10) !== uid))
+ }, 900)
+ }
+
+ const handleClick = (event: any) => {
+ event.preventDefault()
+ event.stopPropagation()
+ burst()
+ onReact(moment, reactionKey)
+ }
+
+ const iconAnimation = reactionKey === 'smile'
+ ? 'scParentMomentWiggle 520ms cubic-bezier(0.16, 1, 0.3, 1)'
+ : 'scParentMomentPop 420ms cubic-bezier(0.16, 1, 0.3, 1)'
+
+ return (
+ <button
+ type="button"
+ onClick={handleClick}
+ aria-label={reactionKey}
+ disabled={reacting === moment?.id}
+ style={{
+ position: 'relative',
+ minWidth: 44,
+ minHeight: 52,
+ borderRadius: 999,
+ border: 'none',
+ background: 'transparent',
+ color: active ? color : T.ink,
+ display: 'inline-flex',
+ flexDirection: 'column',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: 4,
+ cursor: reacting === moment?.id ? 'default' : 'pointer',
+ opacity: reacting === moment?.id ? 0.72 : 1,
+ padding: '0 6px',
+ fontFamily: 'inherit',
+ fontSize: 13,
+ fontWeight: 560,
+ zIndex: 40,
+ pointerEvents: 'auto',
+ WebkitTapHighlightColor: 'transparent',
+ touchAction: 'manipulation',
+ }}
+ >
+ <style>{`
+ @keyframes scParentMomentPop {
+ 0% { transform: scale(0.72) rotate(-8deg); }
+ 52% { transform: scale(1.26) rotate(6deg); }
+ 100% { transform: scale(1) rotate(0deg); }
+ }
+ @keyframes scParentMomentWiggle {
+ 0% { transform: rotate(0deg) scale(0.9); }
+ 20% { transform: rotate(-13deg) scale(1.12); }
+ 45% { transform: rotate(12deg) scale(1.18); }
+ 72% { transform: rotate(-5deg) scale(1.05); }
+ 100% { transform: rotate(0deg) scale(1); }
+ }
+ @keyframes scParentMomentRing {
+ 0% { opacity: 0.42; transform: translate(-50%, -50%) scale(0.72); }
+ 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
+ }
+ @keyframes scParentMomentParticle {
+ 0% { opacity: 0; transform: translate(-50%, -50%) translateY(0) scale(0.65); }
+ 18% { opacity: 1; }
+ 100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), -48px) scale(1.15); }
+ }
+ @keyframes scParentMomentScore {
+ 0% { opacity: 0; transform: translate(-50%, 6px) scale(0.8); }
+ 24% { opacity: 1; transform: translate(-50%, -8px) scale(1); }
+ 100% { opacity: 0; transform: translate(-50%, -25px) scale(1); }
+ }
+ `}</style>
+
+ <span
+ style={{
+ position: 'relative',
+ width: 42,
+ height: 42,
+ borderRadius: 999,
+ background: '#FFFFFF',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ boxShadow: '0 4px 14px rgba(20,32,43,0.08)',
+ border: '1px solid rgba(20,32,43,0.08)',
+ transform: reacting === moment?.id ? 'scale(0.96)' : 'scale(1)',
+ transition: 'transform 160ms ease',
+ overflow: 'visible',
+ }}
+ >
+ {rings.map((ring: number) => (
+ <span
+ key={ring}
+ aria-hidden="true"
+ style={{
+ position: 'absolute',
+ left: '50%',
+ top: '50%',
+ width: 42,
+ height: 42,
+ borderRadius: 999,
+ background: color,
+ opacity: 0,
+ pointerEvents: 'none',
+ animation: 'scParentMomentRing 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+ }}
+ />
+ ))}
+
+ {score !== null && (
+ <span
+ key={`score-${animKey}`}
+ aria-hidden="true"
+ style={{
+ position: 'absolute',
+ left: '50%',
+ top: -4,
+ color,
+ fontSize: 12,
+ fontWeight: 800,
+ lineHeight: 1,
+ pointerEvents: 'none',
+ animation: 'scParentMomentScore 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+ }}
+ >
+ +1
+ </span>
+ )}
+
+ {particles.map((item: any) => (
+ <span
+ key={item.id}
+ aria-hidden="true"
+ style={{
+ position: 'absolute',
+ left: '50%',
+ top: '50%',
+ fontSize: 16,
+ pointerEvents: 'none',
+ ['--dx' as any]: `${item.dx}px`,
+ animation: 'scParentMomentParticle 860ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
+ }}
+ >
+ {item.emoji}
+ </span>
+ ))}
+
+ <span
+ key={animKey}
+ style={{
+ color: active || animKey ? color : T.ink3,
+ lineHeight: 0,
+ animation: animKey ? iconAnimation : 'none',
+ }}
+ >
+ <Icon
+ size={20}
+ strokeWidth={active ? 2.3 : 2}
+ fill={active ? color : 'none'}
+ fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
+ />
+ </span>
+ </span>
+
+ {count > 0 && (
+ <span style={{
+ color: active ? color : T.ink3,
+ fontSize: 12.5,
+ fontWeight: 650,
+ lineHeight: 1,
+ }}>
+ {count}
+ </span>
+ )}
+ </button>
+ )
+}
+
 
 function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], imageIndex = 0, insideReportShell = false }: any) {
  const teacherName = moment.teacher?.name || 'Teacher'
@@ -1057,44 +1277,19 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  const count = Number(moment.reaction_counts?.[key] || 0)
 
  return (
- <button
+ <ParentReactionFXButton
  key={key}
- type="button"
- onClick={() => onReact(moment, key)}
- style={{
- minWidth: 40,
- height: 40,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: active ? reactionTone(key) : T.ink,
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- gap: 5,
- cursor: 'pointer',
- opacity: reacting ? 0.72 : 1,
- padding: '0 7px',
- fontFamily: 'inherit',
- fontSize: 13,
- fontWeight: 560,
- transition: 'color 160ms ease, transform 160ms ease, opacity 160ms ease',
- transform: active ? 'translateY(-1px) scale(1.04)' : 'none',
- position: 'relative',
- zIndex: 40,
- pointerEvents: 'auto',
- }}
- >
- <Icon
- size={19}
- strokeWidth={active ? 2.25 : 2}
- fill={active ? reactionTone(key) : 'none'}
- fillOpacity={active && key === 'smile' ? 0.18 : 1}
+ moment={moment}
+ reactionKey={key}
+ Icon={Icon}
+ active={active}
+ count={count}
+ reacting={reacting}
+ onReact={onReact}
  />
- {count > 0 && <span>{count}</span>}
- </button>
  )
  })}
+
  </div>
  </div>
  </article>
