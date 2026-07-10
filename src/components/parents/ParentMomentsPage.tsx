@@ -521,7 +521,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  <div style={{
  maxWidth: 520,
  height: '100dvh',
- minHeight: shellless ? '100dvh' : undefined,
  margin: '0 auto',
  display: 'flex',
  flexDirection: 'column',
