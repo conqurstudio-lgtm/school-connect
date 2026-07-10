@@ -511,6 +511,46 @@ function getScoreTone(score: number) {
 }
 
 
+function getSafeTeacherCommentIndex(seed: string, count: number) {
+  let total = 0
+  for (let i = 0; i < seed.length; i += 1) {
+    total = (total + seed.charCodeAt(i) * (i + 1)) % 100000
+  }
+  return total % count
+}
+
+function getSafeWarmTeacherFallback(childName: string, score: number) {
+  const name = childName || 'Your child'
+  const safeScore = Number.isFinite(score) ? score : 0
+
+  const strong = [
+    `${name} has had a lovely week and is showing strong progress. The confidence and effort shown in class are encouraging.`,
+    `${name} is doing well and continues to show good focus, confidence, and positive classroom habits.`,
+    `${name} is showing strong consistency this week. It is wonderful to see this confidence growing in class.`,
+    `${name} has shown excellent effort and steady confidence. We will keep encouraging the same positive growth.`,
+  ]
+
+  const steady = [
+    `${name} is making steady progress this week. We are seeing good effort in class and will continue supporting confidence and consistency.`,
+    `${name} is growing at a steady pace. We will keep encouraging participation, confidence, and calm progress in class.`,
+    `${name} has had a steady week. There is positive effort, and we will keep supporting the small steps that build confidence.`,
+    `${name} is settling into a good rhythm. We are supporting consistency and encouraging continued growth in class.`,
+  ]
+
+  const support = [
+    `${name} had a more challenging week, but there is no need for worry. We are supporting each step calmly and will keep encouraging growth in class.`,
+    `${name} needs a little more support at the moment, and that is okay. We will continue guiding confidence and progress step by step.`,
+    `${name} found some areas challenging this week, but this is part of the learning journey. We are here to support and encourage steady growth.`,
+    `${name} is still building confidence in some areas. We will keep working gently in class and celebrate the small wins along the way.`,
+  ]
+
+  let bank = steady
+  if (safeScore >= 4) bank = strong
+  else if (safeScore < 2.7) bank = support
+
+  return bank[getSafeTeacherCommentIndex(`${name}-${safeScore.toFixed(1)}-safe-teacher`, bank.length)]
+}
+
 function getSubjectGrowthWord(score: number, change: number | null) {
   if (change !== null && change >= 0.6) return 'Great growth'
   if (change !== null && change >= 0.2) return 'Improved'
@@ -591,7 +631,7 @@ export function ReportCard({ report, childName }: Props) {
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
   const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<null | { name: string; score: number; change: number | null }>(null)
-  const teacherCommentText = String(report.comment || '')
+  const teacherCommentText = String(report.comment || getSafeWarmTeacherFallback('', Number(report.overallScore) || 0))
   const teacherCommentNeedsMore = teacherCommentText.length > 92
   const teacherCommentPreview = teacherCommentNeedsMore
     ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
