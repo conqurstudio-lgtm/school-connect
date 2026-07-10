@@ -976,16 +976,6 @@ export default function ParentMagicReportPage() {
     }
   }
 
-  if (parentView === 'moments') {
-    return (
-      <ParentMomentsPage
-        token={token || ''}
-        embedded={true}
-        onClose={openReportView}
-      />
-    )
-  }
-
   const childName = payload.child?.name || 'Your child'
   const teacherName = payload.teacher?.name || 'Teacher'
   const school = payload.school || null
@@ -1068,6 +1058,20 @@ export default function ParentMagicReportPage() {
           padding: '0 16px calc(18px + env(safe-area-inset-bottom, 0px))',
           background: '#FFFFFF',
         }}>
+          {parentView === 'moments' ? (
+            <div style={{
+              width: '100%',
+              maxWidth: 430,
+              margin: '0 auto',
+            }}>
+              <ParentMomentsPage
+                token={token || ''}
+                embedded={true}
+                onClose={openReportView}
+                insideReportShell={true}
+              />
+            </div>
+          ) : (
           <div style={{
             width: '100%',
             maxWidth: 430,
@@ -1117,6 +1121,7 @@ export default function ParentMagicReportPage() {
               </section>
             )}
           </div>
+          )}
         </section>
       </div>
 </main>

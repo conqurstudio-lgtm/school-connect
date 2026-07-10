@@ -234,7 +234,7 @@ function ReactionBurstLayer({ bursts = [] }: any) {
  inset: 0,
  pointerEvents: 'none',
  zIndex: 6,
- overflow: 'hidden',
+ overflow: insideReportShell ? 'visible' : 'hidden',
  borderRadius: 22,
  }}>
  {bursts.map((burst: any, index: number) => (
@@ -316,8 +316,9 @@ function ParentMomentsBackButton({ onClick, href, label = 'Back' }: any) {
  )
 }
 
-export function ParentMomentsPage({ token, embedded = false, onClose }: { token: string, embedded?: boolean, onClose?: () => void }) {
+export function ParentMomentsPage({ token, embedded = false, onClose, insideReportShell = false }: { token: string, embedded?: boolean, onClose?: () => void, insideReportShell?: boolean }) {
  useEffect(() => {
+ if (insideReportShell) return
  const html = document.documentElement
  const body = document.body
 
@@ -350,7 +351,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  body.style.background = previous.bodyBackground
  body.style.touchAction = previous.bodyTouchAction
  }
- }, [])
+ }, [insideReportShell])
 
  const [loading, setLoading] = useState(true)
  const [child, setChild] = useState<any>(null)
@@ -503,8 +504,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: '100dvh',
- height: '100dvh',
+ minHeight: insideReportShell ? 'auto' : '100dvh',
+ height: insideReportShell ? 'auto' : '100dvh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
@@ -520,7 +521,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
 
  <div style={{
  maxWidth: 520,
- height: '100dvh',
+ height: insideReportShell ? 'auto' : '100dvh',
  margin: '0 auto',
  display: 'flex',
  flexDirection: 'column',
@@ -540,12 +541,12 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  />
 
  <section style={{
- flex: 1,
- minHeight: 0,
- overflowY: 'auto',
+ flex: insideReportShell ? 'initial' : 1,
+ minHeight: insideReportShell ? 'auto' : 0,
+ overflowY: insideReportShell ? 'visible' : 'auto',
  overflowX: 'hidden',
- WebkitOverflowScrolling: 'touch',
- padding: '12px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
+ WebkitOverflowScrolling: insideReportShell ? undefined : 'touch',
+ padding: insideReportShell ? '12px 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
  {true && (
@@ -553,7 +554,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose }: { token:
  display: 'flex',
  alignItems: 'center',
  gap: 22,
- margin: '0 0 22px 56px',
+ margin: insideReportShell ? '0 0 22px 0' : '0 0 22px 56px',
  borderBottom: `1px solid ${T.border}`,
  }}>
  {[
