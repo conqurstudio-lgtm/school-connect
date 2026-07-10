@@ -166,76 +166,6 @@ function PreviousReportDropdown({ report, childName }: { report: any, childName:
 }
 
 
-function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
-  const [hasNew, setHasNew] = useState(false)
-
-  useEffect(() => {
-    if (!token) return
-
-    let alive = true
-
-    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}&peek=1`, { cache: 'no-store' })
-      .then(res => res.json())
-      .then(json => {
-        if (!alive) return
-
-        const nextHasNew = Array.isArray(json.moments)
-          ? json.moments.some((moment: any) => !moment?.recipient?.viewed_at)
-          : false
-
-        setHasNew(nextHasNew)
-      })
-      .catch(() => {
-        if (alive) setHasNew(false)
-      })
-
-    return () => {
-      alive = false
-    }
-  }, [token])
-
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label="View Moments"
-      style={{
-        position: 'relative',
-        top: 'auto',
-        right: 'auto',
-        width: 38,
-        height: 38,
-        borderRadius: 999,
-        border: 'none',
-        background: '#FFFFFF',
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textDecoration: 'none',
-        flexShrink: 0,
-        overflow: 'visible',
-        zIndex: 30,
-        cursor: 'pointer',
-        padding: 0,
-      }}
-    >
-      <iframe
-        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
-        title="Moments"
-        aria-hidden="true"
-        style={{
-          width: 30,
-          height: 30,
-          border: 'none',
-          display: 'block',
-          pointerEvents: 'none',
-        }}
-      />
-    </button>
-  )
-}
-
-
 function reportTeacherInitials(name: any) {
   return String(name || 'Teacher')
     .trim()
@@ -1042,7 +972,6 @@ export default function ParentMagicReportPage() {
               alignItems: 'center',
               gap: 8,
             }}>
-              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
               {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             </div>
           </div>
