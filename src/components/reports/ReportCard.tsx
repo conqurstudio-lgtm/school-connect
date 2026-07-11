@@ -781,7 +781,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
       <style jsx global>{`
         .sc-report-subject-grid-card-v1,
         .sc-subject-card-growth-v1 {
-          background: #f8f8f7 !important;
+          background: #f7f7f7 !important;
         }
       `}</style>
 

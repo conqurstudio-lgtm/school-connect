@@ -83,7 +83,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         maxWidth: 370,
         margin: '14px auto 0',
         borderRadius: 28,
-        background: '#f8f8f7',
+        background: '#f7f7f7',
         padding: '16px 16px 12px',
         boxSizing: 'border-box',
       }}
@@ -544,7 +544,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           margin: '14px auto 0',
           border: 'none',
           borderRadius: 26,
-          background: '#f8f8f7',
+          background: '#f7f7f7',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
