@@ -850,6 +850,71 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       )}
 
+
+      <style jsx global>{`
+        @keyframes scSubjectPopupBackdropIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scSubjectPopupExpandIn {
+          0% {
+            opacity: 0;
+            transform: translateY(14px) scale(0.88);
+            filter: blur(2px);
+          }
+          60% {
+            opacity: 1;
+            transform: translateY(-2px) scale(1.015);
+            filter: blur(0);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+        }
+
+        .sc-subject-detail-modal-shell-v2 {
+          animation: scSubjectPopupBackdropIn 180ms ease-out both;
+        }
+
+        .sc-subject-detail-modal-card-v2 {
+          transform-origin: center center;
+          animation: scSubjectPopupExpandIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          will-change: transform, opacity;
+        }
+
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          transition:
+            transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+            background 180ms ease,
+            opacity 180ms ease;
+        }
+
+        .sc-report-subject-grid-card-v1:active,
+        .sc-subject-card-growth-v1:active {
+          transform: scale(0.985);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .sc-subject-detail-modal-shell-v2,
+          .sc-subject-detail-modal-card-v2 {
+            animation: none !important;
+          }
+
+          .sc-report-subject-grid-card-v1,
+          .sc-subject-card-growth-v1 {
+            transition: none !important;
+          }
+        }
+      `}</style>
+
       {selectedSubjectDetail && (
         <div
           className="sc-subject-detail-modal-shell-v2"
