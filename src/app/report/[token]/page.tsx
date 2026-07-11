@@ -408,16 +408,12 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 
 
 function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant?: 'icon' | 'card' }) {
-  const [open, setOpen] = useState(false)
   const [creating, setCreating] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [shareUrl, setShareUrl] = useState('')
 
-  async function createShareLink() {
-    if (!token || creating) return
+  async function getShareUrl() {
+    if (!token || creating) return ''
 
     setCreating(true)
-    setCopied(false)
 
     try {
       const res = await fetch(`/api/report/${encodeURIComponent(token)}/family-share`, {
@@ -432,557 +428,141 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         throw new Error(json.error || 'Could not create family link')
       }
 
-      setShareUrl(json.share_url || '')
-      setOpen(true)
+      return json.share_url || ''
     } catch (err: any) {
       alert(err?.message || 'Could not create family link')
+      return ''
     } finally {
       setCreating(false)
     }
   }
 
-  async function copyShareLink() {
-    if (!shareUrl) return
-
-    try {
-      await navigator.clipboard.writeText(shareUrl)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1600)
-    } catch {
-      alert('Could not copy link')
-    }
-  }
-
-  async function nativeShare() {
-    if (!shareUrl) return copyShareLink()
+  async function shareReport() {
+    const url = await getShareUrl()
+    if (!url) return
 
     const shareData = {
       title: 'School report',
       text: 'I am sharing a read-only school report with you.',
-      url: shareUrl,
+      url,
     }
 
     if (navigator.share) {
       try {
         await navigator.share(shareData)
-        return
       } catch {}
+      return
     }
 
-    await copyShareLink()
+    alert('Sharing is not available on this device. Please open this report on your phone to share it.')
   }
-
 
   if (variant === 'card') {
     return (
-      <div
-        className="sc-family-share-card-v1"
+      <button
+        type="button"
+        className="sc-family-share-card-v2"
+        onClick={shareReport}
+        disabled={creating}
+        aria-label="Share report with family"
         style={{
-          position: 'relative',
           width: '100%',
           maxWidth: 370,
           margin: '14px auto 0',
+          border: 'none',
+          borderRadius: 28,
+          background: '#F5F5F7',
+          color: '#1A1A1A',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          padding: '18px 18px',
+          cursor: creating ? 'default' : 'pointer',
+          opacity: creating ? 0.65 : 1,
+          textAlign: 'left',
+          fontFamily: 'inherit',
         }}
       >
-        <button
-          type="button"
-          onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
-          disabled={creating}
-          aria-label="Share report with family"
-          style={{
-            width: '100%',
-            border: 'none',
-            borderRadius: 28,
-            background: '#F5F5F7',
-            color: '#1A1A1A',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '15px 16px',
-            cursor: creating ? 'default' : 'pointer',
-            opacity: creating ? 0.65 : 1,
-            textAlign: 'left',
-            fontFamily: 'inherit',
-          }}
-        >
-          <span style={{
-            width: 42,
-            height: 42,
-            borderRadius: 16,
-            background: '#FFFFFF',
-            color: '#1A1A1A',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            {copied ? <Check size={18} strokeWidth={2.2} /> : <Send size={18} strokeWidth={2.1} />}
-          </span>
+        <span style={{
+          width: 34,
+          height: 34,
+          background: 'transparent',
+          color: '#1A1A1A',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <Send size={22} strokeWidth={2.2} />
+        </span>
 
-          <span style={{ minWidth: 0, flex: 1 }}>
-            <span style={{
-              display: 'block',
-              fontSize: 14.5,
-              fontWeight: 650,
-              letterSpacing: '-0.02em',
-              color: '#1A1A1A',
-              lineHeight: 1.15,
-            }}>
-              Share with family
-            </span>
-            <span style={{
-              display: 'block',
-              marginTop: 3,
-              fontSize: 12.5,
-              fontWeight: 430,
-              color: '#5F6268',
-              lineHeight: 1.25,
-            }}>
-              Send a secure read-only report link.
-            </span>
-          </span>
-
+        <span style={{
+          minWidth: 0,
+          flex: 1,
+          display: 'block',
+        }}>
           <span style={{
-            fontSize: 12.5,
+            display: 'block',
+            fontSize: 14.5,
             fontWeight: 650,
-            color: '#5F6268',
+            letterSpacing: '-0.02em',
+            color: '#1A1A1A',
+            lineHeight: 1.15,
           }}>
-            {shareUrl ? 'Open' : 'Create'}
+            Share with family
           </span>
-        </button>
-
-        {open && (
-          <div style={{
-            position: 'absolute',
-            top: 'calc(100% + 10px)',
-            left: 0,
-            right: 0,
-            borderRadius: 24,
-            background: '#F5F5F7',
-            boxShadow: 'none',
-            border: 'none',
-            padding: 14,
-            zIndex: 100,
+          <span style={{
+            display: 'block',
+            marginTop: 4,
+            fontSize: 13.2,
+            fontWeight: 430,
+            color: '#5F6268',
+            lineHeight: 1.25,
           }}>
-            <p style={{
-              fontSize: 13.5,
-              fontWeight: 650,
-              color: '#1A1A1A',
-              margin: '0 0 6px',
-            }}>
-              Family sharing
-            </p>
+            Send this report to family.
+          </span>
+        </span>
 
-            <p style={{
-              fontSize: 12.5,
-              fontWeight: 430,
-              color: '#5F6268',
-              lineHeight: 1.35,
-              margin: '0 0 12px',
-            }}>
-              Copy or send a secure report link to family.
-            </p>
-
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button
-                type="button"
-                onClick={copyShareLink}
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  borderRadius: 16,
-                  background: '#FFFFFF',
-                  color: '#1A1A1A',
-                  padding: '11px 10px',
-                  fontSize: 12.5,
-                  fontWeight: 650,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {copied ? 'Copied' : 'Copy link'}
-              </button>
-
-              <button
-                type="button"
-                onClick={nativeShare}
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  borderRadius: 16,
-                  background: '#1A1A1A',
-                  color: '#FFFFFF',
-                  padding: '11px 10px',
-                  fontSize: 12.5,
-                  fontWeight: 650,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
-              >
-                Share
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+        <span style={{
+          border: 'none',
+          borderRadius: 999,
+          background: '#FFFFFF',
+          color: '#1A1A1A',
+          padding: '9px 14px',
+          fontSize: 13,
+          fontWeight: 650,
+          lineHeight: 1,
+          flexShrink: 0,
+        }}>
+          {creating ? '...' : 'Share'}
+        </span>
+      </button>
     )
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <button
-        type="button"
-        onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
-        disabled={creating}
-        aria-label="Share report with family"
-        style={{
-          width: 38,
-          height: 38,
-          borderRadius: 999,
-          border: 'none',
-          background: '#FFFFFF',
-          color: '#252525',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: creating ? 'default' : 'pointer',
-          opacity: creating ? 0.55 : 1,
-          padding: 0,
-        }}
-      >
-        <Send size={18} strokeWidth={2} />
-      </button>
-
-      {open && (
-        <div style={{
-          position: 'absolute',
-          top: 44,
-          right: 0,
-          width: 260,
-          borderRadius: 22,
-          background: '#FFFFFF',
-          boxShadow: '0 18px 50px rgba(37,37,37,0.10)',
-          padding: 14,
-          zIndex: 100,
-        }}>
-          <p style={{
-            fontSize: 13.5,
-            fontWeight: 560,
-            color: '#252525',
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
-            Share with family
-          </p>
-
-          <p style={{
-            fontSize: 12.4,
-            color: '#7C8486',
-            lineHeight: 1.4,
-            margin: '5px 0 12px',
-          }}>
-            This creates a read-only link for the current report only.
-          </p>
-
-          <div style={{
-            display: 'flex',
-            gap: 8,
-          }}>
-            <button
-              type="button"
-              onClick={copyShareLink}
-              style={{
-                flex: 1,
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: '#F5F5F4',
-                color: '#252525',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-              }}
-            >
-              {copied ? <Check size={15} /> : <Copy size={15} />}
-              {copied ? 'Copied' : 'Copy'}
-            </button>
-
-            <button
-              type="button"
-              onClick={nativeShare}
-              style={{
-                flex: 1,
-                minHeight: 36,
-                borderRadius: 999,
-                border: 'none',
-                background: '#252525',
-                color: '#FFFFFF',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 6,
-                fontSize: 12.5,
-                fontWeight: 520,
-                fontFamily: 'inherit',
-              }}
-            >
-              Share
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function SchoolQuickView({ school }: { school: any }) {
-  const [open, setOpen] = useState(false)
-  const wrapRef = useRef<HTMLDivElement | null>(null)
-  const schoolInitial = String(school?.name || 'S').slice(0, 1).toUpperCase()
-
-  const location = [
-    school?.address,
-    school?.province,
-    school?.country,
-  ].filter(Boolean).join(' · ')
-
-  const rawWebsite = String(school?.website || '').trim()
-  const websiteHref = rawWebsite
-    ? (/^https?:\/\//i.test(rawWebsite) ? rawWebsite : `https://${rawWebsite}`)
-    : ''
-
-  useEffect(() => {
-    if (!open) return
-
-    const closeOnOutside = (event: PointerEvent) => {
-      if (!wrapRef.current) return
-
-      if (!wrapRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    document.addEventListener('pointerdown', closeOnOutside)
-    document.addEventListener('keydown', closeOnEscape)
-
-    return () => {
-      document.removeEventListener('pointerdown', closeOnOutside)
-      document.removeEventListener('keydown', closeOnEscape)
-    }
-  }, [open])
-
-  return (
-    <div ref={wrapRef} style={{
-      position: 'relative',
-      width: 'fit-content',
-      marginTop: 0,
-    }}>
-      <button
-        type="button"
-        onClick={() => setOpen(current => !current)}
-        style={{
-          cursor: 'pointer',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 17,
-          padding: 0,
-          borderRadius: 0,
-          background: 'transparent',
-          border: 'none',
-          color: '#7C8486',
-          fontSize: 10.5,
-          fontWeight: 430,
-          lineHeight: 1,
-          userSelect: 'none',
-          fontFamily: 'inherit',
-        }}
-      >
-        View school
-      </button>
-
-      {open && (
-        <div style={{
-          position: 'absolute',
-          top: 25,
-          left: 0,
-          zIndex: 100,
-          width: 272,
-          padding: 12,
-          borderRadius: 20,
-          background: '#FFFFFF',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 9,
-          }}>
-            <div style={{
-              width: 38,
-              height: 38,
-              borderRadius: 15,
-              background: school?.logo_url ? `url(${school.logo_url}) center/cover` : '#EEF3F1',
-              color: '#8FA6A1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 15,
-              fontWeight: 560,
-              flexShrink: 0,
-              overflow: 'hidden',
-                boxShadow: '0 18px 45px rgba(0,0,0,0.055)',
-            }}>
-              {!school?.logo_url && schoolInitial}
-            </div>
-
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{
-                fontSize: 13.5,
-                fontWeight: 560,
-                color: '#252525',
-                margin: 0,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                {school?.name || 'School'}
-              </p>
-
-              <p style={{
-                fontSize: 12,
-                color: '#9A9A9A',
-                margin: '2px 0 0',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
-              }}>
-                School profile
-              </p>
-            </div>
-          </div>
-
-          <div style={{
-            marginTop: 11,
-            paddingTop: 10,
-            borderTop: '1px solid rgba(0,0,0,0.07)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 9,
-          }}>
-            {school?.tagline && (
-              <p style={{
-                fontSize: 12.5,
-                color: '#5F6268',
-                lineHeight: 1.45,
-                margin: 0,
-              }}>
-                {school.tagline}
-              </p>
-            )}
-
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}>
-              <span style={{
-                fontSize: 10.5,
-                color: '#B8B8BC',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.055em',
-              }}>
-                Location
-              </span>
-
-              <span style={{
-                fontSize: 12.5,
-                color: '#5F6268',
-                lineHeight: 1.4,
-              }}>
-                {location || 'Location not added yet'}
-              </span>
-            </div>
-
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-            }}>
-              <span style={{
-                fontSize: 10.5,
-                color: '#B8B8BC',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.055em',
-              }}>
-                Website
-              </span>
-
-              {websiteHref ? (
-                <a
-                  href={websiteHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    fontSize: 12.5,
-                    color: '#8FA6A1',
-                    lineHeight: 1.4,
-                    textDecoration: 'none',
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {rawWebsite}
-                </a>
-              ) : (
-                <span style={{
-                  fontSize: 12.5,
-                  color: '#9A9A9A',
-                  lineHeight: 1.4,
-                }}>
-                  Website not added yet
-                </span>
-              )}
-            </div>
-
-            {(school?.phone || school?.email) && (
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-                paddingTop: 2,
-              }}>
-                {school?.phone && (
-                  <span style={{ fontSize: 12.2, color: '#9A9A9A' }}>
-                    {school.phone}
-                  </span>
-                )}
-
-                {school?.email && (
-                  <span style={{
-                    fontSize: 12.2,
-                    color: '#9A9A9A',
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                  }}>
-                    {school.email}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    <button
+      type="button"
+      onClick={shareReport}
+      disabled={creating}
+      aria-label="Share report with family"
+      style={{
+        width: 38,
+        height: 38,
+        borderRadius: 999,
+        border: 'none',
+        background: '#FFFFFF',
+        color: '#252525',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: creating ? 'default' : 'pointer',
+        opacity: creating ? 0.55 : 1,
+        padding: 0,
+      }}
+    >
+      <Send size={18} strokeWidth={2} />
+    </button>
   )
 }
 
