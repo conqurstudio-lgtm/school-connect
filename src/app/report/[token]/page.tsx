@@ -70,6 +70,10 @@ function getReportDateLabel(report: any) {
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
+  const trophyReports = safeReports.filter((report: any) => getReportScore(report) >= 4.5).length
+  const starReports = safeReports.filter((report: any) => getReportScore(report) >= 4).length
+  const bestScore = safeReports.reduce((best: number, report: any) => Math.max(best, getReportScore(report)), 0)
+  const bestScoreText = bestScore > 0 ? bestScore.toFixed(1) : '—'
   const visibleReports = showAllPreviousReports ? safeReports : safeReports.slice(0, 4)
 
   if (!safeReports.length) return null
@@ -123,11 +127,63 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           color: '#5F6268',
           background: '#FFFFFF',
           borderRadius: 999,
-          padding: '6px 9px',
+          padding: '6px 10px',
           flexShrink: 0,
         }}>
-          {safeReports.length}
+          {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'}
         </span>
+      </div>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+        gap: 8,
+        marginBottom: 12,
+      }}>
+        <div style={{
+          borderRadius: 18,
+          background: '#FFFFFF',
+          padding: '10px 8px',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 17, lineHeight: 1 }}>🏆</div>
+          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
+            {trophyReports}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
+            Trophies
+          </p>
+        </div>
+
+        <div style={{
+          borderRadius: 18,
+          background: '#FFFFFF',
+          padding: '10px 8px',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 17, lineHeight: 1 }}>⭐</div>
+          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
+            {starReports}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
+            Stars
+          </p>
+        </div>
+
+        <div style={{
+          borderRadius: 18,
+          background: '#FFFFFF',
+          padding: '10px 8px',
+          textAlign: 'center',
+        }}>
+          <div style={{ fontSize: 17, lineHeight: 1 }}>✨</div>
+          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
+            {bestScoreText}
+          </p>
+          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
+            Best
+          </p>
+        </div>
       </div>
 
       <div style={{
