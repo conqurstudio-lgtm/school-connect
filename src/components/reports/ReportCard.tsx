@@ -777,6 +777,14 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </section>
       )}
 
+
+      <style jsx global>{`
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          background: #f8f8f7 !important;
+        }
+      `}</style>
+
       {subjects.length > 0 && (
         <section
           className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2"
