@@ -67,104 +67,177 @@ function getReportDateLabel(report: any) {
   })
 }
 
-function PreviousReportDropdown({ report, childName }: { report: any, childName: string }) {
-  const score = getReportScore(report)
-  const scoreText = score > 0 ? score.toFixed(1) : '—'
-  const performance = getReportPerformance(score)
-  const scorePercent = score > 0 ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0
+function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
+  const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
+  const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
+  const visibleReports = showAllPreviousReports ? safeReports : safeReports.slice(0, 4)
+
+  if (!safeReports.length) return null
 
   return (
-    <details open className="sc-previous-report-flat-v278" style={{
-      borderTop: '1px solid rgba(0,0,0,0.06)',
-      background: 'transparent',
-    }}>
-      <summary style={{
-        listStyle: 'none',
-        cursor: 'pointer',
+    <section
+      className="sc-previous-reports-history-card-v1"
+      aria-label="Previous reports history"
+      style={{
+        width: '100%',
+        maxWidth: 370,
+        margin: '14px auto 0',
+        borderRadius: 28,
+        background: '#f8f8f7',
+        padding: '16px 16px 12px',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 14,
-        padding: '14px 2px',
+        gap: 12,
+        marginBottom: 12,
       }}>
-        <div style={{
-          minWidth: 0,
-          flex: 1,
-        }}>
+        <div style={{ minWidth: 0 }}>
           <p style={{
-            fontSize: 13.5,
-            fontWeight: 540,
-            color: T.ink,
             margin: 0,
-            letterSpacing: '-0.01em',
+            fontSize: 13.5,
+            fontWeight: 650,
+            letterSpacing: '-0.02em',
+            color: '#1A1A1A',
+            lineHeight: 1.15,
           }}>
-            {getReportDateLabel(report)}
+            Previous reports
           </p>
-
           <p style={{
+            margin: '4px 0 0',
             fontSize: 12.5,
-            color: T.ink3,
-            lineHeight: 1.35,
-            margin: '3px 0 0',
+            fontWeight: 430,
+            color: '#5F6268',
+            lineHeight: 1.25,
           }}>
-            {performance}
+            Recent report history
           </p>
         </div>
 
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 9,
+        <span style={{
+          fontSize: 11.5,
+          fontWeight: 650,
+          color: '#5F6268',
+          background: '#FFFFFF',
+          borderRadius: 999,
+          padding: '6px 9px',
           flexShrink: 0,
         }}>
-          <div
-            aria-label={`Score ${scoreText} out of 5`}
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 999,
-              padding: 2,
-              boxSizing: 'border-box',
-              background: score > 0
-                ? `conic-gradient(${T.accent} ${scorePercent}%, rgba(0,0,0,0.06) 0)`
-                : 'rgba(0,0,0,0.06)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <span style={{
-              width: '100%',
-              height: '100%',
-              borderRadius: 999,
-              background: '#FFFFFF',
-              color: T.ink2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12,
-              fontWeight: 560,
-              letterSpacing: '-0.02em',
-            }}>
-              {scoreText}
-            </span>
-          </div>
-        </div>
-      </summary>
-
-      <div className="sc-previous-report-open-body-v288" style={{
-        padding: '14px 10px 18px',
-        background: '#FFFFFF',
-        borderRadius: 20,
-        margin: '0 0 14px',
-      }}>
-        <ReportCard report={report} childName={childName} />
+          {safeReports.length}
+        </span>
       </div>
-    </details>
+
+      <div style={{
+        display: 'grid',
+        gap: 8,
+      }}>
+        {visibleReports.map((report: any, index: number) => {
+          const score = getReportScore(report)
+          const scoreText = score > 0 ? score.toFixed(1) : '—'
+          const performance = getReportPerformance(score)
+          const scorePercent = score > 0 ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0
+
+          return (
+            <article
+              key={report?.id || report?.token || report?.week_starting || index}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+                borderRadius: 22,
+                background: '#FFFFFF',
+                padding: '11px 12px',
+                boxSizing: 'border-box',
+              }}
+            >
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p style={{
+                  margin: 0,
+                  fontSize: 13,
+                  fontWeight: 620,
+                  color: '#1A1A1A',
+                  lineHeight: 1.18,
+                  letterSpacing: '-0.02em',
+                }}>
+                  {getReportDateLabel(report)}
+                </p>
+                <p style={{
+                  margin: '4px 0 0',
+                  fontSize: 12,
+                  fontWeight: 430,
+                  color: '#5F6268',
+                  lineHeight: 1.25,
+                }}>
+                  {performance}
+                </p>
+              </div>
+
+              <div
+                aria-label={`Previous report score ${scoreText} out of 5`}
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 999,
+                  padding: 2,
+                  boxSizing: 'border-box',
+                  background: score > 0
+                    ? `conic-gradient(#252525 ${scorePercent}%, rgba(0,0,0,0.08) 0)`
+                    : 'rgba(0,0,0,0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 999,
+                  background: '#FFFFFF',
+                  color: '#1A1A1A',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 11.5,
+                  fontWeight: 650,
+                  letterSpacing: '-0.02em',
+                }}>
+                  {scoreText}
+                </span>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      {safeReports.length > 4 && (
+        <button
+          type="button"
+          onClick={() => setShowAllPreviousReports(value => !value)}
+          style={{
+            width: '100%',
+            marginTop: 10,
+            border: 'none',
+            background: 'transparent',
+            color: '#252525',
+            fontSize: 12.5,
+            fontWeight: 650,
+            lineHeight: 1,
+            padding: '8px 0 4px',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          {showAllPreviousReports ? 'View less' : `View more`}
+        </button>
+      )}
+    </section>
   )
 }
-
-
 
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
@@ -852,13 +925,9 @@ export default function ParentMagicReportPage() {
                   Previous reports
                 </p>
 
-                {reports.slice(1).map((report: any, index: number) => (
-                  <PreviousReportDropdown
-                    key={report.id || `${report.week_starting || 'previous-report'}-${index}`}
-                    report={report}
-                    childName={childName}
-                  />
-                ))}
+                {reports.slice(1).length > 0 && (
+                    <PreviousReportsCard reports={reports.slice(1)} childName={childName} />
+                  )}
               </section>
             )}
           </div>
