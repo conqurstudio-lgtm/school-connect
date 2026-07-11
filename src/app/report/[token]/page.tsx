@@ -471,7 +471,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           margin: '14px auto 0',
           border: 'none',
           borderRadius: 26,
-          background: '#F0F0F3',
+          background: '#f8f8f7',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
