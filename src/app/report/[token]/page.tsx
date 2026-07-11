@@ -609,14 +609,26 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           display: 'block',
         }}>
           <span style={{
-            display: 'block',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
             fontSize: 13.5,
             fontWeight: 650,
             letterSpacing: '-0.02em',
             color: '#1A1A1A',
             lineHeight: 1.15,
           }}>
-            Share with family
+            <i
+              className="fa-duotone fa-solid fa-family"
+              aria-hidden="true"
+              style={{
+                fontSize: 13,
+                color: '#252525',
+                lineHeight: 1,
+                flexShrink: 0,
+              }}
+            />
+            <span>Share with family</span>
           </span>
           <span style={{
             display: 'block',
@@ -633,7 +645,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         <span style={{
           width: 32,
           height: 32,
-          borderRadius: 12,
+          borderRadius: 999,
           border: 'none',
           background: '#252525',
           color: '#FFFFFF',
