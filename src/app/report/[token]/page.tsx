@@ -470,30 +470,33 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           maxWidth: 370,
           margin: '14px auto 0',
           border: 'none',
-          borderRadius: 28,
-          background: '#F5F5F7',
+          borderRadius: 26,
+          background: '#FBFBFC',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
-          gap: 14,
-          padding: '18px 18px',
+          gap: 12,
+          padding: '16px 16px',
           cursor: creating ? 'default' : 'pointer',
           opacity: creating ? 0.65 : 1,
           textAlign: 'left',
           fontFamily: 'inherit',
+          boxShadow: 'none',
         }}
       >
         <span style={{
-          width: 34,
-          height: 34,
+          width: 30,
+          height: 30,
+          borderRadius: 999,
+          border: '1.4px solid #252525',
           background: 'transparent',
-          color: '#1A1A1A',
+          color: '#252525',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <Send size={22} strokeWidth={2.2} />
+          <Send size={16} strokeWidth={2.1} />
         </span>
 
         <span style={{
@@ -503,7 +506,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         }}>
           <span style={{
             display: 'block',
-            fontSize: 14.5,
+            fontSize: 13.5,
             fontWeight: 650,
             letterSpacing: '-0.02em',
             color: '#1A1A1A',
@@ -514,22 +517,21 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           <span style={{
             display: 'block',
             marginTop: 4,
-            fontSize: 13.2,
+            fontSize: 12.5,
             fontWeight: 430,
             color: '#5F6268',
             lineHeight: 1.25,
           }}>
-            Send this report to family.
+            Opens your phone sharing options.
           </span>
         </span>
 
         <span style={{
           border: 'none',
-          borderRadius: 999,
-          background: '#FFFFFF',
-          color: '#1A1A1A',
-          padding: '9px 14px',
-          fontSize: 13,
+          background: 'transparent',
+          color: '#5F6268',
+          padding: 0,
+          fontSize: 12.5,
           fontWeight: 650,
           lineHeight: 1,
           flexShrink: 0,
