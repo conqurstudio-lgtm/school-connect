@@ -507,7 +507,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
             color: '#5F6268',
             lineHeight: 1.25,
           }}>
-            Only this report is shared. No other information is included.
+            Only this report is shared.
           </span>
         </span>
 
