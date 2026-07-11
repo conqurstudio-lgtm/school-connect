@@ -81,7 +81,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
   return (
     <section
       className="sc-previous-reports-history-card-v1"
-      aria-label="Previous reports history"
+      aria-label="Progress history history"
       style={{
         width: '100%',
         maxWidth: 370,
@@ -102,10 +102,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         <div style={{ minWidth: 0 }}>
 <p style={{
             margin: '4px 0 0',
-            fontSize: 12.5,
-            fontWeight: 430,
+            fontSize: 13.5,
+            fontWeight: 650,
             color: '#5F6268',
-            lineHeight: 1.25,
+            lineHeight: 1.15,
           }}>
             Recent report history
           </p>
@@ -962,16 +962,7 @@ export default function ParentMagicReportPage() {
                 gap: 0,
                 marginTop: 8,
               }}>
-                <p style={{
-                  fontSize: 12.5,
-                  fontWeight: 540,
-                  color: T.ink3,
-                  margin: '0 2px 6px',
-                }}>
-                  Previous reports
-                </p>
-
-                {reports.slice(1).length > 0 && (
+{reports.slice(1).length > 0 && (
                     <PreviousReportsCard reports={reports.slice(1)} childName={childName} />
                   )}
               </section>
