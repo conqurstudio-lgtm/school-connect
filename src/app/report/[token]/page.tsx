@@ -45,10 +45,10 @@ function getReportPerformance(score: number) {
 function getReportDateLabel(report: any) {
   const raw = report?.week_starting || report?.published_at || report?.created_at
 
-  if (!raw) return 'Previous report'
+  if (!raw) return 'Previous progress'
 
   const start = new Date(raw)
-  if (!Number.isFinite(start.getTime())) return 'Previous report'
+  if (!Number.isFinite(start.getTime())) return 'Previous progress'
 
   if (report?.week_starting) {
     const end = new Date(start)
@@ -93,13 +93,13 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
   return (
     <section
       className="sc-previous-reports-history-card-v1"
-      aria-label="Progress history history"
+      aria-label="Previous progress history"
       style={{
         width: '100%',
         maxWidth: 370,
         margin: '14px auto 0',
         borderRadius: 28,
-        background: '#f6f3ee',
+        background: '#f3f4fb',
         padding: '16px 16px 12px',
         boxSizing: 'border-box',
       }}
@@ -119,7 +119,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
             color: '#5F6268',
             lineHeight: 1.15,
           }}>
-            Recent report history
+            Recent progress history
           </p>
         </div>
 
@@ -127,7 +127,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           fontSize: 11.5,
           fontWeight: 650,
           color: '#5F6268',
-          background: '#fffdf9',
+          background: '#ffffff',
           borderRadius: 999,
           padding: '6px 10px',
           flexShrink: 0,
@@ -144,7 +144,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       }}>
         <div style={{
           borderRadius: 18,
-          background: '#fffdf9',
+          background: '#ffffff',
           padding: '10px 8px',
           textAlign: 'center',
         }}>
@@ -159,7 +159,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
         <div style={{
           borderRadius: 18,
-          background: '#fffdf9',
+          background: '#ffffff',
           padding: '10px 8px',
           textAlign: 'center',
         }}>
@@ -235,7 +235,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
               </div>
 
               <div
-                aria-label={`Previous report score ${scoreText} out of 5`}
+                aria-label={`Previous progress score ${scoreText} out of 5`}
                 style={{
                   width: 38,
                   height: 38,
