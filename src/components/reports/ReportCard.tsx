@@ -740,8 +740,31 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
 
       <style jsx global>{`
+        .sc-parent-report-teacher-note-avatar-line-v437,
+        .sc-teacher-comment-overlap-card-v1,
         .sc-teacher-comment-bubble-v2 {
-          background: #dddde8 !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+
+        .sc-teacher-comment-bubble-v2 {
+          background:
+            linear-gradient(180deg, #e8edf8 0%, #ece3e7 52%, #f0d4c9 100%) !important;
+          color: #1A1A1A !important;
+          border: none !important;
+        }
+
+        .sc-teacher-comment-bubble-v2 *,
+        .sc-teacher-comment-text-v1,
+        .sc-teacher-comment-message-v1,
+        .sc-teacher-comment-message-v1 strong,
+        .sc-teacher-comment-read-more-v1 {
+          color: #1A1A1A !important;
+        }
+
+        .sc-teacher-comment-read-more-v1 {
+          border: none !important;
+          background: transparent !important;
         }
       `}</style>
 
