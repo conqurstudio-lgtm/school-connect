@@ -100,17 +100,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         marginBottom: 12,
       }}>
         <div style={{ minWidth: 0 }}>
-          <p style={{
-            margin: 0,
-            fontSize: 13.5,
-            fontWeight: 650,
-            letterSpacing: '-0.02em',
-            color: '#1A1A1A',
-            lineHeight: 1.15,
-          }}>
-            Previous reports
-          </p>
-          <p style={{
+<p style={{
             margin: '4px 0 0',
             fontSize: 12.5,
             fontWeight: 430,
