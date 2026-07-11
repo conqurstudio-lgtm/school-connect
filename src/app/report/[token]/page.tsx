@@ -407,7 +407,7 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 }
 
 
-function FamilyShareButton({ token }: { token: string }) {
+function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant?: 'icon' | 'card' }) {
   const [open, setOpen] = useState(false)
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -470,6 +470,162 @@ function FamilyShareButton({ token }: { token: string }) {
     }
 
     await copyShareLink()
+  }
+
+
+  if (variant === 'card') {
+    return (
+      <div
+        className="sc-family-share-card-v1"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: 370,
+          margin: '14px auto 0',
+        }}
+      >
+        <button
+          type="button"
+          onClick={shareUrl ? () => setOpen(v => !v) : createShareLink}
+          disabled={creating}
+          aria-label="Share report with family"
+          style={{
+            width: '100%',
+            border: 'none',
+            borderRadius: 28,
+            background: '#F5F5F7',
+            color: '#1A1A1A',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '15px 16px',
+            cursor: creating ? 'default' : 'pointer',
+            opacity: creating ? 0.65 : 1,
+            textAlign: 'left',
+            fontFamily: 'inherit',
+          }}
+        >
+          <span style={{
+            width: 42,
+            height: 42,
+            borderRadius: 16,
+            background: '#FFFFFF',
+            color: '#1A1A1A',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            {copied ? <Check size={18} strokeWidth={2.2} /> : <Send size={18} strokeWidth={2.1} />}
+          </span>
+
+          <span style={{ minWidth: 0, flex: 1 }}>
+            <span style={{
+              display: 'block',
+              fontSize: 14.5,
+              fontWeight: 650,
+              letterSpacing: '-0.02em',
+              color: '#1A1A1A',
+              lineHeight: 1.15,
+            }}>
+              Share with family
+            </span>
+            <span style={{
+              display: 'block',
+              marginTop: 3,
+              fontSize: 12.5,
+              fontWeight: 430,
+              color: '#5F6268',
+              lineHeight: 1.25,
+            }}>
+              Send a secure read-only report link.
+            </span>
+          </span>
+
+          <span style={{
+            fontSize: 12.5,
+            fontWeight: 650,
+            color: '#5F6268',
+          }}>
+            {shareUrl ? 'Open' : 'Create'}
+          </span>
+        </button>
+
+        {open && (
+          <div style={{
+            position: 'absolute',
+            top: 'calc(100% + 10px)',
+            left: 0,
+            right: 0,
+            borderRadius: 24,
+            background: '#F5F5F7',
+            boxShadow: 'none',
+            border: 'none',
+            padding: 14,
+            zIndex: 100,
+          }}>
+            <p style={{
+              fontSize: 13.5,
+              fontWeight: 650,
+              color: '#1A1A1A',
+              margin: '0 0 6px',
+            }}>
+              Family sharing
+            </p>
+
+            <p style={{
+              fontSize: 12.5,
+              fontWeight: 430,
+              color: '#5F6268',
+              lineHeight: 1.35,
+              margin: '0 0 12px',
+            }}>
+              Copy or send a secure report link to family.
+            </p>
+
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                type="button"
+                onClick={copyShareLink}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  borderRadius: 16,
+                  background: '#FFFFFF',
+                  color: '#1A1A1A',
+                  padding: '11px 10px',
+                  fontSize: 12.5,
+                  fontWeight: 650,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {copied ? 'Copied' : 'Copy link'}
+              </button>
+
+              <button
+                type="button"
+                onClick={nativeShare}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  borderRadius: 16,
+                  background: '#1A1A1A',
+                  color: '#FFFFFF',
+                  padding: '11px 10px',
+                  fontSize: 12.5,
+                  fontWeight: 650,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Share
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -1058,7 +1214,6 @@ export default function ParentMagicReportPage() {
               gap: 8,
             }}>
               <MomentBellLink token={token || ''} onOpen={openMomentsView} />
-              {!isFamilyShare && <FamilyShareButton token={token || ''} />}
             </div>
           </div>
         </header>
@@ -1109,6 +1264,7 @@ export default function ParentMagicReportPage() {
                   report={reports[0]}
                   childName={childName}
                 />
+              {!isFamilyShare && <FamilyShareButton token={token || ''} variant="card" />}
 </div>
             )}
             {reports.length > 1 && (
