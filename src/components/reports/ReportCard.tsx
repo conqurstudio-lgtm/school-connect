@@ -738,6 +738,13 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </div>
       </div>
 
+
+      <style jsx global>{`
+        .sc-teacher-comment-bubble-v2 {
+          background: #dddde8 !important;
+        }
+      `}</style>
+
       {/* ── Teacher's note ─────────────────── */}
 
       {teacherCommentText && (
