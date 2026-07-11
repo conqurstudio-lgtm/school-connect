@@ -485,21 +485,6 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         }}
       >
         <span style={{
-          width: 30,
-          height: 30,
-          borderRadius: 999,
-          border: '1.4px solid #252525',
-          background: 'transparent',
-          color: '#252525',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
-          <Send size={16} strokeWidth={2.1} />
-        </span>
-
-        <span style={{
           minWidth: 0,
           flex: 1,
           display: 'block',
@@ -527,16 +512,17 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         </span>
 
         <span style={{
+          width: 30,
+          height: 30,
           border: 'none',
           background: 'transparent',
-          color: '#5F6268',
-          padding: 0,
-          fontSize: 12.5,
-          fontWeight: 650,
-          lineHeight: 1,
+          color: '#252525',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
         }}>
-          {creating ? '...' : 'Share'}
+          <Send size={17} strokeWidth={1.65} />
         </span>
       </button>
     )
