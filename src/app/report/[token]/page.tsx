@@ -67,6 +67,18 @@ function getReportDateLabel(report: any) {
   })
 }
 
+
+      <style jsx global>{`
+        .sc-family-share-card-v2,
+        .sc-previous-reports-history-card-v1 {
+          border: 1px solid rgba(37, 37, 37, 0.035) !important;
+        }
+
+        .sc-previous-reports-history-card-v1 article {
+          border: 1px solid rgba(37, 37, 37, 0.03) !important;
+        }
+      `}</style>
+
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
@@ -87,7 +99,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         maxWidth: 370,
         margin: '14px auto 0',
         borderRadius: 28,
-        background: '#f7f7f7',
+        background: '#f6f3ee',
         padding: '16px 16px 12px',
         boxSizing: 'border-box',
       }}
@@ -115,7 +127,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           fontSize: 11.5,
           fontWeight: 650,
           color: '#5F6268',
-          background: '#FFFFFF',
+          background: '#fffdf9',
           borderRadius: 999,
           padding: '6px 10px',
           flexShrink: 0,
@@ -132,7 +144,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       }}>
         <div style={{
           borderRadius: 18,
-          background: '#FFFFFF',
+          background: '#fffdf9',
           padding: '10px 8px',
           textAlign: 'center',
         }}>
@@ -147,7 +159,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
         <div style={{
           borderRadius: 18,
-          background: '#FFFFFF',
+          background: '#fffdf9',
           padding: '10px 8px',
           textAlign: 'center',
         }}>
@@ -590,7 +602,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           margin: '14px auto 0',
           border: 'none',
           borderRadius: 26,
-          background: '#f7f7f7',
+          background: '#f3f6f3',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
