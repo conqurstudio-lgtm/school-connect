@@ -78,7 +78,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
   return (
     <section
-      className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1"
+      className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
       aria-label="Previous progress history"
       style={{
         width: '100%',
@@ -587,7 +587,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
   if (variant === 'card') {
     return (
       <section
-        className="sc-family-share-card-v2 sc-report-lower-card-motion-v1"
+        className="sc-family-share-card-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
         aria-label="Share report with family"
         style={{
           width: '100%',
@@ -908,6 +908,95 @@ export default function ParentMagicReportPage() {
   }, [])
 
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    const styleId = 'sc-report-motion-runtime-style'
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style')
+      style.id = styleId
+      style.textContent = `
+        @keyframes scReportPageSlideInRuntime {
+          from {
+            opacity: 0;
+            transform: translateY(18px) scale(0.992);
+            filter: blur(1px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+        }
+
+        .sc-report-page-motion-v1 {
+          animation: scReportPageSlideInRuntime 560ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+          will-change: transform, opacity;
+        }
+
+        .sc-report-scroll-reveal-v1 {
+          opacity: 0;
+          transform: translateY(22px);
+          transition: opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform, opacity;
+        }
+
+        .sc-report-scroll-reveal-v1.sc-report-is-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .sc-report-page-motion-v1,
+          .sc-report-scroll-reveal-v1 {
+            animation: none !important;
+            transition: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+            filter: none !important;
+          }
+        }
+      `
+      document.head.appendChild(style)
+    }
+
+    const runReveal = () => {
+      const items = Array.from(document.querySelectorAll('.sc-report-scroll-reveal-v1'))
+      if (!items.length) return
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach((item) => item.classList.add('sc-report-is-visible'))
+        return
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('sc-report-is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      }, {
+        threshold: 0.12,
+        rootMargin: '0px 0px -8% 0px',
+      })
+
+      items.forEach((item) => observer.observe(item))
+      return () => observer.disconnect()
+    }
+
+    let cleanup: void | (() => void)
+    const frame = window.requestAnimationFrame(() => {
+      cleanup = runReveal()
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      if (cleanup) cleanup()
+    }
+  }, [loading, parentView])
+
   const [error, setError] = useState('')
   const [payload, setPayload] = useState<any>(null)
 

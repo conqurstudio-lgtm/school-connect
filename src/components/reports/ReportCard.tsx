@@ -742,7 +742,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {teacherCommentText && (
         <section
-          className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1"
+          className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1 sc-report-scroll-reveal-v1"
           aria-label="Teacher comment"
         >
           <div className="sc-teacher-comment-photo-v1" aria-hidden="true">
@@ -804,7 +804,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {subjects.length > 0 && (
         <section
-          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1"
+          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
           style={{
             width: '100%',
