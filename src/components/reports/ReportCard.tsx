@@ -785,14 +785,31 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         }
       `}</style>
 
+
+      <style jsx global>{`
+        .sc-report-subject-grid-v1 {
+          gap: 10px !important;
+        }
+
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          box-sizing: border-box !important;
+          min-height: 78px;
+        }
+
+        .sc-subject-card-copy-v1 {
+          min-width: 0;
+        }
+      `}</style>
+
       {subjects.length > 0 && (
         <section
-          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2"
+          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1"
           aria-label="Subject scores"
           style={{
             width: '100%',
             maxWidth: 370,
-            margin: '14px auto 0',
+            margin: '16px auto 0',
             padding: 0,
             borderRadius: 0,
             background: 'transparent',

@@ -6,7 +6,6 @@ import { useParams } from 'next/navigation'
 import {GraduationCap, Send, Copy, Check} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
-import { PageGhostLoader } from '@/components/ui/PageGhostLoader'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
 
 const T = {
@@ -66,19 +65,6 @@ function getReportDateLabel(report: any) {
     year: 'numeric',
   })
 }
-
-
-      <style jsx global>{`
-        .sc-family-share-card-v2,
-        .sc-previous-reports-history-card-v1 {
-          border: 1px solid rgba(37, 37, 37, 0.035) !important;
-        }
-
-        .sc-previous-reports-history-card-v1 article {
-          border: 1px solid rgba(37, 37, 37, 0.03) !important;
-        }
-      `}</style>
-
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
@@ -92,7 +78,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
   return (
     <section
-      className="sc-previous-reports-history-card-v1"
+      className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1"
       aria-label="Previous progress history"
       style={{
         width: '100%',
@@ -100,7 +86,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         margin: '14px auto 0',
         borderRadius: 28,
         background: '#f3f4fb',
-        padding: '16px 16px 12px',
+        padding: '16px 16px 13px',
         boxSizing: 'border-box',
       }}
     >
@@ -113,11 +99,21 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       }}>
         <div style={{ minWidth: 0 }}>
 <p style={{
-            margin: '4px 0 0',
+            margin: 0,
             fontSize: 13.5,
             fontWeight: 650,
-            color: '#5F6268',
+            letterSpacing: '-0.02em',
+            color: '#1A1A1A',
             lineHeight: 1.15,
+          }}>
+            Previous progress
+          </p>
+          <p style={{
+            margin: '4px 0 0',
+            fontSize: 12.5,
+            fontWeight: 430,
+            color: '#5F6268',
+            lineHeight: 1.25,
           }}>
             Recent progress history
           </p>
@@ -590,17 +586,14 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 
   if (variant === 'card') {
     return (
-      <button
-        type="button"
-        className="sc-family-share-card-v2"
-        onClick={shareReport}
-        disabled={creating}
+      <section
+        className="sc-family-share-card-v2 sc-report-lower-card-motion-v1"
         aria-label="Share report with family"
         style={{
           width: '100%',
           maxWidth: 370,
-          margin: '14px auto 0',
-          border: 'none',
+          margin: '16px auto 0',
+          border: '1px solid rgba(37, 37, 37, 0.035)',
           borderRadius: 26,
           background: '#f3f6f3',
           color: '#1A1A1A',
@@ -608,11 +601,10 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           alignItems: 'center',
           gap: 12,
           padding: '16px 16px',
-          cursor: creating ? 'default' : 'pointer',
-          opacity: creating ? 0.65 : 1,
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
+          boxSizing: 'border-box',
         }}
       >
         <span style={{
@@ -621,26 +613,14 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           display: 'block',
         }}>
           <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 7,
+            display: 'block',
             fontSize: 13.5,
             fontWeight: 650,
             letterSpacing: '-0.02em',
             color: '#1A1A1A',
             lineHeight: 1.15,
           }}>
-            <i
-              className="fa-duotone fa-solid fa-family"
-              aria-hidden="true"
-              style={{
-                fontSize: 13,
-                color: '#252525',
-                lineHeight: 1,
-                flexShrink: 0,
-              }}
-            />
-            <span>Share with family</span>
+            Share with family
           </span>
           <span style={{
             display: 'block',
@@ -654,21 +634,31 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           </span>
         </span>
 
-        <span style={{
-          width: 32,
-          height: 32,
-          borderRadius: 999,
-          border: 'none',
-          background: '#252525',
-          color: '#FFFFFF',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}>
+        <button
+          type="button"
+          onClick={shareReport}
+          disabled={creating}
+          aria-label="Share report with family"
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 999,
+            border: 'none',
+            background: '#252525',
+            color: '#FFFFFF',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            cursor: creating ? 'default' : 'pointer',
+            opacity: creating ? 0.65 : 1,
+            padding: 0,
+            fontFamily: 'inherit',
+          }}
+        >
           <Send size={16} strokeWidth={1.75} />
-        </span>
-      </button>
+        </button>
+      </section>
     )
   }
 
@@ -700,11 +690,107 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 
 
 function ReportSafeAreaStyle() {
-  return null
+  return (
+    <style jsx global>{`
+      @keyframes scReportPageSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes scReportLowerCardIn {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes scReportLoaderSpin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes scReportLoaderFade {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .sc-report-page-motion-v1 {
+        animation: scReportPageSlideIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      .sc-report-lower-card-motion-v1,
+      .sc-report-subject-panel-inline {
+        animation: scReportLowerCardIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        will-change: transform, opacity;
+      }
+
+      .sc-family-share-card-v2 {
+        animation-delay: 60ms;
+      }
+
+      .sc-previous-reports-history-card-v1 {
+        animation-delay: 120ms;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .sc-report-page-motion-v1,
+        .sc-report-lower-card-motion-v1,
+        .sc-report-subject-panel-inline {
+          animation: none !important;
+        }
+      }
+    `}</style>
+  )
 }
 
 function LoadingState() {
-  return <PageGhostLoader />
+  return (
+    <main style={centerPage}>
+      <ReportSafeAreaStyle />
+
+      <section
+        aria-label="Loading report"
+        style={{
+          width: 96,
+          minHeight: 96,
+          borderRadius: 30,
+          background: 'rgba(255,255,255,0.72)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'scReportLoaderFade 260ms ease-out both',
+        }}
+      >
+        <div style={{
+          width: 34,
+          height: 34,
+          borderRadius: 999,
+          border: '2px solid rgba(37,37,37,0.10)',
+          borderTopColor: '#252525',
+          animation: 'scReportLoaderSpin 780ms linear infinite',
+        }} />
+      </section>
+    </main>
+  )
 }
 
 function ErrorState({ message }: { message: string }) {
@@ -752,19 +838,48 @@ export default function ParentMagicReportPage() {
   const params = useParams<{ token: string }>()
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
+
   const [parentView, setParentView] = useState<'report' | 'moments'>(() => {
     if (typeof window === 'undefined') return 'report'
     return new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report'
   })
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const syncParentViewFromUrl = () => {
-      const nextView = new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report'
-      setParentView(nextView)
+      setParentView(new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report')
     }
 
+    syncParentViewFromUrl()
     window.addEventListener('popstate', syncParentViewFromUrl)
     return () => window.removeEventListener('popstate', syncParentViewFromUrl)
+  }, [])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+
+    const html = document.documentElement
+    const body = document.body
+
+    const previous = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      htmlOverscroll: html.style.overscrollBehavior,
+      bodyOverscroll: body.style.overscrollBehavior,
+    }
+
+    html.style.overflow = 'auto'
+    body.style.overflow = 'auto'
+    html.style.overscrollBehavior = 'auto'
+    body.style.overscrollBehavior = 'auto'
+
+    return () => {
+      html.style.overflow = previous.htmlOverflow
+      body.style.overflow = previous.bodyOverflow
+      html.style.overscrollBehavior = previous.htmlOverscroll
+      body.style.overscrollBehavior = previous.bodyOverscroll
+    }
   }, [])
 
   const [loading, setLoading] = useState(true)
@@ -971,11 +1086,14 @@ export default function ParentMagicReportPage() {
                 border: 'none',
                 overflow: 'hidden',
               }}>
-                <ReportCard
+                <div className="sc-report-page-motion-v1">
+                  <ReportCard
                   key={reports[0].id || `${reports[0].week_starting || 'latest-report'}-latest`}
                   report={reports[0]}
                   childName={childName}
                 />
+              </div>
+
               {!isFamilyShare && <FamilyShareButton token={token || ''} variant="card" />}
 </div>
             )}
