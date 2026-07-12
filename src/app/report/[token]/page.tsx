@@ -83,7 +83,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '7px auto 0',
+        margin: '0 auto 0',
         borderRadius: 28,
         background: '#f3f4fb',
         padding: '13px 14px 11px',
@@ -592,7 +592,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         style={{
           width: '100%',
           maxWidth: 370,
-          margin: '7px auto 0',
+          margin: '0 auto 0',
           border: '1px solid rgba(37, 37, 37, 0.035)',
           borderRadius: 26,
           background: '#f3f6f3',
@@ -747,6 +747,31 @@ function ReportSafeAreaStyle() {
 
       .sc-previous-reports-history-card-v1 {
         animation-delay: 120ms;
+      }
+
+
+      /* compact report stack spacing */
+      .sc-report-subject-panel-inline {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
+      .sc-family-share-card-v2 {
+        margin-top: -42px !important;
+      }
+
+      .sc-previous-reports-history-card-v1 {
+        margin-top: -42px !important;
+      }
+
+      @media (max-width: 520px) {
+        .sc-family-share-card-v2 {
+          margin-top: -46px !important;
+        }
+
+        .sc-previous-reports-history-card-v1 {
+          margin-top: -46px !important;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
