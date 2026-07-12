@@ -691,7 +691,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
             fontWeight: 470,
             letterSpacing: '0.045em',
             textTransform: 'uppercase',
-            marginBottom: 9,
+            marginBottom: 7,
           }}>
             {reportStatusLabel}
           </div>
@@ -809,7 +809,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           style={{
             width: '100%',
             maxWidth: 370,
-            margin: '10px auto 0',
+            margin: '7px auto 0',
             padding: 0,
             borderRadius: 0,
             background: 'transparent',

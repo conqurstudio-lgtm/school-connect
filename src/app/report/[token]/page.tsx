@@ -83,10 +83,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '10px auto 0',
+        margin: '7px auto 0',
         borderRadius: 28,
         background: '#f3f4fb',
-        padding: '14px 15px 12px',
+        padding: '13px 14px 11px',
         boxSizing: 'border-box',
       }}
     >
@@ -95,7 +95,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 8,
-        marginBottom: 9,
+        marginBottom: 7,
       }}>
         <div style={{ minWidth: 0 }}>
 <p style={{
@@ -136,7 +136,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         display: 'grid',
         gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         gap: 8,
-        marginBottom: 9,
+        marginBottom: 7,
       }}>
         <div style={{
           borderRadius: 18,
@@ -204,7 +204,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 gap: 8,
                 borderRadius: 22,
                 background: '#FFFFFF',
-                padding: '10px 11px',
+                padding: '9px 10px',
                 boxSizing: 'border-box',
               }}
             >
@@ -274,7 +274,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           onClick={() => setShowAllPreviousReports(value => !value)}
           style={{
             width: '100%',
-            marginTop: 10,
+            marginTop: 7,
             border: 'none',
             background: 'transparent',
             color: '#252525',
@@ -592,7 +592,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         style={{
           width: '100%',
           maxWidth: 370,
-          margin: '10px auto 0',
+          margin: '7px auto 0',
           border: '1px solid rgba(37, 37, 37, 0.035)',
           borderRadius: 26,
           background: '#f3f6f3',
@@ -600,7 +600,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: '14px 15px',
+          padding: '13px 14px',
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
