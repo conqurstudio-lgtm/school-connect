@@ -83,10 +83,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '14px auto 0',
+        margin: '10px auto 0',
         borderRadius: 28,
         background: '#f3f4fb',
-        padding: '16px 16px 13px',
+        padding: '14px 15px 12px',
         boxSizing: 'border-box',
       }}
     >
@@ -94,8 +94,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 12,
-        marginBottom: 12,
+        gap: 8,
+        marginBottom: 9,
       }}>
         <div style={{ minWidth: 0 }}>
 <p style={{
@@ -136,7 +136,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         display: 'grid',
         gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
         gap: 8,
-        marginBottom: 12,
+        marginBottom: 9,
       }}>
         <div style={{
           borderRadius: 18,
@@ -201,10 +201,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: 12,
+                gap: 8,
                 borderRadius: 22,
                 background: '#FFFFFF',
-                padding: '11px 12px',
+                padding: '10px 11px',
                 boxSizing: 'border-box',
               }}
             >
@@ -592,15 +592,15 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         style={{
           width: '100%',
           maxWidth: 370,
-          margin: '16px auto 0',
+          margin: '10px auto 0',
           border: '1px solid rgba(37, 37, 37, 0.035)',
           borderRadius: 26,
           background: '#f3f6f3',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
-          gap: 12,
-          padding: '16px 16px',
+          gap: 8,
+          padding: '14px 15px',
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
