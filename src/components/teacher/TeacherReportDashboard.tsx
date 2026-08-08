@@ -2052,7 +2052,13 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  const json = await res.json().catch(() => ({}))
  if (!res.ok) throw new Error(json.error || 'Could not send report')
 
- if (json.magic_link) setMagicLink(json.magic_link)
+ const fallbackLink = String(json.magic_link || magicLink || '')
+
+ if (fallbackLink) setMagicLink(fallbackLink)
+
+ const whatsappStatus = String(json.whatsapp_status || '').toLowerCase()
+ const automaticWhatsAppSent = ['sent', 'delivered', 'read'].includes(whatsappStatus)
+ const shouldShowManualFallback = Boolean(fallbackLink) && !automaticWhatsAppSent
 
  const updatedChild = {
  ...child,
@@ -2060,7 +2066,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  latest_report_at: new Date().toISOString(),
  }
 
- toast.success('Report sent', { id: tid })
+ toast.success(automaticWhatsAppSent ? 'Report sent to parent' : 'Report saved', { id: tid })
  await onSaved(updatedChild)
 
  setHistory((current) => [
@@ -2079,12 +2085,12 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  }
  } catch (e: any) {
  toast.error(e.message || 'Could not send report', { id: tid })
- }
-
+ } finally {
  setSaving(false)
  }
+ }
 
- const copyLink = async () => {
+  const copyLink = async () => {
  if (!magicLink) {
  toast.error('Save a report first')
  return
