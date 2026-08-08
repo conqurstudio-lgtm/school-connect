@@ -1713,16 +1713,6 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  const message = buildParentReportMessage(child, reportLink)
  const whatsappUrl = buildWhatsAppUrl(child?.parent_whatsapp, message)
 
- const copyParentLink = async () => {
- if (!reportLink) {
- toast.error('Parent link is not available yet')
- return
- }
-
- await navigator.clipboard.writeText(reportLink)
- toast.success('Parent link copied')
- }
-
  const openWhatsApp = () => {
  if (!whatsappUrl) {
  toast.error('Parent WhatsApp number is missing or invalid')
@@ -1764,13 +1754,24 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  </p>
 
  <p style={{
- margin: '0 0 14px',
+ margin: '0 0 16px',
  fontSize: 13,
  lineHeight: 1.45,
  color: '#6B6F76',
  }}>
  Automatic WhatsApp was not sent. Please open WhatsApp and send the parent link manually.
  </p>
+
+ {!whatsappUrl ? (
+ <p style={{
+ margin: '0 0 12px',
+ fontSize: 12,
+ color: '#B42318',
+ lineHeight: 1.35,
+ }}>
+ Parent WhatsApp number is missing or invalid.
+ </p>
+ ) : null}
 
  <div style={{
  display: 'grid',
@@ -1782,13 +1783,13 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  type="button"
  onClick={openWhatsApp}
  style={{
- minHeight: 42,
+ minHeight: 44,
  borderRadius: 999,
  border: 'none',
  background: '#252525',
  color: '#FFFFFF',
- fontSize: 13,
- fontWeight: 620,
+ fontSize: 13.5,
+ fontWeight: 650,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -1799,69 +1800,15 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
 
  <button
  type="button"
- onClick={copyParentLink}
- style={{
- minHeight: 42,
- borderRadius: 999,
- border: 'none',
- background: '#F5F5F5',
- color: '#252525',
- fontSize: 13,
- fontWeight: 620,
- cursor: 'pointer',
- fontFamily: 'inherit',
- }}
- >
- Copy link
- </button>
- </div>
-
- {!whatsappUrl ? (
- <p style={{
- margin: '10px 0 0',
- fontSize: 12,
- color: '#B42318',
- lineHeight: 1.35,
- }}>
- Parent WhatsApp number is missing or invalid.
- </p>
- ) : null}
-
- <div style={{
- display: 'grid',
- gridTemplateColumns: '1fr 1fr',
- gap: 8,
- marginTop: 10,
- }}>
- <button
- type="button"
- onClick={onClose}
- style={{
- minHeight: 40,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: '#6B6F76',
- fontSize: 13,
- fontWeight: 600,
- cursor: 'pointer',
- fontFamily: 'inherit',
- }}
- >
- Stay here
- </button>
-
- <button
- type="button"
  onClick={onDone}
  style={{
- minHeight: 40,
+ minHeight: 44,
  borderRadius: 999,
  border: 'none',
  background: '#F5F5F5',
  color: '#252525',
- fontSize: 13,
- fontWeight: 620,
+ fontSize: 13.5,
+ fontWeight: 650,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
