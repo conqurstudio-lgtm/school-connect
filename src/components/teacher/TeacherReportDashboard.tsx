@@ -1861,7 +1861,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  fontWeight: 660,
  letterSpacing: '-0.025em',
  }}>
- Manual WhatsApp needed
+ Report saved
  </p>
 
  <p style={{
@@ -1870,7 +1870,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  lineHeight: 1.45,
  color: '#6B6F76',
  }}>
- The report was saved, but automatic WhatsApp did not send. Open WhatsApp and send the parent link manually.
+ Automatic WhatsApp was not sent. Please open WhatsApp and send the parent link manually.
  </p>
 
  <div style={{
@@ -2006,7 +2006,10 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  if (fallbackLink) setMagicLink(fallbackLink)
 
  const whatsappStatus = String(json.whatsapp_status || '').toLowerCase()
- const shouldShowManualFallback = Boolean(fallbackLink) && whatsappStatus !== 'sent'
+
+ const shouldShowManualFallback =
+ Boolean(fallbackLink) &&
+ !['sent', 'delivered', 'read'].includes(whatsappStatus)
  })
  .catch(() => setHistory([]))
  .finally(() => setHistoryLoading(false))
@@ -2276,6 +2279,18 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  </div>
  )}
  </section>
+
+ {manualWhatsAppFallback ? (
+ <ManualWhatsAppFallbackModal
+ child={child}
+ reportLink={manualWhatsAppFallback.reportLink}
+ onClose={() => setManualWhatsAppFallback(null)}
+ onDone={() => {
+ setManualWhatsAppFallback(null)
+ onBack?.()
+ }}
+ />
+ ) : null}
  </TeacherReportScreenFrame>
  )
 }
