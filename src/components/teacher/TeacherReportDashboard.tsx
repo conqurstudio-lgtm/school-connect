@@ -1709,107 +1709,6 @@ function buildWhatsAppUrl(parentNumber: any, message: string) {
  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`
 }
 
-function showManualWhatsAppToast({ child, reportLink }: any) {
- const message = buildParentReportMessage(child, reportLink)
- const whatsappUrl = buildWhatsAppUrl(child?.parent_whatsapp, message)
-
- toast.custom((t: any) => (
- <div
- style={{
- width: 'min(92vw, 390px)',
- borderRadius: 24,
- background: '#FFFFFF',
- boxShadow: '0 18px 55px rgba(0,0,0,0.16)',
- border: '1px solid rgba(0,0,0,0.06)',
- padding: 16,
- fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
- color: '#252525',
- }}
- >
- <p style={{
- margin: '0 0 4px',
- fontSize: 15,
- fontWeight: 650,
- letterSpacing: '-0.02em',
- }}>
- Report ready
- </p>
-
- <p style={{
- margin: '0 0 14px',
- fontSize: 13,
- lineHeight: 1.42,
- color: '#6B6F76',
- }}>
- Send the parent link manually on WhatsApp.
- </p>
-
- <div style={{
- display: 'grid',
- gridTemplateColumns: whatsappUrl ? '1fr 1fr' : '1fr',
- gap: 8,
- }}>
- {whatsappUrl ? (
- <button
- type="button"
- onClick={() => {
- window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
- toast.dismiss(t.id)
- }}
- style={{
- minHeight: 42,
- borderRadius: 999,
- border: 'none',
- background: '#252525',
- color: '#FFFFFF',
- fontSize: 13,
- fontWeight: 620,
- cursor: 'pointer',
- fontFamily: 'inherit',
- }}
- >
- Open WhatsApp
- </button>
- ) : null}
-
- <button
- type="button"
- onClick={async () => {
- await navigator.clipboard.writeText(reportLink)
- toast.success('Parent link copied')
- toast.dismiss(t.id)
- }}
- style={{
- minHeight: 42,
- borderRadius: 999,
- border: 'none',
- background: '#F5F5F5',
- color: '#252525',
- fontSize: 13,
- fontWeight: 620,
- cursor: 'pointer',
- fontFamily: 'inherit',
- }}
- >
- Copy link
- </button>
- </div>
-
- {!whatsappUrl ? (
- <p style={{
- margin: '10px 0 0',
- fontSize: 12,
- color: '#B42318',
- lineHeight: 1.35,
- }}>
- Parent WhatsApp number is missing or invalid.
- </p>
- ) : null}
- </div>
- ), { duration: 15000 })
-}
-
-
 function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any) {
  const message = buildParentReportMessage(child, reportLink)
  const whatsappUrl = buildWhatsAppUrl(child?.parent_whatsapp, message)
@@ -2001,15 +1900,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  .then(res => res.json())
  .then(json => {
  setHistory(json.reports || [])
- const fallbackLink = String(json.magic_link || magicLink || '')
-
- if (fallbackLink) setMagicLink(fallbackLink)
-
- const whatsappStatus = String(json.whatsapp_status || '').toLowerCase()
-
- const shouldShowManualFallback =
- Boolean(fallbackLink) &&
- !['sent', 'delivered', 'read'].includes(whatsappStatus)
+ if (json.magic_link) setMagicLink(String(json.magic_link || ''))
  })
  .catch(() => setHistory([]))
  .finally(() => setHistoryLoading(false))
@@ -2050,9 +1941,15 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  })
 
  const json = await res.json().catch(() => ({}))
- if (!res.ok) throw new Error(json.error || 'Could not send report')
 
  const fallbackLink = String(json.magic_link || magicLink || '')
+ const hasSavedReport = Boolean(json.report?.id || fallbackLink)
+
+ // Only treat it as a real error if the report/link was not created.
+ // If the report was saved but WhatsApp was not sent, we use the manual fallback modal.
+ if (!res.ok && !hasSavedReport) {
+ throw new Error(json.error || 'Could not send report')
+ }
 
  if (fallbackLink) setMagicLink(fallbackLink)
 
@@ -2066,7 +1963,12 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  latest_report_at: new Date().toISOString(),
  }
 
- toast.success(automaticWhatsAppSent ? 'Report sent to parent' : 'Report saved', { id: tid })
+ if (automaticWhatsAppSent) {
+ toast.success('Report sent to parent', { id: tid })
+ } else {
+ toast.dismiss(tid)
+ }
+
  await onSaved(updatedChild)
 
  setHistory((current) => [
@@ -2080,9 +1982,10 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  reportLink: fallbackLink,
  status: whatsappStatus || 'pending',
  })
- } else {
- onBack?.()
+ return
  }
+
+ onBack?.()
  } catch (e: any) {
  toast.error(e.message || 'Could not send report', { id: tid })
  } finally {
