@@ -1833,13 +1833,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  .then(res => res.json())
  .then(json => {
  setHistory(json.reports || [])
- if (json.magic_link) {
-  setMagicLink(json.magic_link)
-  showManualWhatsAppToast({
-  child,
-  reportLink: json.magic_link,
-  })
- }
+ if (json.magic_link) setMagicLink(json.magic_link)
  })
  .catch(() => setHistory([]))
  .finally(() => setHistoryLoading(false))
@@ -2078,7 +2072,13 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  ) : (
  <div style={{ display: 'flex', flexDirection: 'column' }}>
  {history.slice(0, 4).map((report: any, index: number) => (
- <HistoryCard key={report.id} report={report} isLast={index === Math.min(history.length, 4) - 1} />
+ <HistoryCard
+ key={report.id}
+ report={report}
+ child={child}
+ magicLink={magicLink}
+ isLast={index === Math.min(history.length, 4) - 1}
+ />
  ))}
  </div>
  )}
@@ -2087,12 +2087,39 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  )
 }
 
-function HistoryCard({ report, isLast = false }: any) {
+function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  const avg = averageScore(report.scores)
+
+ const copyParentLink = async () => {
+ if (!magicLink) {
+ toast.error('Parent link is not available yet')
+ return
+ }
+
+ await navigator.clipboard.writeText(magicLink)
+ toast.success('Parent link copied')
+ }
+
+ const openWhatsApp = () => {
+ if (!magicLink) {
+ toast.error('Parent link is not available yet')
+ return
+ }
+
+ const message = buildParentReportMessage(child, magicLink)
+ const whatsappUrl = buildWhatsAppUrl(child?.parent_whatsapp, message)
+
+ if (!whatsappUrl) {
+ toast.error('Parent WhatsApp number is missing or invalid')
+ return
+ }
+
+ window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+ }
 
  return (
  <div style={{
- padding: '12px 0',
+ padding: '13px 0',
  borderBottom: isLast ? 'none' : '1px solid var(--sc-border-soft)',
  }}>
  <div style={{
@@ -2117,6 +2144,49 @@ function HistoryCard({ report, isLast = false }: any) {
  </p>
  </div>
  <ReportAveragePill value={avg == null ? '—' : avg.toFixed(1)} />
+ </div>
+
+ <div style={{
+ display: 'grid',
+ gridTemplateColumns: '1fr 1fr',
+ gap: 8,
+ marginTop: 10,
+ }}>
+ <button
+ type="button"
+ onClick={openWhatsApp}
+ style={{
+ minHeight: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: '#252525',
+ color: '#FFFFFF',
+ fontSize: 12.4,
+ fontWeight: 620,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Open WhatsApp
+ </button>
+
+ <button
+ type="button"
+ onClick={copyParentLink}
+ style={{
+ minHeight: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: '#F5F5F5',
+ color: '#252525',
+ fontSize: 12.4,
+ fontWeight: 620,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Copy link
+ </button>
  </div>
  </div>
  )
