@@ -559,6 +559,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  flexDirection: 'column',
  background: T.bg,
  }}>
+ {!insideReportShell ? (
  <SCTopBar
  title="Moments"
  align="left"
@@ -571,6 +572,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  )
  }
  />
+ ) : null}
 
  <section style={{
  flex: insideReportShell ? 'initial' : 1,
@@ -578,7 +580,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  overflowY: insideReportShell ? 'visible' : 'auto',
  overflowX: 'hidden',
  WebkitOverflowScrolling: insideReportShell ? undefined : 'touch',
- padding: insideReportShell ? '12px 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ padding: insideReportShell ? '0 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
  {true && (
@@ -586,7 +588,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  display: 'flex',
  alignItems: 'center',
  gap: 22,
- margin: insideReportShell ? '0 0 22px 0' : '0 0 22px 56px',
+ width: '100%',
+ padding: '0 2px',
+ margin: '0 0 18px',
  borderBottom: `1px solid ${T.border}`,
  }}>
  {[
@@ -636,10 +640,10 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  {moments.length === 0 ? (
  <SCEmptyState
  title={loading ? 'Loading Moments' : 'No Moments yet'}
- text={loading ? 'Getting the latest updates.' : 'Teacher Moments will appear here.'}
+ text={loading ? 'Getting the latest updates.' : 'Moments shared by the teacher will appear here.'}
  />
  ) : (
- <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+ <div style={{ display: 'flex', flexDirection: 'column', gap: insideReportShell ? 22 : 28 }}>
  {renderedMoments.map((moment, index) => (
  <MomentPost
  key={moment.id}
@@ -982,10 +986,12 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
 
  return (
  <article className="sc-parent-moment-post-v414" style={{
+ width: '100%',
+ boxSizing: 'border-box',
  display: 'grid',
  gridTemplateColumns: '38px 1fr',
  gap: 10,
- padding: '0 0 24px',
+ padding: insideReportShell ? '0 0 22px' : '0 0 24px',
  borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
  background: 'transparent',
  }}>
@@ -1167,8 +1173,8 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  type="button"
  onClick={() => onImage(moment.file_url)}
  style={{
- display: 'inline-flex',
- width: 'fit-content',
+ display: 'block',
+ width: '100%',
  maxWidth: '100%',
  padding: 0,
  border: 'none',
@@ -1176,8 +1182,6 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  cursor: 'zoom-in',
  fontFamily: 'inherit',
  textAlign: 'left',
- alignItems: 'flex-start',
- justifyContent: 'flex-start',
  }}
  >
  <img
@@ -1188,15 +1192,15 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
  onLoad={() => setImageReady(true)}
  style={{
- width: 'auto',
+ width: '100%',
  maxWidth: '100%',
  height: 'auto',
- maxHeight: 360,
+ maxHeight: insideReportShell ? 320 : 360,
  objectFit: 'contain',
- objectPosition: 'left center',
+ objectPosition: 'center center',
  display: 'block',
  borderRadius: 18,
- background: 'transparent',
+ background: T.soft,
  opacity: imageReady ? 1 : 0,
  transition: 'opacity 220ms ease',
  }}
@@ -1209,7 +1213,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  rel="noreferrer"
  style={{
  width: '100%',
- maxWidth: 390,
+ maxWidth: '100%',
  padding: 13,
  borderRadius: 20,
  background: T.soft,
