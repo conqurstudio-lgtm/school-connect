@@ -1809,6 +1809,172 @@ function showManualWhatsAppToast({ child, reportLink }: any) {
  ), { duration: 15000 })
 }
 
+
+function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any) {
+ const message = buildParentReportMessage(child, reportLink)
+ const whatsappUrl = buildWhatsAppUrl(child?.parent_whatsapp, message)
+
+ const copyParentLink = async () => {
+ if (!reportLink) {
+ toast.error('Parent link is not available yet')
+ return
+ }
+
+ await navigator.clipboard.writeText(reportLink)
+ toast.success('Parent link copied')
+ }
+
+ const openWhatsApp = () => {
+ if (!whatsappUrl) {
+ toast.error('Parent WhatsApp number is missing or invalid')
+ return
+ }
+
+ window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+ }
+
+ return (
+ <div style={{
+ position: 'fixed',
+ inset: 0,
+ zIndex: 10000,
+ background: 'rgba(0,0,0,0.18)',
+ display: 'flex',
+ alignItems: 'flex-end',
+ justifyContent: 'center',
+ padding: '16px 12px calc(16px + env(safe-area-inset-bottom, 0px))',
+ fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+ }}>
+ <div style={{
+ width: '100%',
+ maxWidth: 420,
+ borderRadius: 26,
+ background: '#FFFFFF',
+ boxShadow: '0 18px 55px rgba(0,0,0,0.18)',
+ border: '1px solid rgba(0,0,0,0.06)',
+ padding: 16,
+ color: '#252525',
+ }}>
+ <p style={{
+ margin: '0 0 4px',
+ fontSize: 16,
+ fontWeight: 660,
+ letterSpacing: '-0.025em',
+ }}>
+ Manual WhatsApp needed
+ </p>
+
+ <p style={{
+ margin: '0 0 14px',
+ fontSize: 13,
+ lineHeight: 1.45,
+ color: '#6B6F76',
+ }}>
+ The report was saved, but automatic WhatsApp did not send. Open WhatsApp and send the parent link manually.
+ </p>
+
+ <div style={{
+ display: 'grid',
+ gridTemplateColumns: whatsappUrl ? '1fr 1fr' : '1fr',
+ gap: 8,
+ }}>
+ {whatsappUrl ? (
+ <button
+ type="button"
+ onClick={openWhatsApp}
+ style={{
+ minHeight: 42,
+ borderRadius: 999,
+ border: 'none',
+ background: '#252525',
+ color: '#FFFFFF',
+ fontSize: 13,
+ fontWeight: 620,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Open WhatsApp
+ </button>
+ ) : null}
+
+ <button
+ type="button"
+ onClick={copyParentLink}
+ style={{
+ minHeight: 42,
+ borderRadius: 999,
+ border: 'none',
+ background: '#F5F5F5',
+ color: '#252525',
+ fontSize: 13,
+ fontWeight: 620,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Copy link
+ </button>
+ </div>
+
+ {!whatsappUrl ? (
+ <p style={{
+ margin: '10px 0 0',
+ fontSize: 12,
+ color: '#B42318',
+ lineHeight: 1.35,
+ }}>
+ Parent WhatsApp number is missing or invalid.
+ </p>
+ ) : null}
+
+ <div style={{
+ display: 'grid',
+ gridTemplateColumns: '1fr 1fr',
+ gap: 8,
+ marginTop: 10,
+ }}>
+ <button
+ type="button"
+ onClick={onClose}
+ style={{
+ minHeight: 40,
+ borderRadius: 999,
+ border: 'none',
+ background: 'transparent',
+ color: '#6B6F76',
+ fontSize: 13,
+ fontWeight: 600,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Stay here
+ </button>
+
+ <button
+ type="button"
+ onClick={onDone}
+ style={{
+ minHeight: 40,
+ borderRadius: 999,
+ border: 'none',
+ background: '#F5F5F5',
+ color: '#252525',
+ fontSize: 13,
+ fontWeight: 620,
+ cursor: 'pointer',
+ fontFamily: 'inherit',
+ }}
+ >
+ Done
+ </button>
+ </div>
+ </div>
+ </div>
+ )
+}
+
 function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, onSaved, onNext }: any) {
  const subjects = normalizeReportSubjects(teacher?.report_subjects)
  const subjectsKey = subjects.join('|')
@@ -1820,6 +1986,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  const [history, setHistory] = useState<any[]>([])
  const [historyLoading, setHistoryLoading] = useState(true)
  const [previewing, setPreviewing] = useState(false)
+ const [manualWhatsAppFallback, setManualWhatsAppFallback] = useState<any>(null)
 
  useEffect(() => {
  setWeek(weekStart)
@@ -1827,13 +1994,19 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  setComment('')
  setMagicLink('')
  setPreviewing(false)
+ setManualWhatsAppFallback(null)
  setHistoryLoading(true)
 
  fetch(`/api/teacher/report-history?child_id=${encodeURIComponent(child.id)}`, { cache: 'no-store' })
  .then(res => res.json())
  .then(json => {
  setHistory(json.reports || [])
- if (json.magic_link) setMagicLink(json.magic_link)
+ const fallbackLink = String(json.magic_link || magicLink || '')
+
+ if (fallbackLink) setMagicLink(fallbackLink)
+
+ const whatsappStatus = String(json.whatsapp_status || '').toLowerCase()
+ const shouldShowManualFallback = Boolean(fallbackLink) && whatsappStatus !== 'sent'
  })
  .catch(() => setHistory([]))
  .finally(() => setHistoryLoading(false))
@@ -1892,7 +2065,15 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  ...current.filter((item) => item.id !== json.report?.id),
  ].filter(Boolean))
 
+ if (shouldShowManualFallback) {
+ setManualWhatsAppFallback({
+ child,
+ reportLink: fallbackLink,
+ status: whatsappStatus || 'pending',
+ })
+ } else {
  onBack?.()
+ }
  } catch (e: any) {
  toast.error(e.message || 'Could not send report', { id: tid })
  }
@@ -1960,6 +2141,18 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  footer={previewFooter}
  >
  <TeacherParentReportCardPreview report={draftReport} child={child} teacher={teacher} />
+
+ {manualWhatsAppFallback ? (
+ <ManualWhatsAppFallbackModal
+ child={child}
+ reportLink={manualWhatsAppFallback.reportLink}
+ onClose={() => setManualWhatsAppFallback(null)}
+ onDone={() => {
+ setManualWhatsAppFallback(null)
+ onBack?.()
+ }}
+ />
+ ) : null}
  </TeacherReportScreenFrame>
  )
  }
