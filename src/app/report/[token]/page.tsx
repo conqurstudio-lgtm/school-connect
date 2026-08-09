@@ -1058,6 +1058,54 @@ export default function ParentMagicReportPage() {
         flexDirection: 'column',
         background: '#FFFFFF',
       }}>
+        <style jsx global>{`
+          @keyframes scParentMomentsEnterV1 {
+            from {
+              opacity: 0;
+              transform: translateX(18px);
+              filter: blur(2px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+              filter: blur(0);
+            }
+          }
+
+          @keyframes scParentReportEnterV1 {
+            from {
+              opacity: 0;
+              transform: translateX(-14px);
+              filter: blur(2px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+              filter: blur(0);
+            }
+          }
+
+          .sc-parent-view-motion-v1 {
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+          }
+
+          .sc-parent-moments-enter-v1 {
+            animation: scParentMomentsEnterV1 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          }
+
+          .sc-parent-report-enter-v1 {
+            animation: scParentReportEnterV1 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .sc-parent-moments-enter-v1,
+            .sc-parent-report-enter-v1 {
+              animation: none !important;
+            }
+          }
+        `}</style>
+
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
@@ -1140,11 +1188,15 @@ export default function ParentMagicReportPage() {
           background: '#FFFFFF',
         }}>
           {parentView === 'moments' ? (
-            <div style={{
-              width: '100%',
-              maxWidth: 430,
-              margin: '0 auto',
-            }}>
+            <div
+              key="moments-view"
+              className="sc-parent-view-motion-v1 sc-parent-moments-enter-v1"
+              style={{
+                width: '100%',
+                maxWidth: 430,
+                margin: '0 auto',
+              }}
+            >
               <ParentMomentsPage
                 token={token || ''}
                 embedded={true}
@@ -1153,14 +1205,18 @@ export default function ParentMagicReportPage() {
               />
             </div>
           ) : (
-          <div style={{
-            width: '100%',
-            maxWidth: 430,
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: reports.length > 1 ? 18 : 0,
-          }}>
+          <div
+            key="report-view"
+            className="sc-parent-view-motion-v1 sc-parent-report-enter-v1"
+            style={{
+              width: '100%',
+              maxWidth: 430,
+              margin: '0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: reports.length > 1 ? 18 : 0,
+            }}
+          >
             {reports[0] && (
               <div className="sc-main-report-card-v292" style={{
                 background: '#FFFFFF',
