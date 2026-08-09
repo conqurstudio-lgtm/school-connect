@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {GraduationCap, Send, Copy, Check, ChevronLeft} from 'lucide-react'
+import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
@@ -261,6 +261,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
+        color: '#252525',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -272,17 +273,10 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <iframe
-        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
-        title="Moments"
+      <Bell
+        size={18}
+        strokeWidth={2}
         aria-hidden="true"
-        style={{
-          width: 24,
-          height: 24,
-          border: 'none',
-          display: 'block',
-          pointerEvents: 'none',
-        }}
       />
 
       {hasNew && (
