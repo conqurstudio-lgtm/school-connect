@@ -209,23 +209,24 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 210 : 232
-  const stroke = compact ? 8 : 9
+  const size = compact ? 214 : 244
+  const stroke = compact ? 2.15 : 2.35
   const center = size / 2
-  const radius = (size - stroke - 10) / 2
+  const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
 
-  // Top-half gauge
-  const arcRatio = 0.5
+  // Premium thin open ring: emotional like the old score moment, but cleaner.
+  const arcRatio = 0.76
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
+  const tone = getScoreTone(Number(score))
 
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 900
+    const duration = 950
     const start = performance.now()
     let raf = 0
 
@@ -245,31 +246,24 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   }, [score, targetPct])
 
   const progressLength = arcLength * displayPct
-  const rotation = 180
+  const rotation = 132
 
   return (
-    <div
-      className="sc-combined-score-ring-v1"
-      style={{
-        position: 'relative',
-        width: size,
-        height: compact ? size * 0.78 : size * 0.8,
-        margin: '0 auto',
-      }}
-    >
-      <svg
-        width={size}
-        height={compact ? size * 0.78 : size * 0.8}
-        viewBox={`0 0 ${size} ${size}`}
-        style={{ display: 'block', overflow: 'visible' }}
-      >
-        {/* Base top-half track */}
+    <div className="sc-combined-score-ring-v1" style={{
+      position: 'relative',
+      width: size,
+      height: size,
+      margin: '0 auto',
+      '--score-tone': tone.text,
+      '--score-ring-tone': tone.ring,
+    } as React.CSSProperties}>
+      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="#D9D9DC"
+          stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -277,15 +271,15 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           transform={`rotate(${rotation} ${center} ${center})`}
         />
 
-        {/* Active score */}
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="#72DB2F"
+          stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
+          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
@@ -293,37 +287,55 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       </svg>
 
       <div
+        className="sc-ring-gap-score-emoji-v1"
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          left: 0,
-          right: 0,
-          top: compact ? '58%' : '57%',
-          transform: 'translateY(-50%)',
-          textAlign: 'center',
+          left: '50%',
+          right: 'auto',
+          top: 'auto',
+          bottom: compact ? 16 : 18,
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          height: 'auto',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: compact ? 21 : 24,
+          lineHeight: 1,
+          zIndex: 5,
+          pointerEvents: 'none',
         }}
       >
-        <div
-          style={{
-            fontSize: compact ? 52 : 72,
-            fontWeight: 400,
-            color: '#111111',
-            letterSpacing: '-0.05em',
-            lineHeight: 0.95,
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
+        {getReportScoreEmoji(Number(score))}
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: '55%',
+        transform: 'translateY(-50%)',
+        textAlign: 'center',
+      }}>
+        <div className="sc-main-score-number-tone-v1" style={{
+          fontSize: compact ? 45 : 56,
+          fontWeight: 420,
+          color: tone.text,
+          letterSpacing: '-0.075em',
+          lineHeight: 0.92,
+          fontVariantNumeric: 'tabular-nums',
+        }}>
           {displayScore.toFixed(1)}
         </div>
 
-        <div
-          style={{
-            fontSize: compact ? 12 : 13,
-            color: '#8E8E93',
-            fontWeight: 500,
-            marginTop: 6,
-            letterSpacing: '-0.01em',
-          }}
-        >
+        <div style={{
+          fontSize: compact ? 11.8 : 12.8,
+          color: '#8E8E93',
+          fontWeight: 430,
+          marginTop: 4,
+          letterSpacing: '-0.01em',
+        }}>
           out of {max}
         </div>
       </div>
