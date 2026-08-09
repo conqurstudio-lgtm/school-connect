@@ -1331,22 +1331,7 @@ export default function ParentMagicReportPage() {
                 />
               </div>
 
-              <MomentsActionCard onOpen={openMomentsView} />
-
-              {!isFamilyShare && <FamilyShareButton token={token || ''} variant="card" />}
 </div>
-            )}
-            {reports.length > 1 && (
-              <section style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0,
-                marginTop: 8,
-              }}>
-{reports.slice(1).length > 0 && (
-                    <PreviousReportsCard reports={reports.slice(1)} childName={childName} />
-                  )}
-              </section>
             )}
           </div>
           )}
