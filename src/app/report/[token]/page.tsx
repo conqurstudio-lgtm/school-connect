@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell} from 'lucide-react'
+import {GraduationCap, Send, Copy, Check, ChevronLeft} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
@@ -256,8 +256,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         position: 'relative',
         top: 'auto',
         right: 'auto',
-        width: 36,
-        height: 36,
+        width: 38,
+        height: 38,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -273,10 +273,17 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         padding: 0,
       }}
     >
-      <Bell
-        size={20}
-        strokeWidth={2}
+      <iframe
+        src="https://lottie.host/embed/282102dd-9f81-471f-8ce5-2aa3f37cca26/QoO9r7Ad2Y.lottie"
+        title="Moments"
         aria-hidden="true"
+        style={{
+          width: 30,
+          height: 30,
+          border: 'none',
+          display: 'block',
+          pointerEvents: 'none',
+        }}
       />
 
       {hasNew && (
@@ -286,8 +293,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
             position: 'absolute',
             top: 4,
             right: 4,
-            width: 7,
-            height: 7,
+            width: 8,
+            height: 8,
             borderRadius: 999,
             background: '#ef4444',
             boxShadow: '0 0 0 2px #FFFFFF',
@@ -1116,9 +1123,6 @@ export default function ParentMagicReportPage() {
               gap: 8,
               marginLeft: 'auto',
             }}>
-              {!isFamilyShare ? (
-                <FamilyShareButton token={token || ''} variant="icon" />
-              ) : null}
               <MomentBellLink token={token || ''} onOpen={openMomentsView} />
             </div>
           ) : null}
