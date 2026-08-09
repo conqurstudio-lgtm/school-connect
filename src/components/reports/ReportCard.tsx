@@ -1030,10 +1030,21 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         }
 
         .sc-subject-grid-view-all-v1 {
-          background: #F4F4F5 !important;
-          border: 1px solid rgba(17,17,17,0.05) !important;
-          color: #3A3A3C !important;
+          background: transparent !important;
+          border: none !important;
+          color: #252525 !important;
           box-shadow: none !important;
+          width: auto !important;
+          height: auto !important;
+          min-height: 0 !important;
+          padding: 10px 0 0 !important;
+          margin: 6px auto 0 !important;
+          display: block !important;
+          font-size: 13px !important;
+          font-weight: 650 !important;
+          letter-spacing: -0.015em !important;
+          text-align: center !important;
+          text-decoration: none !important;
         }
       `}</style>
 
