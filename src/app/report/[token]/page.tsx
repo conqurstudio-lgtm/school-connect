@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell, Share2} from 'lucide-react'
+import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
@@ -256,8 +256,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         position: 'relative',
         top: 'auto',
         right: 'auto',
-        width: 32,
-        height: 32,
+        width: 36,
+        height: 36,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -274,7 +274,7 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
       }}
     >
       <Bell
-        size={18}
+        size={20}
         strokeWidth={2}
         aria-hidden="true"
       />
@@ -284,8 +284,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
           aria-hidden="true"
           style={{
             position: 'absolute',
-            top: 3,
-            right: 3,
+            top: 4,
+            right: 4,
             width: 7,
             height: 7,
             borderRadius: 999,
@@ -588,8 +588,8 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
       disabled={creating}
       aria-label="Share report with family"
       style={{
-        width: 32,
-        height: 32,
+        width: 36,
+        height: 36,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -602,7 +602,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         padding: 0,
       }}
     >
-      <Share2 size={17} strokeWidth={2} />
+      <Send size={18} strokeWidth={2} />
     </button>
   )
 }
@@ -1116,10 +1116,10 @@ export default function ParentMagicReportPage() {
               gap: 8,
               marginLeft: 'auto',
             }}>
-              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
               {!isFamilyShare ? (
                 <FamilyShareButton token={token || ''} variant="icon" />
               ) : null}
+              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
             </div>
           ) : null}
         </header>
