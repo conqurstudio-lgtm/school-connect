@@ -699,6 +699,28 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           </div>
         ) : null}
 
+        {isLatestReport ? (
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 30,
+            padding: '0 16px',
+            borderRadius: 999,
+            background: '#F7F7F8',
+            border: '1px solid rgba(0,0,0,0.035)',
+            color: '#252525',
+            fontSize: 11.5,
+            fontWeight: 700,
+            letterSpacing: '0.075em',
+            textTransform: 'uppercase',
+            margin: '0 0 16px',
+            lineHeight: 1,
+          }}>
+            This week
+          </div>
+        ) : null}
+
         <h2 style={{
           fontSize: 26.5, fontWeight: 420, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
