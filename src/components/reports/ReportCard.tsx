@@ -287,11 +287,12 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={primary}
           strokeWidth={stroke}
           strokeLinecap="round"
-          className="sc-score-ring-progress-tone-v1"
-          strokeDasharray={`${progressLength} ${circumference}`}
+          strokeDasharray={`${Math.max(0.001, progressLength)} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
           style={{
+            stroke: primary,
+            opacity: 1,
             transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
           }}
         />
@@ -312,8 +313,8 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         <div
           className="sc-main-score-number-tone-v1"
           style={{
-            fontSize: compact ? 54 : 64,
-            fontWeight: 560,
+            fontSize: compact ? 52 : 62,
+            fontWeight: 360,
             color: ink,
             letterSpacing: '-0.075em',
             lineHeight: 0.9,
@@ -668,10 +669,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   const teacherCommentPreview = teacherCommentNeedsMore
     ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
     : teacherCommentText
-  const parentFocusMemo = buildParentReportMemo(childFirstName, subjects as [string, number][])
-
-
-
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
@@ -698,7 +695,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         ) : null}
 
         <h2 style={{
-          fontSize: 30, fontWeight: 620, color: '#10141A',
+          fontSize: 29, fontWeight: 520, color: '#10141A',
           letterSpacing: '-0.045em', lineHeight: 1.05,
           margin: '0 0 7px',
         }}>
@@ -706,7 +703,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </h2>
 
         <p style={{
-          fontSize: 14, color: isLatestReport ? '#6B7280' : '#8A8F98', margin: '0 0 22px',
+          fontSize: 13.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 22px',
           letterSpacing: '-0.01em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -721,7 +718,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: -16 }}>
           <p style={{
-            fontSize: 17, fontWeight: 650, color: isLatestReport ? '#10141A' : '#5F6268',
+            fontSize: 15.8, fontWeight: 540, color: isLatestReport ? '#10141A' : '#5F6268',
             letterSpacing: '-0.035em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -779,18 +776,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           </div>
         </section>
       )}
-
-
-      {parentFocusMemo && (
-        <section
-          className="sc-premium-focus-card-v1 sc-report-scroll-reveal-v1"
-          aria-label="This week's focus"
-        >
-          <p className="sc-premium-focus-label-v1">This week’s focus</p>
-          <p className="sc-premium-focus-text-v1">{parentFocusMemo}</p>
-        </section>
-      )}
-
 
       <style jsx global>{`
         .sc-premium-teacher-note-card-v1 {
@@ -968,15 +953,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
                 <article
                   key={String(name)}
                   className="sc-premium-subject-card-v1"
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault()
-                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
-                    }
-                  }}
                 >
                   <p className="sc-premium-subject-name-v1">
                     {shortenSubject(String(name))}
@@ -1000,53 +976,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           </div>
         </section>
       )}
-
-
-      <style jsx global>{`
-        .sc-premium-focus-card-v1 {
-          width: 100% !important;
-          max-width: 370px !important;
-          margin: 0 auto 18px !important;
-          padding: 16px 16px 15px !important;
-          border-radius: 26px !important;
-          background: #FFF7F3 !important;
-          border: 1px solid rgba(244,83,31,0.10) !important;
-          box-shadow: none !important;
-          box-sizing: border-box !important;
-        }
-
-        .sc-premium-focus-label-v1 {
-          margin: 0 0 8px !important;
-          color: #F4531F !important;
-          font-size: 12.4px !important;
-          font-weight: 740 !important;
-          line-height: 1.1 !important;
-          letter-spacing: -0.015em !important;
-        }
-
-        .sc-premium-focus-text-v1 {
-          margin: 0 !important;
-          color: #10141A !important;
-          font-size: 13.6px !important;
-          font-weight: 440 !important;
-          line-height: 1.52 !important;
-          letter-spacing: -0.012em !important;
-        }
-
-        @media (max-width: 420px) {
-          .sc-premium-focus-card-v1 {
-            padding: 15px 15px 14px !important;
-            border-radius: 24px !important;
-            margin-bottom: 16px !important;
-          }
-
-          .sc-premium-focus-text-v1 {
-            font-size: 13.3px !important;
-          }
-        }
-      `}</style>
-
-
       <style jsx global>{`
         .sc-premium-subject-breakdown-v1 {
           width: 100% !important;
@@ -1054,6 +983,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           margin: 0 auto 18px !important;
           padding: 0 !important;
           box-sizing: border-box !important;
+          display: block !important;
         }
 
         .sc-premium-subject-head-v1 {
@@ -1069,7 +999,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           margin: 0 !important;
           color: #10141A !important;
           font-size: 15px !important;
-          font-weight: 720 !important;
+          font-weight: 560 !important;
           letter-spacing: -0.035em !important;
           line-height: 1.1 !important;
         }
@@ -1079,7 +1009,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           background: transparent !important;
           color: #F4531F !important;
           font-size: 12.5px !important;
-          font-weight: 680 !important;
+          font-weight: 620 !important;
           padding: 4px 0 !important;
           cursor: pointer !important;
           letter-spacing: -0.015em !important;
@@ -1089,9 +1019,12 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           display: grid !important;
           grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
           gap: 10px !important;
+          width: 100% !important;
+          overflow: visible !important;
         }
 
         .sc-premium-subject-card-v1 {
+          display: block !important;
           min-height: 122px !important;
           border-radius: 24px !important;
           background: #FFFFFF !important;
@@ -1100,11 +1033,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           padding: 15px 14px 14px !important;
           cursor: pointer !important;
           box-sizing: border-box !important;
-          transition:
-            transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-            opacity 180ms ease,
-            border-color 180ms ease,
-            box-shadow 180ms ease !important;
         }
 
         .sc-premium-subject-card-v1:active {
@@ -1116,7 +1044,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           margin: 0 0 15px !important;
           color: #6B7280 !important;
           font-size: 12.5px !important;
-          font-weight: 560 !important;
+          font-weight: 500 !important;
           line-height: 1.12 !important;
           letter-spacing: -0.02em !important;
           min-height: 28px !important;
@@ -1132,7 +1060,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-premium-subject-score-row-v1 strong {
           color: #10141A !important;
           font-size: 27px !important;
-          font-weight: 680 !important;
+          font-weight: 520 !important;
           line-height: 0.95 !important;
           letter-spacing: -0.06em !important;
           font-variant-numeric: tabular-nums !important;
@@ -1141,7 +1069,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-premium-subject-score-row-v1 span {
           color: #9CA3AF !important;
           font-size: 12px !important;
-          font-weight: 520 !important;
+          font-weight: 460 !important;
           letter-spacing: -0.01em !important;
         }
 
@@ -1165,7 +1093,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           margin: 0 !important;
           color: #6B7280 !important;
           font-size: 11.7px !important;
-          font-weight: 520 !important;
+          font-weight: 480 !important;
           line-height: 1.15 !important;
           letter-spacing: -0.01em !important;
         }
