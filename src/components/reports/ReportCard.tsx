@@ -781,6 +781,98 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
 
       <style jsx global>{`
+        .sc-parent-report-teacher-note-avatar-line-v437 {
+          max-width: 370px !important;
+          margin: -2px auto 18px !important;
+          padding: 0 2px !important;
+        }
+
+        .sc-teacher-comment-photo-v1 {
+          width: 42px !important;
+          height: 42px !important;
+          border-radius: 999px !important;
+          background: #F1F2F3 !important;
+          border: 2px solid #FFFFFF !important;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+          overflow: hidden !important;
+          flex-shrink: 0 !important;
+        }
+
+        .sc-teacher-comment-photo-v1 img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          display: block !important;
+        }
+
+        .sc-teacher-comment-photo-v1 span {
+          width: 100% !important;
+          height: 100% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          color: #252525 !important;
+          font-size: 13px !important;
+          font-weight: 650 !important;
+          letter-spacing: -0.02em !important;
+        }
+
+        .sc-teacher-comment-bubble-v2 {
+          background: #F7F7F8 !important;
+          border-radius: 22px !important;
+          padding: 13px 15px 14px !important;
+          border: 1px solid rgba(0,0,0,0.025) !important;
+          box-shadow: none !important;
+        }
+
+        .sc-teacher-comment-text-v1 {
+          margin: 0 !important;
+          color: #252525 !important;
+          font-size: 13.2px !important;
+          font-weight: 430 !important;
+          line-height: 1.48 !important;
+          letter-spacing: -0.01em !important;
+        }
+
+        .sc-teacher-comment-message-v1 strong {
+          font-weight: 680 !important;
+          color: #1A1A1A !important;
+        }
+
+        .sc-teacher-comment-read-more-v1 {
+          margin-left: 5px !important;
+          border: none !important;
+          background: transparent !important;
+          padding: 0 !important;
+          color: #252525 !important;
+          font: inherit !important;
+          font-weight: 680 !important;
+          cursor: pointer !important;
+          text-decoration: none !important;
+        }
+
+        .sc-teacher-comment-read-more-v1:active {
+          opacity: 0.72 !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-parent-report-teacher-note-avatar-line-v437 {
+            margin-bottom: 16px !important;
+          }
+
+          .sc-teacher-comment-bubble-v2 {
+            border-radius: 21px !important;
+            padding: 12px 14px 13px !important;
+          }
+
+          .sc-teacher-comment-text-v1 {
+            font-size: 13px !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         .sc-report-subject-grid-card-v1,
         .sc-subject-card-growth-v1 {
           background: #f7f7f7 !important;
