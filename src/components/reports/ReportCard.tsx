@@ -781,13 +781,16 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
       <style jsx global>{`
         .sc-report-subject-grid-v1 {
           display: flex !important;
-          gap: 10px !important;
+          gap: 12px !important;
           overflow-x: auto !important;
           overflow-y: hidden !important;
           scroll-snap-type: x mandatory;
+          scroll-padding-left: 24px;
+          scroll-padding-right: 24px;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch;
-          padding: 0 2px 4px !important;
+          overscroll-behavior-x: contain;
+          padding: 0 24px 6px !important;
           margin: 0 !important;
           scrollbar-width: none;
         }
@@ -799,12 +802,13 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-report-subject-grid-card-v1,
         .sc-subject-card-growth-v1 {
           box-sizing: border-box !important;
-          flex: 0 0 168px !important;
-          width: 168px !important;
+          flex: 0 0 min(260px, calc(100vw - 112px)) !important;
+          width: min(260px, calc(100vw - 112px)) !important;
           min-height: 78px !important;
           height: 78px !important;
           background: #f7f7f7 !important;
           scroll-snap-align: start;
+          scroll-snap-stop: always;
         }
 
         .sc-subject-card-copy-v1 {
@@ -812,10 +816,17 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         }
 
         @media (max-width: 390px) {
+          .sc-report-subject-grid-v1 {
+            padding-left: 22px !important;
+            padding-right: 22px !important;
+            scroll-padding-left: 22px;
+            scroll-padding-right: 22px;
+          }
+
           .sc-report-subject-grid-card-v1,
           .sc-subject-card-growth-v1 {
-            flex-basis: 158px !important;
-            width: 158px !important;
+            flex-basis: min(250px, calc(100vw - 96px)) !important;
+            width: min(250px, calc(100vw - 96px)) !important;
             min-height: 78px !important;
             height: 78px !important;
           }
@@ -827,14 +838,16 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
           style={{
-            width: '100%',
-            maxWidth: 370,
-            margin: '0 auto 0',
+            width: '100vw',
+            maxWidth: '100vw',
+            marginLeft: 'calc(50% - 50vw)',
+            marginRight: 'calc(50% - 50vw)',
             padding: 0,
             borderRadius: 0,
             background: 'transparent',
             border: 'none',
             boxShadow: 'none',
+            overflow: 'hidden',
           }}
         >
           <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
