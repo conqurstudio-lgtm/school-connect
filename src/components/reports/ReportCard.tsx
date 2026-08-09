@@ -213,12 +213,6 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const stroke = compact ? 2.4 : 2.7
   const center = size / 2
   const radius = (size - stroke - 10) / 2
-  const circumference = 2 * Math.PI * radius
-
-  // Top-half semicircle
-  const arcRatio = 0.5
-  const arcLength = circumference * arcRatio
-  const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
   const tone = getScoreTone(Number(score))
 
@@ -245,8 +239,12 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
+  const arcStartX = center - radius
+  const arcEndX = center + radius
+  const arcY = center
+  const arcPath = `M ${arcStartX} ${arcY} A ${radius} ${radius} 0 0 1 ${arcEndX} ${arcY}`
+  const arcLength = Math.PI * radius
   const progressLength = arcLength * displayPct
-  const rotation = 180
 
   return (
     <div
@@ -266,31 +264,23 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         viewBox={`0 0 ${size} ${size}`}
         style={{ display: 'block', overflow: 'visible' }}
       >
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
+        <path
+          d={arcPath}
           fill="none"
           stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${arcLength} ${gapLength}`}
-          strokeDashoffset={0}
-          transform={`rotate(${rotation} ${center} ${center})`}
         />
 
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
+        <path
+          d={arcPath}
           fill="none"
           stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
           className="sc-score-ring-progress-tone-v1"
-          strokeDasharray={`${progressLength} ${circumference}`}
+          strokeDasharray={`${progressLength} ${arcLength}`}
           strokeDashoffset={0}
-          transform={`rotate(${rotation} ${center} ${center})`}
         />
       </svg>
 
@@ -299,7 +289,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           position: 'absolute',
           left: 0,
           right: 0,
-          top: compact ? '57%' : '58%',
+          top: compact ? '50%' : '51%',
           transform: 'translateY(-50%)',
           textAlign: 'center',
         }}
