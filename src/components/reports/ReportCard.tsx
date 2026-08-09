@@ -215,7 +215,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
 
-  // Original premium thin open ring, but visually clipped to show the upper part only.
+  // Premium thin open ring.
   const arcRatio = 0.76
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
@@ -247,102 +247,95 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
-  const visibleHeight = compact ? 104 : 113
 
   return (
-    <div
-      className="sc-combined-score-ring-v1"
-      style={{
-        position: 'relative',
-        width: size,
-        height: compact ? 142 : 150,
-        margin: '0 auto',
-        '--score-tone': tone.text,
-        '--score-ring-tone': tone.ring,
-      } as React.CSSProperties}
-    >
+    <div className="sc-combined-score-ring-v1" style={{
+      position: 'relative',
+      width: size,
+      height: size,
+      margin: '0 auto',
+      '--score-tone': tone.text,
+      '--score-ring-tone': tone.ring,
+    } as React.CSSProperties}>
+      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="rgba(17,17,17,0.13)"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
+        />
+
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={tone.ring}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          className="sc-score-ring-progress-tone-v1"
+          strokeDasharray={`${progressLength} ${circumference}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
+        />
+      </svg>
+
       <div
+        className="sc-ring-gap-score-emoji-v1"
         aria-hidden="true"
         style={{
           position: 'absolute',
-          left: 0,
-          right: 0,
-          top: 0,
-          height: visibleHeight,
-          overflow: 'hidden',
+          left: '50%',
+          right: 'auto',
+          top: 'auto',
+          bottom: compact ? 10 : 12,
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          height: 'auto',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: compact ? 21 : 24,
+          lineHeight: 1,
+          zIndex: 5,
+          pointerEvents: 'none',
         }}
       >
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          style={{
-            display: 'block',
-            overflow: 'visible',
-          }}
-        >
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            fill="none"
-            stroke="rgba(17,17,17,0.13)"
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={`${arcLength} ${gapLength}`}
-            strokeDashoffset={0}
-            transform={`rotate(${rotation} ${center} ${center})`}
-          />
-
-          <circle
-            cx={center}
-            cy={center}
-            r={radius}
-            fill="none"
-            stroke={tone.ring}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            className="sc-score-ring-progress-tone-v1"
-            strokeDasharray={`${progressLength} ${circumference}`}
-            strokeDashoffset={0}
-            transform={`rotate(${rotation} ${center} ${center})`}
-          />
-        </svg>
+        {getReportScoreEmoji(Number(score))}
       </div>
 
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: compact ? '54%' : '55%',
-          transform: 'translateY(-50%)',
-          textAlign: 'center',
-        }}
-      >
-        <div
-          className="sc-main-score-number-tone-v1"
-          style={{
-            fontSize: compact ? 42 : 52,
-            fontWeight: 420,
-            color: '#111111',
-            letterSpacing: '-0.065em',
-            lineHeight: 0.92,
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        textAlign: 'center',
+      }}>
+        <div className="sc-main-score-number-tone-v1" style={{
+          fontSize: compact ? 42 : 52,
+          fontWeight: 420,
+          color: '#111111',
+          letterSpacing: '-0.065em',
+          lineHeight: 0.92,
+          fontVariantNumeric: 'tabular-nums',
+        }}>
           {displayScore.toFixed(1)}
         </div>
 
-        <div
-          style={{
-            fontSize: compact ? 11.8 : 12.8,
-            color: '#8E8E93',
-            fontWeight: 430,
-            marginTop: 4,
-            letterSpacing: '-0.01em',
-          }}
-        >
+        <div style={{
+          fontSize: compact ? 11.8 : 12.8,
+          color: '#8E8E93',
+          fontWeight: 430,
+          marginTop: 4,
+          letterSpacing: '-0.01em',
+        }}>
           out of {max}
         </div>
       </div>
