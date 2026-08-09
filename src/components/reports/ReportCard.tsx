@@ -209,17 +209,13 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 206 : 228
+  const size = compact ? 208 : 230
+  const stroke = compact ? 2.3 : 2.55
   const center = size / 2
-  const stroke = compact ? 4.2 : 4.8
-
-  const containerHeight = compact ? 162 : 184
-  const svgHeight = compact ? 126 : 146
-
-  const radius = compact ? 82 : 92
-  const arcCy = compact ? 108 : 124
-
+  const radius = compact ? 88 : 98
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
+  const tone = getScoreTone(Number(score))
+
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
 
@@ -243,121 +239,74 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
+  // Original thin-ring feel, corrected to sit as an upper curve.
   const arcStartX = center - radius
   const arcEndX = center + radius
-  const arcTopY = arcCy - radius
-  const arcPath = `M ${arcStartX} ${arcCy} A ${radius} ${radius} 0 0 1 ${arcEndX} ${arcCy}`
+  const arcY = center + 18
+  const arcPath = `M ${arcStartX} ${arcY} A ${radius} ${radius} 0 0 1 ${arcEndX} ${arcY}`
   const arcLength = Math.PI * radius
   const progressLength = arcLength * displayPct
 
-  // Marker position along top arc
-  const theta = Math.PI - Math.PI * displayPct
-  const markerX = center + radius * Math.cos(theta)
-  const markerY = arcCy - radius * Math.sin(theta)
-
-  const gradientId = compact ? 'scReportRingGradientCompactV2' : 'scReportRingGradientMainV2'
-
   return (
-    <div
-      className="sc-combined-score-ring-v1"
-      style={{
-        position: 'relative',
-        width: size,
-        height: containerHeight,
-        margin: '0 auto',
-      }}
-    >
+    <div className="sc-combined-score-ring-v1" style={{
+      position: 'relative',
+      width: size,
+      height: compact ? 170 : 186,
+      margin: '0 auto',
+      '--score-tone': tone.text,
+      '--score-ring-tone': tone.ring,
+    } as React.CSSProperties}>
       <svg
         width={size}
-        height={svgHeight}
-        viewBox={`0 0 ${size} ${svgHeight}`}
+        height={compact ? 170 : 186}
+        viewBox={`0 0 ${size} ${size}`}
         style={{ display: 'block', overflow: 'visible' }}
       >
-        <defs>
-          <linearGradient
-            id={gradientId}
-            x1={arcStartX}
-            y1={arcTopY}
-            x2={arcEndX}
-            y2={arcTopY}
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop offset="0%" stopColor="#E5791B" />
-            <stop offset="42%" stopColor="#F0C513" />
-            <stop offset="72%" stopColor="#A7CF37" />
-            <stop offset="100%" stopColor="#4AB767" />
-          </linearGradient>
-        </defs>
-
-        {/* Full upper track */}
         <path
           d={arcPath}
           fill="none"
-          stroke="rgba(17,17,17,0.12)"
+          stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
         />
 
-        {/* Active score arc */}
         <path
           d={arcPath}
           fill="none"
-          stroke={`url(#${gradientId})`}
+          stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
-          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${arcLength}`}
           strokeDashoffset={0}
         />
-
-        {/* End marker */}
-        {displayPct > 0.01 ? (
-          <g>
-            <circle
-              cx={markerX}
-              cy={markerY}
-              r={compact ? 7 : 8}
-              fill="#FFFFFF"
-              stroke="#CFCFD4"
-              strokeWidth={compact ? 1.3 : 1.5}
-            />
-          </g>
-        ) : null}
       </svg>
 
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          top: compact ? '47%' : '48%',
-          transform: 'translateY(-50%)',
-          textAlign: 'center',
-        }}
-      >
-        <div
-          className="sc-main-score-number-tone-v1"
-          style={{
-            fontSize: compact ? 42 : 52,
-            fontWeight: 420,
-            color: '#111111',
-            letterSpacing: '-0.065em',
-            lineHeight: 0.92,
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: compact ? '57%' : '58%',
+        transform: 'translateY(-50%)',
+        textAlign: 'center',
+      }}>
+        <div className="sc-main-score-number-tone-v1" style={{
+          fontSize: compact ? 42 : 52,
+          fontWeight: 420,
+          color: '#111111',
+          letterSpacing: '-0.065em',
+          lineHeight: 0.92,
+          fontVariantNumeric: 'tabular-nums',
+        }}>
           {displayScore.toFixed(1)}
         </div>
 
-        <div
-          style={{
-            fontSize: compact ? 11.8 : 12.8,
-            color: '#8E8E93',
-            fontWeight: 430,
-            marginTop: 4,
-            letterSpacing: '-0.01em',
-          }}
-        >
+        <div style={{
+          fontSize: compact ? 11.8 : 12.8,
+          color: '#8E8E93',
+          fontWeight: 430,
+          marginTop: 4,
+          letterSpacing: '-0.01em',
+        }}>
           out of {max}
         </div>
       </div>
