@@ -209,23 +209,23 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 204 : 226
-  const stroke = compact ? 7.5 : 8.5
+  const size = compact ? 210 : 232
+  const stroke = compact ? 8 : 9
   const center = size / 2
-  const radius = (size - stroke - 18) / 2
+  const radius = (size - stroke - 10) / 2
   const circumference = 2 * Math.PI * radius
 
-  const arcRatio = 0.78
+  // Top-half gauge
+  const arcRatio = 0.5
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
-  const tone = getScoreTone(Number(score))
 
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 950
+    const duration = 900
     const start = performance.now()
     let raf = 0
 
@@ -244,35 +244,32 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
-  const rotation = 130
-  const segmentGap = compact ? 5 : 6
-  const segments = [
-    { color: '#D97706', from: 0.00, to: 0.28 },
-    { color: '#C69214', from: 0.28, to: 0.50 },
-    { color: '#3AA7B8', from: 0.50, to: 0.70 },
-    { color: '#127C63', from: 0.70, to: 1.00 },
-  ]
-
-  const markerAngle = (rotation + 360 * arcRatio * displayPct) * (Math.PI / 180)
-  const markerX = center + radius * Math.cos(markerAngle)
-  const markerY = center + radius * Math.sin(markerAngle)
+  const progressLength = arcLength * displayPct
+  const rotation = 180
 
   return (
-    <div className="sc-combined-score-ring-v1" style={{
-      position: 'relative',
-      width: size,
-      height: size,
-      margin: '0 auto',
-      '--score-tone': tone.text,
-      '--score-ring-tone': tone.ring,
-    } as React.CSSProperties}>
-      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+    <div
+      className="sc-combined-score-ring-v1"
+      style={{
+        position: 'relative',
+        width: size,
+        height: compact ? size * 0.78 : size * 0.8,
+        margin: '0 auto',
+      }}
+    >
+      <svg
+        width={size}
+        height={compact ? size * 0.78 : size * 0.8}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
+        {/* Base top-half track */}
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.075)"
+          stroke="#D9D9DC"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -280,64 +277,53 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           transform={`rotate(${rotation} ${center} ${center})`}
         />
 
-        {segments.map((segment, index) => {
-          const segmentLength = Math.max(0, arcLength * (segment.to - segment.from) - segmentGap)
-          const offset = -(arcLength * segment.from)
-
-          return (
-            <circle
-              key={index}
-              cx={center}
-              cy={center}
-              r={radius}
-              fill="none"
-              stroke={segment.color}
-              strokeWidth={stroke}
-              strokeLinecap="round"
-              strokeDasharray={`${segmentLength} ${circumference}`}
-              strokeDashoffset={offset}
-              transform={`rotate(${rotation} ${center} ${center})`}
-              opacity={displayPct >= segment.from ? 1 : 0.18}
-            />
-          )
-        })}
-
+        {/* Active score */}
         <circle
-          cx={markerX}
-          cy={markerY}
-          r={compact ? 7.5 : 8.5}
-          fill="#FFFFFF"
-          stroke={tone.ring}
-          strokeWidth={compact ? 3 : 3.5}
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="#72DB2F"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${progressLength} ${circumference}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
         />
       </svg>
 
-      <div style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        textAlign: 'center',
-      }}>
-        <div className="sc-main-score-number-tone-v1" style={{
-          fontSize: compact ? 42 : 52,
-          fontWeight: 430,
-          color: '#111111',
-          letterSpacing: '-0.055em',
-          lineHeight: 0.92,
-          fontVariantNumeric: 'tabular-nums',
-        }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: compact ? '58%' : '57%',
+          transform: 'translateY(-50%)',
+          textAlign: 'center',
+        }}
+      >
+        <div
+          style={{
+            fontSize: compact ? 52 : 72,
+            fontWeight: 400,
+            color: '#111111',
+            letterSpacing: '-0.05em',
+            lineHeight: 0.95,
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
           {displayScore.toFixed(1)}
         </div>
 
-        <div style={{
-          fontSize: compact ? 11.8 : 12.8,
-          color: '#8E8E93',
-          fontWeight: 520,
-          marginTop: 5,
-          letterSpacing: '-0.01em',
-        }}>
+        <div
+          style={{
+            fontSize: compact ? 12 : 13,
+            color: '#8E8E93',
+            fontWeight: 500,
+            marginTop: 6,
+            letterSpacing: '-0.01em',
+          }}
+        >
           out of {max}
         </div>
       </div>
@@ -1016,6 +1002,28 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         }
       `}</style>
 
+
+      <style jsx global>{`
+        .sc-teacher-comment-bubble-v2 {
+          background: #FBFBFB !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          box-shadow: none !important;
+        }
+
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          background: #FBFBFB !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          box-shadow: none !important;
+        }
+
+        .sc-subject-grid-view-all-v1 {
+          background: #F4F4F5 !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          color: #3A3A3C !important;
+          box-shadow: none !important;
+        }
+      `}</style>
 
       <style jsx global>{`
         @keyframes scSubjectPopupBackdropIn {
