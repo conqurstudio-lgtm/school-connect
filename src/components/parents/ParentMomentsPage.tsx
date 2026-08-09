@@ -673,7 +673,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  position: 'fixed',
  inset: 0,
  zIndex: 2147483000,
- background: 'rgba(15, 23, 42, 0.94)',
+ background: '#000000',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -715,17 +715,18 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  src={openImage}
  alt=""
  decoding="async"
- loading={imageIndex < 2 ? "eager" : "lazy"}
- fetchPriority={imageIndex < 2 ? "high" : "auto"}
+ loading="eager"
+ fetchPriority="high" 
  onClick={event => event.stopPropagation()}
  style={{
  maxWidth: '100%',
  maxHeight: '100%',
- width: 'auto',
- height: 'auto',
+ width: '100%',
+ height: '100%',
  objectFit: 'contain',
  display: 'block',
  borderRadius: 0,
+ background: '#000000',
  boxShadow: 'none',
  }}
  />
@@ -761,8 +762,8 @@ function ParentReactionFXButton({
  aria-label={reactionKey}
  disabled={reacting === moment?.id}
  style={{
- minHeight: 34,
- minWidth: 42,
+ minHeight: 40,
+ minWidth: 48,
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
@@ -770,12 +771,12 @@ function ParentReactionFXButton({
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 5,
- padding: count > 0 ? '0 10px' : '0 9px',
+ gap: 6,
+ padding: count > 0 ? '0 12px' : '0 11px',
  cursor: reacting === moment?.id ? 'default' : 'pointer',
  opacity: reacting === moment?.id ? 0.66 : 1,
  fontFamily: 'inherit',
- fontSize: 12.3,
+ fontSize: 13,
  fontWeight: 650,
  lineHeight: 1,
  boxShadow: 'none',
@@ -786,7 +787,7 @@ function ParentReactionFXButton({
  }}
  >
  <Icon
- size={16}
+ size={19}
  strokeWidth={active ? 2.35 : 2}
  fill={active && reactionKey !== 'like' ? color : 'none'}
  fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
@@ -795,7 +796,7 @@ function ParentReactionFXButton({
  {count > 0 ? (
  <span style={{
  color: active ? color : T.ink3,
- fontSize: 12,
+ fontSize: 12.8,
  fontWeight: 650,
  lineHeight: 1,
  }}>
