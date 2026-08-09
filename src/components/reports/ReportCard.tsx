@@ -210,24 +210,25 @@ function SubjectMiniRing({ score }: { score: number }) {
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
   const size = compact ? 218 : 236
-  const stroke = compact ? 4.8 : 5.2
+  const stroke = compact ? 4.6 : 5
   const center = size / 2
-  const radius = (size - stroke - 12) / 2
+  const radius = (size - stroke - 10) / 2
   const circumference = 2 * Math.PI * radius
 
-  const sweep = 0.76
+  // Premium sample-inspired open gauge.
+  const sweep = 0.74
   const arcLength = circumference * sweep
-  const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
 
   const primary = '#F4531F'
-  const track = '#E7E7EA'
+  const track = '#ECECEE'
+  const ink = '#10141A'
 
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 760
+    const duration = 900
     const start = performance.now()
     let raf = 0
 
@@ -246,8 +247,8 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
     return () => cancelAnimationFrame(raf)
   }, [score, targetPct])
 
-  const progressLength = Math.max(0.001, arcLength * displayPct)
-  const rotation = 132
+  const progressLength = arcLength * displayPct
+  const rotation = 90 + (1 - sweep) * 180
 
   return (
     <div
@@ -273,7 +274,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={track}
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDasharray={`${arcLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
         />
@@ -286,12 +287,12 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={primary}
           strokeWidth={stroke}
           strokeLinecap="round"
+          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
           style={{
-            stroke: primary,
-            opacity: 1,
+            transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
           }}
         />
       </svg>
@@ -311,11 +312,11 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         <div
           className="sc-main-score-number-tone-v1"
           style={{
-            fontSize: compact ? 50 : 60,
-            fontWeight: 360,
-            color: '#10141A',
+            fontSize: compact ? 54 : 64,
+            fontWeight: 560,
+            color: ink,
             letterSpacing: '-0.075em',
-            lineHeight: 0.92,
+            lineHeight: 0.9,
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -324,10 +325,10 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
         <div
           style={{
-            fontSize: compact ? 12 : 13,
-            color: '#8A8F98',
+            fontSize: compact ? 12.2 : 13,
+            color: '#6B7280',
             fontWeight: 430,
-            marginTop: 10,
+            marginTop: 12,
             letterSpacing: '-0.01em',
           }}
         >
@@ -625,11 +626,6 @@ export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall  = getOverallScore(scoreSource)
   const subjects = Object.entries(scoreSource)
-  const [selectedBreakdown, setSelectedBreakdown] = useState<{ name: string; score: number; change: number | null }>({
-    name: 'Overall',
-    score: overall,
-    change: null,
-  })
   const [showAllSubjects, setShowAllSubjects] = useState(false)
   const [showFullTeacherComment, setShowFullTeacherComment] = useState(false)
   const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<null | { name: string; score: number; change: number | null }>(null)
@@ -638,14 +634,6 @@ export function ReportCard({ report, childName }: Props) {
   }, [report.comment])
 const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
   const overallDelta = prevOverall !== null ? overall - prevOverall : null
-
-  useEffect(() => {
-    setSelectedBreakdown({
-      name: 'Overall',
-      score: overall,
-      change: overallDelta,
-    })
-  }, [report.id, report.week_starting, overall, overallDelta])
 
   const isLatestReport = report.display_position !== 'previous'
   const reportStatusLabel = isLatestReport ? '' : 'Previous report'
@@ -710,7 +698,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         ) : null}
 
         <h2 style={{
-          fontSize: 29, fontWeight: 520, color: '#10141A',
+          fontSize: 30, fontWeight: 620, color: '#10141A',
           letterSpacing: '-0.045em', lineHeight: 1.05,
           margin: '0 0 7px',
         }}>
@@ -718,7 +706,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </h2>
 
         <p style={{
-          fontSize: 13.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 22px',
+          fontSize: 14, color: isLatestReport ? '#6B7280' : '#8A8F98', margin: '0 0 22px',
           letterSpacing: '-0.01em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
@@ -728,7 +716,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           width: 'fit-content',
           margin: '0 auto',
         }}>
-          <ScoreRing score={selectedBreakdown.score} compact={!isLatestReport} />
+          <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: -16 }}>
@@ -736,13 +724,13 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
             fontSize: 17, fontWeight: 650, color: isLatestReport ? '#10141A' : '#5F6268',
             letterSpacing: '-0.035em', margin: 0,
           }}>
-            {selectedBreakdown.name === 'Overall' ? getScoreLabel(overall) : getSubjectGrowthWord(selectedBreakdown.score, selectedBreakdown.change)}
+            {getScoreLabel(overall)}
           </p>
-          {selectedBreakdown.change !== null && (
+          {overallDelta !== null && (
             <div style={{ marginTop: 8,
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              <Delta value={selectedBreakdown.change} size={13} />
-              <span style={{ fontSize: 12.5, color: '#6B7280', fontWeight: 430 }}>
+              <Delta value={overallDelta} size={13} />
+              <span style={{ fontSize: 12.5, color: '#5F6268', fontWeight: 430 }}>
                 from last week
               </span>
             </div>
@@ -958,37 +946,55 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         >
           <div className="sc-premium-subject-head-v1">
             <h3>Breakdown</h3>
-            <span>Slide to view</span>
+            {subjects.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setShowAllSubjects(value => !value)}
+              >
+                {showAllSubjects ? 'Show less' : 'View all'}
+              </button>
+            )}
           </div>
 
-          <div className="sc-premium-subject-slider-v2" aria-label="Subject score slider">
-            <button
-              type="button"
-              className={`sc-premium-subject-pill-v2 ${selectedBreakdown.name === 'Overall' ? 'is-active' : ''}`}
-              onClick={() => setSelectedBreakdown({ name: 'Overall', score: overall, change: overallDelta })}
-            >
-              <span>Overall</span>
-              <strong>{overall.toFixed(1)}</strong>
-            </button>
-
-            {subjects.map(([name, score]) => {
+          <div className="sc-premium-subject-strip-v1" aria-label="Subject score cards">
+            {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
               const change = previousScore === null ? null : safeScore - previousScore
-              const shortName = shortenSubject(String(name))
-              const isActive = selectedBreakdown.name === shortName
+              const progress = Math.max(0, Math.min(100, (safeScore / 5) * 100))
 
               return (
-                <button
+                <article
                   key={String(name)}
-                  type="button"
-                  className={`sc-premium-subject-pill-v2 ${isActive ? 'is-active' : ''}`}
-                  onClick={() => setSelectedBreakdown({ name: shortName, score: safeScore, change })}
+                  className="sc-premium-subject-card-v1"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
+                    }
+                  }}
                 >
-                  <span>{shortName}</span>
-                  <strong>{safeScore.toFixed(1)}</strong>
-                </button>
+                  <p className="sc-premium-subject-name-v1">
+                    {shortenSubject(String(name))}
+                  </p>
+
+                  <div className="sc-premium-subject-score-row-v1">
+                    <strong>{safeScore.toFixed(1)}</strong>
+                    <span>/ 5</span>
+                  </div>
+
+                  <div className="sc-premium-subject-track-v1" aria-hidden="true">
+                    <span style={{ width: `${progress}%` }} />
+                  </div>
+
+                  <p className="sc-premium-subject-status-v1">
+                    {getSubjectGrowthWord(safeScore, change)}
+                  </p>
+                </article>
               )
             })}
           </div>
@@ -997,10 +1003,55 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
 
       <style jsx global>{`
+        .sc-premium-focus-card-v1 {
+          width: 100% !important;
+          max-width: 370px !important;
+          margin: 0 auto 18px !important;
+          padding: 16px 16px 15px !important;
+          border-radius: 26px !important;
+          background: #FFF7F3 !important;
+          border: 1px solid rgba(244,83,31,0.10) !important;
+          box-shadow: none !important;
+          box-sizing: border-box !important;
+        }
+
+        .sc-premium-focus-label-v1 {
+          margin: 0 0 8px !important;
+          color: #F4531F !important;
+          font-size: 12.4px !important;
+          font-weight: 740 !important;
+          line-height: 1.1 !important;
+          letter-spacing: -0.015em !important;
+        }
+
+        .sc-premium-focus-text-v1 {
+          margin: 0 !important;
+          color: #10141A !important;
+          font-size: 13.6px !important;
+          font-weight: 440 !important;
+          line-height: 1.52 !important;
+          letter-spacing: -0.012em !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-premium-focus-card-v1 {
+            padding: 15px 15px 14px !important;
+            border-radius: 24px !important;
+            margin-bottom: 16px !important;
+          }
+
+          .sc-premium-focus-text-v1 {
+            font-size: 13.3px !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         .sc-premium-subject-breakdown-v1 {
           width: 100% !important;
           max-width: 370px !important;
-          margin: 0 auto 20px !important;
+          margin: 0 auto 18px !important;
           padding: 0 !important;
           box-sizing: border-box !important;
         }
@@ -1018,101 +1069,119 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           margin: 0 !important;
           color: #10141A !important;
           font-size: 15px !important;
-          font-weight: 620 !important;
+          font-weight: 720 !important;
           letter-spacing: -0.035em !important;
           line-height: 1.1 !important;
         }
 
-        .sc-premium-subject-head-v1 span {
-          color: #9CA3AF !important;
-          font-size: 12px !important;
-          font-weight: 430 !important;
-          letter-spacing: -0.01em !important;
-        }
-
-        .sc-premium-subject-slider-v2 {
-          display: flex !important;
-          gap: 10px !important;
-          overflow-x: auto !important;
-          overflow-y: hidden !important;
-          scroll-snap-type: x proximity !important;
-          -webkit-overflow-scrolling: touch !important;
-          padding: 0 2px 8px !important;
-          margin: 0 -2px !important;
-          scrollbar-width: none !important;
-        }
-
-        .sc-premium-subject-slider-v2::-webkit-scrollbar {
-          display: none !important;
-        }
-
-        .sc-premium-subject-pill-v2 {
-          scroll-snap-align: start !important;
-          flex: 0 0 auto !important;
-          min-width: 116px !important;
-          height: 112px !important;
-          border-radius: 28px !important;
-          border: 1px solid rgba(17,17,17,0.06) !important;
-          background: #FFFFFF !important;
-          color: #10141A !important;
-          box-shadow: 0 16px 38px rgba(15, 23, 42, 0.045) !important;
-          padding: 16px 15px !important;
-          font-family: inherit !important;
-          text-align: left !important;
+        .sc-premium-subject-head-v1 button {
+          border: none !important;
+          background: transparent !important;
+          color: #F4531F !important;
+          font-size: 12.5px !important;
+          font-weight: 680 !important;
+          padding: 4px 0 !important;
           cursor: pointer !important;
-          display: flex !important;
-          flex-direction: column !important;
-          justify-content: space-between !important;
+          letter-spacing: -0.015em !important;
+        }
+
+        .sc-premium-subject-strip-v1 {
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 10px !important;
+        }
+
+        .sc-premium-subject-card-v1 {
+          min-height: 122px !important;
+          border-radius: 24px !important;
+          background: #FFFFFF !important;
+          border: 1px solid rgba(17,17,17,0.06) !important;
+          box-shadow: 0 16px 38px rgba(15, 23, 42, 0.045) !important;
+          padding: 15px 14px 14px !important;
+          cursor: pointer !important;
+          box-sizing: border-box !important;
           transition:
             transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
-            background 180ms ease,
+            opacity 180ms ease,
             border-color 180ms ease,
-            color 180ms ease !important;
+            box-shadow 180ms ease !important;
         }
 
-        .sc-premium-subject-pill-v2 span {
+        .sc-premium-subject-card-v1:active {
+          transform: scale(0.985) !important;
+          opacity: 0.88 !important;
+        }
+
+        .sc-premium-subject-name-v1 {
+          margin: 0 0 15px !important;
           color: #6B7280 !important;
-          font-size: 12.6px !important;
-          font-weight: 500 !important;
-          line-height: 1.15 !important;
+          font-size: 12.5px !important;
+          font-weight: 560 !important;
+          line-height: 1.12 !important;
           letter-spacing: -0.02em !important;
+          min-height: 28px !important;
         }
 
-        .sc-premium-subject-pill-v2 strong {
+        .sc-premium-subject-score-row-v1 {
+          display: flex !important;
+          align-items: baseline !important;
+          gap: 4px !important;
+          margin: 0 0 12px !important;
+        }
+
+        .sc-premium-subject-score-row-v1 strong {
           color: #10141A !important;
-          font-size: 34px !important;
-          font-weight: 420 !important;
-          line-height: 0.9 !important;
-          letter-spacing: -0.075em !important;
+          font-size: 27px !important;
+          font-weight: 680 !important;
+          line-height: 0.95 !important;
+          letter-spacing: -0.06em !important;
           font-variant-numeric: tabular-nums !important;
         }
 
-        .sc-premium-subject-pill-v2.is-active {
+        .sc-premium-subject-score-row-v1 span {
+          color: #9CA3AF !important;
+          font-size: 12px !important;
+          font-weight: 520 !important;
+          letter-spacing: -0.01em !important;
+        }
+
+        .sc-premium-subject-track-v1 {
+          width: 100% !important;
+          height: 5px !important;
+          border-radius: 999px !important;
+          background: #F1F2F4 !important;
+          overflow: hidden !important;
+          margin: 0 0 10px !important;
+        }
+
+        .sc-premium-subject-track-v1 span {
+          display: block !important;
+          height: 100% !important;
+          border-radius: inherit !important;
           background: #F4531F !important;
-          border-color: rgba(244,83,31,0.20) !important;
-          color: #FFFFFF !important;
-          box-shadow: 0 18px 42px rgba(244,83,31,0.22) !important;
         }
 
-        .sc-premium-subject-pill-v2.is-active span,
-        .sc-premium-subject-pill-v2.is-active strong {
-          color: #FFFFFF !important;
-        }
-
-        .sc-premium-subject-pill-v2:active {
-          transform: scale(0.98) !important;
+        .sc-premium-subject-status-v1 {
+          margin: 0 !important;
+          color: #6B7280 !important;
+          font-size: 11.7px !important;
+          font-weight: 520 !important;
+          line-height: 1.15 !important;
+          letter-spacing: -0.01em !important;
         }
 
         @media (max-width: 360px) {
-          .sc-premium-subject-pill-v2 {
-            min-width: 108px !important;
-            height: 106px !important;
-            border-radius: 25px !important;
-            padding: 15px 14px !important;
+          .sc-premium-subject-strip-v1 {
+            gap: 8px !important;
           }
 
-          .sc-premium-subject-pill-v2 strong {
-            font-size: 31px !important;
+          .sc-premium-subject-card-v1 {
+            border-radius: 22px !important;
+            padding: 14px 12px 13px !important;
+          }
+
+          .sc-premium-subject-score-row-v1 strong {
+            font-size: 25px !important;
           }
         }
       `}</style>
