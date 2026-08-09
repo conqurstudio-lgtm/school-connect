@@ -220,8 +220,9 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   const arcLength = circumference * sweep
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
 
-  const primary = '#F4531F'
-  const track = '#ECECEE'
+  const tone = getScoreTone(Number(score))
+  const primary = tone.ring
+  const track = '#E6E6E8'
   const ink = '#10141A'
 
   const [displayScore, setDisplayScore] = useState(0)
@@ -258,7 +259,8 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         width: size,
         height: size,
         margin: '0 auto',
-      }}
+        '--score-ring-tone': primary,
+      } as React.CSSProperties}
     >
       <svg
         width={size}
@@ -287,6 +289,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={primary}
           strokeWidth={stroke}
           strokeLinecap="round"
+          className="sc-main-score-active-ring-v1"
           strokeDasharray={`${Math.max(0.001, progressLength)} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
@@ -314,7 +317,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           className="sc-main-score-number-tone-v1"
           style={{
             fontSize: compact ? 52 : 62,
-            fontWeight: 360,
+            fontWeight: 420,
             color: ink,
             letterSpacing: '-0.075em',
             lineHeight: 0.9,
@@ -695,7 +698,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         ) : null}
 
         <h2 style={{
-          fontSize: 29, fontWeight: 520, color: '#10141A',
+          fontSize: 29, fontWeight: 480, color: '#10141A',
           letterSpacing: '-0.045em', lineHeight: 1.05,
           margin: '0 0 7px',
         }}>
@@ -718,7 +721,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: -16 }}>
           <p style={{
-            fontSize: 15.8, fontWeight: 540, color: isLatestReport ? '#10141A' : '#5F6268',
+            fontSize: 15.8, fontWeight: 500, color: isLatestReport ? '#10141A' : '#5F6268',
             letterSpacing: '-0.035em', margin: 0,
           }}>
             {getScoreLabel(overall)}
@@ -742,11 +745,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           className="sc-premium-teacher-note-card-v1 sc-report-scroll-reveal-v1"
           aria-label="Teacher comment"
         >
-          <div className="sc-premium-teacher-note-label-v1">
-            Teacher note
-          </div>
-
-          <div className="sc-premium-teacher-note-row-v1">
+<div className="sc-premium-teacher-note-row-v1">
             <div className="sc-premium-teacher-photo-v1" aria-hidden="true">
               {teacherPhoto ? (
                 <img src={teacherPhoto} alt="" />
@@ -756,11 +755,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
             </div>
 
             <div className="sc-premium-teacher-copy-v1">
-              <p className="sc-premium-teacher-name-v1">
-                {teacherName}
-              </p>
-
               <p className="sc-premium-teacher-message-v1">
+                <strong className="sc-premium-teacher-inline-name-v1">{teacherName}:</strong>{' '}
                 {showFullTeacherComment ? teacherCommentText : teacherCommentPreview}
                 {!showFullTeacherComment && teacherCommentNeedsMore && (
                   <button
@@ -782,7 +778,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           width: 100% !important;
           max-width: 370px !important;
           margin: 8px auto 18px !important;
-          padding: 16px 16px 15px !important;
+          padding: 15px 16px 15px !important;
           border-radius: 26px !important;
           background: #FFFFFF !important;
           border: 1px solid rgba(17,17,17,0.06) !important;
@@ -838,7 +834,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-premium-teacher-copy-v1 {
           min-width: 0 !important;
           flex: 1 !important;
-          padding-top: 1px !important;
+          padding-top: 0 !important;
         }
 
         .sc-premium-teacher-name-v1 {
@@ -847,6 +843,12 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           font-size: 13.2px !important;
           font-weight: 680 !important;
           line-height: 1.15 !important;
+          letter-spacing: -0.02em !important;
+        }
+
+        .sc-premium-teacher-inline-name-v1 {
+          color: #10141A !important;
+          font-weight: 680 !important;
           letter-spacing: -0.02em !important;
         }
 
@@ -977,6 +979,12 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </section>
       )}
       <style jsx global>{`
+
+        .sc-combined-score-ring-v1 .sc-main-score-active-ring-v1 {
+          stroke: #F4531F !important;
+          opacity: 1 !important;
+        }
+
         .sc-premium-subject-breakdown-v1 {
           width: 100% !important;
           max-width: 370px !important;
@@ -991,7 +999,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           align-items: center !important;
           justify-content: space-between !important;
           gap: 12px !important;
-          margin: 0 0 12px !important;
+          margin: 0 0 9px !important;
           padding: 0 2px !important;
         }
 
@@ -1015,6 +1023,11 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           letter-spacing: -0.015em !important;
         }
 
+
+        .sc-premium-subject-track-v1 {
+          display: none !important;
+        }
+
         .sc-premium-subject-strip-v1 {
           display: grid !important;
           grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -1025,12 +1038,12 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         .sc-premium-subject-card-v1 {
           display: block !important;
-          min-height: 122px !important;
-          border-radius: 24px !important;
+          min-height: 98px !important;
+          border-radius: 22px !important;
           background: #FFFFFF !important;
           border: 1px solid rgba(17,17,17,0.06) !important;
           box-shadow: 0 16px 38px rgba(15, 23, 42, 0.045) !important;
-          padding: 15px 14px 14px !important;
+          padding: 13px 13px 12px !important;
           cursor: pointer !important;
           box-sizing: border-box !important;
         }
@@ -1041,13 +1054,13 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         }
 
         .sc-premium-subject-name-v1 {
-          margin: 0 0 15px !important;
+          margin: 0 0 13px !important;
           color: #6B7280 !important;
           font-size: 12.5px !important;
           font-weight: 500 !important;
           line-height: 1.12 !important;
           letter-spacing: -0.02em !important;
-          min-height: 28px !important;
+          min-height: 20px !important;
         }
 
         .sc-premium-subject-score-row-v1 {
@@ -1059,8 +1072,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         .sc-premium-subject-score-row-v1 strong {
           color: #10141A !important;
-          font-size: 27px !important;
-          font-weight: 520 !important;
+          font-size: 25px !important;
+          font-weight: 460 !important;
           line-height: 0.95 !important;
           letter-spacing: -0.06em !important;
           font-variant-numeric: tabular-nums !important;
@@ -1092,8 +1105,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-premium-subject-status-v1 {
           margin: 0 !important;
           color: #6B7280 !important;
-          font-size: 11.7px !important;
-          font-weight: 480 !important;
+          font-size: 11.4px !important;
+          font-weight: 430 !important;
           line-height: 1.15 !important;
           letter-spacing: -0.01em !important;
         }
