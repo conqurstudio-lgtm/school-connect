@@ -256,8 +256,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         position: 'relative',
         top: 'auto',
         right: 'auto',
-        width: 38,
-        height: 38,
+        width: 32,
+        height: 32,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -277,8 +277,8 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
         title="Moments"
         aria-hidden="true"
         style={{
-          width: 30,
-          height: 30,
+          width: 24,
+          height: 24,
           border: 'none',
           display: 'block',
           pointerEvents: 'none',
@@ -290,10 +290,10 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
           aria-hidden="true"
           style={{
             position: 'absolute',
-            top: 4,
-            right: 4,
-            width: 8,
-            height: 8,
+            top: 3,
+            right: 3,
+            width: 7,
+            height: 7,
             borderRadius: 999,
             background: '#ef4444',
             boxShadow: '0 0 0 2px #FFFFFF',
