@@ -898,19 +898,20 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {subjects.length > 0 && (
         <section
-          className="sc-focus-slide-panel-v1 sc-report-scroll-reveal-v1"
-          aria-label="Focus areas"
+          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
+          aria-label="Subject scores"
+          style={{
+            width: '100%',
+            maxWidth: 370,
+            margin: '0 auto 0',
+            padding: 0,
+            borderRadius: 0,
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+          }}
         >
-          <div className="sc-focus-slide-head-v1">
-            <div>
-              <h3>Focus areas</h3>
-              <p>Simple view for family sharing.</p>
-            </div>
-
-            <span aria-hidden="true" />
-          </div>
-
-          <div className="sc-focus-subject-list-v1">
+          <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
             {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
@@ -918,23 +919,30 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               const change = previousScore === null ? null : safeScore - previousScore
 
               return (
-                <button
+                                <article
                   key={String(name)}
-                  type="button"
-                  className="sc-focus-subject-row-v1"
+                  className="sc-report-subject-grid-card-v1 sc-subject-card-growth-v1"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
+                    }
+                  }}
                 >
-                  <span className="sc-focus-subject-copy-v1">
-                    <span className="sc-focus-subject-name-v1">
-                      {shortenSubject(String(name))}
-                    </span>
-                    <span className="sc-focus-subject-note-v1">
-                      {getSubjectGrowthWord(safeScore, change)}
-                    </span>
-                  </span>
-
                   <SubjectMiniRing score={safeScore} />
-                </button>
+
+                  <div className="sc-subject-card-copy-v1">
+                    <p className="sc-subject-grid-name-v1">
+                      {shortenSubject(String(name))}
+                    </p>
+                    <p className="sc-subject-growth-word-v1">
+                      {getSubjectGrowthWord(safeScore, change)}
+                    </p>
+                  </div>
+                </article>
               )
             })}
           </div>
@@ -942,180 +950,92 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           {subjects.length > 4 && (
             <button
               type="button"
-              className="sc-focus-subject-view-all-v1"
+              className="sc-subject-grid-view-all-v1"
               onClick={() => setShowAllSubjects(value => !value)}
             >
-              {showAllSubjects ? 'Show less' : 'View all focus areas'}
+              {showAllSubjects ? 'Show less' : `View more`}
             </button>
           )}
         </section>
+
+
       )}
 
+
       <style jsx global>{`
-        @keyframes scFocusSlideUpV1 {
-          from {
-            opacity: 0;
-            transform: translateY(22px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          border-radius: 22px !important;
+          background: #F7F7F8 !important;
+          border: 1px solid rgba(0,0,0,0.025) !important;
+          box-shadow: none !important;
+          padding: 11px 12px !important;
+          cursor: pointer !important;
         }
 
-        .sc-focus-slide-panel-v1 {
-          width: 100% !important;
-          max-width: 370px !important;
-          margin: 12px auto 14px !important;
-          padding: 20px 18px 18px !important;
-          border-radius: 34px !important;
-          background: #FFFFFF !important;
-          border: 1px solid rgba(17,17,17,0.07) !important;
-          box-shadow: 0 18px 44px rgba(15, 23, 42, 0.055) !important;
-          box-sizing: border-box !important;
-          animation: scFocusSlideUpV1 620ms cubic-bezier(.2,.8,.2,1) both !important;
-        }
-
-        .sc-focus-slide-head-v1 {
-          display: flex !important;
-          align-items: flex-end !important;
-          justify-content: space-between !important;
-          gap: 16px !important;
-          margin: 0 0 12px !important;
-        }
-
-        .sc-focus-slide-head-v1 h3 {
+        .sc-subject-grid-name-v1 {
           margin: 0 !important;
-          color: #18181B !important;
-          font-size: 22px !important;
+          color: #252525 !important;
+          font-size: 12.8px !important;
           font-weight: 650 !important;
-          line-height: 1.05 !important;
-          letter-spacing: -0.045em !important;
+          line-height: 1.14 !important;
+          letter-spacing: -0.025em !important;
         }
 
-        .sc-focus-slide-head-v1 p {
+        .sc-subject-growth-word-v1 {
           margin: 4px 0 0 !important;
-          color: #71717A !important;
-          font-size: 13px !important;
-          font-weight: 460 !important;
-          line-height: 1.25 !important;
+          color: #7C8486 !important;
+          font-size: 11.5px !important;
+          font-weight: 470 !important;
+          line-height: 1.15 !important;
           letter-spacing: -0.01em !important;
         }
 
-        .sc-focus-slide-head-v1 > span {
-          width: 48px !important;
-          height: 8px !important;
-          border-radius: 999px !important;
-          background: #D87600 !important;
+        .sc-subject-mini-ring-v1 {
           flex-shrink: 0 !important;
-          margin-bottom: 5px !important;
         }
 
-        .sc-focus-subject-list-v1 {
-          display: flex !important;
-          flex-direction: column !important;
-          width: 100% !important;
-          border-top: 1px solid rgba(24,24,27,0.06) !important;
+        .sc-subject-mini-ring-v1 span {
+          color: #252525 !important;
+          font-weight: 680 !important;
         }
 
-        .sc-focus-subject-row-v1 {
-          width: 100% !important;
-          min-height: 74px !important;
-          padding: 12px 0 !important;
-          border: none !important;
-          border-bottom: 1px solid rgba(24,24,27,0.06) !important;
-          background: transparent !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 18px !important;
-          text-align: left !important;
-          cursor: pointer !important;
-          font-family: inherit !important;
-          transition: transform 180ms ease, opacity 180ms ease !important;
-        }
-
-        .sc-focus-subject-row-v1:active {
-          transform: translateX(4px) !important;
-          opacity: 0.82 !important;
-        }
-
-        .sc-focus-subject-copy-v1 {
-          min-width: 0 !important;
-          display: block !important;
-        }
-
-        .sc-focus-subject-name-v1 {
-          display: block !important;
-          max-width: 240px !important;
-          color: #18181B !important;
-          font-size: 18px !important;
-          font-weight: 650 !important;
-          line-height: 1.08 !important;
-          letter-spacing: -0.045em !important;
-          white-space: nowrap !important;
-          overflow: hidden !important;
-          text-overflow: ellipsis !important;
-        }
-
-        .sc-focus-subject-note-v1 {
-          display: block !important;
-          margin-top: 5px !important;
-          color: #71717A !important;
-          font-size: 13px !important;
-          font-weight: 500 !important;
-          line-height: 1.2 !important;
-          letter-spacing: -0.01em !important;
-        }
-
-        .sc-focus-subject-row-v1 .sc-subject-mini-ring-v1 {
-          flex-shrink: 0 !important;
-          transform: scale(0.95) !important;
-          transform-origin: center !important;
-        }
-
-        .sc-focus-subject-row-v1 .sc-subject-mini-ring-progress-v1 {
-          stroke: #D87600 !important;
-        }
-
-        .sc-focus-subject-view-all-v1 {
-          width: 100% !important;
-          height: 42px !important;
-          margin: 12px 0 0 !important;
-          border: none !important;
-          border-radius: 999px !important;
-          background: #F5F5F4 !important;
-          color: #18181B !important;
-          font-size: 13px !important;
-          font-weight: 620 !important;
-          letter-spacing: -0.01em !important;
-          font-family: inherit !important;
-          cursor: pointer !important;
+        .sc-report-subject-grid-card-v1:active,
+        .sc-subject-card-growth-v1:active {
+          transform: scale(0.975) !important;
+          opacity: 0.86 !important;
         }
 
         @media (max-width: 420px) {
-          .sc-focus-slide-panel-v1 {
-            border-radius: 32px !important;
-            padding: 19px 17px 17px !important;
-          }
-
-          .sc-focus-subject-name-v1 {
-            max-width: 220px !important;
-            font-size: 17px !important;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .sc-focus-slide-panel-v1 {
-            animation: none !important;
-          }
-
-          .sc-focus-subject-row-v1 {
-            transition: none !important;
+          .sc-report-subject-grid-card-v1,
+          .sc-subject-card-growth-v1 {
+            padding: 10px 11px !important;
           }
         }
       `}</style>
 
+
+      <style jsx global>{`
+        .sc-teacher-comment-bubble-v2 {
+          background: #FBFBFB !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          box-shadow: none !important;
+        }
+
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          background: #FBFBFB !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          box-shadow: none !important;
+        }
+
+        .sc-subject-grid-view-all-v1 {
+          background: #F4F4F5 !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          color: #3A3A3C !important;
+          box-shadow: none !important;
+        }
+      `}</style>
 
       <style jsx global>{`
         @keyframes scSubjectPopupBackdropIn {

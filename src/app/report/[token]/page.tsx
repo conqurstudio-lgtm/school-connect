@@ -113,7 +113,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
             fontWeight: 650,
             letterSpacing: '-0.02em',
             lineHeight: 1.15,
-            color: '#FFFFFF',
+            color: '#1A1A1A',
           }}>
             Previous reports
           </span>
@@ -123,7 +123,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
             marginTop: 4,
             fontSize: 12.5,
             fontWeight: 430,
-            color: 'rgba(255,255,255,0.72)',
+            color: '#5F6268',
             lineHeight: 1.25,
           }}>
             {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'} available
@@ -539,62 +539,79 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 
   if (variant === 'card') {
     return (
-      <button
-        type="button"
-        onClick={shareReport}
-        disabled={creating}
+      <section
         className="sc-family-share-card-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
         aria-label="Share report with family"
         style={{
           width: '100%',
           maxWidth: 370,
-          minHeight: 60,
           margin: '0 auto 0',
-          border: 'none',
-          borderRadius: 999,
-          background: '#18181B',
-          color: '#FFFFFF',
+          border: '1px solid rgba(37, 37, 37, 0.035)',
+          borderRadius: 26,
+          background: '#f3f6f3',
+          color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 18,
-          padding: '10px 22px',
+          gap: 8,
+          padding: '13px 14px',
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
           boxSizing: 'border-box',
-          cursor: creating ? 'default' : 'pointer',
-          opacity: creating ? 0.72 : 1,
         }}
       >
         <span style={{
           minWidth: 0,
+          flex: 1,
           display: 'block',
         }}>
           <span style={{
             display: 'block',
-            fontSize: 17,
+            fontSize: 13.5,
             fontWeight: 650,
-            letterSpacing: '-0.03em',
-            color: '#FFFFFF',
-            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+            color: '#1A1A1A',
+            lineHeight: 1.15,
           }}>
             Share with family
           </span>
           <span style={{
             display: 'block',
             marginTop: 4,
-            fontSize: 14,
+            fontSize: 12.5,
             fontWeight: 430,
-            color: 'rgba(255,255,255,0.65)',
-            lineHeight: 1.2,
+            color: '#5F6268',
+            lineHeight: 1.25,
           }}>
             Only this report is shared.
           </span>
         </span>
 
-        <Send size={24} strokeWidth={2} color="#D87600" />
-      </button>
+        <button
+          type="button"
+          onClick={shareReport}
+          disabled={creating}
+          aria-label="Share report with family"
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 999,
+            border: 'none',
+            background: '#252525',
+            color: '#FFFFFF',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            cursor: creating ? 'default' : 'pointer',
+            opacity: creating ? 0.65 : 1,
+            padding: 0,
+            fontFamily: 'inherit',
+          }}
+        >
+          <Send size={16} strokeWidth={1.75} />
+        </button>
+      </section>
     )
   }
 
@@ -754,13 +771,16 @@ function ReportSafeAreaStyle() {
       }
 
       .sc-family-share-card-v2 {
-        background: #18181B !important;
-        border: none !important;
+        background: #FFF7F3 !important;
+        border: 1px solid rgba(244,83,31,0.12) !important;
         box-shadow: none !important;
-        padding: 10px 22px !important;
+        padding: 14px 14px !important;
       }
 
-
+      .sc-family-share-card-v2 button {
+        background: #F4531F !important;
+        color: #FFFFFF !important;
+      }
 
       .sc-previous-reports-history-card-v1 {
         background: #FFFFFF !important;
