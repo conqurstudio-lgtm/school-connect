@@ -764,8 +764,8 @@ function ParentReactionFXButton({
  minHeight: 34,
  minWidth: 42,
  borderRadius: 999,
- border: active ? `1px solid ${color}` : '1px solid rgba(37,37,37,0.08)',
- background: active ? 'rgba(37,37,37,0.04)' : '#FFFFFF',
+ border: 'none',
+ background: 'transparent',
  color: active ? color : T.ink2,
  display: 'inline-flex',
  alignItems: 'center',
@@ -778,11 +778,11 @@ function ParentReactionFXButton({
  fontSize: 12.3,
  fontWeight: 650,
  lineHeight: 1,
- boxShadow: '0 4px 14px rgba(20,32,43,0.055)',
+ boxShadow: 'none',
  WebkitTapHighlightColor: 'transparent',
  touchAction: 'manipulation',
  transition: 'transform 160ms ease, background 160ms ease, border-color 160ms ease',
- transform: active ? 'translateY(-1px)' : 'none',
+ transform: 'none',
  }}
  >
  <Icon
