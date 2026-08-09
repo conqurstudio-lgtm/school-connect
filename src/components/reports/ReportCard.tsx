@@ -677,7 +677,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
-      <div style={{ textAlign: 'center', padding: '0 0 18px', opacity: mutedReportOpacity }}>
+      <div style={{ textAlign: 'center', padding: '0 0 10px', opacity: mutedReportOpacity }}>
         {reportStatusLabel ? (
           <div style={{
             display: 'inline-flex',
@@ -721,7 +721,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
+        <div className="sc-score-comment-up-v1" style={{ marginTop: 4 }}>
           <p style={{
             fontSize: 15.5, fontWeight: 620, color: isLatestReport ? '#1A1A1A' : '#5F6268',
             letterSpacing: '-0.025em', margin: 0,
@@ -783,7 +783,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
       <style jsx global>{`
         .sc-parent-report-teacher-note-avatar-line-v437 {
           max-width: 370px !important;
-          margin: -2px auto 18px !important;
+          margin: -10px auto 16px !important;
           padding: 0 2px !important;
         }
 
@@ -857,7 +857,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         @media (max-width: 420px) {
           .sc-parent-report-teacher-note-avatar-line-v437 {
-            margin-bottom: 16px !important;
+            margin-bottom: 14px !important;
           }
 
           .sc-teacher-comment-bubble-v2 {
