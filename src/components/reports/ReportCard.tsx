@@ -740,129 +740,163 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {teacherCommentText && (
         <section
-          className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1 sc-report-scroll-reveal-v1"
+          className="sc-premium-teacher-note-card-v1 sc-report-scroll-reveal-v1"
           aria-label="Teacher comment"
         >
-          <div className="sc-teacher-comment-photo-v1" aria-hidden="true">
-            {teacherPhoto ? (
-              <img src={teacherPhoto} alt="" />
-            ) : (
-              <span>{teacherInitials}</span>
-            )}
+          <div className="sc-premium-teacher-note-label-v1">
+            Teacher note
           </div>
 
-          <div className="sc-teacher-comment-bubble-v2">
-            <p className="sc-teacher-comment-text-v1">
-              <span className="sc-teacher-comment-message-v1">
-                {teacherName ? (
-                  <>
-                    <strong>{teacherName}:</strong>{' '}
-                  </>
-                ) : null}
+          <div className="sc-premium-teacher-note-row-v1">
+            <div className="sc-premium-teacher-photo-v1" aria-hidden="true">
+              {teacherPhoto ? (
+                <img src={teacherPhoto} alt="" />
+              ) : (
+                <span>{teacherInitials}</span>
+              )}
+            </div>
+
+            <div className="sc-premium-teacher-copy-v1">
+              <p className="sc-premium-teacher-name-v1">
+                {teacherName}
+              </p>
+
+              <p className="sc-premium-teacher-message-v1">
                 {showFullTeacherComment ? teacherCommentText : teacherCommentPreview}
                 {!showFullTeacherComment && teacherCommentNeedsMore && (
                   <button
                     type="button"
-                    className="sc-teacher-comment-read-more-v1"
+                    className="sc-premium-teacher-read-more-v1"
                     onClick={() => setShowFullTeacherComment(true)}
                   >
                     more
                   </button>
                 )}
-              </span>
-            </p>
+              </p>
+            </div>
           </div>
         </section>
       )}
 
 
       <style jsx global>{`
-        .sc-parent-report-teacher-note-avatar-line-v437 {
+        .sc-premium-teacher-note-card-v1 {
+          width: 100% !important;
           max-width: 370px !important;
-          margin: -10px auto 16px !important;
-          padding: 0 2px !important;
+          margin: 8px auto 18px !important;
+          padding: 16px 16px 15px !important;
+          border-radius: 26px !important;
+          background: #FFFFFF !important;
+          border: 1px solid rgba(17,17,17,0.06) !important;
+          box-shadow: 0 18px 44px rgba(15, 23, 42, 0.055) !important;
+          box-sizing: border-box !important;
         }
 
-        .sc-teacher-comment-photo-v1 {
-          width: 42px !important;
-          height: 42px !important;
+        .sc-premium-teacher-note-label-v1 {
+          margin: 0 0 13px !important;
+          color: #10141A !important;
+          font-size: 13px !important;
+          font-weight: 680 !important;
+          letter-spacing: -0.02em !important;
+          line-height: 1.1 !important;
+        }
+
+        .sc-premium-teacher-note-row-v1 {
+          display: flex !important;
+          align-items: flex-start !important;
+          gap: 12px !important;
+          min-width: 0 !important;
+        }
+
+        .sc-premium-teacher-photo-v1 {
+          width: 44px !important;
+          height: 44px !important;
           border-radius: 999px !important;
-          background: #F1F2F3 !important;
-          border: 2px solid #FFFFFF !important;
-          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+          background: #FFF1EC !important;
+          border: 1px solid rgba(244,83,31,0.16) !important;
           overflow: hidden !important;
           flex-shrink: 0 !important;
         }
 
-        .sc-teacher-comment-photo-v1 img {
+        .sc-premium-teacher-photo-v1 img {
           width: 100% !important;
           height: 100% !important;
           object-fit: cover !important;
           display: block !important;
         }
 
-        .sc-teacher-comment-photo-v1 span {
+        .sc-premium-teacher-photo-v1 span {
           width: 100% !important;
           height: 100% !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          color: #252525 !important;
+          color: #F4531F !important;
           font-size: 13px !important;
-          font-weight: 650 !important;
+          font-weight: 720 !important;
           letter-spacing: -0.02em !important;
         }
 
-        .sc-teacher-comment-bubble-v2 {
-          background: #F7F7F8 !important;
-          border-radius: 22px !important;
-          padding: 13px 15px 14px !important;
-          border: 1px solid rgba(0,0,0,0.025) !important;
-          box-shadow: none !important;
+        .sc-premium-teacher-copy-v1 {
+          min-width: 0 !important;
+          flex: 1 !important;
+          padding-top: 1px !important;
         }
 
-        .sc-teacher-comment-text-v1 {
-          margin: 0 !important;
-          color: #252525 !important;
+        .sc-premium-teacher-name-v1 {
+          margin: 0 0 5px !important;
+          color: #10141A !important;
           font-size: 13.2px !important;
+          font-weight: 680 !important;
+          line-height: 1.15 !important;
+          letter-spacing: -0.02em !important;
+        }
+
+        .sc-premium-teacher-message-v1 {
+          margin: 0 !important;
+          color: #4B5563 !important;
+          font-size: 13.4px !important;
           font-weight: 430 !important;
-          line-height: 1.48 !important;
+          line-height: 1.52 !important;
           letter-spacing: -0.01em !important;
         }
 
-        .sc-teacher-comment-message-v1 strong {
-          font-weight: 680 !important;
-          color: #1A1A1A !important;
-        }
-
-        .sc-teacher-comment-read-more-v1 {
+        .sc-premium-teacher-read-more-v1 {
           margin-left: 5px !important;
           border: none !important;
           background: transparent !important;
           padding: 0 !important;
-          color: #252525 !important;
+          color: #F4531F !important;
           font: inherit !important;
-          font-weight: 680 !important;
+          font-weight: 720 !important;
           cursor: pointer !important;
           text-decoration: none !important;
         }
 
-        .sc-teacher-comment-read-more-v1:active {
+        .sc-premium-teacher-read-more-v1:active {
           opacity: 0.72 !important;
         }
 
         @media (max-width: 420px) {
-          .sc-parent-report-teacher-note-avatar-line-v437 {
-            margin-bottom: 14px !important;
+          .sc-premium-teacher-note-card-v1 {
+            max-width: 370px !important;
+            margin-top: 8px !important;
+            margin-bottom: 16px !important;
+            padding: 15px 15px 14px !important;
+            border-radius: 24px !important;
           }
 
-          .sc-teacher-comment-bubble-v2 {
-            border-radius: 21px !important;
-            padding: 12px 14px 13px !important;
+          .sc-premium-teacher-note-row-v1 {
+            gap: 11px !important;
           }
 
-          .sc-teacher-comment-text-v1 {
-            font-size: 13px !important;
+          .sc-premium-teacher-photo-v1 {
+            width: 42px !important;
+            height: 42px !important;
+          }
+
+          .sc-premium-teacher-message-v1 {
+            font-size: 13.2px !important;
           }
         }
       `}</style>
