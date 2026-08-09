@@ -209,65 +209,61 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 226 : 244
-  const stroke = compact ? 2.25 : 2.35
+  const size = compact ? 214 : 244
+  const stroke = compact ? 2.15 : 2.35
   const center = size / 2
-  const radius = (size - stroke - 8) / 2
+  const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
-  const progress = Math.max(0, Math.min(1, Number(score) / max))
-  const tone = getScoreTone(Number(score))
 
+  // Premium thin open ring: emotional like the old score moment, but cleaner.
   const arcRatio = 0.76
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
-  const progressLength = Math.max(0.001, arcLength * progress)
-  const rotation = 132
+  const targetPct = Math.max(0, Math.min(1, Number(score) / max))
+  const tone = getScoreTone(Number(score))
 
   const [displayScore, setDisplayScore] = useState(0)
+  const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 780
+    const duration = 950
     const start = performance.now()
     let raf = 0
 
     const tick = (now: number) => {
       const elapsed = now - start
       const t = Math.min(1, elapsed / duration)
-      const eased = 1 - Math.pow(1 - t, 3)
+      const eased = 1 - Math.pow(1 - t, 4)
 
       setDisplayScore(Number(score) * eased)
+      setDisplayPct(targetPct * eased)
 
       if (t < 1) raf = requestAnimationFrame(tick)
     }
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [score])
+  }, [score, targetPct])
+
+  const progressLength = arcLength * displayPct
+  const rotation = 132
 
   return (
-    <div
-      className="sc-combined-score-ring-v1"
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-        margin: '0 auto',
-        '--score-ring-tone': tone.ring,
-      } as React.CSSProperties}
-    >
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        style={{ display: 'block', overflow: 'visible' }}
-        aria-hidden="true"
-      >
+    <div className="sc-combined-score-ring-v1" style={{
+      position: 'relative',
+      width: size,
+      height: size,
+      margin: '0 auto',
+      '--score-tone': tone.text,
+      '--score-ring-tone': tone.ring,
+    } as React.CSSProperties}>
+      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(37,37,37,0.12)"
+          stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -276,7 +272,6 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         />
 
         <circle
-          className="sc-main-score-active-ring-v1"
           cx={center}
           cy={center}
           r={radius}
@@ -284,52 +279,63 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
+          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
-          style={{
-            stroke: 'var(--score-ring-tone)',
-            opacity: 1,
-            transition: 'stroke-dasharray 780ms cubic-bezier(.22,1,.36,1)',
-          }}
         />
       </svg>
 
       <div
+        className="sc-ring-gap-score-emoji-v1"
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          flexDirection: 'column',
+          left: '50%',
+          right: 'auto',
+          top: 'auto',
+          bottom: compact ? 16 : 18,
+          transform: 'translateX(-50%)',
+          width: 'auto',
+          height: 'auto',
+          display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          textAlign: 'center',
+          fontSize: compact ? 21 : 24,
+          lineHeight: 1,
+          zIndex: 5,
           pointerEvents: 'none',
         }}
       >
-        <div
-          className="sc-main-score-number-tone-v1"
-          style={{
-            fontSize: compact ? 54 : 64,
-            fontWeight: 420,
-            color: '#10141A',
-            letterSpacing: '-0.075em',
-            lineHeight: 0.9,
-            fontVariantNumeric: 'tabular-nums',
-          }}
-        >
+        {getReportScoreEmoji(Number(score))}
+      </div>
+
+      <div style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: '55%',
+        transform: 'translateY(-50%)',
+        textAlign: 'center',
+      }}>
+        <div className="sc-main-score-number-tone-v1" style={{
+          fontSize: compact ? 45 : 56,
+          fontWeight: 420,
+          color: tone.text,
+          letterSpacing: '-0.075em',
+          lineHeight: 0.92,
+          fontVariantNumeric: 'tabular-nums',
+        }}>
           {displayScore.toFixed(1)}
         </div>
 
-        <div
-          style={{
-            fontSize: compact ? 12.2 : 13,
-            color: '#8A8F98',
-            fontWeight: 430,
-            marginTop: 12,
-            letterSpacing: '-0.01em',
-          }}
-        >
+        <div style={{
+          fontSize: compact ? 11.8 : 12.8,
+          color: '#8E8E93',
+          fontWeight: 430,
+          marginTop: 4,
+          letterSpacing: '-0.01em',
+        }}>
           out of {max}
         </div>
       </div>
@@ -487,20 +493,25 @@ function getReportScoreEmoji(score: number) {
 }
 
 function getScoreTone(score: number) {
-  if (score <= 2.4) {
-    return { ring: '#F4531F', text: '#F4531F' }
+  if (score <= 1.9) {
+    return { ring: '#C24132', text: '#B33427' }
   }
 
-  if (score <= 3.4) {
-    return { ring: '#F59E0B', text: '#D97706' }
+  if (score <= 2.9) {
+    return { ring: '#D97706', text: '#B65F00' }
   }
 
-  if (score <= 4.1) {
-    return { ring: '#8FA6A1', text: '#6F8782' }
+  if (score <= 3.9) {
+    return { ring: '#B89412', text: '#8A6F0A' }
   }
 
-  return { ring: '#0F7A4F', text: '#0F7A4F' }
+  if (score <= 4.4) {
+    return { ring: '#0F8B7F', text: '#087568' }
+  }
+
+  return { ring: '#0F6B45', text: '#0F6B45' }
 }
+
 
 function getSafeTeacherCommentIndex(seed: string, count: number) {
   let total = 0
@@ -661,6 +672,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   const teacherCommentPreview = teacherCommentNeedsMore
     ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
     : teacherCommentText
+
+
   return (
     <section className="sc-parent-report-card-view" style={{ paddingBottom: 28 }}>
       {/* ── Hero ─────────────────── */}
@@ -687,16 +700,16 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         ) : null}
 
         <h2 style={{
-          fontSize: 29, fontWeight: 480, color: '#10141A',
-          letterSpacing: '-0.045em', lineHeight: 1.05,
-          margin: '0 0 7px',
+          fontSize: 26.5, fontWeight: 420, color: T.ink,
+          letterSpacing: '-0.03em', lineHeight: 1.1,
+          margin: '0 0 8px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
 
         <p style={{
-          fontSize: 13.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 22px',
-          letterSpacing: '-0.01em', fontWeight: 430,
+          fontSize: 12.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 18px',
+          letterSpacing: '0.004em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
         </p>
@@ -708,24 +721,10 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div
-          className="sc-report-score-emoji-v1"
-          aria-hidden="true"
-          style={{
-            marginTop: -30,
-            marginBottom: 18,
-            fontSize: 31,
-            lineHeight: 1,
-            textAlign: 'center',
-          }}
-        >
-          {getScoreEmoji(overall)}
-        </div>
-
-        <div className="sc-score-comment-up-v1" style={{ marginTop: 0 }}>
+        <div className="sc-score-comment-up-v1" style={{ marginTop: 4 }}>
           <p style={{
-            fontSize: 15.8, fontWeight: 500, color: isLatestReport ? '#10141A' : '#5F6268',
-            letterSpacing: '-0.035em', margin: 0,
+            fontSize: 15.5, fontWeight: 620, color: isLatestReport ? '#1A1A1A' : '#5F6268',
+            letterSpacing: '-0.025em', margin: 0,
           }}>
             {getScoreLabel(overall)}
           </p>
@@ -745,161 +744,129 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {teacherCommentText && (
         <section
-          className="sc-premium-teacher-note-card-v1 sc-report-scroll-reveal-v1"
+          className="sc-parent-report-teacher-note-avatar-line-v437 sc-teacher-comment-overlap-card-v1 sc-report-scroll-reveal-v1"
           aria-label="Teacher comment"
         >
-<div className="sc-premium-teacher-note-row-v1">
-            <div className="sc-premium-teacher-photo-v1" aria-hidden="true">
-              {teacherPhoto ? (
-                <img src={teacherPhoto} alt="" />
-              ) : (
-                <span>{teacherInitials}</span>
-              )}
-            </div>
+          <div className="sc-teacher-comment-photo-v1" aria-hidden="true">
+            {teacherPhoto ? (
+              <img src={teacherPhoto} alt="" />
+            ) : (
+              <span>{teacherInitials}</span>
+            )}
+          </div>
 
-            <div className="sc-premium-teacher-copy-v1">
-              <p className="sc-premium-teacher-message-v1">
-                <strong className="sc-premium-teacher-inline-name-v1">{teacherName}:</strong>{' '}
+          <div className="sc-teacher-comment-bubble-v2">
+            <p className="sc-teacher-comment-text-v1">
+              <span className="sc-teacher-comment-message-v1">
+                {teacherName ? (
+                  <>
+                    <strong>{teacherName}:</strong>{' '}
+                  </>
+                ) : null}
                 {showFullTeacherComment ? teacherCommentText : teacherCommentPreview}
                 {!showFullTeacherComment && teacherCommentNeedsMore && (
                   <button
                     type="button"
-                    className="sc-premium-teacher-read-more-v1"
+                    className="sc-teacher-comment-read-more-v1"
                     onClick={() => setShowFullTeacherComment(true)}
                   >
                     more
                   </button>
                 )}
-              </p>
-            </div>
+              </span>
+            </p>
           </div>
         </section>
       )}
 
+
       <style jsx global>{`
-        .sc-premium-teacher-note-card-v1 {
-          width: 100% !important;
+        .sc-parent-report-teacher-note-avatar-line-v437 {
           max-width: 370px !important;
-          margin: 8px auto 18px !important;
-          padding: 15px 16px 15px !important;
-          border-radius: 26px !important;
-          background: #FFFFFF !important;
-          border: 1px solid rgba(17,17,17,0.06) !important;
-          box-shadow: 0 18px 44px rgba(15, 23, 42, 0.055) !important;
-          box-sizing: border-box !important;
+          margin: -10px auto 16px !important;
+          padding: 0 2px !important;
         }
 
-        .sc-premium-teacher-note-label-v1 {
-          margin: 0 0 13px !important;
-          color: #10141A !important;
-          font-size: 13px !important;
-          font-weight: 680 !important;
-          letter-spacing: -0.02em !important;
-          line-height: 1.1 !important;
-        }
-
-        .sc-premium-teacher-note-row-v1 {
-          display: flex !important;
-          align-items: flex-start !important;
-          gap: 12px !important;
-          min-width: 0 !important;
-        }
-
-        .sc-premium-teacher-photo-v1 {
-          width: 44px !important;
-          height: 44px !important;
+        .sc-teacher-comment-photo-v1 {
+          width: 42px !important;
+          height: 42px !important;
           border-radius: 999px !important;
-          background: #FFF1EC !important;
-          border: 1px solid rgba(244,83,31,0.16) !important;
+          background: #F1F2F3 !important;
+          border: 2px solid #FFFFFF !important;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
           overflow: hidden !important;
           flex-shrink: 0 !important;
         }
 
-        .sc-premium-teacher-photo-v1 img {
+        .sc-teacher-comment-photo-v1 img {
           width: 100% !important;
           height: 100% !important;
           object-fit: cover !important;
           display: block !important;
         }
 
-        .sc-premium-teacher-photo-v1 span {
+        .sc-teacher-comment-photo-v1 span {
           width: 100% !important;
           height: 100% !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          color: #F4531F !important;
+          color: #252525 !important;
           font-size: 13px !important;
-          font-weight: 720 !important;
+          font-weight: 650 !important;
           letter-spacing: -0.02em !important;
         }
 
-        .sc-premium-teacher-copy-v1 {
-          min-width: 0 !important;
-          flex: 1 !important;
-          padding-top: 0 !important;
+        .sc-teacher-comment-bubble-v2 {
+          background: #F7F7F8 !important;
+          border-radius: 22px !important;
+          padding: 13px 15px 14px !important;
+          border: 1px solid rgba(0,0,0,0.025) !important;
+          box-shadow: none !important;
         }
 
-        .sc-premium-teacher-name-v1 {
-          margin: 0 0 5px !important;
-          color: #10141A !important;
-          font-size: 13.2px !important;
-          font-weight: 680 !important;
-          line-height: 1.15 !important;
-          letter-spacing: -0.02em !important;
-        }
-
-        .sc-premium-teacher-inline-name-v1 {
-          color: #10141A !important;
-          font-weight: 680 !important;
-          letter-spacing: -0.02em !important;
-        }
-
-        .sc-premium-teacher-message-v1 {
+        .sc-teacher-comment-text-v1 {
           margin: 0 !important;
-          color: #4B5563 !important;
-          font-size: 13.4px !important;
+          color: #252525 !important;
+          font-size: 13.2px !important;
           font-weight: 430 !important;
-          line-height: 1.52 !important;
+          line-height: 1.48 !important;
           letter-spacing: -0.01em !important;
         }
 
-        .sc-premium-teacher-read-more-v1 {
+        .sc-teacher-comment-message-v1 strong {
+          font-weight: 680 !important;
+          color: #1A1A1A !important;
+        }
+
+        .sc-teacher-comment-read-more-v1 {
           margin-left: 5px !important;
           border: none !important;
           background: transparent !important;
           padding: 0 !important;
-          color: #F4531F !important;
+          color: #252525 !important;
           font: inherit !important;
-          font-weight: 720 !important;
+          font-weight: 680 !important;
           cursor: pointer !important;
           text-decoration: none !important;
         }
 
-        .sc-premium-teacher-read-more-v1:active {
+        .sc-teacher-comment-read-more-v1:active {
           opacity: 0.72 !important;
         }
 
         @media (max-width: 420px) {
-          .sc-premium-teacher-note-card-v1 {
-            max-width: 370px !important;
-            margin-top: 8px !important;
-            margin-bottom: 16px !important;
-            padding: 15px 15px 14px !important;
-            border-radius: 24px !important;
+          .sc-parent-report-teacher-note-avatar-line-v437 {
+            margin-bottom: 14px !important;
           }
 
-          .sc-premium-teacher-note-row-v1 {
-            gap: 11px !important;
+          .sc-teacher-comment-bubble-v2 {
+            border-radius: 21px !important;
+            padding: 12px 14px 13px !important;
           }
 
-          .sc-premium-teacher-photo-v1 {
-            width: 42px !important;
-            height: 42px !important;
-          }
-
-          .sc-premium-teacher-message-v1 {
-            font-size: 13.2px !important;
+          .sc-teacher-comment-text-v1 {
+            font-size: 13px !important;
           }
         }
       `}</style>
@@ -931,201 +898,118 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {subjects.length > 0 && (
         <section
-          className="sc-premium-subject-breakdown-v1 sc-report-scroll-reveal-v1"
+          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
+          style={{
+            width: '100%',
+            maxWidth: 370,
+            margin: '0 auto 0',
+            padding: 0,
+            borderRadius: 0,
+            background: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+          }}
         >
-          <div className="sc-premium-subject-head-v1">
-            <h3>Breakdown</h3>
-            {subjects.length > 4 && (
-              <button
-                type="button"
-                onClick={() => setShowAllSubjects(value => !value)}
-              >
-                {showAllSubjects ? 'Show less' : 'View all'}
-              </button>
-            )}
-          </div>
-
-          <div className="sc-premium-subject-strip-v1" aria-label="Subject score cards">
+          <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
             {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
               const change = previousScore === null ? null : safeScore - previousScore
-              const progress = Math.max(0, Math.min(100, (safeScore / 5) * 100))
 
               return (
-                <article
+                                <article
                   key={String(name)}
-                  className="sc-premium-subject-card-v1"
+                  className="sc-report-subject-grid-card-v1 sc-subject-card-growth-v1"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
+                    }
+                  }}
                 >
-                  <p className="sc-premium-subject-name-v1">
-                    {shortenSubject(String(name))}
-                  </p>
+                  <SubjectMiniRing score={safeScore} />
 
-                  <div className="sc-premium-subject-score-row-v1">
-                    <strong>{safeScore.toFixed(1)}</strong>
-                    <span>/ 5</span>
+                  <div className="sc-subject-card-copy-v1">
+                    <p className="sc-subject-grid-name-v1">
+                      {shortenSubject(String(name))}
+                    </p>
+                    <p className="sc-subject-growth-word-v1">
+                      {getSubjectGrowthWord(safeScore, change)}
+                    </p>
                   </div>
-
-                  <div className="sc-premium-subject-track-v1" aria-hidden="true">
-                    <span style={{ width: `${progress}%` }} />
-                  </div>
-
-                  <p className="sc-premium-subject-status-v1">
-                    {getSubjectGrowthWord(safeScore, change)}
-                  </p>
                 </article>
               )
             })}
           </div>
+
+          {subjects.length > 4 && (
+            <button
+              type="button"
+              className="sc-subject-grid-view-all-v1"
+              onClick={() => setShowAllSubjects(value => !value)}
+            >
+              {showAllSubjects ? 'Show less' : `View more`}
+            </button>
+          )}
         </section>
+
+
       )}
+
+
       <style jsx global>{`
-
-        .sc-combined-score-ring-v1 .sc-main-score-active-ring-v1 {
-          stroke: #F4531F !important;
-          opacity: 1 !important;
-        }
-
-        .sc-premium-subject-breakdown-v1 {
-          width: 100% !important;
-          max-width: 370px !important;
-          margin: 0 auto 18px !important;
-          padding: 0 !important;
-          box-sizing: border-box !important;
-          display: block !important;
-        }
-
-        .sc-premium-subject-head-v1 {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 12px !important;
-          margin: 0 0 9px !important;
-          padding: 0 2px !important;
-        }
-
-        .sc-premium-subject-head-v1 h3 {
-          margin: 0 !important;
-          color: #10141A !important;
-          font-size: 15px !important;
-          font-weight: 560 !important;
-          letter-spacing: -0.035em !important;
-          line-height: 1.1 !important;
-        }
-
-        .sc-premium-subject-head-v1 button {
-          border: none !important;
-          background: transparent !important;
-          color: #F4531F !important;
-          font-size: 12.5px !important;
-          font-weight: 620 !important;
-          padding: 4px 0 !important;
-          cursor: pointer !important;
-          letter-spacing: -0.015em !important;
-        }
-
-
-        .sc-premium-subject-track-v1 {
-          display: none !important;
-        }
-
-        .sc-premium-subject-strip-v1 {
-          display: grid !important;
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          gap: 10px !important;
-          width: 100% !important;
-          overflow: visible !important;
-        }
-
-        .sc-premium-subject-card-v1 {
-          display: block !important;
-          min-height: 98px !important;
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
           border-radius: 22px !important;
-          background: #FFFFFF !important;
-          border: 1px solid rgba(17,17,17,0.06) !important;
-          box-shadow: 0 16px 38px rgba(15, 23, 42, 0.045) !important;
-          padding: 13px 13px 12px !important;
+          background: #F7F7F8 !important;
+          border: 1px solid rgba(0,0,0,0.025) !important;
+          box-shadow: none !important;
+          padding: 11px 12px !important;
           cursor: pointer !important;
-          box-sizing: border-box !important;
         }
 
-        .sc-premium-subject-card-v1:active {
-          transform: scale(0.985) !important;
-          opacity: 0.88 !important;
-        }
-
-        .sc-premium-subject-name-v1 {
-          margin: 0 0 13px !important;
-          color: #6B7280 !important;
-          font-size: 12.5px !important;
-          font-weight: 500 !important;
-          line-height: 1.12 !important;
-          letter-spacing: -0.02em !important;
-          min-height: 20px !important;
-        }
-
-        .sc-premium-subject-score-row-v1 {
-          display: flex !important;
-          align-items: baseline !important;
-          gap: 4px !important;
-          margin: 0 0 12px !important;
-        }
-
-        .sc-premium-subject-score-row-v1 strong {
-          color: #10141A !important;
-          font-size: 25px !important;
-          font-weight: 460 !important;
-          line-height: 0.95 !important;
-          letter-spacing: -0.06em !important;
-          font-variant-numeric: tabular-nums !important;
-        }
-
-        .sc-premium-subject-score-row-v1 span {
-          color: #9CA3AF !important;
-          font-size: 12px !important;
-          font-weight: 460 !important;
-          letter-spacing: -0.01em !important;
-        }
-
-        .sc-premium-subject-track-v1 {
-          width: 100% !important;
-          height: 5px !important;
-          border-radius: 999px !important;
-          background: #F1F2F4 !important;
-          overflow: hidden !important;
-          margin: 0 0 10px !important;
-        }
-
-        .sc-premium-subject-track-v1 span {
-          display: block !important;
-          height: 100% !important;
-          border-radius: inherit !important;
-          background: #F4531F !important;
-        }
-
-        .sc-premium-subject-status-v1 {
+        .sc-subject-grid-name-v1 {
           margin: 0 !important;
-          color: #6B7280 !important;
-          font-size: 11.4px !important;
-          font-weight: 430 !important;
+          color: #252525 !important;
+          font-size: 12.8px !important;
+          font-weight: 650 !important;
+          line-height: 1.14 !important;
+          letter-spacing: -0.025em !important;
+        }
+
+        .sc-subject-growth-word-v1 {
+          margin: 4px 0 0 !important;
+          color: #7C8486 !important;
+          font-size: 11.5px !important;
+          font-weight: 470 !important;
           line-height: 1.15 !important;
           letter-spacing: -0.01em !important;
         }
 
-        @media (max-width: 360px) {
-          .sc-premium-subject-strip-v1 {
-            gap: 8px !important;
-          }
+        .sc-subject-mini-ring-v1 {
+          flex-shrink: 0 !important;
+        }
 
-          .sc-premium-subject-card-v1 {
-            border-radius: 22px !important;
-            padding: 14px 12px 13px !important;
-          }
+        .sc-subject-mini-ring-v1 span {
+          color: #252525 !important;
+          font-weight: 680 !important;
+        }
 
-          .sc-premium-subject-score-row-v1 strong {
-            font-size: 25px !important;
+        .sc-report-subject-grid-card-v1:active,
+        .sc-subject-card-growth-v1:active {
+          transform: scale(0.975) !important;
+          opacity: 0.86 !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-report-subject-grid-card-v1,
+          .sc-subject-card-growth-v1 {
+            padding: 10px 11px !important;
           }
         }
       `}</style>
