@@ -247,7 +247,6 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
-  const gradientId = 'sc-score-ring-gradient-main-v1'
 
   return (
     <div className="sc-combined-score-ring-v1" style={{
@@ -259,21 +258,12 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       '--score-ring-tone': tone.ring,
     } as React.CSSProperties}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
-        <defs>
-          <linearGradient id={gradientId} x1="12%" y1="88%" x2="88%" y2="12%">
-            <stop offset="0%" stopColor="#5FA8F5" />
-            <stop offset="34%" stopColor="#4FC3B1" />
-            <stop offset="67%" stopColor="#F5A623" />
-            <stop offset="100%" stopColor="#FF6B2C" />
-          </linearGradient>
-        </defs>
-
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.10)"
+          stroke="rgba(17,17,17,0.13)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -286,21 +276,15 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke={`url(#${gradientId})`}
+          stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
-          className="sc-score-ring-progress-tone-v1 sc-score-ring-progress-gradient-v1"
+          className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
         />
       </svg>
-
-      <style jsx global>{`
-        .sc-combined-score-ring-v1 .sc-score-ring-progress-gradient-v1 {
-          stroke: url(#sc-score-ring-gradient-main-v1) !important;
-        }
-      `}</style>
 
       <div
         className="sc-ring-gap-score-emoji-v1"
