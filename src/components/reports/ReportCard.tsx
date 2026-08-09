@@ -668,6 +668,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
   const teacherCommentPreview = teacherCommentNeedsMore
     ? `${teacherCommentText.slice(0, 89).trim().replace(/[.,;:!?\-]+$/, '')}...`
     : teacherCommentText
+  const parentFocusMemo = buildParentReportMemo(childFirstName, subjects as [string, number][])
+
 
 
   return (
@@ -775,6 +777,17 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               </p>
             </div>
           </div>
+        </section>
+      )}
+
+
+      {parentFocusMemo && (
+        <section
+          className="sc-premium-focus-card-v1 sc-report-scroll-reveal-v1"
+          aria-label="This week's focus"
+        >
+          <p className="sc-premium-focus-label-v1">This week’s focus</p>
+          <p className="sc-premium-focus-text-v1">{parentFocusMemo}</p>
         </section>
       )}
 
@@ -987,6 +1000,51 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           </div>
         </section>
       )}
+
+
+      <style jsx global>{`
+        .sc-premium-focus-card-v1 {
+          width: 100% !important;
+          max-width: 370px !important;
+          margin: 0 auto 18px !important;
+          padding: 16px 16px 15px !important;
+          border-radius: 26px !important;
+          background: #FFF7F3 !important;
+          border: 1px solid rgba(244,83,31,0.10) !important;
+          box-shadow: none !important;
+          box-sizing: border-box !important;
+        }
+
+        .sc-premium-focus-label-v1 {
+          margin: 0 0 8px !important;
+          color: #F4531F !important;
+          font-size: 12.4px !important;
+          font-weight: 740 !important;
+          line-height: 1.1 !important;
+          letter-spacing: -0.015em !important;
+        }
+
+        .sc-premium-focus-text-v1 {
+          margin: 0 !important;
+          color: #10141A !important;
+          font-size: 13.6px !important;
+          font-weight: 440 !important;
+          line-height: 1.52 !important;
+          letter-spacing: -0.012em !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-premium-focus-card-v1 {
+            padding: 15px 15px 14px !important;
+            border-radius: 24px !important;
+            margin-bottom: 16px !important;
+          }
+
+          .sc-premium-focus-text-v1 {
+            font-size: 13.3px !important;
+          }
+        }
+      `}</style>
 
 
       <style jsx global>{`
