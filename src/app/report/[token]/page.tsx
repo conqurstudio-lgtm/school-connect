@@ -71,6 +71,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
   if (!safeReports.length) return null
 
+  const parentViewTransitionClass = parentViewTransition === 'to-moments'
+    ? 'sc-parent-view-to-moments-v1'
+    : 'sc-parent-view-to-report-v1'
+
   return (
     <section
       className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
@@ -714,6 +718,56 @@ function ReportSafeAreaStyle() {
 function LoadingState() {
   return (
     <main style={centerPage}>
+      <style jsx global>{`
+        @keyframes scParentMomentsInV1 {
+          from {
+            opacity: 0;
+            transform: translateX(16px);
+            filter: blur(2px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+            filter: blur(0);
+          }
+        }
+
+        @keyframes scParentReportInV1 {
+          from {
+            opacity: 0;
+            transform: translateX(-12px);
+            filter: blur(2px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+            filter: blur(0);
+          }
+        }
+
+        .sc-parent-view-motion-v1 {
+          will-change: transform, opacity, filter;
+          backface-visibility: hidden;
+        }
+
+        .sc-parent-view-to-moments-v1 {
+          animation: scParentMomentsInV1 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .sc-parent-view-to-report-v1 {
+          animation: scParentReportInV1 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .sc-parent-view-to-moments-v1,
+          .sc-parent-view-to-report-v1 {
+            animation: none !important;
+          }
+        }
+      `}</style>
+
+      <div key={parentView} className={`sc-parent-view-motion-v1 ${parentViewTransitionClass}`}>
+
       <ReportSafeAreaStyle />
 
       <section
@@ -791,6 +845,9 @@ export default function ParentMagicReportPage() {
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
 
   const [parentView, setParentView] = useState<'report' | 'moments'>(() => {
+  const [parentViewTransition, setParentViewTransition] = useState<'to-report' | 'to-moments'>(
+    initialView === 'moments' ? 'to-moments' : 'to-report'
+  )
     if (typeof window === 'undefined') return 'report'
     return new URLSearchParams(window.location.search).get('view') === 'moments' ? 'moments' : 'report'
   })
@@ -1001,6 +1058,7 @@ export default function ParentMagicReportPage() {
 
 
   const openReportView = () => {
+    setParentViewTransition('to-report')
     setParentView('report')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}`)
@@ -1008,6 +1066,7 @@ export default function ParentMagicReportPage() {
   }
 
   const openMomentsView = () => {
+    setParentViewTransition('to-moments')
     setParentView('moments')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}?view=moments`)
@@ -1195,6 +1254,7 @@ export default function ParentMagicReportPage() {
           </div>
           )}
         </section>
+      </div>
       </div>
 </main>
   )
