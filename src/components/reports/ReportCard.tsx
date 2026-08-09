@@ -209,7 +209,7 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 214 : 244
+  const size = compact ? 204 : 226
   const stroke = compact ? 2.15 : 2.35
   const center = size / 2
   const radius = (size - stroke - 14) / 2
@@ -319,7 +319,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         textAlign: 'center',
       }}>
         <div className="sc-main-score-number-tone-v1" style={{
-          fontSize: compact ? 45 : 56,
+          fontSize: compact ? 42 : 52,
           fontWeight: 420,
           color: tone.text,
           letterSpacing: '-0.075em',
@@ -699,28 +699,6 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           </div>
         ) : null}
 
-        {isLatestReport ? (
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: 30,
-            padding: '0 16px',
-            borderRadius: 999,
-            background: '#F7F7F8',
-            border: '1px solid rgba(0,0,0,0.035)',
-            color: '#252525',
-            fontSize: 11.5,
-            fontWeight: 700,
-            letterSpacing: '0.075em',
-            textTransform: 'uppercase',
-            margin: '0 0 16px',
-            lineHeight: 1,
-          }}>
-            This week
-          </div>
-        ) : null}
-
         <h2 style={{
           fontSize: 26.5, fontWeight: 420, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
@@ -730,8 +708,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         </h2>
 
         <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 18px',
-          letterSpacing: '0.002em', fontWeight: 430,
+          fontSize: 12.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 18px',
+          letterSpacing: '0.004em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
         </p>
@@ -745,8 +723,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
         <div className="sc-score-comment-up-v1" style={{ marginTop: 8 }}>
           <p style={{
-            fontSize: 16, fontWeight: 560, color: isLatestReport ? T.ink : '#5F6268',
-            letterSpacing: '-0.02em', margin: 0,
+            fontSize: 15.5, fontWeight: 620, color: isLatestReport ? '#1A1A1A' : '#5F6268',
+            letterSpacing: '-0.025em', margin: 0,
           }}>
             {getScoreLabel(overall)}
           </p>
