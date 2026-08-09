@@ -247,9 +247,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
-  const gradientId = compact
-    ? 'sc-score-ring-gradient-compact-v1'
-    : 'sc-score-ring-gradient-main-v1'
+  const gradientId = 'sc-score-ring-gradient-main-v1'
 
   return (
     <div className="sc-combined-score-ring-v1" style={{
@@ -291,12 +289,18 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           stroke={`url(#${gradientId})`}
           strokeWidth={stroke}
           strokeLinecap="round"
-          className="sc-score-ring-progress-tone-v1"
+          className="sc-score-ring-progress-tone-v1 sc-score-ring-progress-gradient-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
         />
       </svg>
+
+      <style jsx global>{`
+        .sc-combined-score-ring-v1 .sc-score-ring-progress-gradient-v1 {
+          stroke: url(#sc-score-ring-gradient-main-v1) !important;
+        }
+      `}</style>
 
       <div
         className="sc-ring-gap-score-emoji-v1"
