@@ -209,14 +209,14 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 204 : 226
-  const stroke = compact ? 2.15 : 2.35
+  const size = compact ? 208 : 230
+  const stroke = compact ? 2.4 : 2.7
   const center = size / 2
-  const radius = (size - stroke - 14) / 2
+  const radius = (size - stroke - 10) / 2
   const circumference = 2 * Math.PI * radius
 
-  // Premium thin open ring.
-  const arcRatio = 0.76
+  // Bottom-half semicircle
+  const arcRatio = 0.5
   const arcLength = circumference * arcRatio
   const gapLength = circumference - arcLength
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
@@ -246,18 +246,26 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   }, [score, targetPct])
 
   const progressLength = arcLength * displayPct
-  const rotation = 132
+  const rotation = 0
 
   return (
-    <div className="sc-combined-score-ring-v1" style={{
-      position: 'relative',
-      width: size,
-      height: size,
-      margin: '0 auto',
-      '--score-tone': tone.text,
-      '--score-ring-tone': tone.ring,
-    } as React.CSSProperties}>
-      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+    <div
+      className="sc-combined-score-ring-v1"
+      style={{
+        position: 'relative',
+        width: size,
+        height: compact ? 168 : 182,
+        margin: '0 auto',
+        '--score-tone': tone.text,
+        '--score-ring-tone': tone.ring,
+      } as React.CSSProperties}
+    >
+      <svg
+        width={size}
+        height={compact ? 168 : 182}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
         <circle
           cx={center}
           cy={center}
@@ -287,55 +295,38 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       </svg>
 
       <div
-        className="sc-ring-gap-score-emoji-v1"
-        aria-hidden="true"
         style={{
           position: 'absolute',
-          left: '50%',
-          right: 'auto',
-          top: 'auto',
-          bottom: compact ? 10 : 12,
-          transform: 'translateX(-50%)',
-          width: 'auto',
-          height: 'auto',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: compact ? 21 : 24,
-          lineHeight: 1,
-          zIndex: 5,
-          pointerEvents: 'none',
+          left: 0,
+          right: 0,
+          top: compact ? '42%' : '43%',
+          transform: 'translateY(-50%)',
+          textAlign: 'center',
         }}
       >
-        {getReportScoreEmoji(Number(score))}
-      </div>
-
-      <div style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        textAlign: 'center',
-      }}>
-        <div className="sc-main-score-number-tone-v1" style={{
-          fontSize: compact ? 42 : 52,
-          fontWeight: 420,
-          color: '#111111',
-          letterSpacing: '-0.065em',
-          lineHeight: 0.92,
-          fontVariantNumeric: 'tabular-nums',
-        }}>
+        <div
+          className="sc-main-score-number-tone-v1"
+          style={{
+            fontSize: compact ? 42 : 52,
+            fontWeight: 420,
+            color: '#111111',
+            letterSpacing: '-0.065em',
+            lineHeight: 0.92,
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
           {displayScore.toFixed(1)}
         </div>
 
-        <div style={{
-          fontSize: compact ? 11.8 : 12.8,
-          color: '#8E8E93',
-          fontWeight: 430,
-          marginTop: 4,
-          letterSpacing: '-0.01em',
-        }}>
+        <div
+          style={{
+            fontSize: compact ? 11.8 : 12.8,
+            color: '#8E8E93',
+            fontWeight: 430,
+            marginTop: 4,
+            letterSpacing: '-0.01em',
+          }}
+        >
           out of {max}
         </div>
       </div>
