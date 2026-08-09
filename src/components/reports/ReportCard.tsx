@@ -312,22 +312,18 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
       <div style={{
         position: 'absolute',
-        left: '50%',
-        top: '48%',
-        width: '100%',
-        transform: 'translate(-50%, -50%)',
+        left: 0,
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
         textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
       }}>
         <div className="sc-main-score-number-tone-v1" style={{
           fontSize: compact ? 42 : 52,
           fontWeight: 420,
           color: tone.text,
-          letterSpacing: '-0.045em',
-          lineHeight: 0.9,
+          letterSpacing: '-0.065em',
+          lineHeight: 0.92,
           fontVariantNumeric: 'tabular-nums',
         }}>
           {displayScore.toFixed(1)}
@@ -337,7 +333,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           fontSize: compact ? 11.8 : 12.8,
           color: '#8E8E93',
           fontWeight: 430,
-          marginTop: 7,
+          marginTop: 4,
           letterSpacing: '-0.01em',
         }}>
           out of {max}
