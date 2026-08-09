@@ -700,17 +700,10 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         <h2 style={{
           fontSize: 26.5, fontWeight: 420, color: T.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          margin: '0 0 8px',
+          margin: '0 0 20px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
-        <p style={{
-          fontSize: 12.3, color: isLatestReport ? '#5F6268' : '#7C8486', margin: '0 0 18px',
-          letterSpacing: '0.002em', fontWeight: 430,
-        }}>
-          {formatWeek(report.week_starting)}
-        </p>
-
         <div className="sc-report-score-info-clean-v441" style={{
           position: 'relative',
           width: 'fit-content',
