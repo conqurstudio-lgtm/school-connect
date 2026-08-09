@@ -209,27 +209,24 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 218 : 236
-  const stroke = compact ? 4.6 : 5
+  const size = compact ? 226 : 244
+  const stroke = compact ? 2.25 : 2.35
   const center = size / 2
-  const radius = (size - stroke - 10) / 2
+  const radius = (size - stroke - 8) / 2
   const circumference = 2 * Math.PI * radius
-
-  // Premium sample-inspired open gauge.
-  const sweep = 0.74
-  const arcLength = circumference * sweep
-  const targetPct = Math.max(0, Math.min(1, Number(score) / max))
-
+  const progress = Math.max(0, Math.min(1, Number(score) / max))
   const tone = getScoreTone(Number(score))
-  const primary = tone.ring
-  const track = '#E6E6E8'
-  const ink = '#10141A'
+
+  const arcRatio = 0.76
+  const arcLength = circumference * arcRatio
+  const gapLength = circumference - arcLength
+  const progressLength = Math.max(0.001, arcLength * progress)
+  const rotation = 132
 
   const [displayScore, setDisplayScore] = useState(0)
-  const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 900
+    const duration = 780
     const start = performance.now()
     let raf = 0
 
@@ -239,17 +236,13 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       const eased = 1 - Math.pow(1 - t, 3)
 
       setDisplayScore(Number(score) * eased)
-      setDisplayPct(targetPct * eased)
 
       if (t < 1) raf = requestAnimationFrame(tick)
     }
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [score, targetPct])
-
-  const progressLength = arcLength * displayPct
-  const rotation = 90 + (1 - sweep) * 180
+  }, [score])
 
   return (
     <div
@@ -259,7 +252,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         width: size,
         height: size,
         margin: '0 auto',
-        '--score-ring-tone': primary,
+        '--score-ring-tone': tone.ring,
       } as React.CSSProperties}
     >
       <svg
@@ -267,36 +260,37 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         height={size}
         viewBox={`0 0 ${size} ${size}`}
         style={{ display: 'block', overflow: 'visible' }}
+        aria-hidden="true"
       >
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke={track}
+          stroke="rgba(37,37,37,0.12)"
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${arcLength} ${circumference}`}
+          strokeDasharray={`${arcLength} ${gapLength}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
         />
 
         <circle
+          className="sc-main-score-active-ring-v1"
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke={primary}
+          stroke={tone.ring}
           strokeWidth={stroke}
           strokeLinecap="round"
-          className="sc-main-score-active-ring-v1"
-          strokeDasharray={`${Math.max(0.001, progressLength)} ${circumference}`}
+          strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
           style={{
-            stroke: primary,
+            stroke: 'var(--score-ring-tone)',
             opacity: 1,
-            transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
+            transition: 'stroke-dasharray 780ms cubic-bezier(.22,1,.36,1)',
           }}
         />
       </svg>
@@ -316,9 +310,9 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         <div
           className="sc-main-score-number-tone-v1"
           style={{
-            fontSize: compact ? 52 : 62,
+            fontSize: compact ? 54 : 64,
             fontWeight: 420,
-            color: ink,
+            color: '#10141A',
             letterSpacing: '-0.075em',
             lineHeight: 0.9,
             fontVariantNumeric: 'tabular-nums',
@@ -330,7 +324,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         <div
           style={{
             fontSize: compact ? 12.2 : 13,
-            color: '#6B7280',
+            color: '#8A8F98',
             fontWeight: 430,
             marginTop: 12,
             letterSpacing: '-0.01em',
@@ -493,25 +487,20 @@ function getReportScoreEmoji(score: number) {
 }
 
 function getScoreTone(score: number) {
-  if (score <= 1.9) {
-    return { ring: '#C24132', text: '#B33427' }
+  if (score <= 2.4) {
+    return { ring: '#F4531F', text: '#F4531F' }
   }
 
-  if (score <= 2.9) {
-    return { ring: '#D97706', text: '#B65F00' }
+  if (score <= 3.4) {
+    return { ring: '#F59E0B', text: '#D97706' }
   }
 
-  if (score <= 3.9) {
-    return { ring: '#B89412', text: '#8A6F0A' }
+  if (score <= 4.1) {
+    return { ring: '#8FA6A1', text: '#6F8782' }
   }
 
-  if (score <= 4.4) {
-    return { ring: '#0F8B7F', text: '#087568' }
-  }
-
-  return { ring: '#0F6B45', text: '#0F6B45' }
+  return { ring: '#0F7A4F', text: '#0F7A4F' }
 }
-
 
 function getSafeTeacherCommentIndex(seed: string, count: number) {
   let total = 0
@@ -719,7 +708,21 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div className="sc-score-comment-up-v1" style={{ marginTop: -16 }}>
+        <div
+          className="sc-report-score-emoji-v1"
+          aria-hidden="true"
+          style={{
+            marginTop: -30,
+            marginBottom: 18,
+            fontSize: 31,
+            lineHeight: 1,
+            textAlign: 'center',
+          }}
+        >
+          {getScoreEmoji(overall)}
+        </div>
+
+        <div className="sc-score-comment-up-v1" style={{ marginTop: 0 }}>
           <p style={{
             fontSize: 15.8, fontWeight: 500, color: isLatestReport ? '#10141A' : '#5F6268',
             letterSpacing: '-0.035em', margin: 0,
