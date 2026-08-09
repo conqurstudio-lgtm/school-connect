@@ -583,60 +583,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  padding: insideReportShell ? '0 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
- {insideReportShell ? (
- <div style={{
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'space-between',
- gap: 12,
- margin: '0 0 14px',
- padding: '0 2px',
- }}>
- <button
- type="button"
- onClick={onClose || (() => { window.location.href = `/report/${token}` })}
- aria-label="Back to report"
- style={{
- width: 38,
- height: 38,
- borderRadius: 999,
- border: 'none',
- background: T.soft,
- color: T.ink,
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- padding: 0,
- fontFamily: 'inherit',
- flexShrink: 0,
- }}
- >
- <ChevronLeft size={20} strokeWidth={2.2} />
- </button>
+ 
 
- <div style={{ flex: 1, minWidth: 0 }}>
- <p style={{
- margin: 0,
- fontSize: 16,
- fontWeight: 650,
- color: T.ink,
- letterSpacing: '-0.025em',
- lineHeight: 1.1,
- }}>
- Moments
- </p>
- <p style={{
- margin: '4px 0 0',
- fontSize: 12.5,
- color: T.ink3,
- lineHeight: 1.25,
- }}>
- Updates shared by the teacher
- </p>
- </div>
- </div>
- ) : null}
  {true && (
  <div style={{
  display: 'flex',
