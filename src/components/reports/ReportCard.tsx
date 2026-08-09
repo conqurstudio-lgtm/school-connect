@@ -168,14 +168,15 @@ function SubjectMiniRing({ score }: { score: number }) {
   const radius = (size - stroke - 5) / 2
   const circumference = 2 * Math.PI * radius
   const progress = Math.max(0, Math.min(1, Number(score) / 5))
-  const tone = getScoreTone(score)
+  const subjectRingColor = '#252525'
+  const subjectTrackColor = 'rgba(37,37,37,0.16)'
 
   return (
     <div
       className="sc-subject-mini-ring-v1"
       style={{
-        '--subject-ring-tone': tone.ring,
-        '--subject-score-tone': tone.text,
+        '--subject-ring-tone': subjectRingColor,
+        '--subject-score-tone': subjectRingColor,
       } as React.CSSProperties}
       aria-label={`Score ${score.toFixed(1)} out of 5`}
     >
@@ -185,7 +186,7 @@ function SubjectMiniRing({ score }: { score: number }) {
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.22)"
+          stroke={subjectTrackColor}
           strokeWidth={stroke}
         />
         <circle
@@ -194,7 +195,7 @@ function SubjectMiniRing({ score }: { score: number }) {
           cy={center}
           r={radius}
           fill="none"
-          stroke={tone.ring}
+          stroke={subjectRingColor}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${circumference * progress} ${circumference}`}
@@ -246,6 +247,10 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
+  const gradientId = compact
+    ? 'sc-score-ring-gradient-compact-v1'
+    : 'sc-score-ring-gradient-main-v1'
+
   return (
     <div className="sc-combined-score-ring-v1" style={{
       position: 'relative',
@@ -256,12 +261,21 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       '--score-ring-tone': tone.ring,
     } as React.CSSProperties}>
       <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+        <defs>
+          <linearGradient id={gradientId} x1="12%" y1="88%" x2="88%" y2="12%">
+            <stop offset="0%" stopColor="#5FA8F5" />
+            <stop offset="34%" stopColor="#4FC3B1" />
+            <stop offset="67%" stopColor="#F5A623" />
+            <stop offset="100%" stopColor="#FF6B2C" />
+          </linearGradient>
+        </defs>
+
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.13)"
+          stroke="rgba(17,17,17,0.10)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${arcLength} ${gapLength}`}
@@ -274,7 +288,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke={tone.ring}
+          stroke={`url(#${gradientId})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           className="sc-score-ring-progress-tone-v1"
