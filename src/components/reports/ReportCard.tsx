@@ -787,8 +787,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           scroll-snap-type: x mandatory;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch;
-          padding: 0 16px 4px !important;
-          margin: 0 -16px !important;
+          padding: 0 2px 4px !important;
+          margin: 0 !important;
           scrollbar-width: none;
         }
 
@@ -799,9 +799,10 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         .sc-report-subject-grid-card-v1,
         .sc-subject-card-growth-v1 {
           box-sizing: border-box !important;
-          flex: 0 0 176px !important;
-          width: 176px !important;
-          min-height: 84px;
+          flex: 0 0 168px !important;
+          width: 168px !important;
+          min-height: 78px !important;
+          height: 78px !important;
           background: #f7f7f7 !important;
           scroll-snap-align: start;
         }
@@ -813,8 +814,10 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         @media (max-width: 390px) {
           .sc-report-subject-grid-card-v1,
           .sc-subject-card-growth-v1 {
-            flex-basis: 164px !important;
-            width: 164px !important;
+            flex-basis: 158px !important;
+            width: 158px !important;
+            min-height: 78px !important;
+            height: 78px !important;
           }
         }
       `}</style>
@@ -824,8 +827,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
           style={{
-            width: 'min(430px, calc(100vw - 32px))',
-            maxWidth: 430,
+            width: '100%',
+            maxWidth: 370,
             margin: '0 auto 0',
             padding: 0,
             borderRadius: 0,
