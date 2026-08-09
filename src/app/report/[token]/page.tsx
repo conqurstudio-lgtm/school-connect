@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {GraduationCap, Send, Copy, Check} from 'lucide-react'
+import {GraduationCap, Send, Copy, Check, ChevronLeft} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
@@ -1138,24 +1138,65 @@ export default function ParentMagicReportPage() {
           background: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: parentView === 'moments' ? 'space-between' : 'flex-end',
           position: 'relative',
           zIndex: 10,
         }}>
+          {parentView === 'moments' ? (
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              minWidth: 0,
+              flex: 1,
+            }}>
+              <button
+                type="button"
+                onClick={openReportView}
+                aria-label="Back to report"
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 999,
+                  border: 'none',
+                  background: '#F5F5F7',
+                  color: '#252525',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  padding: 0,
+                  flexShrink: 0,
+                  fontFamily: 'inherit',
+                }}
+              >
+                <ChevronLeft size={20} strokeWidth={2.2} />
+              </button>
+
+              <h1 style={{
+                margin: 0,
+                fontSize: 17,
+                fontWeight: 660,
+                color: '#252525',
+                letterSpacing: '-0.03em',
+                lineHeight: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                Moments
+              </h1>
+            </div>
+          ) : null}
+
           <div style={{
-              position: 'relative',
+            position: 'relative',
             display: 'flex',
             alignItems: 'center',
             gap: 8,
+            marginLeft: parentView === 'moments' ? 12 : 'auto',
           }}>
-            <div style={{
-              marginLeft: 'auto',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-            }}>
-              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
-            </div>
+            <MomentBellLink token={token || ''} onOpen={openMomentsView} />
           </div>
         </header>
 
