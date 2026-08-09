@@ -963,6 +963,59 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
 
       <style jsx global>{`
+        .sc-report-subject-grid-card-v1,
+        .sc-subject-card-growth-v1 {
+          border-radius: 22px !important;
+          background: #F7F7F8 !important;
+          border: 1px solid rgba(0,0,0,0.025) !important;
+          box-shadow: none !important;
+          padding: 11px 12px !important;
+          cursor: pointer !important;
+        }
+
+        .sc-subject-grid-name-v1 {
+          margin: 0 !important;
+          color: #252525 !important;
+          font-size: 12.8px !important;
+          font-weight: 650 !important;
+          line-height: 1.14 !important;
+          letter-spacing: -0.025em !important;
+        }
+
+        .sc-subject-growth-word-v1 {
+          margin: 4px 0 0 !important;
+          color: #7C8486 !important;
+          font-size: 11.5px !important;
+          font-weight: 470 !important;
+          line-height: 1.15 !important;
+          letter-spacing: -0.01em !important;
+        }
+
+        .sc-subject-mini-ring-v1 {
+          flex-shrink: 0 !important;
+        }
+
+        .sc-subject-mini-ring-v1 span {
+          color: #252525 !important;
+          font-weight: 680 !important;
+        }
+
+        .sc-report-subject-grid-card-v1:active,
+        .sc-subject-card-growth-v1:active {
+          transform: scale(0.975) !important;
+          opacity: 0.86 !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-report-subject-grid-card-v1,
+          .sc-subject-card-growth-v1 {
+            padding: 10px 11px !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         @keyframes scSubjectPopupBackdropIn {
           from {
             opacity: 0;
