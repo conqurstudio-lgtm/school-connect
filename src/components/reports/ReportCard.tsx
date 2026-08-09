@@ -779,26 +779,43 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
 
       <style jsx global>{`
-        .sc-report-subject-grid-card-v1,
-        .sc-subject-card-growth-v1 {
-          background: #f7f7f7 !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
         .sc-report-subject-grid-v1 {
+          display: flex !important;
           gap: 10px !important;
+          overflow-x: auto !important;
+          overflow-y: hidden !important;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          padding: 0 16px 4px !important;
+          margin: 0 -16px !important;
+          scrollbar-width: none;
+        }
+
+        .sc-report-subject-grid-v1::-webkit-scrollbar {
+          display: none;
         }
 
         .sc-report-subject-grid-card-v1,
         .sc-subject-card-growth-v1 {
           box-sizing: border-box !important;
-          min-height: 78px;
+          flex: 0 0 176px !important;
+          width: 176px !important;
+          min-height: 84px;
+          background: #f7f7f7 !important;
+          scroll-snap-align: start;
         }
 
         .sc-subject-card-copy-v1 {
           min-width: 0;
+        }
+
+        @media (max-width: 390px) {
+          .sc-report-subject-grid-card-v1,
+          .sc-subject-card-growth-v1 {
+            flex-basis: 164px !important;
+            width: 164px !important;
+          }
         }
       `}</style>
 
@@ -807,8 +824,8 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
           style={{
-            width: '100%',
-            maxWidth: 370,
+            width: 'min(430px, calc(100vw - 32px))',
+            maxWidth: 430,
             margin: '0 auto 0',
             padding: 0,
             borderRadius: 0,
@@ -818,7 +835,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           }}
         >
           <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
-            {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
+            {subjects.map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
               const previousScore = getPreviousSubjectScore(report.previous_scores, String(name))
@@ -853,15 +870,7 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
             })}
           </div>
 
-          {subjects.length > 4 && (
-            <button
-              type="button"
-              className="sc-subject-grid-view-all-v1"
-              onClick={() => setShowAllSubjects(value => !value)}
-            >
-              {showAllSubjects ? 'Show less' : `View more`}
-            </button>
-          )}
+
         </section>
 
 
