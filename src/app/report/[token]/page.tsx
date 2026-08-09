@@ -68,231 +68,156 @@ function getReportDateLabel(report: any) {
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
-  const trophyReports = safeReports.filter((report: any) => getReportScore(report) >= 4.5).length
-  const starReports = safeReports.filter((report: any) => getReportScore(report) >= 4).length
-  const bestScore = safeReports.reduce((best: number, report: any) => Math.max(best, getReportScore(report)), 0)
-  const bestScoreText = bestScore > 0 ? bestScore.toFixed(1) : '—'
-  const visibleReports = showAllPreviousReports ? safeReports : safeReports.slice(0, 4)
 
   if (!safeReports.length) return null
 
   return (
     <section
       className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
-      aria-label="Previous progress history"
+      aria-label="Previous reports"
       style={{
         width: '100%',
         maxWidth: 370,
         margin: '0 auto 0',
-        borderRadius: 28,
-        background: '#f3f4fb',
-        padding: '13px 14px 11px',
+        borderRadius: 24,
+        background: '#F7F7F8',
+        padding: 10,
         boxSizing: 'border-box',
       }}
     >
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 8,
-        marginBottom: 7,
-      }}>
-        <div style={{ minWidth: 0 }}>
-<p style={{
-            margin: 0,
-            fontSize: 13.5,
+      <button
+        type="button"
+        onClick={() => setShowAllPreviousReports(value => !value)}
+        aria-expanded={showAllPreviousReports}
+        style={{
+          width: '100%',
+          border: 'none',
+          background: 'transparent',
+          color: '#1A1A1A',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '4px 4px',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ minWidth: 0, flex: 1 }}>
+          <span style={{
+            display: 'block',
+            fontSize: 13.8,
             fontWeight: 650,
             letterSpacing: '-0.02em',
-            color: '#1A1A1A',
             lineHeight: 1.15,
+            color: '#1A1A1A',
           }}>
-            Previous progress
-          </p>
-          <p style={{
-            margin: '4px 0 0',
+            Previous reports
+          </span>
+
+          <span style={{
+            display: 'block',
+            marginTop: 4,
             fontSize: 12.5,
             fontWeight: 430,
             color: '#5F6268',
             lineHeight: 1.25,
           }}>
-            Recent progress history
-          </p>
-        </div>
+            {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'} available
+          </span>
+        </span>
 
         <span style={{
-          fontSize: 11.5,
-          fontWeight: 650,
-          color: '#5F6268',
-          background: '#ffffff',
-          borderRadius: 999,
-          padding: '6px 10px',
           flexShrink: 0,
-        }}>
-          {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'}
-        </span>
-      </div>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-        gap: 8,
-        marginBottom: 7,
-      }}>
-        <div style={{
-          borderRadius: 18,
-          background: '#ffffff',
-          padding: '10px 8px',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: 17, lineHeight: 1 }}>🏆</div>
-          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
-            {trophyReports}
-          </p>
-          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
-            Trophies
-          </p>
-        </div>
-
-        <div style={{
-          borderRadius: 18,
-          background: '#ffffff',
-          padding: '10px 8px',
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: 17, lineHeight: 1 }}>⭐</div>
-          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
-            {starReports}
-          </p>
-          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
-            Stars
-          </p>
-        </div>
-
-        <div style={{
-          borderRadius: 18,
+          minWidth: 48,
+          height: 30,
+          borderRadius: 999,
           background: '#FFFFFF',
-          padding: '10px 8px',
-          textAlign: 'center',
+          color: '#252525',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12,
+          fontWeight: 650,
+          lineHeight: 1,
+          padding: '0 11px',
         }}>
-          <div style={{ fontSize: 17, lineHeight: 1 }}>✨</div>
-          <p style={{ margin: '6px 0 0', fontSize: 12.5, fontWeight: 700, color: '#1A1A1A', lineHeight: 1 }}>
-            {bestScoreText}
-          </p>
-          <p style={{ margin: '4px 0 0', fontSize: 10.5, fontWeight: 520, color: '#6B6F76', lineHeight: 1.05 }}>
-            Best
-          </p>
-        </div>
-      </div>
+          {showAllPreviousReports ? 'Hide' : 'View'}
+        </span>
+      </button>
 
-      <div style={{
-        display: 'grid',
-        gap: 8,
-      }}>
-        {visibleReports.map((report: any, index: number) => {
-          const score = getReportScore(report)
-          const scoreText = score > 0 ? score.toFixed(1) : '—'
-          const performance = getReportPerformance(score)
-          const scorePercent = score > 0 ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0
+      {showAllPreviousReports ? (
+        <div style={{
+          display: 'grid',
+          gap: 8,
+          marginTop: 9,
+        }}>
+          {safeReports.map((report: any, index: number) => {
+            const score = getReportScore(report)
+            const scoreText = score > 0 ? score.toFixed(1) : '—'
+            const performance = getReportPerformance(score)
 
-          return (
-            <article
-              key={report?.id || report?.token || report?.week_starting || index}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 8,
-                borderRadius: 22,
-                background: '#FFFFFF',
-                padding: '9px 10px',
-                boxSizing: 'border-box',
-              }}
-            >
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <p style={{
-                  margin: 0,
-                  fontSize: 13,
-                  fontWeight: 620,
-                  color: '#1A1A1A',
-                  lineHeight: 1.18,
-                  letterSpacing: '-0.02em',
-                }}>
-                  {getReportDateLabel(report)}
-                </p>
-                <p style={{
-                  margin: '4px 0 0',
-                  fontSize: 12,
-                  fontWeight: 430,
-                  color: '#5F6268',
-                  lineHeight: 1.25,
-                }}>
-                  {performance}
-                </p>
-              </div>
-
-              <div
-                aria-label={`Previous progress score ${scoreText} out of 5`}
+            return (
+              <article
+                key={report?.id || report?.token || report?.week_starting || index}
                 style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 999,
-                  padding: 2,
-                  boxSizing: 'border-box',
-                  background: score > 0
-                    ? `conic-gradient(#252525 ${scorePercent}%, rgba(0,0,0,0.08) 0)`
-                    : 'rgba(0,0,0,0.08)',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  borderRadius: 20,
+                  background: '#FFFFFF',
+                  padding: '10px 11px',
+                  boxSizing: 'border-box',
                 }}
               >
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <p style={{
+                    margin: 0,
+                    fontSize: 13,
+                    fontWeight: 620,
+                    color: '#1A1A1A',
+                    lineHeight: 1.18,
+                    letterSpacing: '-0.02em',
+                  }}>
+                    {getReportDateLabel(report)}
+                  </p>
+
+                  <p style={{
+                    margin: '4px 0 0',
+                    fontSize: 12,
+                    fontWeight: 430,
+                    color: '#5F6268',
+                    lineHeight: 1.25,
+                  }}>
+                    {performance}
+                  </p>
+                </div>
+
                 <span style={{
-                  width: '100%',
-                  height: '100%',
+                  width: 36,
+                  height: 28,
                   borderRadius: 999,
-                  background: '#FFFFFF',
-                  color: '#1A1A1A',
-                  display: 'flex',
+                  background: '#F5F5F7',
+                  color: '#252525',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: 11.5,
                   fontWeight: 650,
-                  letterSpacing: '-0.02em',
+                  flexShrink: 0,
                 }}>
                   {scoreText}
                 </span>
-              </div>
-            </article>
-          )
-        })}
-      </div>
-
-      {safeReports.length > 4 && (
-        <button
-          type="button"
-          onClick={() => setShowAllPreviousReports(value => !value)}
-          style={{
-            width: '100%',
-            marginTop: 7,
-            border: 'none',
-            background: 'transparent',
-            color: '#252525',
-            fontSize: 12.5,
-            fontWeight: 650,
-            lineHeight: 1,
-            padding: '8px 0 4px',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          {showAllPreviousReports ? 'View less' : `View more`}
-        </button>
-      )}
+              </article>
+            )
+          })}
+        </div>
+      ) : null}
     </section>
   )
 }
-
 
 function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [hasNew, setHasNew] = useState(false)
