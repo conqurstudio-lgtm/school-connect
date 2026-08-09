@@ -294,7 +294,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           left: '50%',
           right: 'auto',
           top: 'auto',
-          bottom: compact ? 16 : 18,
+          bottom: compact ? 10 : 12,
           transform: 'translateX(-50%)',
           width: 'auto',
           height: 'auto',
@@ -314,7 +314,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
         position: 'absolute',
         left: 0,
         right: 0,
-        top: '55%',
+        top: '50%',
         transform: 'translateY(-50%)',
         textAlign: 'center',
       }}>
@@ -322,7 +322,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           fontSize: compact ? 42 : 52,
           fontWeight: 420,
           color: tone.text,
-          letterSpacing: '-0.075em',
+          letterSpacing: '-0.065em',
           lineHeight: 0.92,
           fontVariantNumeric: 'tabular-nums',
         }}>
