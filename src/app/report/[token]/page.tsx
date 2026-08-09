@@ -81,8 +81,9 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         margin: '0 auto 0',
         borderRadius: 24,
         background: '#F7F7F8',
-        padding: 10,
+        padding: 11,
         boxSizing: 'border-box',
+        border: '1px solid rgba(0,0,0,0.025)',
       }}
     >
       <button
@@ -102,6 +103,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           cursor: 'pointer',
           fontFamily: 'inherit',
           textAlign: 'left',
+          transition: 'opacity 160ms ease, transform 160ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <span style={{ minWidth: 0, flex: 1 }}>
@@ -130,8 +132,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
         <span style={{
           flexShrink: 0,
-          minWidth: 48,
-          height: 30,
+          minWidth: 52,
+          height: 32,
           borderRadius: 999,
           background: '#FFFFFF',
           color: '#252525',
@@ -139,9 +141,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 12,
-          fontWeight: 650,
+          fontWeight: 680,
           lineHeight: 1,
-          padding: '0 11px',
+          padding: '0 12px',
+          boxShadow: '0 1px 0 rgba(0,0,0,0.025)',
         }}>
           {showAllPreviousReports ? 'Hide' : 'View'}
         </span>
