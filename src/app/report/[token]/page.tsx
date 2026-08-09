@@ -539,79 +539,62 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 
   if (variant === 'card') {
     return (
-      <section
+      <button
+        type="button"
+        onClick={shareReport}
+        disabled={creating}
         className="sc-family-share-card-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
         aria-label="Share report with family"
         style={{
           width: '100%',
           maxWidth: 370,
+          minHeight: 60,
           margin: '0 auto 0',
-          border: '1px solid rgba(255,255,255,0.10)',
-          borderRadius: 28,
-          background: '#111111',
+          border: 'none',
+          borderRadius: 999,
+          background: '#18181B',
           color: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '15px 15px 15px 16px',
+          justifyContent: 'space-between',
+          gap: 18,
+          padding: '10px 22px',
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
           boxSizing: 'border-box',
+          cursor: creating ? 'default' : 'pointer',
+          opacity: creating ? 0.72 : 1,
         }}
       >
         <span style={{
           minWidth: 0,
-          flex: 1,
           display: 'block',
         }}>
           <span style={{
             display: 'block',
-            fontSize: 13.5,
+            fontSize: 17,
             fontWeight: 650,
-            letterSpacing: '-0.02em',
-            color: '#1A1A1A',
-            lineHeight: 1.15,
+            letterSpacing: '-0.03em',
+            color: '#FFFFFF',
+            lineHeight: 1.1,
           }}>
             Share with family
           </span>
           <span style={{
             display: 'block',
             marginTop: 4,
-            fontSize: 12.5,
+            fontSize: 14,
             fontWeight: 430,
-            color: '#5F6268',
-            lineHeight: 1.25,
+            color: 'rgba(255,255,255,0.65)',
+            lineHeight: 1.2,
           }}>
             Only this report is shared.
           </span>
         </span>
 
-        <button
-          type="button"
-          onClick={shareReport}
-          disabled={creating}
-          aria-label="Share report with family"
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 999,
-            border: 'none',
-            background: '#FFFFFF',
-            color: '#111111',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            cursor: creating ? 'default' : 'pointer',
-            opacity: creating ? 0.65 : 1,
-            padding: 0,
-            fontFamily: 'inherit',
-          }}
-        >
-          <Send size={16} strokeWidth={1.75} />
-        </button>
-      </section>
+        <Send size={24} strokeWidth={2} color="#D87600" />
+      </button>
     )
   }
 
@@ -771,16 +754,13 @@ function ReportSafeAreaStyle() {
       }
 
       .sc-family-share-card-v2 {
-        background: #111111 !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: #18181B !important;
+        border: none !important;
         box-shadow: none !important;
-        padding: 15px 15px 15px 16px !important;
+        padding: 10px 22px !important;
       }
 
-      .sc-family-share-card-v2 button {
-        background: #FFFFFF !important;
-        color: #111111 !important;
-      }
+
 
       .sc-previous-reports-history-card-v1 {
         background: #FFFFFF !important;
