@@ -209,31 +209,33 @@ function SubjectMiniRing({ score }: { score: number }) {
 
 // Circular ring with red→amber→blue→green gradient — animates on mount
 function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: number; compact?: boolean }) {
-  const size = compact ? 214 : 244
-  const stroke = compact ? 2.15 : 2.35
+  const size = compact ? 218 : 236
+  const stroke = compact ? 4.6 : 5
   const center = size / 2
-  const radius = (size - stroke - 14) / 2
+  const radius = (size - stroke - 10) / 2
   const circumference = 2 * Math.PI * radius
 
-  // Premium thin open ring: emotional like the old score moment, but cleaner.
-  const arcRatio = 0.76
-  const arcLength = circumference * arcRatio
-  const gapLength = circumference - arcLength
+  // Premium sample-inspired open gauge.
+  const sweep = 0.74
+  const arcLength = circumference * sweep
   const targetPct = Math.max(0, Math.min(1, Number(score) / max))
-  const tone = getScoreTone(Number(score))
+
+  const primary = '#F4531F'
+  const track = '#ECECEE'
+  const ink = '#10141A'
 
   const [displayScore, setDisplayScore] = useState(0)
   const [displayPct, setDisplayPct] = useState(0)
 
   useEffect(() => {
-    const duration = 950
+    const duration = 900
     const start = performance.now()
     let raf = 0
 
     const tick = (now: number) => {
       const elapsed = now - start
       const t = Math.min(1, elapsed / duration)
-      const eased = 1 - Math.pow(1 - t, 4)
+      const eased = 1 - Math.pow(1 - t, 3)
 
       setDisplayScore(Number(score) * eased)
       setDisplayPct(targetPct * eased)
@@ -246,27 +248,33 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
   }, [score, targetPct])
 
   const progressLength = arcLength * displayPct
-  const rotation = 132
+  const rotation = 90 + (1 - sweep) * 180
 
   return (
-    <div className="sc-combined-score-ring-v1" style={{
-      position: 'relative',
-      width: size,
-      height: size,
-      margin: '0 auto',
-      '--score-tone': tone.text,
-      '--score-ring-tone': tone.ring,
-    } as React.CSSProperties}>
-      <svg width={size} height={size} style={{ display: 'block', overflow: 'visible' }}>
+    <div
+      className="sc-combined-score-ring-v1"
+      style={{
+        position: 'relative',
+        width: size,
+        height: size,
+        margin: '0 auto',
+      }}
+    >
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ display: 'block', overflow: 'visible' }}
+      >
         <circle
           cx={center}
           cy={center}
           r={radius}
           fill="none"
-          stroke="rgba(17,17,17,0.13)"
+          stroke={track}
           strokeWidth={stroke}
           strokeLinecap="round"
-          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDasharray={`${arcLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
         />
@@ -276,66 +284,54 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           cy={center}
           r={radius}
           fill="none"
-          stroke={tone.ring}
+          stroke={primary}
           strokeWidth={stroke}
           strokeLinecap="round"
           className="sc-score-ring-progress-tone-v1"
           strokeDasharray={`${progressLength} ${circumference}`}
           strokeDashoffset={0}
           transform={`rotate(${rotation} ${center} ${center})`}
+          style={{
+            transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
+          }}
         />
       </svg>
 
       <div
-        className="sc-ring-gap-score-emoji-v1"
-        aria-hidden="true"
         style={{
           position: 'absolute',
-          left: '50%',
-          right: 'auto',
-          top: 'auto',
-          bottom: compact ? 16 : 18,
-          transform: 'translateX(-50%)',
-          width: 'auto',
-          height: 'auto',
-          display: 'inline-flex',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: compact ? 21 : 24,
-          lineHeight: 1,
-          zIndex: 5,
+          textAlign: 'center',
           pointerEvents: 'none',
         }}
       >
-        {getReportScoreEmoji(Number(score))}
-      </div>
-
-      <div style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: '55%',
-        transform: 'translateY(-50%)',
-        textAlign: 'center',
-      }}>
-        <div className="sc-main-score-number-tone-v1" style={{
-          fontSize: compact ? 45 : 56,
-          fontWeight: 420,
-          color: tone.text,
-          letterSpacing: '-0.075em',
-          lineHeight: 0.92,
-          fontVariantNumeric: 'tabular-nums',
-        }}>
+        <div
+          className="sc-main-score-number-tone-v1"
+          style={{
+            fontSize: compact ? 54 : 64,
+            fontWeight: 560,
+            color: ink,
+            letterSpacing: '-0.075em',
+            lineHeight: 0.9,
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
           {displayScore.toFixed(1)}
         </div>
 
-        <div style={{
-          fontSize: compact ? 11.8 : 12.8,
-          color: '#8E8E93',
-          fontWeight: 430,
-          marginTop: 4,
-          letterSpacing: '-0.01em',
-        }}>
+        <div
+          style={{
+            fontSize: compact ? 12.2 : 13,
+            color: '#6B7280',
+            fontWeight: 430,
+            marginTop: 12,
+            letterSpacing: '-0.01em',
+          }}
+        >
           out of {max}
         </div>
       </div>
@@ -700,16 +696,16 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
         ) : null}
 
         <h2 style={{
-          fontSize: 26.5, fontWeight: 420, color: T.ink,
-          letterSpacing: '-0.03em', lineHeight: 1.1,
-          margin: '0 0 8px',
+          fontSize: 30, fontWeight: 620, color: '#10141A',
+          letterSpacing: '-0.045em', lineHeight: 1.05,
+          margin: '0 0 7px',
         }}>
           {childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}
         </h2>
 
         <p style={{
-          fontSize: 12.2, color: isLatestReport ? '#73777F' : '#8A8F98', margin: '0 0 18px',
-          letterSpacing: '0.004em', fontWeight: 430,
+          fontSize: 14, color: isLatestReport ? '#6B7280' : '#8A8F98', margin: '0 0 22px',
+          letterSpacing: '-0.01em', fontWeight: 430,
         }}>
           {formatWeek(report.week_starting)}
         </p>
@@ -721,10 +717,10 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
           <ScoreRing score={overall} compact={!isLatestReport} />
         </div>
 
-        <div className="sc-score-comment-up-v1" style={{ marginTop: 4 }}>
+        <div className="sc-score-comment-up-v1" style={{ marginTop: -16 }}>
           <p style={{
-            fontSize: 15.5, fontWeight: 620, color: isLatestReport ? '#1A1A1A' : '#5F6268',
-            letterSpacing: '-0.025em', margin: 0,
+            fontSize: 17, fontWeight: 650, color: isLatestReport ? '#10141A' : '#5F6268',
+            letterSpacing: '-0.035em', margin: 0,
           }}>
             {getScoreLabel(overall)}
           </p>
