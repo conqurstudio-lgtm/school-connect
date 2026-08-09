@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
-import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell} from 'lucide-react'
+import {GraduationCap, Send, Copy, Check, ChevronLeft, Bell, Share2} from 'lucide-react'
 import { ReportCard } from '@/components/reports/ReportCard'
 import { ParentMomentsPage } from '@/components/parents/ParentMomentsPage'
 import { ParentBottomHoverMenu } from '@/components/parents/ParentBottomHoverMenu'
@@ -588,8 +588,8 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
       disabled={creating}
       aria-label="Share report with family"
       style={{
-        width: 38,
-        height: 38,
+        width: 32,
+        height: 32,
         borderRadius: 999,
         border: 'none',
         background: '#FFFFFF',
@@ -602,7 +602,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         padding: 0,
       }}
     >
-      <Send size={18} strokeWidth={2} />
+      <Share2 size={17} strokeWidth={2} />
     </button>
   )
 }
@@ -1117,6 +1117,9 @@ export default function ParentMagicReportPage() {
               marginLeft: 'auto',
             }}>
               <MomentBellLink token={token || ''} onOpen={openMomentsView} />
+              {!isFamilyShare ? (
+                <FamilyShareButton token={token || ''} variant="icon" />
+              ) : null}
             </div>
           ) : null}
         </header>
