@@ -247,7 +247,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
 
   const progressLength = arcLength * displayPct
   const rotation = 132
-  const visibleHeight = compact ? 138 : 150
+  const visibleHeight = compact ? 104 : 113
 
   return (
     <div
@@ -255,7 +255,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
       style={{
         position: 'relative',
         width: size,
-        height: compact ? 166 : 178,
+        height: compact ? 142 : 150,
         margin: '0 auto',
         '--score-tone': tone.text,
         '--score-ring-tone': tone.ring,
@@ -315,7 +315,7 @@ function ScoreRing({ score, max = 5, compact = false }: { score: number; max?: n
           position: 'absolute',
           left: 0,
           right: 0,
-          top: compact ? '52%' : '53%',
+          top: compact ? '54%' : '55%',
           transform: 'translateY(-50%)',
           textAlign: 'center',
         }}
