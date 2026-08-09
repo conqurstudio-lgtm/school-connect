@@ -636,6 +636,9 @@ export function ReportCard({ report, childName }: Props) {
   useEffect(() => {
     setShowFullTeacherComment(false)
   }, [report.comment])
+const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
+  const overallDelta = prevOverall !== null ? overall - prevOverall : null
+
   useEffect(() => {
     setSelectedBreakdown({
       name: 'Overall',
@@ -643,9 +646,6 @@ export function ReportCard({ report, childName }: Props) {
       change: overallDelta,
     })
   }, [report.id, report.week_starting, overall, overallDelta])
-
-const prevOverall  = report.previous_scores ? getOverallScore(report.previous_scores) : null
-  const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   const isLatestReport = report.display_position !== 'previous'
   const reportStatusLabel = isLatestReport ? '' : 'Previous report'
