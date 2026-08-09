@@ -583,6 +583,60 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  padding: insideReportShell ? '0 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
+ {insideReportShell ? (
+ <div style={{
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'space-between',
+ gap: 12,
+ margin: '0 0 14px',
+ padding: '0 2px',
+ }}>
+ <button
+ type="button"
+ onClick={onClose || (() => { window.location.href = `/report/${token}` })}
+ aria-label="Back to report"
+ style={{
+ width: 38,
+ height: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: T.soft,
+ color: T.ink,
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ fontFamily: 'inherit',
+ flexShrink: 0,
+ }}
+ >
+ <ChevronLeft size={20} strokeWidth={2.2} />
+ </button>
+
+ <div style={{ flex: 1, minWidth: 0 }}>
+ <p style={{
+ margin: 0,
+ fontSize: 16,
+ fontWeight: 650,
+ color: T.ink,
+ letterSpacing: '-0.025em',
+ lineHeight: 1.1,
+ }}>
+ Moments
+ </p>
+ <p style={{
+ margin: '4px 0 0',
+ fontSize: 12.5,
+ color: T.ink3,
+ lineHeight: 1.25,
+ }}>
+ Updates shared by the teacher
+ </p>
+ </div>
+ </div>
+ ) : null}
  {true && (
  <div style={{
  display: 'flex',
@@ -744,47 +798,13 @@ function ParentReactionFXButton({
  reacting,
  onReact,
 }: any) {
- const [animKey, setAnimKey] = useState(0)
- const [particles, setParticles] = useState<any[]>([])
- const [rings, setRings] = useState<number[]>([])
- const [score, setScore] = useState<number | null>(null)
- const idRef = useRef(0)
-
  const color = reactionTone(reactionKey)
- const particle = reactionKey === 'heart' ? '💗' : reactionKey === 'like' ? '👍' : '😊'
-
- const burst = () => {
- const uid = ++idRef.current
-
- setAnimKey(value => value + 1)
- setScore(1)
- setRings(current => [...current, uid])
- setParticles(current => [
- ...current,
- ...Array.from({ length: 3 }).map((_, index) => ({
- id: uid * 10 + index,
- dx: (Math.random() - 0.5) * 44,
- emoji: particle,
- })),
- ])
-
- window.setTimeout(() => {
- setScore(null)
- setRings(current => current.filter(item => item !== uid))
- setParticles(current => current.filter(item => Math.floor(item.id / 10) !== uid))
- }, 900)
- }
 
  const handleClick = (event: any) => {
  event.preventDefault()
  event.stopPropagation()
- burst()
  onReact(moment, reactionKey)
  }
-
- const iconAnimation = reactionKey === 'smile'
- ? 'scParentMomentWiggle 520ms cubic-bezier(0.16, 1, 0.3, 1)'
- : 'scParentMomentPop 420ms cubic-bezier(0.16, 1, 0.3, 1)'
 
  return (
  <button
@@ -793,160 +813,47 @@ function ParentReactionFXButton({
  aria-label={reactionKey}
  disabled={reacting === moment?.id}
  style={{
- position: 'relative',
- minWidth: 44,
- minHeight: 52,
+ minHeight: 34,
+ minWidth: 42,
  borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: active ? color : T.ink,
+ border: active ? `1px solid ${color}` : '1px solid rgba(37,37,37,0.08)',
+ background: active ? 'rgba(37,37,37,0.04)' : '#FFFFFF',
+ color: active ? color : T.ink2,
  display: 'inline-flex',
- flexDirection: 'column',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 4,
+ gap: 5,
+ padding: count > 0 ? '0 10px' : '0 9px',
  cursor: reacting === moment?.id ? 'default' : 'pointer',
- opacity: reacting === moment?.id ? 0.72 : 1,
- padding: '0 6px',
+ opacity: reacting === moment?.id ? 0.66 : 1,
  fontFamily: 'inherit',
- fontSize: 13,
- fontWeight: 560,
- zIndex: 40,
- pointerEvents: 'auto',
+ fontSize: 12.3,
+ fontWeight: 650,
+ lineHeight: 1,
+ boxShadow: '0 4px 14px rgba(20,32,43,0.055)',
  WebkitTapHighlightColor: 'transparent',
  touchAction: 'manipulation',
- }}
- >
- <style>{`
- @keyframes scParentMomentPop {
- 0% { transform: scale(0.72) rotate(-8deg); }
- 52% { transform: scale(1.26) rotate(6deg); }
- 100% { transform: scale(1) rotate(0deg); }
- }
- @keyframes scParentMomentWiggle {
- 0% { transform: rotate(0deg) scale(0.9); }
- 20% { transform: rotate(-13deg) scale(1.12); }
- 45% { transform: rotate(12deg) scale(1.18); }
- 72% { transform: rotate(-5deg) scale(1.05); }
- 100% { transform: rotate(0deg) scale(1); }
- }
- @keyframes scParentMomentRing {
- 0% { opacity: 0.42; transform: translate(-50%, -50%) scale(0.72); }
- 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.85); }
- }
- @keyframes scParentMomentParticle {
- 0% { opacity: 0; transform: translate(-50%, -50%) translateY(0) scale(0.65); }
- 18% { opacity: 1; }
- 100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), -48px) scale(1.15); }
- }
- @keyframes scParentMomentScore {
- 0% { opacity: 0; transform: translate(-50%, 6px) scale(0.8); }
- 24% { opacity: 1; transform: translate(-50%, -8px) scale(1); }
- 100% { opacity: 0; transform: translate(-50%, -25px) scale(1); }
- }
- `}</style>
-
- <span
- style={{
- position: 'relative',
- width: 42,
- height: 42,
- borderRadius: 999,
- background: '#FFFFFF',
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- boxShadow: '0 4px 14px rgba(20,32,43,0.08)',
- border: '1px solid rgba(20,32,43,0.08)',
- transform: reacting === moment?.id ? 'scale(0.96)' : 'scale(1)',
- transition: 'transform 160ms ease',
- overflow: 'visible',
- }}
- >
- {rings.map((ring: number) => (
- <span
- key={ring}
- aria-hidden="true"
- style={{
- position: 'absolute',
- left: '50%',
- top: '50%',
- width: 42,
- height: 42,
- borderRadius: 999,
- background: color,
- opacity: 0,
- pointerEvents: 'none',
- animation: 'scParentMomentRing 760ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
- }}
- />
- ))}
-
- {score !== null && (
- <span
- key={`score-${animKey}`}
- aria-hidden="true"
- style={{
- position: 'absolute',
- left: '50%',
- top: -4,
- color,
- fontSize: 12,
- fontWeight: 800,
- lineHeight: 1,
- pointerEvents: 'none',
- animation: 'scParentMomentScore 800ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
- }}
- >
- +1
- </span>
- )}
-
- {particles.map((item: any) => (
- <span
- key={item.id}
- aria-hidden="true"
- style={{
- position: 'absolute',
- left: '50%',
- top: '50%',
- fontSize: 16,
- pointerEvents: 'none',
- ['--dx' as any]: `${item.dx}px`,
- animation: 'scParentMomentParticle 860ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
- }}
- >
- {item.emoji}
- </span>
- ))}
-
- <span
- key={animKey}
- style={{
- color: active || animKey ? color : T.ink3,
- lineHeight: 0,
- animation: animKey ? iconAnimation : 'none',
+ transition: 'transform 160ms ease, background 160ms ease, border-color 160ms ease',
+ transform: active ? 'translateY(-1px)' : 'none',
  }}
  >
  <Icon
- size={20}
- strokeWidth={active ? 2.3 : 2}
- fill={active ? color : 'none'}
+ size={16}
+ strokeWidth={active ? 2.35 : 2}
+ fill={active && reactionKey !== 'like' ? color : 'none'}
  fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
  />
- </span>
- </span>
 
- {count > 0 && (
+ {count > 0 ? (
  <span style={{
  color: active ? color : T.ink3,
- fontSize: 12.5,
+ fontSize: 12,
  fontWeight: 650,
  lineHeight: 1,
  }}>
  {count}
  </span>
- )}
+ ) : null}
  </button>
  )
 }
@@ -1261,13 +1168,12 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  </div>
  <div style={{
  display: 'flex',
- // parent-reactions-left-align-v432
- // Keep reactions inside the card so the first button/heart has a full tap area.
+ // parent-reactions-clean-v436
  marginLeft: 0,
  width: '100%',
  alignItems: 'center',
- gap: 8,
- marginTop: 13,
+ gap: 7,
+ marginTop: 12,
  position: 'relative',
  zIndex: 30,
  pointerEvents: 'auto',
