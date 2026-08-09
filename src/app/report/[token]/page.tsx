@@ -113,7 +113,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
             fontWeight: 650,
             letterSpacing: '-0.02em',
             lineHeight: 1.15,
-            color: '#1A1A1A',
+            color: '#FFFFFF',
           }}>
             Previous reports
           </span>
@@ -123,7 +123,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
             marginTop: 4,
             fontSize: 12.5,
             fontWeight: 430,
-            color: '#5F6268',
+            color: 'rgba(255,255,255,0.72)',
             lineHeight: 1.25,
           }}>
             {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'} available
@@ -546,14 +546,14 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           width: '100%',
           maxWidth: 370,
           margin: '0 auto 0',
-          border: '1px solid rgba(37, 37, 37, 0.035)',
-          borderRadius: 26,
-          background: '#f3f6f3',
-          color: '#1A1A1A',
+          border: '1px solid rgba(255,255,255,0.10)',
+          borderRadius: 28,
+          background: '#111111',
+          color: '#FFFFFF',
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: '13px 14px',
+          padding: '15px 15px 15px 16px',
           textAlign: 'left',
           fontFamily: 'inherit',
           boxShadow: 'none',
@@ -593,12 +593,12 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           disabled={creating}
           aria-label="Share report with family"
           style={{
-            width: 32,
-            height: 32,
+            width: 38,
+            height: 38,
             borderRadius: 999,
             border: 'none',
-            background: '#252525',
-            color: '#FFFFFF',
+            background: '#FFFFFF',
+            color: '#111111',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -771,15 +771,15 @@ function ReportSafeAreaStyle() {
       }
 
       .sc-family-share-card-v2 {
-        background: #FFF7F3 !important;
-        border: 1px solid rgba(244,83,31,0.12) !important;
+        background: #111111 !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
         box-shadow: none !important;
-        padding: 14px 14px !important;
+        padding: 15px 15px 15px 16px !important;
       }
 
       .sc-family-share-card-v2 button {
-        background: #F4531F !important;
-        color: #FFFFFF !important;
+        background: #FFFFFF !important;
+        color: #111111 !important;
       }
 
       .sc-previous-reports-history-card-v1 {

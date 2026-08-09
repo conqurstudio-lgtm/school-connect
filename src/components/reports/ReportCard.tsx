@@ -898,20 +898,23 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
 
       {subjects.length > 0 && (
         <section
-          className="sc-report-subject-panel sc-report-subject-panel-inline sc-clean-subjects-v2 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
+          className="sc-subject-list-section-v1 sc-report-scroll-reveal-v1"
           aria-label="Subject scores"
-          style={{
-            width: '100%',
-            maxWidth: 370,
-            margin: '0 auto 0',
-            padding: 0,
-            borderRadius: 0,
-            background: 'transparent',
-            border: 'none',
-            boxShadow: 'none',
-          }}
         >
-          <div className="sc-report-subject-grid-v1" aria-label="Subject score cards">
+          <div className="sc-subject-list-head-v1">
+            <p>Subjects</p>
+
+            {subjects.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setShowAllSubjects(value => !value)}
+              >
+                {showAllSubjects ? 'Show less' : 'View all'}
+              </button>
+            )}
+          </div>
+
+          <div className="sc-subject-list-v1" aria-label="Subject score list">
             {(showAllSubjects ? subjects : subjects.slice(0, 4)).map(([name, score]) => {
               const numericScore = Number(score)
               const safeScore = Number.isFinite(numericScore) ? Math.max(0, Math.min(5, numericScore)) : 0
@@ -919,47 +922,156 @@ const prevOverall  = report.previous_scores ? getOverallScore(report.previous_sc
               const change = previousScore === null ? null : safeScore - previousScore
 
               return (
-                                <article
+                <button
                   key={String(name)}
-                  className="sc-report-subject-grid-card-v1 sc-subject-card-growth-v1"
-                  role="button"
-                  tabIndex={0}
+                  type="button"
+                  className="sc-subject-list-row-v1"
                   onClick={() => setSelectedSubjectDetail({ name: String(name), score: safeScore, change })}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      event.preventDefault()
-                      setSelectedSubjectDetail({ name: String(name), score: safeScore, change })
-                    }
-                  }}
                 >
-                  <SubjectMiniRing score={safeScore} />
-
-                  <div className="sc-subject-card-copy-v1">
-                    <p className="sc-subject-grid-name-v1">
+                  <span className="sc-subject-list-copy-v1">
+                    <span className="sc-subject-list-name-v1">
                       {shortenSubject(String(name))}
-                    </p>
-                    <p className="sc-subject-growth-word-v1">
+                    </span>
+                    <span className="sc-subject-list-note-v1">
                       {getSubjectGrowthWord(safeScore, change)}
-                    </p>
-                  </div>
-                </article>
+                    </span>
+                  </span>
+
+                  <span className="sc-subject-list-score-v1">
+                    <SubjectMiniRing score={safeScore} />
+                  </span>
+                </button>
               )
             })}
           </div>
-
-          {subjects.length > 4 && (
-            <button
-              type="button"
-              className="sc-subject-grid-view-all-v1"
-              onClick={() => setShowAllSubjects(value => !value)}
-            >
-              {showAllSubjects ? 'Show less' : `View more`}
-            </button>
-          )}
         </section>
-
-
       )}
+
+      <style jsx global>{`
+        .sc-subject-list-section-v1 {
+          width: 100% !important;
+          max-width: 370px !important;
+          margin: 0 auto 18px !important;
+          padding: 0 !important;
+          box-sizing: border-box !important;
+        }
+
+        .sc-subject-list-head-v1 {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 12px !important;
+          margin: 0 0 10px !important;
+          padding: 0 2px !important;
+        }
+
+        .sc-subject-list-head-v1 p {
+          margin: 0 !important;
+          color: #252525 !important;
+          font-size: 13px !important;
+          font-weight: 520 !important;
+          letter-spacing: -0.018em !important;
+          line-height: 1.1 !important;
+        }
+
+        .sc-subject-list-head-v1 button {
+          border: none !important;
+          background: transparent !important;
+          color: #252525 !important;
+          font-size: 12px !important;
+          font-weight: 620 !important;
+          padding: 3px 0 !important;
+          cursor: pointer !important;
+          letter-spacing: -0.01em !important;
+        }
+
+        .sc-subject-list-v1 {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 9px !important;
+          width: 100% !important;
+        }
+
+        .sc-subject-list-row-v1 {
+          width: 100% !important;
+          min-height: 72px !important;
+          border: 1px solid rgba(17,17,17,0.05) !important;
+          background: #FBFBFB !important;
+          border-radius: 24px !important;
+          padding: 10px 11px 10px 15px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 14px !important;
+          text-align: left !important;
+          cursor: pointer !important;
+          font-family: inherit !important;
+          box-shadow: none !important;
+          box-sizing: border-box !important;
+          transition:
+            transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 180ms ease,
+            background 180ms ease !important;
+        }
+
+        .sc-subject-list-row-v1:active {
+          transform: scale(0.985) !important;
+          opacity: 0.86 !important;
+        }
+
+        .sc-subject-list-copy-v1 {
+          min-width: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 4px !important;
+        }
+
+        .sc-subject-list-name-v1 {
+          display: block !important;
+          color: #252525 !important;
+          font-size: 13.2px !important;
+          font-weight: 650 !important;
+          line-height: 1.12 !important;
+          letter-spacing: -0.025em !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          max-width: 230px !important;
+        }
+
+        .sc-subject-list-note-v1 {
+          display: block !important;
+          color: #7C8486 !important;
+          font-size: 11.7px !important;
+          font-weight: 450 !important;
+          line-height: 1.2 !important;
+          letter-spacing: -0.01em !important;
+        }
+
+        .sc-subject-list-score-v1 {
+          flex-shrink: 0 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+
+        .sc-subject-list-score-v1 .sc-subject-mini-ring-v1 {
+          transform: scale(0.92) !important;
+          transform-origin: center !important;
+        }
+
+        @media (max-width: 420px) {
+          .sc-subject-list-row-v1 {
+            min-height: 70px !important;
+            border-radius: 23px !important;
+            padding: 9px 10px 9px 14px !important;
+          }
+
+          .sc-subject-list-name-v1 {
+            max-width: 205px !important;
+          }
+        }
+      `}</style>
 
 
       <style jsx global>{`
