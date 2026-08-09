@@ -1159,7 +1159,7 @@ export default function ParentMagicReportPage() {
                   height: 38,
                   borderRadius: 999,
                   border: 'none',
-                  background: '#F5F5F7',
+                  background: 'transparent',
                   color: '#252525',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -1189,15 +1189,17 @@ export default function ParentMagicReportPage() {
             </div>
           ) : null}
 
-          <div style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            marginLeft: parentView === 'moments' ? 12 : 'auto',
-          }}>
-            <MomentBellLink token={token || ''} onOpen={openMomentsView} />
-          </div>
+          {parentView !== 'moments' ? (
+            <div style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              marginLeft: 'auto',
+            }}>
+              <MomentBellLink token={token || ''} onOpen={openMomentsView} />
+            </div>
+          ) : null}
         </header>
 
         <section className="sc-report-clean-scroll-v276" style={{
