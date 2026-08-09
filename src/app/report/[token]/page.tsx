@@ -309,6 +309,30 @@ function MomentBellLink({ token, onOpen }: { token: string, onOpen: () => void }
 }
 
 
+
+function MomentsActionCard({ onOpen }: { onOpen: () => void }) {
+  return (
+    <section
+      className="sc-premium-moments-card-v1 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
+      aria-label="Class moments"
+    >
+      <span className="sc-premium-moments-copy-v1">
+        <span className="sc-premium-moments-title-v1">Class moments</span>
+        <span className="sc-premium-moments-subtitle-v1">View photos and updates shared from class.</span>
+      </span>
+
+      <button
+        type="button"
+        onClick={onOpen}
+        className="sc-premium-moments-button-v1"
+      >
+        View
+      </button>
+    </section>
+  )
+}
+
+
 function reportTeacherInitials(name: any) {
   return String(name || 'Teacher')
     .trim()
@@ -679,27 +703,98 @@ function ReportSafeAreaStyle() {
       }
 
 
-      /* compact report stack spacing */
+      /* premium report bottom actions */
       .sc-report-subject-panel-inline {
-        margin-bottom: 0 !important;
+        margin-bottom: 18px !important;
         padding-bottom: 0 !important;
       }
 
+      .sc-premium-moments-card-v1,
+      .sc-family-share-card-v2,
+      .sc-previous-reports-history-card-v1 {
+        width: 100% !important;
+        max-width: 370px !important;
+        margin: 0 auto 12px !important;
+        border-radius: 26px !important;
+        box-sizing: border-box !important;
+      }
+
+      .sc-premium-moments-card-v1 {
+        background: #FFFFFF !important;
+        border: 1px solid rgba(17,17,17,0.06) !important;
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.045) !important;
+        padding: 14px 14px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+      }
+
+      .sc-premium-moments-copy-v1 {
+        min-width: 0 !important;
+        flex: 1 !important;
+        display: block !important;
+      }
+
+      .sc-premium-moments-title-v1 {
+        display: block !important;
+        color: #10141A !important;
+        font-size: 13.8px !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.025em !important;
+        line-height: 1.15 !important;
+      }
+
+      .sc-premium-moments-subtitle-v1 {
+        display: block !important;
+        margin-top: 4px !important;
+        color: #6B7280 !important;
+        font-size: 12.4px !important;
+        font-weight: 430 !important;
+        line-height: 1.28 !important;
+        letter-spacing: -0.01em !important;
+      }
+
+      .sc-premium-moments-button-v1 {
+        min-width: 58px !important;
+        height: 34px !important;
+        border-radius: 999px !important;
+        border: none !important;
+        background: #F4531F !important;
+        color: #FFFFFF !important;
+        font-family: inherit !important;
+        font-size: 12.4px !important;
+        font-weight: 720 !important;
+        cursor: pointer !important;
+        padding: 0 15px !important;
+        flex-shrink: 0 !important;
+      }
+
       .sc-family-share-card-v2 {
-        margin-top: -42px !important;
+        background: #FFF7F3 !important;
+        border: 1px solid rgba(244,83,31,0.12) !important;
+        box-shadow: none !important;
+        padding: 14px 14px !important;
+      }
+
+      .sc-family-share-card-v2 button {
+        background: #F4531F !important;
+        color: #FFFFFF !important;
       }
 
       .sc-previous-reports-history-card-v1 {
-        margin-top: -42px !important;
+        background: #FFFFFF !important;
+        border: 1px solid rgba(17,17,17,0.06) !important;
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.035) !important;
+        padding: 11px !important;
       }
 
       @media (max-width: 520px) {
-        .sc-family-share-card-v2 {
-          margin-top: -46px !important;
-        }
-
+        .sc-premium-moments-card-v1,
+        .sc-family-share-card-v2,
         .sc-previous-reports-history-card-v1 {
-          margin-top: -46px !important;
+          margin-bottom: 11px !important;
+          border-radius: 24px !important;
         }
       }
 
@@ -1235,6 +1330,8 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
               </div>
+
+              <MomentsActionCard onOpen={openMomentsView} />
 
               {!isFamilyShare && <FamilyShareButton token={token || ''} variant="card" />}
 </div>
