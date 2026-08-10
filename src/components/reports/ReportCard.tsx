@@ -895,7 +895,7 @@ export function ReportCard({ report, childName }: Props) {
       {cards.length > 0 && (
         <section className="sc-breakdown-flat-v1" aria-label="Report breakdown">
           <div className="sc-breakdown-flat-head-v1">
-            <p>Breakdown</p>
+            <p style={{ fontSize: 13.1, fontWeight: 480 }}>Breakdown</p>
             <span>{subjects.length} areas</span>
           </div>
 
