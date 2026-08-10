@@ -82,6 +82,25 @@ function getSubjectStatus(score: number): string {
   return 'Needs support'
 }
 
+function getSubjectTipMessage(subjectName: string, score: number, childName: string): string {
+  const child = childName || 'Your child'
+  const subject = subjectName || 'this subject'
+
+  if (score >= 4.5) {
+    return `${child} is doing very well in ${subject}. Keep encouraging this strength with light revision and praise at home.`
+  }
+
+  if (score >= 3.5) {
+    return `${child} is making good progress in ${subject}. A little more practice will help build even stronger confidence.`
+  }
+
+  if (score >= 2.5) {
+    return `${child} is showing fair progress in ${subject}. Short, consistent practice will help improve understanding.`
+  }
+
+  return `${child} needs gentle support in ${subject}. Focus on small daily practice and celebrate each improvement.`
+}
+
 function useCountUp(value: number) {
   const [shown, setShown] = useState(value)
 
@@ -324,10 +343,11 @@ export function ReportCard({ report, childName }: Props) {
     report.comment || getSafeWarmTeacherFallback(childFirstName, overall)
   )
 
-  const activeTeacherNote =
-    active.key === 'overall'
-      ? teacherCommentText
-      : `${active.name} is currently marked as ${active.status.toLowerCase()}.`
+  const noteIsOverall = active.key === 'overall'
+
+  const activeTeacherNote = noteIsOverall
+    ? teacherCommentText
+    : getSubjectTipMessage(active.name, active.score, childFirstName)
 
   const [openNote, setOpenNote] = useState(false)
   const isLong = activeTeacherNote.length > 92
@@ -510,6 +530,37 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-copy-v1 strong {
           color: #10141A;
           font-weight: 700;
+        }
+
+        .sc-teacher-flat-note-v1 {
+          animation: scTeacherNoteSwapV1 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes scTeacherNoteSwapV1 {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .sc-teacher-flat-note-v1.is-subject-tip-note {
+          background: #FFF8F5;
+          border-color: rgba(244,83,31,0.10);
+        }
+
+        .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
+          background: #FFFFFF;
+          color: #10141A;
+          border-color: rgba(244,83,31,0.16);
+        }
+
+        .sc-subject-tip-emoji-v1 {
+          font-size: 20px;
+          line-height: 1;
         }
 
         .sc-teacher-flat-copy-v1 button {
@@ -703,14 +754,22 @@ export function ReportCard({ report, childName }: Props) {
         ) : null}
       </div>
 
-      <section className="sc-teacher-flat-note-v1" aria-label="Teacher note">
+      <section
+        key={active.key}
+        className={`sc-teacher-flat-note-v1 ${noteIsOverall ? 'is-overall-note' : 'is-subject-tip-note'}`}
+        aria-label={noteIsOverall ? 'Teacher note' : `${active.name} tip`}
+      >
         <div className="sc-teacher-flat-avatar-v1" aria-hidden="true">
-          {teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>}
+          {noteIsOverall ? (
+            teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>
+          ) : (
+            <span className="sc-subject-tip-emoji-v1">{getScoreEmoji(active.score)}</span>
+          )}
         </div>
 
         <div className="sc-teacher-flat-copy-v1">
           <p>
-            <strong>{teacherName}:</strong>{' '}
+            <strong>{noteIsOverall ? teacherName : `${active.name} tip`}:</strong>{' '}
             {shownNote}
             {!openNote && isLong ? (
               <button type="button" onClick={() => setOpenNote(true)}>more</button>
