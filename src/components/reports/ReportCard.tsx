@@ -725,7 +725,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: auto 0 0;
+          margin: 20px 0 0;
           color: inherit;
           font-size: 12.8px;
           font-weight: 560;
