@@ -573,7 +573,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   gap: 12,
   width: '100%',
   padding: '0 2px',
-  margin: '0 0 18px',
+  margin: '0 0 14px',
   position: 'relative',
   }}>
   <div style={{ minWidth: 0 }}>
@@ -618,12 +618,23 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   cursor: 'pointer',
   padding: 0,
   fontFamily: 'inherit',
-  fontSize: 24,
+  fontSize: 0,
   lineHeight: 1,
   WebkitTapHighlightColor: 'transparent',
   }}
   >
-  ⋯
+  <span style={{
+  width: 18,
+  height: 13,
+  display: 'inline-flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  alignItems: 'stretch',
+  }}>
+  <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
+  <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block', width: 13, marginLeft: 'auto' }} />
+  <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
+  </span>
   </button>
 
   {momentsMenuOpen && (
