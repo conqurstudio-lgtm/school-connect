@@ -597,8 +597,8 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
             height: 32,
             borderRadius: 999,
             border: 'none',
-            background: 'rgba(244,83,31,0.09)',
-            color: '#F4531F',
+            background: 'rgba(113,134,234,0.09)',
+            color: '#7186EA',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -760,7 +760,7 @@ function ReportSafeAreaStyle() {
         height: 34px !important;
         border-radius: 999px !important;
         border: none !important;
-        background: #F4531F !important;
+        background: #7186EA !important;
         color: #FFFFFF !important;
         font-family: inherit !important;
         font-size: 12.4px !important;
@@ -771,14 +771,14 @@ function ReportSafeAreaStyle() {
       }
 
       .sc-family-share-card-v2 {
-        background: #FFF7F3 !important;
-        border: 1px solid rgba(244,83,31,0.12) !important;
+        background: #F7F8FF !important;
+        border: 1px solid rgba(113,134,234,0.12) !important;
         box-shadow: none !important;
         padding: 14px 14px !important;
       }
 
       .sc-family-share-card-v2 button {
-        background: #F4531F !important;
+        background: #7186EA !important;
         color: #FFFFFF !important;
       }
 

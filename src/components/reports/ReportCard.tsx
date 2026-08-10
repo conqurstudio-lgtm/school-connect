@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { TrendingDown, TrendingUp, Minus } from 'lucide-react'
 import { getOverallScore, getScoreLabel } from '@/lib/reports'
 
-const BRAND = '#F4531F'
+const BRAND = '#7186EA'
 const INK = '#252525'
 const INK_SOFT = '#8A8F96'
 const HAIRLINE = 'rgba(17,17,17,0.055)'
@@ -227,7 +227,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
+          stroke={active ? 'rgba(113,134,234,0.14)' : '#DADBDD'}
           strokeWidth="3"
         />
         <circle
@@ -720,7 +720,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.18);
+          border-color: rgba(113,134,234,0.18);
           box-shadow: none;
         }
 
