@@ -131,7 +131,7 @@ function useCountUp(value: number) {
 function Delta({ value }: { value: number }) {
   if (Math.abs(value) < 0.1) {
     return (
-      <span className="sc-report-delta-flat-v1">
+      <span className="sc-report-delta-flat-v1" data-tone="neutral">
         <Minus size={14} strokeWidth={2.4} />
         <strong>0.0</strong>
         <span>from last week</span>
@@ -142,7 +142,7 @@ function Delta({ value }: { value: number }) {
   const up = value > 0
 
   return (
-    <span className="sc-report-delta-flat-v1">
+    <span className="sc-report-delta-flat-v1" data-tone={up ? "up" : "down"}>
       {up ? <TrendingUp size={14} strokeWidth={2.4} /> : <TrendingDown size={14} strokeWidth={2.4} />}
       <strong>{up ? '+' : ''}{value.toFixed(1)}</strong>
       <span>from last week</span>
@@ -152,7 +152,7 @@ function Delta({ value }: { value: number }) {
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
-  const size = 250
+  const size = 264
   const stroke = 2.15
   const center = size / 2
   const radius = (size - stroke - 14) / 2
@@ -395,9 +395,9 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-score-gauge-flat-v1 {
           position: relative;
-          width: 250px;
-          height: 250px;
-          max-width: 76vw;
+          width: 264px;
+          height: 264px;
+          max-width: 80vw;
           margin: 30px auto 0;
         }
 
@@ -450,7 +450,8 @@ export function ReportCard({ report, childName }: Props) {
           font-size: 25px;
           line-height: 1;
           margin-bottom: 17px;
-        }
+                  transform: translateY(-10px);
+}
 
         .sc-score-flat-summary-v1 .status {
           margin: 0;
@@ -471,6 +472,26 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 430;
           line-height: 1;
         }
+
+        .sc-report-delta-flat-v1 strong {
+          font-weight: 650;
+        }
+
+        .sc-report-delta-flat-v1[data-tone="up"] svg,
+        .sc-report-delta-flat-v1[data-tone="up"] strong {
+          color: #1F9D63;
+        }
+
+        .sc-report-delta-flat-v1[data-tone="down"] svg,
+        .sc-report-delta-flat-v1[data-tone="down"] strong {
+          color: #E1483E;
+        }
+
+        .sc-report-delta-flat-v1[data-tone="neutral"] svg,
+        .sc-report-delta-flat-v1[data-tone="neutral"] strong {
+          color: ${INK_SOFT};
+        }
+
 
         .sc-report-delta-flat-v1 svg,
         .sc-report-delta-flat-v1 strong {
