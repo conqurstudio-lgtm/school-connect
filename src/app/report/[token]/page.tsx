@@ -602,7 +602,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           disabled={creating}
           aria-label="Share report with family"
           style={{
-            width: 42,
+            width: creating ? 86 : 42,
             height: 32,
             borderRadius: 999,
             border: 'none',
@@ -613,12 +613,24 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
             justifyContent: 'center',
             flexShrink: 0,
             cursor: creating ? 'default' : 'pointer',
-            opacity: creating ? 0.65 : 1,
+            opacity: 1,
             padding: 0,
             fontFamily: 'inherit',
+            transition: 'width 180ms ease, opacity 180ms ease, transform 180ms ease',
           }}
         >
-          <Send size={16} strokeWidth={1.75} />
+          {creating ? (
+            <span style={{
+              fontSize: 11.2,
+              fontWeight: 560,
+              letterSpacing: '-0.01em',
+              lineHeight: 1,
+            }}>
+              Opening...
+            </span>
+          ) : (
+            <Send size={16} strokeWidth={1.75} />
+          )}
         </button>
       </section>
     )
