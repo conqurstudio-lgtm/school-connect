@@ -691,14 +691,14 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-flat-slider-card-v1 {
           width: 150px;
-          min-height: 136px;
+          min-height: 128px;
           flex-shrink: 0;
           scroll-snap-align: start;
           border: 1px solid rgba(17,17,17,0.045);
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
-          padding: 14px 15px 12px;
+          padding: 14px 15px 14px;
           border: 1px solid rgba(17,17,17,0.045);
           box-shadow: none;
           text-align: left;
@@ -725,7 +725,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: 16px 0 0;
+          margin: auto 0 0;
           color: inherit;
           font-size: 12.8px;
           font-weight: 560;
@@ -735,7 +735,7 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 1px;
+          margin-top: 2px;
           color: ${INK_SOFT};
           font-size: 11.6px;
           font-weight: 420;
