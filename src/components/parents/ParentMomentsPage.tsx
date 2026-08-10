@@ -74,46 +74,21 @@ function formatTimeAgo(value?: string) {
 
 function SafeStyle() {
   return (
-    <style jsx global>{`
-      .sc-parent-moment-fullscreen-v2,
-      .sc-parent-moment-lightbox-v2,
-      .sc-parent-moments-fullscreen-v2 {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100vw !important;
-        height: 100dvh !important;
-        max-width: none !important;
-        max-height: none !important;
-        margin: 0 !important;
-        padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px) !important;
-        background: #000000 !important;
-        z-index: 2147483647 !important;
-        overflow: auto !important;
-        overscroll-behavior: contain !important;
-        -webkit-overflow-scrolling: touch !important;
-        box-sizing: border-box !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+    <style>{`
+      html,
+      body {
+        background: #FFFFFF !important;
       }
 
-      .sc-parent-moment-fullscreen-v2 img,
-      .sc-parent-moment-lightbox-v2 img,
-      .sc-parent-moments-fullscreen-v2 img {
-        width: auto !important;
-        height: auto !important;
-        max-width: 100vw !important;
-        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
-        object-fit: contain !important;
-        display: block !important;
-        border-radius: 0 !important;
-        margin: auto !important;
+      @keyframes parentMomentDotBounce {
+        0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
+        40% { transform: scale(1); opacity: 1; }
       }
 
-      .sc-parent-moment-fullscreen-v2 button,
-      .sc-parent-moment-lightbox-v2 button,
-      .sc-parent-moments-fullscreen-v2 button {
-        z-index: 2147483647 !important;
+      @keyframes parentMomentReactionFly {
+        0% { transform: translate(-50%, 0) scale(0.65); opacity: 0; }
+        18% { opacity: 1; }
+        100% { transform: translate(-50%, -72px) scale(1.25); opacity: 0; }
       }
     `}</style>
   )
