@@ -66,30 +66,31 @@ function getReportDateLabel(report: any) {
   })
 }
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
-  const [showAllPreviousReports, setShowAllPreviousReports] = useState(false)
-  const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
+  const [open, setOpen] = useState(false)
+  const [showMore, setShowMore] = useState(false)
 
+  const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
   if (!safeReports.length) return null
+
+  const visibleReports = showMore ? safeReports : safeReports.slice(0, 3)
+  const hasMore = safeReports.length > 3
 
   return (
     <section
-      className="sc-previous-reports-history-card-v1 sc-report-lower-card-motion-v1 sc-report-scroll-reveal-v1"
+      className="sc-previous-reports-history-plain-v1"
       aria-label="Previous reports"
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '0 auto 0',
-        borderRadius: 24,
-        background: '#F7F7F8',
-        padding: 11,
+        margin: '0 auto',
+        padding: '0',
         boxSizing: 'border-box',
-        border: '1px solid rgba(0,0,0,0.025)',
       }}
     >
       <button
         type="button"
-        onClick={() => setShowAllPreviousReports(value => !value)}
-        aria-expanded={showAllPreviousReports}
+        onClick={() => setOpen(value => !value)}
+        aria-expanded={open}
         style={{
           width: '100%',
           border: 'none',
@@ -99,66 +100,44 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 12,
-          padding: '4px 4px',
+          padding: '6px 0 9px',
           cursor: 'pointer',
           fontFamily: 'inherit',
           textAlign: 'left',
-          transition: 'opacity 160ms ease, transform 160ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <span style={{ minWidth: 0, flex: 1 }}>
-          <span style={{
-            display: 'block',
-            fontSize: 13.8,
-            fontWeight: 570,
-            letterSpacing: '-0.02em',
-            lineHeight: 1.15,
-            color: '#1A1A1A',
-          }}>
-            Previous reports
-          </span>
-
-          <span style={{
-            display: 'block',
-            marginTop: 3,
-            fontSize: 12,
-            fontWeight: 430,
-            color: '#5F6268',
-            lineHeight: 1.25,
-          }}>
-            {safeReports.length} {safeReports.length === 1 ? 'report' : 'reports'} available
-          </span>
+        <span style={{
+          display: 'block',
+          minWidth: 0,
+          fontSize: 13.6,
+          fontWeight: 560,
+          letterSpacing: '-0.02em',
+          lineHeight: 1.15,
+          color: '#1A1A1A',
+        }}>
+          Previous reports
         </span>
 
         <span style={{
           flexShrink: 0,
-          minWidth: 52,
-          height: 42,
-          borderRadius: 999,
-          background: '#FFFFFF',
-          color: '#252525',
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           fontSize: 12,
-          fontWeight: 680,
+          fontWeight: 560,
+          color: '#5F6268',
           lineHeight: 1,
-          padding: '0 12px',
-          boxShadow: '0 1px 0 rgba(0,0,0,0.025)',
         }}>
-          {showAllPreviousReports ? 'Hide' : 'View'}
+          {open ? 'Hide' : 'View'}
         </span>
       </button>
 
-      {showAllPreviousReports ? (
-        <div style={{
-          display: 'grid',
-          gap: 8,
-          marginTop: 9,
-        }}>
-          {safeReports.map((report: any, index: number) => {
+      {open ? (
+        <div
+          style={{
+            borderTop: '1px solid rgba(17,17,17,0.07)',
+          }}
+        >
+          {visibleReports.map((report: any, index: number) => {
             const score = getReportScore(report)
-            const scoreText = score > 0 ? score.toFixed(1) : '—'
+            const scoreText = score > 0 ? `${score.toFixed(1)} / 5` : '—'
             const performance = getReportPerformance(score)
 
             return (
@@ -168,54 +147,73 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  gap: 10,
-                  borderRadius: 20,
-                  background: '#FFFFFF',
-                  padding: '10px 11px',
-                  boxSizing: 'border-box',
+                  gap: 14,
+                  padding: '11px 0',
+                  borderBottom: '1px solid rgba(17,17,17,0.07)',
                 }}
               >
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <p style={{
-                    margin: 0,
-                    fontSize: 13,
-                    fontWeight: 620,
+                <span style={{
+                  display: 'grid',
+                  gap: 3,
+                  minWidth: 0,
+                }}>
+                  <span style={{
                     color: '#1A1A1A',
-                    lineHeight: 1.18,
-                    letterSpacing: '-0.02em',
+                    fontSize: 12.8,
+                    fontWeight: 520,
+                    letterSpacing: '-0.015em',
+                    lineHeight: 1.15,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}>
                     {getReportDateLabel(report)}
-                  </p>
+                  </span>
 
-                  <p style={{
-                    margin: '4px 0 0',
-                    fontSize: 12,
-                    fontWeight: 430,
-                    color: '#5F6268',
-                    lineHeight: 1.25,
+                  <span style={{
+                    color: '#8A8F96',
+                    fontSize: 11.5,
+                    fontWeight: 400,
+                    lineHeight: 1.15,
                   }}>
                     {performance}
-                  </p>
-                </div>
+                  </span>
+                </span>
 
                 <span style={{
-                  width: 36,
-                  height: 28,
-                  borderRadius: 999,
-                  background: '#F5F5F7',
-                  color: '#252525',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 11.5,
-                  fontWeight: 650,
                   flexShrink: 0,
+                  color: '#252525',
+                  fontSize: 12.4,
+                  fontWeight: 560,
+                  letterSpacing: '-0.015em',
+                  lineHeight: 1,
                 }}>
                   {scoreText}
                 </span>
               </article>
             )
           })}
+
+          {hasMore ? (
+            <button
+              type="button"
+              onClick={() => setShowMore(value => !value)}
+              style={{
+                width: '100%',
+                border: 'none',
+                background: 'transparent',
+                color: '#5F6268',
+                padding: '10px 0 2px',
+                fontSize: 12.2,
+                fontWeight: 560,
+                fontFamily: 'inherit',
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              {showMore ? 'Show less' : `See more (${safeReports.length - 3})`}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </section>
@@ -1334,10 +1332,21 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
 
+                {reports.length > 1 ? (
+                  <div
+                    className="sc-report-previous-history-wrap-v1"
+                    style={{
+                      margin: '10px 24px 0',
+                    }}
+                  >
+                    <PreviousReportsCard reports={reports.slice(1)} childName={childName} />
+                  </div>
+                ) : null}
+
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
                   style={{
-                    margin: '10px 24px 0',
+                    margin: reports.length > 1 ? '10px 24px 0' : '10px 24px 0',
                     paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
                   }}
                 >
