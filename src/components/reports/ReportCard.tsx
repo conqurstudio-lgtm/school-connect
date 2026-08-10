@@ -444,15 +444,15 @@ export function ReportCard({ report, childName }: Props) {
           font-size: 58px;
           font-weight: 500;
           line-height: 0.92;
-          letter-spacing: -0.075em;
+          letter-spacing: -0.055em;
           font-variant-numeric: tabular-nums;
         }
 
         .sc-score-gauge-center-flat-v1 small {
           margin-top: 7px;
-          color: ${INK_SOFT};
-          font-size: 13.1px;
-          font-weight: 430;
+          color: #B8BBC1;
+          font-size: 13px;
+          font-weight: 360;
           letter-spacing: -0.01em;
         }
 
