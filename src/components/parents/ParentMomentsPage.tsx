@@ -375,23 +375,32 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  }
 
  useEffect(() => {
- let usedCache = false
+  let usedCache = false
 
- try {
- const raw = window.localStorage.getItem(parentMomentsCacheKey(token))
- if (raw) {
- const cached = JSON.parse(raw)
- if (cached?.moments) {
- setChild(cached.child || null)
- setMoments(cached.moments || [])
- setLoading(false)
- usedCache = true
- }
- }
- } catch {}
+  // Inside the parent report shell, do not show cached Moments first.
+  // This prevents deleted teacher posts from flashing before the fresh fetch finishes.
+  if (insideReportShell) {
+    setLoading(true)
+    setMoments([])
+    load(false)
+    return
+  }
 
- load(usedCache)
- }, [token])
+  try {
+    const raw = window.localStorage.getItem(parentMomentsCacheKey(token))
+    if (raw) {
+      const cached = JSON.parse(raw)
+      if (cached?.moments) {
+        setChild(cached.child || null)
+        setMoments(cached.moments || [])
+        setLoading(false)
+        usedCache = true
+      }
+    }
+  } catch {}
+
+  load(usedCache)
+  }, [token, insideReportShell])
 
 
  const addReactionBurst = (momentId: string, reaction: string) => {
