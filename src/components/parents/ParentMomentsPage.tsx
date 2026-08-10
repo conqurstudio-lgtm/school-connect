@@ -703,7 +703,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   gap: 12,
   width: '100%',
   padding: '0 2px',
-  margin: '0 0 14px',
+  margin: insideReportShell ? '0 0 6px' : '0 0 14px',
   position: 'relative',
   }}>
   <div style={{ minWidth: 0, display: insideReportShell ? 'none' : 'block' }}>
@@ -790,14 +790,42 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   top: insideReportShell ? 'calc(52px + env(safe-area-inset-top, 0px))' : 42,
   right: insideReportShell ? 'max(16px, calc((100vw - 520px) / 2 + 16px))' : 0,
   zIndex: 8999,
-  minWidth: 172,
-  borderRadius: 18,
+  minWidth: 178,
+  borderRadius: 20,
   background: T.white,
   border: `1px solid ${T.border}`,
-  boxShadow: '0 16px 42px rgba(15,23,42,0.08)',
-  padding: 6,
+  boxShadow: '0 18px 46px rgba(15,23,42,0.12)',
+  padding: 7,
   }}
   >
+  <div style={{
+  padding: '7px 10px 8px',
+  borderBottom: `1px solid ${T.border}`,
+  marginBottom: 5,
+  }}>
+  <p style={{
+  margin: 0,
+  fontSize: 10.5,
+  fontWeight: 680,
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  color: T.ink3,
+  lineHeight: 1.1,
+  }}>
+  Showing
+  </p>
+  <p style={{
+  margin: '3px 0 0',
+  fontSize: 13,
+  fontWeight: 640,
+  letterSpacing: '-0.02em',
+  color: T.ink,
+  lineHeight: 1.15,
+  }}>
+  {momentScope === 'recent' ? 'Recent moments' : momentScope === 'child' ? 'Child moments' : 'Class moments'}
+  </p>
+  </div>
+
   {[
   ['recent', 'Recent'],
   ['child', 'Child'],
@@ -815,8 +843,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   }}
   style={{
   width: '100%',
-  minHeight: 38,
-  borderRadius: 13,
+  minHeight: 40,
+  borderRadius: 14,
   border: 'none',
   background: active ? T.soft : 'transparent',
   color: active ? T.ink : T.ink2,
@@ -880,7 +908,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: 0,
+  padding: 'max(18px, env(safe-area-inset-top, 0px)) 14px max(18px, env(safe-area-inset-bottom, 0px))',
   boxSizing: 'border-box',
   cursor: 'zoom-out',
   overflow: 'hidden',
@@ -925,6 +953,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   style={{
   width: '100%',
   height: '100%',
+  maxWidth: '100%',
+  maxHeight: '100%',
   objectFit: 'contain',
   display: 'block',
   borderRadius: 0,
