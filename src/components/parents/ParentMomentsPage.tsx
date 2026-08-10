@@ -1330,11 +1330,15 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  src={`${moment.file_url}#page=1&toolbar=0&navpanes=0&scrollbar=0`}
  title={moment.file_name || 'PDF preview'}
  style={{
- width: '100%',
- height: '100%',
+ width: '108%',
+ height: '108%',
  border: 'none',
  background: '#F3F1EC',
  pointerEvents: 'none',
+ transform: 'scale(1.04)',
+ transformOrigin: 'center top',
+ marginLeft: '-4%',
+ marginTop: '-2%',
  }}
  />
  <div style={{
