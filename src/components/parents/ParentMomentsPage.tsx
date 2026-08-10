@@ -1003,7 +1003,7 @@ function ParentReactionFXButton({
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
- color: active ? color : T.ink2,
+ color: active ? color : T.ink,
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -1024,14 +1024,14 @@ function ParentReactionFXButton({
  >
  <Icon
  size={19}
- strokeWidth={active ? 2.35 : 2}
+ strokeWidth={active ? 1.9 : 1.55}
  fill={active && reactionKey !== 'like' ? color : 'none'}
  fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
  />
 
  {count > 0 ? (
  <span style={{
- color: active ? color : T.ink3,
+ color: active ? color : T.ink,
  fontSize: 12.8,
  fontWeight: 650,
  lineHeight: 1,
