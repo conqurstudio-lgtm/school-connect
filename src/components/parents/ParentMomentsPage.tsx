@@ -912,7 +912,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: 'max(18px, env(safe-area-inset-top, 0px)) 14px max(18px, env(safe-area-inset-bottom, 0px))',
+  padding: 0,
   boxSizing: 'border-box',
   cursor: 'zoom-out',
   overflow: 'hidden',
@@ -957,8 +957,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   style={{
   width: '100%',
   height: '100%',
-  maxWidth: '100%',
-  maxHeight: '100%',
   objectFit: 'contain',
   display: 'block',
   borderRadius: 0,
