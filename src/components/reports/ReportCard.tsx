@@ -151,29 +151,31 @@ function Delta({ value }: { value: number }) {
 }
 
 function HighScoreCelebration({ score }: { score: number }) {
-  const isHighScore = Number(score) >= 4.5
+  const safeScore = Number(score) || 0
+  const isHighScore = safeScore >= 4.5
 
   if (!isHighScore) {
-    return <><HighScoreCelebration score={score} /></>
+    return <>{getScoreEmoji(safeScore)}</>
   }
 
   return (
     <span className="sc-score-lottie-celebration-v1" role="img" aria-label="Excellent score">
-      <dotlottie-wc
-        src="https://lottie.host/a73da68c-54ce-4ecb-aad0-7cd34696e089/3ze4jlJA9W.lottie"
-        speed="1"
-        mode="forward"
-        loop
-        autoplay
+      <iframe
+        title="Excellent score celebration"
+        src="https://lottie.host/embed/a73da68c-54ce-4ecb-aad0-7cd34696e089/3ze4jlJA9W.lottie"
         style={{
-          width: '58px',
-          height: '58px',
+          width: '64px',
+          height: '64px',
+          border: 'none',
           display: 'block',
+          pointerEvents: 'none',
+          overflow: 'hidden',
         }}
       />
     </span>
   )
 }
+
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
@@ -499,6 +501,24 @@ export function ReportCard({ report, childName }: Props) {
           place-items: center;
           line-height: 1;
           transform: translateY(2px);
+        }
+
+
+        .sc-score-lottie-celebration-v1 {
+          width: 64px;
+          height: 64px;
+          display: grid;
+          place-items: center;
+          line-height: 1;
+          transform: translateY(2px);
+          overflow: hidden;
+        }
+
+        .sc-score-lottie-celebration-v1 iframe {
+          width: 64px;
+          height: 64px;
+          border: 0;
+          display: block;
         }
 
 .sc-score-flat-summary-v1 .emoji {
@@ -892,7 +912,7 @@ export function ReportCard({ report, childName }: Props) {
       <ScoreGauge value={active.score} />
 
       <div className="sc-score-flat-summary-v1">
-        <div className="emoji" aria-hidden="true">{getScoreEmoji(active.score)}</div>
+        <div className="emoji" aria-hidden="true"><HighScoreCelebration score={active.score} /></div>
         <p className="status">{active.status}</p>
 
         {typeof active.delta === 'number' ? (
