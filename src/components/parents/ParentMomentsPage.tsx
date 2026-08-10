@@ -565,6 +565,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
         fontSize: 0,
         lineHeight: 1,
         WebkitTapHighlightColor: 'transparent',
+        pointerEvents: 'auto',
+        position: 'relative',
+        zIndex: 2147482502,
       }}
     >
       <span style={{
@@ -581,7 +584,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
       </span>
     </button>
 
-    {!insideReportShell && momentsMenuOpen && (
+    {momentsMenuOpen && (
       <>
         <div
           onClick={() => setMomentsMenuOpen(false)}
@@ -768,7 +771,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   </span>
   </button>
 
-  {momentsMenuOpen && (
+  {!insideReportShell && momentsMenuOpen && (
   <>
   <div
   onClick={() => setMomentsMenuOpen(false)}
