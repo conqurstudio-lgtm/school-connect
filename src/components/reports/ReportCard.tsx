@@ -419,7 +419,7 @@ export function ReportCard({ report, childName }: Props) {
           width: 264px;
           height: 264px;
           max-width: 80vw;
-          margin: 30px auto 0;
+          margin: 18px auto 0;
         }
 
         .sc-score-gauge-svg-flat-v1 {
