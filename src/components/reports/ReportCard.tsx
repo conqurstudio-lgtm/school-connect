@@ -6,10 +6,10 @@ import { TrendingDown, TrendingUp, Minus } from 'lucide-react'
 import { getOverallScore, getScoreLabel } from '@/lib/reports'
 
 const BRAND = '#F4531F'
-const INK = '#0F1113'
+const INK = '#252525'
 const INK_SOFT = '#8A8F96'
-const HAIRLINE = '#ECECEE'
-const SURFACE = '#F4F5F7'
+const HAIRLINE = 'rgba(17,17,17,0.055)'
+const SURFACE = '#F7F7F8'
 
 interface Props {
   report: {
@@ -226,7 +226,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? 'rgba(244,83,31,0.20)' : '#D8D8D5'}
+          stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
           strokeWidth="3"
         />
         <circle
@@ -454,8 +454,8 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-flat-summary-v1 .status {
           margin: 0;
           color: ${INK};
-          font-size: 15.5px;
-          font-weight: 620;
+          font-size: 15.2px;
+          font-weight: 560;
           line-height: 1.15;
           letter-spacing: -0.025em;
         }
@@ -473,8 +473,8 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-report-delta-flat-v1 svg,
         .sc-report-delta-flat-v1 strong {
-          color: ${BRAND};
-          font-weight: 650;
+          color: #5F6268;
+          font-weight: 600;
         }
 
         .sc-teacher-flat-note-v1 {
@@ -487,7 +487,7 @@ export function ReportCard({ report, childName }: Props) {
           gap: 11px;
           border-radius: 22px;
           background: #FFFFFF;
-          border: 1px solid rgba(17,17,17,0.05);
+          border: 1px solid rgba(17,17,17,0.045);
           box-shadow: none;
           box-sizing: border-box;
         }
@@ -497,12 +497,12 @@ export function ReportCard({ report, childName }: Props) {
           height: 38px;
           border-radius: 999px;
           background: #F1F2F3;
-          border: 2px solid #FFF1EC;
+          border: 1px solid rgba(17,17,17,0.06);
           overflow: hidden;
           flex-shrink: 0;
           display: grid;
           place-items: center;
-          color: ${BRAND};
+          color: #5F6268;
           font-size: 12px;
           font-weight: 700;
         }
@@ -550,14 +550,14 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-teacher-flat-note-v1.is-subject-tip-note {
-          background: #FFF8F5;
-          border-color: rgba(244,83,31,0.10);
+          background: #FFFFFF;
+          border-color: rgba(17,17,17,0.055);
         }
 
         .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
-          background: #FFFFFF;
+          background: #F7F7F8;
           color: #10141A;
-          border-color: rgba(244,83,31,0.16);
+          border-color: rgba(17,17,17,0.06);
         }
 
         .sc-subject-tip-emoji-v1 {
@@ -570,9 +570,9 @@ export function ReportCard({ report, childName }: Props) {
           border: none;
           background: transparent;
           padding: 0;
-          color: ${BRAND};
+          color: #252525;
           font: inherit;
-          font-weight: 700;
+          font-weight: 680;
           cursor: pointer;
         }
 
@@ -593,7 +593,7 @@ export function ReportCard({ report, childName }: Props) {
           margin: 0;
           color: ${INK};
           font-size: 13px;
-          font-weight: 420;
+          font-weight: 520;
           letter-spacing: -0.025em;
           text-transform: none;
         }
@@ -647,16 +647,16 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1.is-active {
-          background: #FFF1EC;
+          background: #FFF7F3;
           color: ${INK};
-          border-color: rgba(244,83,31,0.16);
+          border-color: rgba(244,83,31,0.12);
         }
 
         .sc-subject-flat-slider-card-v1 p {
           margin: 14px 0 0;
           color: inherit;
           font-size: 13.2px;
-          font-weight: 650;
+          font-weight: 600;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
@@ -666,7 +666,7 @@ export function ReportCard({ report, childName }: Props) {
           margin-top: 4px;
           color: ${INK_SOFT};
           font-size: 11.7px;
-          font-weight: 470;
+          font-weight: 450;
           line-height: 1.2;
         }
 
