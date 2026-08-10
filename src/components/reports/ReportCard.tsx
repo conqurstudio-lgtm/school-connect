@@ -132,46 +132,58 @@ function Delta({ value }: { value: number }) {
 }
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
-  const pct = Math.max(0, Math.min(1, value / max))
   const shown = useCountUp(value)
-  const r = 100
-  const c = 2 * Math.PI * r
-  const sweep = 0.74
-  const startAngle = 90 + (1 - sweep) * 180
+  const size = 244
+  const stroke = 2.35
+  const center = size / 2
+  const radius = (size - stroke - 14) / 2
+  const circumference = 2 * Math.PI * radius
+  const progress = Math.max(0, Math.min(1, value / max))
+
+  const arcRatio = 0.76
+  const arcLength = circumference * arcRatio
+  const gapLength = circumference - arcLength
+  const progressLength = Math.max(0.001, arcLength * progress)
+  const rotation = 132
 
   return (
     <div className="sc-score-gauge-flat-v1">
       <svg
-        viewBox="0 0 200 200"
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
         className="sc-score-gauge-svg-flat-v1"
         role="img"
         aria-label={`Score ${shown.toFixed(1)} out of ${max}`}
       >
-        <g transform={`rotate(${startAngle} 100 100)`}>
-          <circle
-            cx="100"
-            cy="100"
-            r={r}
-            fill="none"
-            stroke={HAIRLINE}
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeDasharray={`${c * sweep} ${c}`}
-          />
-          <circle
-            cx="100"
-            cy="100"
-            r={r}
-            fill="none"
-            stroke={BRAND}
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeDasharray={`${c * sweep * pct} ${c}`}
-            style={{
-    transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
-            }}
-          />
-        </g>
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke="rgba(17,17,17,0.13)"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${arcLength} ${gapLength}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
+        />
+
+        <circle
+          cx={center}
+          cy={center}
+          r={radius}
+          fill="none"
+          stroke={BRAND}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${progressLength} ${circumference}`}
+          strokeDashoffset={0}
+          transform={`rotate(${rotation} ${center} ${center})`}
+          style={{
+            transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
+          }}
+        />
       </svg>
 
       <div className="sc-score-gauge-center-flat-v1">
@@ -361,16 +373,17 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-score-gauge-flat-v1 {
           position: relative;
-          width: 70vw;
-          max-width: 280px;
-          aspect-ratio: 1 / 1;
-          margin: 42px auto 0;
+          width: 244px;
+          height: 244px;
+          max-width: 76vw;
+          margin: 34px auto 0;
         }
 
         .sc-score-gauge-svg-flat-v1 {
           width: 100%;
           height: 100%;
           display: block;
+          overflow: visible;
         }
 
         .sc-score-gauge-center-flat-v1 {
@@ -386,17 +399,17 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
-          font-size: 60px;
-          font-weight: 650;
+          font-size: 56px;
+          font-weight: 420;
           line-height: 0.92;
           letter-spacing: -0.08em;
           font-variant-numeric: tabular-nums;
         }
 
         .sc-score-gauge-center-flat-v1 small {
-          margin-top: 12px;
+          margin-top: 7px;
           color: ${INK_SOFT};
-          font-size: 13px;
+          font-size: 12.8px;
           font-weight: 430;
           letter-spacing: -0.01em;
         }
@@ -442,23 +455,27 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-teacher-flat-note-v1 {
-          margin-top: 46px;
-          padding: 0 28px;
+          width: calc(100% - 48px);
+          max-width: 370px;
+          margin: 36px auto 0;
+          padding: 0;
           display: flex;
           align-items: flex-start;
-          gap: 14px;
+          gap: 12px;
         }
 
         .sc-teacher-flat-avatar-v1 {
-          width: 44px;
-          height: 44px;
+          width: 42px;
+          height: 42px;
           border-radius: 999px;
-          background: ${SURFACE};
+          background: #F1F2F3;
+          border: 2px solid #FFFFFF;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
           overflow: hidden;
           flex-shrink: 0;
           display: grid;
           place-items: center;
-          color: ${INK};
+          color: #252525;
           font-size: 13px;
           font-weight: 700;
         }
@@ -472,31 +489,36 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-copy-v1 {
           min-width: 0;
-          padding-top: 2px;
+          flex: 1;
+          background: #FBFBFB;
+          border: 1px solid rgba(17,17,17,0.05);
+          border-radius: 22px;
+          padding: 13px 15px 14px;
+          box-sizing: border-box;
         }
 
         .sc-teacher-flat-copy-v1 p {
           margin: 0;
-          color: ${INK_SOFT};
-          font-size: 14.5px;
+          color: #252525;
+          font-size: 13.2px;
           font-weight: 430;
-          line-height: 1.5;
-          letter-spacing: -0.02em;
+          line-height: 1.48;
+          letter-spacing: -0.01em;
         }
 
         .sc-teacher-flat-copy-v1 strong {
-          color: ${INK};
-          font-weight: 700;
+          color: #1A1A1A;
+          font-weight: 680;
         }
 
         .sc-teacher-flat-copy-v1 button {
-          margin-left: 4px;
+          margin-left: 5px;
           border: none;
           background: transparent;
           padding: 0;
-          color: ${INK};
+          color: #252525;
           font: inherit;
-          font-weight: 700;
+          font-weight: 680;
           cursor: pointer;
         }
 
