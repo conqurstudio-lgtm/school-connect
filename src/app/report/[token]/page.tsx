@@ -65,6 +65,17 @@ function getReportDateLabel(report: any) {
     year: 'numeric',
   })
 }
+function isReportWithinLastDays(report: any, days = 30) {
+  const raw = report?.week_starting || report?.published_at || report?.created_at
+  if (!raw) return false
+
+  const time = new Date(raw).getTime()
+  if (!Number.isFinite(time)) return false
+
+  const age = Date.now() - time
+  return age >= 0 && age <= days * 24 * 60 * 60 * 1000
+}
+
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [open, setOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
@@ -109,8 +120,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         <span style={{
           display: 'block',
           minWidth: 0,
-          fontSize: 13.6,
-          fontWeight: 560,
+          fontSize: 13.2,
+          fontWeight: 500,
           letterSpacing: '-0.02em',
           lineHeight: 1.15,
           color: '#1A1A1A',
@@ -159,8 +170,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 }}>
                   <span style={{
                     color: '#1A1A1A',
-                    fontSize: 12.8,
-                    fontWeight: 520,
+                    fontSize: 12.6,
+                    fontWeight: 430,
                     letterSpacing: '-0.015em',
                     lineHeight: 1.15,
                     whiteSpace: 'nowrap',
@@ -172,8 +183,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
                   <span style={{
                     color: '#8A8F96',
-                    fontSize: 11.5,
-                    fontWeight: 400,
+                    fontSize: 11.4,
+                    fontWeight: 380,
                     lineHeight: 1.15,
                   }}>
                     {performance}
@@ -182,9 +193,9 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
                 <span style={{
                   flexShrink: 0,
-                  color: '#252525',
-                  fontSize: 12.4,
-                  fontWeight: 560,
+                  color: '#45484D',
+                  fontSize: 12.2,
+                  fontWeight: 500,
                   letterSpacing: '-0.015em',
                   lineHeight: 1,
                 }}>
@@ -1339,7 +1350,7 @@ export default function ParentMagicReportPage() {
                       margin: '-48px 24px 0',
                     }}
                   >
-                    <PreviousReportsCard reports={reports.slice(1)} childName={childName} />
+                    <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />
                   </div>
                 ) : null}
 
