@@ -1337,7 +1337,7 @@ export default function ParentMagicReportPage() {
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
                   style={{
-                    margin: '22px 24px 0',
+                    margin: '10px 24px 0',
                     paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
                   }}
                 >
