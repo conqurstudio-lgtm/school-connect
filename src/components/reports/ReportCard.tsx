@@ -263,16 +263,19 @@ function SubjectCard({
       aria-pressed={active}
       className={`sc-subject-flat-slider-card-v1 ${active ? 'is-active' : ''}`}
     >
-      {typeof subject.delta === 'number' && Math.abs(subject.delta) >= 0.1 ? (
-        <em
-          className={`sc-subject-delta-flat-v1 ${subject.delta > 0 ? 'is-up' : 'is-down'}`}
-          aria-label={`${subject.delta > 0 ? 'Improved' : 'Dropped'} ${Math.abs(subject.delta).toFixed(1)} from last week`}
-        >
-          {subject.delta > 0 ? '+' : ''}{subject.delta.toFixed(1)}
-        </em>
-      ) : null}
+      <div className="sc-subject-score-row-flat-v1">
+        <MiniRing value={subject.score} active={active} />
 
-      <MiniRing value={subject.score} active={active} />
+        {typeof subject.delta === 'number' && Math.abs(subject.delta) >= 0.1 ? (
+          <em
+            className={`sc-subject-delta-flat-v1 ${subject.delta > 0 ? 'is-up' : 'is-down'}`}
+            aria-label={`${subject.delta > 0 ? 'Improved' : 'Dropped'} ${Math.abs(subject.delta).toFixed(1)} from last week`}
+          >
+            {subject.delta > 0 ? '+' : ''}{subject.delta.toFixed(1)}
+          </em>
+        ) : null}
+      </div>
+
       <p>{subject.name}</p>
       <span>{subject.status}</span>
     </button>
@@ -712,10 +715,15 @@ export function ReportCard({ report, childName }: Props) {
           color: #7C8486;
         }
 
+        .sc-subject-score-row-flat-v1 {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 10px;
+          width: 100%;
+        }
+
         .sc-subject-delta-flat-v1 {
-          position: absolute;
-          top: 15px;
-          right: 15px;
           min-height: 24px;
           padding: 0 8px;
           border-radius: 999px;
@@ -729,6 +737,8 @@ export function ReportCard({ report, childName }: Props) {
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
           color: ${INK_SOFT};
+          flex-shrink: 0;
+          margin-top: 2px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
