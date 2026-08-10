@@ -110,7 +110,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           <span style={{
             display: 'block',
             fontSize: 13.8,
-            fontWeight: 650,
+            fontWeight: 570,
             letterSpacing: '-0.02em',
             lineHeight: 1.15,
             color: '#1A1A1A',
@@ -120,8 +120,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
           <span style={{
             display: 'block',
-            marginTop: 4,
-            fontSize: 12.5,
+            marginTop: 3,
+            fontSize: 12,
             fontWeight: 430,
             color: '#5F6268',
             lineHeight: 1.25,
@@ -133,7 +133,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         <span style={{
           flexShrink: 0,
           minWidth: 52,
-          height: 32,
+          height: 42,
           borderRadius: 999,
           background: '#FFFFFF',
           color: '#252525',
@@ -546,17 +546,17 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           width: '100%',
           maxWidth: 370,
           margin: '0 auto 0',
-          border: '1px solid rgba(37, 37, 37, 0.035)',
-          borderRadius: 26,
-          background: '#f3f6f3',
+          border: '1px solid rgba(17,17,17,0.055)',
+          borderRadius: 28,
+          background: '#FFFFFF',
           color: '#1A1A1A',
           display: 'flex',
           alignItems: 'center',
           gap: 8,
-          padding: '13px 14px',
+          padding: '15px 15px 15px 18px',
           textAlign: 'left',
           fontFamily: 'inherit',
-          boxShadow: 'none',
+          boxShadow: '0 14px 36px rgba(17,17,17,0.035)',
           boxSizing: 'border-box',
         }}
       >
@@ -567,7 +567,7 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
         }}>
           <span style={{
             display: 'block',
-            fontSize: 13.5,
+            fontSize: 14,
             fontWeight: 650,
             letterSpacing: '-0.02em',
             color: '#1A1A1A',
@@ -593,12 +593,12 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
           disabled={creating}
           aria-label="Share report with family"
           style={{
-            width: 32,
+            width: 42,
             height: 32,
             borderRadius: 999,
             border: 'none',
-            background: '#252525',
-            color: '#FFFFFF',
+            background: 'rgba(244,83,31,0.09)',
+            color: '#F4531F',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1333,6 +1333,16 @@ export default function ParentMagicReportPage() {
                   report={reports[0]}
                   childName={childName}
                 />
+
+                <div
+                  className="sc-report-bottom-family-share-wrap-v1"
+                  style={{
+                    margin: '22px 24px 0',
+                    paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
+                  }}
+                >
+                  <FamilyShareButton token={token} variant="card" />
+                </div>
               </div>
             )}
           </div>
