@@ -1301,6 +1301,102 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   }}
  />
  </button>
+ ) : isPdf ? (
+ <a
+ href={moment.file_url}
+ target="_blank"
+ rel="noreferrer"
+ style={{
+ width: '100%',
+ maxWidth: '100%',
+ borderRadius: 20,
+ background: T.soft,
+ display: 'block',
+ color: T.ink,
+ textDecoration: 'none',
+ boxSizing: 'border-box',
+ overflow: 'hidden',
+ border: `1px solid ${T.border}`,
+ }}
+ >
+ <div style={{
+ width: '100%',
+ height: insideReportShell ? 220 : 240,
+ background: '#F3F1EC',
+ position: 'relative',
+ overflow: 'hidden',
+ }}>
+ <iframe
+ src={`${moment.file_url}#page=1&toolbar=0&navpanes=0&scrollbar=0`}
+ title={moment.file_name || 'PDF preview'}
+ style={{
+ width: '100%',
+ height: '100%',
+ border: 'none',
+ background: '#F3F1EC',
+ pointerEvents: 'none',
+ }}
+ />
+ <div style={{
+ position: 'absolute',
+ left: 12,
+ top: 12,
+ borderRadius: 999,
+ background: 'rgba(255,255,255,0.92)',
+ color: T.ink,
+ border: '1px solid rgba(37,37,37,0.08)',
+ padding: '7px 10px',
+ display: 'inline-flex',
+ alignItems: 'center',
+ gap: 6,
+ fontSize: 11.5,
+ fontWeight: 680,
+ boxShadow: '0 10px 24px rgba(0,0,0,0.08)',
+ }}>
+ <FileText size={13} strokeWidth={2} />
+ PDF
+ </div>
+ </div>
+
+ <div style={{
+ padding: 13,
+ display: 'flex',
+ alignItems: 'center',
+ gap: 12,
+ background: T.soft,
+ }}>
+ <div style={{
+ width: 44,
+ height: 44,
+ borderRadius: 16,
+ background: T.accentSoft,
+ color: T.accent,
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ }}>
+ <FileText size={19} strokeWidth={1.8} />
+ </div>
+
+ <div style={{ minWidth: 0 }}>
+ <p style={{
+ fontSize: 13.5,
+ fontWeight: 560,
+ color: T.ink,
+ margin: 0,
+ overflow: 'hidden',
+ textOverflow: 'ellipsis',
+ whiteSpace: 'nowrap',
+ }}>
+ {moment.file_name || 'PDF document'}
+ </p>
+ <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
+ Tap to open PDF
+ </p>
+ </div>
+ </div>
+ </a>
  ) : (
  <a
  href={moment.file_url}
