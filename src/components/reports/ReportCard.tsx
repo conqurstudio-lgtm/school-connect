@@ -727,15 +727,15 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 p {
           margin: 0;
           color: inherit;
-          font-size: 12.6px;
-          font-weight: 520;
-          line-height: 1.12;
-          letter-spacing: -0.025em;
+          font-size: 13.1px;
+          font-weight: 570;
+          line-height: 1.22;
+          letter-spacing: -0.02em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 2px;
+          margin-top: 3px;
           color: ${INK_SOFT};
           font-size: 11.7px;
           font-weight: 450;
@@ -752,7 +752,7 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: space-between;
           gap: 8px;
           width: 100%;
-                  margin-bottom: 13px;
+                  margin-bottom: 11px;
 }
 
         .sc-subject-delta-flat-v1 {
