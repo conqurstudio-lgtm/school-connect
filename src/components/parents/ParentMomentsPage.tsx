@@ -649,18 +649,19 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  onClick={() => setOpenImage('')}
  role="dialog"
  aria-modal="true"
- style={{
- position: 'fixed',
- inset: 0,
- zIndex: 2147483000,
- background: '#000000',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- padding: 'calc(16px + env(safe-area-inset-top, 0px)) 14px calc(16px + env(safe-area-inset-bottom, 0px))',
- boxSizing: 'border-box',
- cursor: 'zoom-out',
- }}
+  style={{
+  position: 'fixed',
+  inset: 0,
+  zIndex: 2147483000,
+  background: '#101114',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 0,
+  boxSizing: 'border-box',
+  cursor: 'zoom-out',
+  overflow: 'hidden',
+  }}
  >
  <button  type="button"
  aria-label="Close image preview"
@@ -698,17 +699,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  loading="eager"
  fetchPriority="high" 
  onClick={event => event.stopPropagation()}
- style={{
- maxWidth: '100%',
- maxHeight: '100%',
- width: '100%',
- height: '100%',
- objectFit: 'contain',
- display: 'block',
- borderRadius: 0,
- background: '#000000',
- boxShadow: 'none',
- }}
+  style={{
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain',
+  display: 'block',
+  borderRadius: 0,
+  background: '#101114',
+  boxShadow: 'none',
+  }}
  />
  </div>,
  document.body
@@ -1008,17 +1007,19 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  <button
  type="button"
  onClick={() => onImage(moment.file_url)}
- style={{
- display: 'block',
- width: '100%',
- maxWidth: '100%',
- padding: 0,
- border: 'none',
- background: 'transparent',
- cursor: 'zoom-in',
- fontFamily: 'inherit',
- textAlign: 'left',
- }}
+  style={{
+  display: 'inline-flex',
+  width: 'fit-content',
+  maxWidth: '100%',
+  padding: 0,
+  border: 'none',
+  background: 'transparent',
+  cursor: 'zoom-in',
+  fontFamily: 'inherit',
+  textAlign: 'left',
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  }}
  >
  <img
  src={moment.file_url}
@@ -1027,19 +1028,19 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  decoding="async"
  fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
  onLoad={() => setImageReady(true)}
- style={{
- width: '100%',
- maxWidth: '100%',
- height: 'auto',
- maxHeight: 'none',
- objectFit: 'contain',
- objectPosition: 'center center',
- display: 'block',
- borderRadius: 18,
- background: T.soft,
- opacity: imageReady ? 1 : 0,
- transition: 'opacity 220ms ease',
- }}
+  style={{
+  width: 'auto',
+  maxWidth: '100%',
+  height: 'auto',
+  maxHeight: 360,
+  objectFit: 'contain',
+  objectPosition: 'left center',
+  display: 'block',
+  borderRadius: 18,
+  background: 'transparent',
+  opacity: imageReady ? 1 : 0,
+  transition: 'opacity 220ms ease',
+  }}
  />
  </button>
  ) : (
