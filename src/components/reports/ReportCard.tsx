@@ -6,11 +6,8 @@ import { TrendingDown, TrendingUp, Minus } from 'lucide-react'
 import { getOverallScore, getScoreLabel } from '@/lib/reports'
 
 const BRAND = '#F4531F'
-const BRAND_SUBJECT = '#F1A07F'
-const TRACK_LIGHT = '#E6E6E8'
-const TRACK_SUBJECT = '#ECECEE'
-const INK = '#232326'
-const INK_SOFT = '#8B8E97'
+const INK = '#252525'
+const INK_SOFT = '#8A8F96'
 const HAIRLINE = 'rgba(17,17,17,0.055)'
 const SURFACE = '#F7F7F8'
 
@@ -230,7 +227,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={TRACK_SUBJECT}
+          stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
           strokeWidth="3"
         />
         <circle
@@ -238,7 +235,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={BRAND_SUBJECT}
+          stroke={BRAND}
           strokeWidth="3"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -697,7 +694,7 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 134px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #ECEAED;
+          border: 1px solid rgba(17,17,17,0.045);
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
@@ -721,9 +718,9 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1.is-active {
-          background: #FFF7F3;
+          background: #FFFFFF;
           color: ${INK};
-          border-color: #F3D7CC;
+          border-color: rgba(244,83,31,0.18);
           box-shadow: none;
         }
 
@@ -770,20 +767,20 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 520;
           line-height: 1;
           letter-spacing: -0.01em;
-          background: #F2F5F2;
-          color: #7D9C8B;
+          background: rgba(17,17,17,0.032);
+          color: #8F949B;
           flex-shrink: 0;
           margin-top: 2px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
-          background: #F2F5F2;
-          color: #7D9C8B;
+          background: rgba(17,17,17,0.032);
+          color: #7F9A8B;
         }
 
         .sc-subject-delta-flat-v1.is-down {
-          background: #FCEEEE;
-          color: #D46A61;
+          background: rgba(255,76,67,0.075);
+          color: #D65C55;
         }
 
         .sc-subject-mini-ring-flat-v1 {
