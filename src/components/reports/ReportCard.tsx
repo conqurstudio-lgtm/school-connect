@@ -437,7 +437,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-flat-summary-v1 {
-          margin-top: -8px;
+          margin-top: -2px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -449,8 +449,8 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-flat-summary-v1 .emoji {
           font-size: 25px;
           line-height: 1;
-          margin-bottom: 17px;
-                  transform: translateY(-10px);
+          margin-bottom: -2px;
+                  transform: translateY(-34px);
 }
 
         .sc-score-flat-summary-v1 .status {
