@@ -174,7 +174,26 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
         className="sc-score-gauge-svg-flat-v1"
         role="img"
         aria-label={`Score ${shown.toFixed(1)} out of ${max}`}
+      
       >
+        <defs>
+          <filter
+            id="scoreArcGlowFlatV1"
+            x="-24%"
+            y="-24%"
+            width="148%"
+            height="148%"
+            colorInterpolationFilters="sRGB"
+          >
+            <feDropShadow
+              dx="0"
+              dy="3"
+              stdDeviation="2.4"
+              floodColor="#F4531F"
+              floodOpacity="0.30"
+            />
+          </filter>
+        </defs>
         <circle
           cx={center}
           cy={center}
@@ -194,6 +213,7 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
           r={radius}
           fill="none"
           stroke={BRAND}
+          filter="url(#scoreArcGlowFlatV1)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
