@@ -1260,19 +1260,14 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  </p>
  )}
 
- <div style={{
- marginTop: 12,
- marginLeft: insideReportShell ? -48 : 0,
- width: insideReportShell ? 'calc(100% + 48px)' : '100%',
- position: 'relative',
- }}>
+ <div style={{ marginTop: 12, position: 'relative' }}>
  {isImage ? (
  <button
  type="button"
  onClick={() => onImage(moment.file_url)}
   style={{
-  display: 'block',
-  width: '100%',
+  display: 'inline-flex',
+  width: 'fit-content',
   maxWidth: '100%',
   padding: 0,
   border: 'none',
@@ -1280,7 +1275,9 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   cursor: 'zoom-in',
   fontFamily: 'inherit',
   textAlign: 'left',
- }}
+  alignItems: 'flex-start',
+  justifyContent: 'flex-start',
+  }}
  >
  <img
  src={moment.file_url}
@@ -1290,18 +1287,18 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
  onLoad={() => setImageReady(true)}
   style={{
-  width: '100%',
+  width: 'auto',
   maxWidth: '100%',
   height: 'auto',
-  maxHeight: 430,
-  objectFit: 'cover',
-  objectPosition: 'center',
+  maxHeight: 360,
+  objectFit: 'contain',
+  objectPosition: 'left center',
   display: 'block',
-  borderRadius: 22,
-  background: T.soft,
+  borderRadius: 18,
+  background: 'transparent',
   opacity: imageReady ? 1 : 0,
   transition: 'opacity 220ms ease',
- }}
+  }}
  />
  </button>
  ) : isPdf ? (
@@ -1312,7 +1309,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  style={{
  width: '100%',
  maxWidth: '100%',
- borderRadius: 24,
+ borderRadius: 20,
  background: T.soft,
  display: 'block',
  color: T.ink,
@@ -1324,7 +1321,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  >
  <div style={{
  width: '100%',
- height: insideReportShell ? 255 : 280,
+ height: insideReportShell ? 230 : 250,
  background: '#F3F1EC',
  position: 'relative',
  overflow: 'hidden',
