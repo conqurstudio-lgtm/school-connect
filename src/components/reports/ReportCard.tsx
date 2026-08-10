@@ -150,6 +150,46 @@ function Delta({ value }: { value: number }) {
   )
 }
 
+function HighScoreCelebration({ score }: { score: number }) {
+  const isHighScore = Number(score) >= 4.5
+
+  useEffect(() => {
+    if (!isHighScore) return
+    if (typeof document === 'undefined') return
+
+    const scriptId = 'dotlottie-wc-loader-v1'
+    if (document.getElementById(scriptId)) return
+
+    const script = document.createElement('script')
+    script.id = scriptId
+    script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.7.1/dist/dotlottie-wc.js'
+    script.type = 'module'
+    script.async = true
+    document.head.appendChild(script)
+  }, [isHighScore])
+
+  if (!isHighScore) {
+    return <><HighScoreCelebration score={score} /></>
+  }
+
+  return (
+    <span className="sc-score-lottie-celebration-v1" role="img" aria-label="Excellent score">
+      <dotlottie-wc
+        src="https://lottie.host/a73da68c-54ce-4ecb-aad0-7cd34696e089/3ze4jlJA9W.lottie"
+        speed="1"
+        mode="forward"
+        loop
+        autoplay
+        style={{
+          width: '58px',
+          height: '58px',
+          display: 'block',
+        }}
+      />
+    </span>
+  )
+}
+
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
   const size = 264
@@ -466,7 +506,17 @@ export function ReportCard({ report, childName }: Props) {
           z-index: 2;
         }
 
-        .sc-score-flat-summary-v1 .emoji {
+        
+        .sc-score-lottie-celebration-v1 {
+          width: 58px;
+          height: 58px;
+          display: grid;
+          place-items: center;
+          line-height: 1;
+          transform: translateY(2px);
+        }
+
+.sc-score-flat-summary-v1 .emoji {
           font-size: 25px;
           line-height: 1;
           margin-bottom: -8px;
