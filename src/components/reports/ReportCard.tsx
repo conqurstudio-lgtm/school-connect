@@ -164,8 +164,8 @@ function HighScoreCelebration({ score }: { score: number }) {
         title="Excellent score celebration"
         src="https://lottie.host/embed/a73da68c-54ce-4ecb-aad0-7cd34696e089/3ze4jlJA9W.lottie"
         style={{
-          width: '64px',
-          height: '64px',
+          width: '96px',
+          height: '96px',
           border: 'none',
           display: 'block',
           pointerEvents: 'none',
@@ -419,7 +419,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-report-flat-title-v1 {
           padding: 10px 30px 0;
           text-align: center;
-          transform: translateY(7px);
+          transform: translateY(-10px);
         }
 
         .sc-report-flat-title-v1 h2 {
@@ -505,18 +505,18 @@ export function ReportCard({ report, childName }: Props) {
 
 
         .sc-score-lottie-celebration-v1 {
-          width: 64px;
-          height: 64px;
+          width: 96px;
+          height: 96px;
           display: grid;
           place-items: center;
           line-height: 1;
           transform: translateY(2px);
-          overflow: hidden;
+          overflow: visible;
         }
 
         .sc-score-lottie-celebration-v1 iframe {
-          width: 64px;
-          height: 64px;
+          width: 96px;
+          height: 96px;
           border: 0;
           display: block;
         }
