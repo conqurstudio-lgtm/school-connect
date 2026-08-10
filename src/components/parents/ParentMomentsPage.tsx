@@ -517,13 +517,14 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: insideReportShell ? 'auto' : '100dvh',
- height: insideReportShell ? 'auto' : '100dvh',
+ minHeight: insideReportShell ? 'calc(100dvh - 54px - env(safe-area-inset-top, 0px))' : '100dvh',
+ height: insideReportShell ? 'calc(100dvh - 54px - env(safe-area-inset-top, 0px))' : '100dvh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
  color: T.ink,
  overscrollBehavior: 'none',
+ touchAction: 'pan-y',
  }}>
  <SafeStyle />
 
@@ -664,7 +665,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
  <div style={{
  maxWidth: 520,
- height: insideReportShell ? 'auto' : '100dvh',
+ height: insideReportShell ? '100%' : '100dvh',
+ minHeight: 0,
  margin: '0 auto',
  display: 'flex',
  flexDirection: 'column',
@@ -686,12 +688,14 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  ) : null}
 
  <section style={{
- flex: insideReportShell ? 'initial' : 1,
- minHeight: insideReportShell ? 'auto' : 0,
- overflowY: insideReportShell ? 'visible' : 'auto',
+ flex: 1,
+ minHeight: 0,
+ overflowY: 'auto',
  overflowX: 'hidden',
- WebkitOverflowScrolling: insideReportShell ? undefined : 'touch',
- padding: insideReportShell ? '0 0 18px' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ WebkitOverflowScrolling: 'touch',
+ overscrollBehaviorY: 'contain',
+ touchAction: 'pan-y',
+ padding: insideReportShell ? '6px 0 calc(26px + env(safe-area-inset-bottom, 0px))' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
  
