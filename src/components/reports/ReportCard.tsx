@@ -152,7 +152,7 @@ function Delta({ value }: { value: number }) {
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
-  const size = 244
+  const size = 256
   const stroke = 2.35
   const center = size / 2
   const radius = (size - stroke - 14) / 2
@@ -394,9 +394,9 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-score-gauge-flat-v1 {
           position: relative;
-          width: 244px;
-          height: 244px;
-          max-width: 76vw;
+          width: 256px;
+          height: 256px;
+          max-width: 78vw;
           margin: 28px auto 0;
         }
 
@@ -577,7 +577,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-v1 {
-          margin-top: 34px;
+          margin-top: 46px;
           padding-bottom: 8px;
         }
 
