@@ -153,21 +153,6 @@ function Delta({ value }: { value: number }) {
 function HighScoreCelebration({ score }: { score: number }) {
   const isHighScore = Number(score) >= 4.5
 
-  useEffect(() => {
-    if (!isHighScore) return
-    if (typeof document === 'undefined') return
-
-    const scriptId = 'dotlottie-wc-loader-v1'
-    if (document.getElementById(scriptId)) return
-
-    const script = document.createElement('script')
-    script.id = scriptId
-    script.src = 'https://unpkg.com/@lottiefiles/dotlottie-wc@0.7.1/dist/dotlottie-wc.js'
-    script.type = 'module'
-    script.async = true
-    document.head.appendChild(script)
-  }, [isHighScore])
-
   if (!isHighScore) {
     return <><HighScoreCelebration score={score} /></>
   }
