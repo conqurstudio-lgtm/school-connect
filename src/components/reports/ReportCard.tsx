@@ -744,17 +744,17 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: 14px 0 0;
+          margin: 0;
           color: inherit;
-          font-size: 13.6px;
-          font-weight: 560;
+          font-size: 13.1px;
+          font-weight: 570;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 4px;
+          margin-top: 5px;
           color: ${INK_SOFT};
           font-size: 11.7px;
           font-weight: 450;
@@ -767,28 +767,29 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-score-row-flat-v1 {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           justify-content: space-between;
-          gap: 10px;
+          gap: 8px;
           width: 100%;
-        }
+                  margin-bottom: 13px;
+}
 
         .sc-subject-delta-flat-v1 {
-          min-height: 24px;
-          padding: 0 8px;
+          min-height: 22px;
+          padding: 0 7px;
           border-radius: 999px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           font-style: normal;
-          font-size: 11.4px;
-          font-weight: 540;
+          font-size: 11px;
+          font-weight: 520;
           line-height: 1;
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
           color: #8F949B;
           flex-shrink: 0;
-          margin-top: 2px;
+          margin-top: 1px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
@@ -803,8 +804,8 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
-          width: 48px;
-          height: 48px;
+          width: 46px;
+          height: 46px;
           flex-shrink: 0;
         }
 
@@ -821,8 +822,8 @@ export function ReportCard({ report, childName }: Props) {
           place-items: center;
           margin: 0;
           color: inherit;
-          font-size: 12.6px;
-          font-weight: 560;
+          font-size: 12.2px;
+          font-weight: 540;
           line-height: 1;
           font-variant-numeric: tabular-nums;
         }
