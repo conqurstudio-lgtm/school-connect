@@ -691,14 +691,14 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-flat-slider-card-v1 {
           width: 150px;
-          min-height: 128px;
+          min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
           border: 1px solid rgba(17,17,17,0.045);
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
-          padding: 14px 15px 14px;
+          padding: 13px 15px 13px;
           border: 1px solid rgba(17,17,17,0.045);
           box-shadow: none;
           text-align: left;
