@@ -718,19 +718,17 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.16);
-          box-shadow: 0 16px 38px rgba(244,83,31,0.055);
-        };
-          border-color: rgba(244,83,31,0.12);
+          border-color: rgba(244,83,31,0.14);
+          box-shadow: 0 14px 34px rgba(244,83,31,0.045);
         }
 
         .sc-subject-flat-slider-card-v1 p {
           margin: 0;
           color: inherit;
-          font-size: 13.6px;
-          font-weight: 520;
-          line-height: 1.15;
-          letter-spacing: -0.025em;
+          font-size: 12.8px;
+          font-weight: 560;
+          line-height: 1.16;
+          letter-spacing: -0.018em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
@@ -752,7 +750,7 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: space-between;
           gap: 8px;
           width: 100%;
-                  margin-bottom: 11px;
+                  margin-bottom: 12px;
 }
 
         .sc-subject-delta-flat-v1 {
