@@ -271,7 +271,7 @@ function SubjectCard({
             className={`sc-subject-delta-flat-v1 ${subject.delta > 0 ? 'is-up' : 'is-down'}`}
             aria-label={`${subject.delta > 0 ? 'Improved' : 'Dropped'} ${Math.abs(subject.delta).toFixed(1)} from last week`}
           >
-            {subject.delta > 0 ? '+' : ''}{subject.delta.toFixed(1)}
+            {subject.delta > 0 ? '↗' : '↘'} {Math.abs(subject.delta).toFixed(1)}
           </em>
         ) : null}
       </div>
@@ -468,7 +468,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-flat-summary-v1 .emoji {
           font-size: 25px;
           line-height: 1;
-          margin-bottom: -2px;
+          margin-bottom: -8px;
                   transform: translateY(-34px);
 }
 
@@ -598,8 +598,9 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-copy-v1 strong {
           color: #10141A;
-          font-weight: 700;
-        }
+          font-weight: 620;
+                  letter-spacing: -0.02em;
+}
 
         .sc-teacher-flat-note-v1 {
           animation: scTeacherNoteSwapV1 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -722,8 +723,8 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 p {
           margin: 14px 0 0;
           color: inherit;
-          font-size: 13.2px;
-          font-weight: 590;
+          font-size: 13.6px;
+          font-weight: 620;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
@@ -758,23 +759,23 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: center;
           font-style: normal;
           font-size: 11.4px;
-          font-weight: 640;
+          font-weight: 600;
           line-height: 1;
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
-          color: ${INK_SOFT};
+          color: #9A9EA6;
           flex-shrink: 0;
           margin-top: 2px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
-          background: rgba(31,157,99,0.10);
-          color: #1F9D63;
+          background: rgba(31,157,99,0.055);
+          color: #7A9B88;
         }
 
         .sc-subject-delta-flat-v1.is-down {
-          background: rgba(225,72,62,0.10);
-          color: #E1483E;
+          background: rgba(225,72,62,0.055);
+          color: #A98885;
         }
 
         .sc-subject-mini-ring-flat-v1 {
