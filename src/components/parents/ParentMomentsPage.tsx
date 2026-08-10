@@ -576,7 +576,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   margin: '0 0 14px',
   position: 'relative',
   }}>
-  <div style={{ minWidth: 0 }}>
+  <div style={{ minWidth: 0, display: insideReportShell ? 'none' : 'block' }}>
   <p style={{
   margin: 0,
   color: T.ink,
@@ -620,6 +620,10 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   fontFamily: 'inherit',
   fontSize: 0,
   lineHeight: 1,
+  position: insideReportShell ? 'fixed' : 'relative',
+  top: insideReportShell ? 'calc(8px + env(safe-area-inset-top, 0px))' : 'auto',
+  right: insideReportShell ? 'max(16px, calc((100vw - 520px) / 2 + 16px))' : 'auto',
+  zIndex: insideReportShell ? 40 : 'auto',
   WebkitTapHighlightColor: 'transparent',
   }}
   >
@@ -652,9 +656,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   <div
   onClick={event => event.stopPropagation()}
   style={{
-  position: 'absolute',
-  top: 42,
-  right: 0,
+  position: insideReportShell ? 'fixed' : 'absolute',
+  top: insideReportShell ? 'calc(52px + env(safe-area-inset-top, 0px))' : 42,
+  right: insideReportShell ? 'max(16px, calc((100vw - 520px) / 2 + 16px))' : 0,
   zIndex: 8999,
   minWidth: 172,
   borderRadius: 18,
@@ -807,23 +811,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
 
 
-function ParentMomentCardPolishStyle() {
- return (
- <style jsx global>{`
- .parent-moment-card-polish-v437 {
-   transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
- }
-
- @media (hover: hover) {
-   .parent-moment-card-polish-v437:hover {
-     transform: translateY(-1px);
-     box-shadow: 0 14px 36px rgba(15,23,42,0.065) !important;
-     border-color: rgba(37,37,37,0.105) !important;
-   }
- }
- `}</style>
- )
-}
 
 function ParentReactionFXButton({
  moment,
@@ -928,17 +915,15 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  const [imageReady, setImageReady] = useState(false)
 
  return (
- <article className="sc-parent-moment-post-v414 parent-moment-card-polish-v437" style={{
+ <article className="sc-parent-moment-post-v414" style={{
  width: '100%',
  boxSizing: 'border-box',
  display: 'grid',
- gridTemplateColumns: '40px 1fr',
- gap: 12,
- padding: insideReportShell ? '14px 12px' : '15px 13px',
- border: `1px solid ${T.border}`,
- borderRadius: 24,
- background: T.white,
- boxShadow: '0 10px 30px rgba(15,23,42,0.045)',
+ gridTemplateColumns: '38px 1fr',
+ gap: 10,
+ padding: insideReportShell ? '0 0 22px' : '0 0 24px',
+ borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
+ background: 'transparent',
  }}>
  <div style={{ position: 'relative', flexShrink: 0 }}>
  {/* parent-moment-teacher-avatar-popup-v433 */}
@@ -947,8 +932,8 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  onClick={() => setTeacherInfoOpen(true)}
  aria-label="View teacher information"
  style={{
- width: 40,
- height: 40,
+ width: 38,
+ height: 38,
  borderRadius: '50%',
  border: '1px solid rgba(37,37,37,0.10)',
  background: teacherPhoto ? `url(${teacherPhoto}) center/cover` : T.soft,
@@ -962,7 +947,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  overflow: 'hidden',
  cursor: 'pointer',
  fontFamily: 'inherit',
- boxShadow: '0 8px 18px rgba(15,23,42,0.055)',
+ boxShadow: '0 6px 16px rgba(0,0,0,0.045)',
  }}
  >
  {!teacherPhoto && initials(teacherName)}
