@@ -1282,8 +1282,10 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '0 0 calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: '#FBFAF7',
+          padding: parentView === 'moments'
+            ? '0 16px calc(18px + env(safe-area-inset-bottom, 0px))'
+            : '0 0 calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: parentView === 'moments' ? '#FFFFFF' : '#FBFAF7',
         }}>
           {parentView === 'moments' ? (
             <div
@@ -1293,6 +1295,7 @@ export default function ParentMagicReportPage() {
                 width: '100%',
                 maxWidth: 430,
                 margin: '0 auto',
+                boxSizing: 'border-box',
               }}
             >
               <ParentMomentsPage
