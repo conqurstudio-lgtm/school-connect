@@ -456,23 +456,23 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-teacher-flat-note-v1 {
-          width: calc(100% - 48px);
-          max-width: 370px;
-          margin: 24px auto 0;
-          padding: 15px 16px;
+          width: calc(100% - 56px);
+          max-width: 356px;
+          margin: 22px auto 0;
+          padding: 12px 14px;
           display: flex;
-          align-items: flex-start;
-          gap: 13px;
-          border-radius: 26px;
+          align-items: center;
+          gap: 11px;
+          border-radius: 22px;
           background: #FFFFFF;
-          border: 1px solid rgba(17,17,17,0.055);
-          box-shadow: 0 16px 42px rgba(15, 23, 42, 0.045);
+          border: 1px solid rgba(17,17,17,0.05);
+          box-shadow: none;
           box-sizing: border-box;
         }
 
         .sc-teacher-flat-avatar-v1 {
-          width: 44px;
-          height: 44px;
+          width: 38px;
+          height: 38px;
           border-radius: 999px;
           background: #F1F2F3;
           border: 2px solid #FFF1EC;
@@ -481,7 +481,7 @@ export function ReportCard({ report, childName }: Props) {
           display: grid;
           place-items: center;
           color: ${BRAND};
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 700;
         }
 
@@ -495,16 +495,16 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-copy-v1 {
           min-width: 0;
           flex: 1;
-          padding-top: 1px;
+          padding-top: 0;
         }
 
         .sc-teacher-flat-copy-v1 p {
           margin: 0;
           color: #5F6268;
-          font-size: 13.2px;
+          font-size: 12.8px;
           font-weight: 430;
-          line-height: 1.48;
-          letter-spacing: -0.012em;
+          line-height: 1.42;
+          letter-spacing: -0.01em;
         }
 
         .sc-teacher-flat-copy-v1 strong {
@@ -577,8 +577,8 @@ export function ReportCard({ report, childName }: Props) {
           background: #FFFFFF;
           color: ${INK};
           padding: 15px;
-          border: 1px solid rgba(17,17,17,0.055);
-          box-shadow: 0 16px 38px rgba(15, 23, 42, 0.035);
+          border: 1px solid rgba(17,17,17,0.045);
+          box-shadow: none;
           text-align: left;
           font-family: inherit;
           cursor: pointer;
