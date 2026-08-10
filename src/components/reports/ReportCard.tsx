@@ -176,25 +176,7 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
         aria-label={`Score ${shown.toFixed(1)} out of ${max}`}
       
       >
-        <defs>
-          <filter
-            id="scoreArcGlowFlatV1"
-            x="-24%"
-            y="-24%"
-            width="148%"
-            height="148%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feDropShadow
-              dx="0"
-              dy="2"
-              stdDeviation="1.8"
-              floodColor="#F4531F"
-              floodOpacity="0.16"
-            />
-          </filter>
-        </defs>
-        <circle
+<circle
           cx={center}
           cy={center}
           r={radius}
@@ -213,7 +195,6 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
           r={radius}
           fill="none"
           stroke={BRAND}
-          filter="url(#scoreArcGlowFlatV1)"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${progressLength} ${circumference}`}
@@ -746,15 +727,15 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 p {
           margin: 0;
           color: inherit;
-          font-size: 13.1px;
-          font-weight: 570;
+          font-size: 12.6px;
+          font-weight: 520;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 5px;
+          margin-top: 2px;
           color: ${INK_SOFT};
           font-size: 11.7px;
           font-weight: 450;
