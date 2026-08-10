@@ -678,7 +678,7 @@ export function ReportCard({ report, childName }: Props) {
           display: flex;
           gap: 12px;
           overflow-x: auto;
-          padding: 0 24px 6px;
+          padding: 0 24px 18px;
           scroll-snap-type: x mandatory;
           scroll-padding-left: 24px;
           -ms-overflow-style: none;
@@ -694,13 +694,13 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 134px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: none;
+          border: 1px solid rgba(17,17,17,0.045);
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
           padding: 15px 15px 14px;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 12px 34px rgba(17,17,17,0.028);
+          box-shadow: none;
           text-align: left;
           font-family: inherit;
           cursor: pointer;
@@ -720,8 +720,8 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.14);
-          box-shadow: 0 14px 34px rgba(244,83,31,0.045);
+          border-color: rgba(244,83,31,0.18);
+          box-shadow: none;
         }
 
         .sc-subject-flat-slider-card-v1 p {
