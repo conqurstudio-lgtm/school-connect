@@ -436,17 +436,19 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-flat-summary-v1 {
-          margin-top: -56px;
+          margin-top: -58px;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
+          position: relative;
+          z-index: 2;
         }
 
         .sc-score-flat-summary-v1 .emoji {
           font-size: 27px;
           line-height: 1;
-          margin-bottom: 18px;
+          margin-bottom: 16px;
         }
 
         .sc-score-flat-summary-v1 .status {
