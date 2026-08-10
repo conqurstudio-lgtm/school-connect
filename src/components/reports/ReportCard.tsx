@@ -252,7 +252,7 @@ function SubjectCard({
   active,
   onSelect,
 }: {
-  subject: { key: string; name: string; score: number; status: string }
+  subject: { key: string; name: string; score: number; status: string; delta?: number | null }
   active: boolean
   onSelect: (key: string) => void
 }) {
@@ -263,6 +263,15 @@ function SubjectCard({
       aria-pressed={active}
       className={`sc-subject-flat-slider-card-v1 ${active ? 'is-active' : ''}`}
     >
+      {typeof subject.delta === 'number' && Math.abs(subject.delta) >= 0.1 ? (
+        <em
+          className={`sc-subject-delta-flat-v1 ${subject.delta > 0 ? 'is-up' : 'is-down'}`}
+          aria-label={`${subject.delta > 0 ? 'Improved' : 'Dropped'} ${Math.abs(subject.delta).toFixed(1)} from last week`}
+        >
+          {subject.delta > 0 ? '+' : ''}{subject.delta.toFixed(1)}
+        </em>
+      ) : null}
+
       <MiniRing value={subject.score} active={active} />
       <p>{subject.name}</p>
       <span>{subject.status}</span>
@@ -287,15 +296,24 @@ function getSafeWarmTeacherFallback(childName: string, score: number) {
 export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall = getOverallScore(scoreSource)
+  const previousScoreSource = report.previous_scores || {}
+  const prevOverall = report.previous_scores ? getOverallScore(previousScoreSource) : null
+  const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   const subjects = Object.entries(scoreSource).map(([name, score]) => {
     const safeScore = Math.max(0, Math.min(5, Number(score) || 0))
+    const previousRaw = previousScoreSource?.[name]
+    const previousScore = previousRaw === undefined || previousRaw === null || previousRaw === ''
+      ? null
+      : Math.max(0, Math.min(5, Number(previousRaw) || 0))
+    const delta = previousScore !== null ? safeScore - previousScore : null
 
     return {
       key: String(name),
       name: shortenSubject(String(name)),
       score: safeScore,
       status: getSubjectStatus(safeScore),
+      delta,
     }
   })
 
@@ -305,6 +323,7 @@ export function ReportCard({ report, childName }: Props) {
       name: 'Overall',
       score: overall,
       status: getScoreLabel(overall),
+      delta: overallDelta,
     },
     ...subjects,
   ]
@@ -315,9 +334,6 @@ export function ReportCard({ report, childName }: Props) {
     () => cards.find(item => item.key === activeKey) || cards[0],
     [cards, activeKey]
   )
-
-  const prevOverall = report.previous_scores ? getOverallScore(report.previous_scores) : null
-  const overallDelta = prevOverall !== null ? overall - prevOverall : null
 
   const isLatestReport = report.display_position !== 'previous'
   const reportStatusLabel = isLatestReport ? '' : 'Previous report'
@@ -696,6 +712,35 @@ export function ReportCard({ report, childName }: Props) {
           color: #7C8486;
         }
 
+        .sc-subject-delta-flat-v1 {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          min-height: 24px;
+          padding: 0 8px;
+          border-radius: 999px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-style: normal;
+          font-size: 11.4px;
+          font-weight: 720;
+          line-height: 1;
+          letter-spacing: -0.01em;
+          background: rgba(17,17,17,0.035);
+          color: ${INK_SOFT};
+        }
+
+        .sc-subject-delta-flat-v1.is-up {
+          background: rgba(31,157,99,0.10);
+          color: #1F9D63;
+        }
+
+        .sc-subject-delta-flat-v1.is-down {
+          background: rgba(225,72,62,0.10);
+          color: #E1483E;
+        }
+
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
           width: 48px;
@@ -773,8 +818,8 @@ export function ReportCard({ report, childName }: Props) {
         <div className="emoji" aria-hidden="true">{getScoreEmoji(active.score)}</div>
         <p className="status">{active.status}</p>
 
-        {overallDelta !== null && active.key === 'overall' ? (
-          <Delta value={overallDelta} />
+        {typeof active.delta === 'number' ? (
+          <Delta value={active.delta} />
         ) : null}
       </div>
 
