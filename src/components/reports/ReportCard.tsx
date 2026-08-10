@@ -58,12 +58,12 @@ function shortenSubject(name: string): string {
 
 function formatWeek(date: string): string {
   const d = new Date(date)
+  if (!Number.isFinite(d.getTime())) return ''
+
   const end = new Date(d)
   end.setDate(d.getDate() + 4)
 
   const opt: Intl.DateTimeFormatOptions = { month: 'short', day: '2-digit' }
-
-  if (!Number.isFinite(d.getTime())) return ''
 
   return `${d.toLocaleDateString('en-ZA', opt)} – ${end.toLocaleDateString('en-ZA', opt)}, ${d.getFullYear()}`
 }
@@ -82,19 +82,13 @@ function getSubjectStatus(score: number): string {
   return 'Needs support'
 }
 
-function getPreviousSubjectScore(previousScores: Record<string, number> | null | undefined, subject: string): number | null {
-  if (!previousScores) return null
-  const raw = Number(previousScores[subject])
-  if (!Number.isFinite(raw)) return null
-  return Math.max(0, Math.min(5, raw))
-}
-
 function useCountUp(value: number) {
-  const [shown, setShown] = useState(0)
+  const [shown, setShown] = useState(value)
 
   useEffect(() => {
     const duration = 900
     const start = performance.now()
+    const from = shown
     let raf = 0
 
     const tick = (now: number) => {
@@ -102,13 +96,14 @@ function useCountUp(value: number) {
       const t = Math.min(1, elapsed / duration)
       const eased = 1 - Math.pow(1 - t, 3)
 
-      setShown(value * eased)
+      setShown(from + (value - from) * eased)
 
       if (t < 1) raf = requestAnimationFrame(tick)
     }
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   return shown
@@ -117,7 +112,7 @@ function useCountUp(value: number) {
 function Delta({ value }: { value: number }) {
   if (Math.abs(value) < 0.1) {
     return (
-      <span className="sc-report-delta-v1">
+      <span className="sc-report-delta-flat-v1">
         <Minus size={14} strokeWidth={2.4} />
         <strong>0.0</strong>
         <span>from last week</span>
@@ -128,7 +123,7 @@ function Delta({ value }: { value: number }) {
   const up = value > 0
 
   return (
-    <span className="sc-report-delta-v1">
+    <span className="sc-report-delta-flat-v1">
       {up ? <TrendingUp size={14} strokeWidth={2.4} /> : <TrendingDown size={14} strokeWidth={2.4} />}
       <strong>{up ? '+' : ''}{value.toFixed(1)}</strong>
       <span>from last week</span>
@@ -145,10 +140,10 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const startAngle = 90 + (1 - sweep) * 180
 
   return (
-    <div className="sc-score-gauge-v1">
+    <div className="sc-score-gauge-flat-v1">
       <svg
         viewBox="0 0 200 200"
-        className="sc-score-gauge-svg-v1"
+        className="sc-score-gauge-svg-flat-v1"
         role="img"
         aria-label={`Score ${shown.toFixed(1)} out of ${max}`}
       >
@@ -173,13 +168,13 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
             strokeLinecap="round"
             strokeDasharray={`${c * sweep * pct} ${c}`}
             style={{
-              transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
+    transition: 'stroke-dasharray 900ms cubic-bezier(.22,1,.36,1)',
             }}
           />
         </g>
       </svg>
 
-      <div className="sc-score-gauge-center-v1">
+      <div className="sc-score-gauge-center-flat-v1">
         <span>{shown.toFixed(1)}</span>
         <small>out of {max}</small>
       </div>
@@ -193,16 +188,23 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
   const progress = Math.max(0, Math.min(1, value / 5))
 
   return (
-    <div className="sc-subject-mini-ring-v2">
+    <div className="sc-subject-mini-ring-flat-v1">
       <svg viewBox="0 0 48 48" aria-hidden="true">
-        <circle cx="24" cy="24" r={radius} fill="none" stroke={active ? 'rgba(255,255,255,0.42)' : '#D8D8D5'} strokeWidth="4" />
+        <circle
+          cx="24"
+          cy="24"
+          r={radius}
+          fill="none"
+          stroke={active ? 'rgba(255,255,255,0.38)' : '#D8D8D5'}
+          strokeWidth="3"
+        />
         <circle
           cx="24"
           cy="24"
           r={radius}
           fill="none"
           stroke={active ? '#FFFFFF' : BRAND}
-          strokeWidth="4"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
@@ -228,7 +230,7 @@ function SubjectCard({
       type="button"
       onClick={() => onSelect(subject.key)}
       aria-pressed={active}
-      className={`sc-subject-slider-card-v1 ${active ? 'is-active' : ''}`}
+      className={`sc-subject-flat-slider-card-v1 ${active ? 'is-active' : ''}`}
     >
       <MiniRing value={subject.score} active={active} />
       <p>{subject.name}</p>
@@ -254,16 +256,17 @@ function getSafeWarmTeacherFallback(childName: string, score: number) {
 export function ReportCard({ report, childName }: Props) {
   const scoreSource = report.scores || {}
   const overall = getOverallScore(scoreSource)
-  const subjects = Object.entries(scoreSource)
-    .map(([name, score]) => {
-      const safeScore = Math.max(0, Math.min(5, Number(score) || 0))
-      return {
-        key: String(name),
-        name: shortenSubject(String(name)),
-        score: safeScore,
-        status: getSubjectStatus(safeScore),
-      }
-    })
+
+  const subjects = Object.entries(scoreSource).map(([name, score]) => {
+    const safeScore = Math.max(0, Math.min(5, Number(score) || 0))
+
+    return {
+      key: String(name),
+      name: shortenSubject(String(name)),
+      score: safeScore,
+      status: getSubjectStatus(safeScore),
+    }
+  })
 
   const cards = [
     {
@@ -276,6 +279,7 @@ export function ReportCard({ report, childName }: Props) {
   ]
 
   const [activeKey, setActiveKey] = useState('overall')
+
   const active = useMemo(
     () => cards.find(item => item.key === activeKey) || cards[0],
     [cards, activeKey]
@@ -322,23 +326,22 @@ export function ReportCard({ report, childName }: Props) {
   }, [activeKey, report.comment])
 
   return (
-    <section className="sc-premium-report-v4">
+    <section className="sc-report-flat-v1">
       <style jsx global>{`
-        .sc-premium-report-v4 {
+        .sc-report-flat-v1 {
           width: 100%;
           max-width: 430px;
           margin: 0 auto;
-          padding: 0 0 20px;
+          padding: 0 0 24px;
           color: ${INK};
           font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
-        .sc-report-title-v4 {
-          text-align: left;
-          padding: 4px 8px 0;
+        .sc-report-flat-title-v1 {
+          padding: 4px 24px 0;
         }
 
-        .sc-report-title-v4 h2 {
+        .sc-report-flat-title-v1 h2 {
           margin: 0;
           color: ${INK};
           font-size: 26px;
@@ -347,7 +350,7 @@ export function ReportCard({ report, childName }: Props) {
           letter-spacing: -0.05em;
         }
 
-        .sc-report-title-v4 p {
+        .sc-report-flat-title-v1 p {
           margin: 5px 0 0;
           color: ${INK_SOFT};
           font-size: 13.5px;
@@ -356,29 +359,21 @@ export function ReportCard({ report, childName }: Props) {
           letter-spacing: -0.01em;
         }
 
-        .sc-report-card-surface-v4 {
-          margin-top: 18px;
-          border-radius: 24px;
-          background: #FFFFFF;
-          padding: 24px 18px 22px;
-          box-sizing: border-box;
-        }
-
-        .sc-score-gauge-v1 {
+        .sc-score-gauge-flat-v1 {
           position: relative;
           width: 70vw;
           max-width: 280px;
           aspect-ratio: 1 / 1;
-          margin: 0 auto;
+          margin: 34px auto 0;
         }
 
-        .sc-score-gauge-svg-v1 {
+        .sc-score-gauge-svg-flat-v1 {
           width: 100%;
           height: 100%;
           display: block;
         }
 
-        .sc-score-gauge-center-v1 {
+        .sc-score-gauge-center-flat-v1 {
           position: absolute;
           inset: 0;
           display: flex;
@@ -389,7 +384,7 @@ export function ReportCard({ report, childName }: Props) {
           text-align: center;
         }
 
-        .sc-score-gauge-center-v1 span {
+        .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
           font-size: 60px;
           font-weight: 650;
@@ -398,7 +393,7 @@ export function ReportCard({ report, childName }: Props) {
           font-variant-numeric: tabular-nums;
         }
 
-        .sc-score-gauge-center-v1 small {
+        .sc-score-gauge-center-flat-v1 small {
           margin-top: 12px;
           color: ${INK_SOFT};
           font-size: 13px;
@@ -406,31 +401,31 @@ export function ReportCard({ report, childName }: Props) {
           letter-spacing: -0.01em;
         }
 
-        .sc-score-summary-v4 {
-          margin-top: 18px;
+        .sc-score-flat-summary-v1 {
+          margin-top: 24px;
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
         }
 
-        .sc-score-summary-v4 .emoji {
+        .sc-score-flat-summary-v1 .emoji {
           font-size: 27px;
           line-height: 1;
           margin-bottom: 12px;
         }
 
-        .sc-score-summary-v4 .status {
+        .sc-score-flat-summary-v1 .status {
           margin: 0;
           color: ${INK};
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 650;
           line-height: 1.15;
           letter-spacing: -0.035em;
         }
 
-        .sc-report-delta-v1 {
-          margin-top: 8px;
+        .sc-report-delta-flat-v1 {
+          margin-top: 9px;
           display: inline-flex;
           align-items: center;
           gap: 5px;
@@ -440,29 +435,23 @@ export function ReportCard({ report, childName }: Props) {
           line-height: 1;
         }
 
-        .sc-report-delta-v1 svg,
-        .sc-report-delta-v1 strong {
+        .sc-report-delta-flat-v1 svg,
+        .sc-report-delta-flat-v1 strong {
           color: ${BRAND};
           font-weight: 650;
         }
 
-        .sc-teacher-note-v4 {
-          margin-top: 12px;
-          border-radius: 24px;
-          background: #FFFFFF;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-
-        .sc-teacher-note-inner-v4 {
+        .sc-teacher-flat-note-v1 {
+          margin-top: 38px;
+          padding: 0 24px;
           display: flex;
           align-items: flex-start;
           gap: 14px;
         }
 
-        .sc-teacher-avatar-v4 {
-          width: 42px;
-          height: 42px;
+        .sc-teacher-flat-avatar-v1 {
+          width: 44px;
+          height: 44px;
           border-radius: 999px;
           background: ${SURFACE};
           overflow: hidden;
@@ -474,35 +463,33 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 700;
         }
 
-        .sc-teacher-avatar-v4 img {
+        .sc-teacher-flat-avatar-v1 img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
         }
 
-        .sc-teacher-note-copy-v4 {
+        .sc-teacher-flat-copy-v1 {
           min-width: 0;
-          padding-top: 1px;
+          padding-top: 2px;
         }
 
-        .sc-teacher-note-copy-v4 strong {
-          color: ${INK};
-          font-size: 13.5px;
-          font-weight: 700;
+        .sc-teacher-flat-copy-v1 p {
+          margin: 0;
+          color: ${INK_SOFT};
+          font-size: 14.5px;
+          font-weight: 430;
+          line-height: 1.5;
           letter-spacing: -0.02em;
         }
 
-        .sc-teacher-note-copy-v4 p {
-          margin: 4px 0 0;
-          color: ${INK_SOFT};
-          font-size: 14px;
-          font-weight: 430;
-          line-height: 1.5;
-          letter-spacing: -0.015em;
+        .sc-teacher-flat-copy-v1 strong {
+          color: ${INK};
+          font-weight: 700;
         }
 
-        .sc-teacher-note-copy-v4 button {
+        .sc-teacher-flat-copy-v1 button {
           margin-left: 4px;
           border: none;
           background: transparent;
@@ -513,24 +500,20 @@ export function ReportCard({ report, childName }: Props) {
           cursor: pointer;
         }
 
-        .sc-breakdown-v4 {
-          margin-top: 12px;
-          border-radius: 24px;
-          background: #FFFFFF;
-          padding: 20px 0 20px;
-          overflow: hidden;
-          box-sizing: border-box;
+        .sc-breakdown-flat-v1 {
+          margin-top: 40px;
+          padding-bottom: 8px;
         }
 
-        .sc-breakdown-head-v4 {
+        .sc-breakdown-flat-head-v1 {
           display: flex;
           align-items: baseline;
           justify-content: space-between;
           gap: 12px;
-          padding: 0 20px;
+          padding: 0 24px;
         }
 
-        .sc-breakdown-head-v4 p {
+        .sc-breakdown-flat-head-v1 p {
           margin: 0;
           color: ${INK_SOFT};
           font-size: 12px;
@@ -539,29 +522,29 @@ export function ReportCard({ report, childName }: Props) {
           text-transform: uppercase;
         }
 
-        .sc-breakdown-head-v4 span {
+        .sc-breakdown-flat-head-v1 span {
           color: ${INK_SOFT};
           font-size: 12px;
           font-weight: 500;
         }
 
-        .sc-subject-slider-v4 {
+        .sc-subject-flat-slider-v1 {
           margin-top: 16px;
           display: flex;
           gap: 12px;
           overflow-x: auto;
-          padding: 0 20px;
+          padding: 0 24px 3px;
           scroll-snap-type: x mandatory;
-          scroll-padding-left: 20px;
+          scroll-padding-left: 24px;
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
 
-        .sc-subject-slider-v4::-webkit-scrollbar {
+        .sc-subject-flat-slider-v1::-webkit-scrollbar {
           display: none;
         }
 
-        .sc-subject-slider-card-v1 {
+        .sc-subject-flat-slider-card-v1 {
           width: 142px;
           min-height: 136px;
           flex-shrink: 0;
@@ -581,16 +564,16 @@ export function ReportCard({ report, childName }: Props) {
             opacity 180ms ease;
         }
 
-        .sc-subject-slider-card-v1:active {
+        .sc-subject-flat-slider-card-v1:active {
           transform: scale(0.98);
         }
 
-        .sc-subject-slider-card-v1.is-active {
+        .sc-subject-flat-slider-card-v1.is-active {
           background: ${BRAND};
           color: #FFFFFF;
         }
 
-        .sc-subject-slider-card-v1 p {
+        .sc-subject-flat-slider-card-v1 p {
           margin: 14px 0 0;
           color: inherit;
           font-size: 15px;
@@ -599,7 +582,7 @@ export function ReportCard({ report, childName }: Props) {
           letter-spacing: -0.035em;
         }
 
-        .sc-subject-slider-card-v1 span {
+        .sc-subject-flat-slider-card-v1 span {
           display: block;
           margin-top: 4px;
           color: ${INK_SOFT};
@@ -608,24 +591,24 @@ export function ReportCard({ report, childName }: Props) {
           line-height: 1.2;
         }
 
-        .sc-subject-slider-card-v1.is-active span {
+        .sc-subject-flat-slider-card-v1.is-active span {
           color: rgba(255,255,255,0.72);
         }
 
-        .sc-subject-mini-ring-v2 {
+        .sc-subject-mini-ring-flat-v1 {
           position: relative;
           width: 48px;
           height: 48px;
           flex-shrink: 0;
         }
 
-        .sc-subject-mini-ring-v2 svg {
+        .sc-subject-mini-ring-flat-v1 svg {
           width: 100%;
           height: 100%;
           display: block;
         }
 
-        .sc-subject-mini-ring-v2 span {
+        .sc-subject-mini-ring-flat-v1 span {
           position: absolute;
           inset: 0;
           display: grid;
@@ -639,19 +622,16 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         @media (max-width: 420px) {
-          .sc-premium-report-v4 {
-            max-width: 100%;
+          .sc-report-flat-title-v1,
+          .sc-teacher-flat-note-v1,
+          .sc-breakdown-flat-head-v1 {
+            padding-left: 24px;
+            padding-right: 24px;
           }
 
-          .sc-report-title-v4 {
-            padding-left: 8px;
-            padding-right: 8px;
-          }
-
-          .sc-report-card-surface-v4,
-          .sc-teacher-note-v4,
-          .sc-breakdown-v4 {
-            border-radius: 24px;
+          .sc-subject-flat-slider-v1 {
+            padding-left: 24px;
+            padding-right: 24px;
           }
         }
       `}</style>
@@ -662,7 +642,7 @@ export function ReportCard({ report, childName }: Props) {
           alignItems: 'center',
           minHeight: 22,
           padding: '0 10px',
-          margin: '0 0 8px 8px',
+          margin: '0 0 8px 24px',
           borderRadius: 999,
           background: SURFACE,
           color: INK_SOFT,
@@ -675,52 +655,49 @@ export function ReportCard({ report, childName }: Props) {
         </div>
       ) : null}
 
-      <div className="sc-report-title-v4">
+      <div className="sc-report-flat-title-v1">
         <h2>{childName ? `${childName.split(' ')[0]}'s Report` : 'Weekly Report'}</h2>
         <p>{formatWeek(report.week_starting)}</p>
       </div>
 
-      <section className="sc-report-card-surface-v4">
-        <ScoreGauge value={active.score} />
+      <ScoreGauge value={active.score} />
 
-        <div className="sc-score-summary-v4">
-          <div className="emoji" aria-hidden="true">{getScoreEmoji(active.score)}</div>
-          <p className="status">{active.status}</p>
-          {overallDelta !== null && active.key === 'overall' ? (
-            <Delta value={overallDelta} />
-          ) : null}
+      <div className="sc-score-flat-summary-v1">
+        <div className="emoji" aria-hidden="true">{getScoreEmoji(active.score)}</div>
+        <p className="status">{active.status}</p>
+
+        {overallDelta !== null && active.key === 'overall' ? (
+          <Delta value={overallDelta} />
+        ) : null}
+      </div>
+
+      <section className="sc-teacher-flat-note-v1" aria-label="Teacher note">
+        <div className="sc-teacher-flat-avatar-v1" aria-hidden="true">
+          {teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>}
         </div>
-      </section>
 
-      <section className="sc-teacher-note-v4" aria-label="Teacher note">
-        <div className="sc-teacher-note-inner-v4">
-          <div className="sc-teacher-avatar-v4" aria-hidden="true">
-            {teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>}
-          </div>
-
-          <div className="sc-teacher-note-copy-v4">
-            <strong>{teacherName}</strong>
-            <p>
-              {shownNote}
-              {!openNote && isLong ? (
-                <button type="button" onClick={() => setOpenNote(true)}>more</button>
-              ) : null}
-              {openNote && isLong ? (
-                <button type="button" onClick={() => setOpenNote(false)}>less</button>
-              ) : null}
-            </p>
-          </div>
+        <div className="sc-teacher-flat-copy-v1">
+          <p>
+            <strong>{teacherName}:</strong>{' '}
+            {shownNote}
+            {!openNote && isLong ? (
+              <button type="button" onClick={() => setOpenNote(true)}>more</button>
+            ) : null}
+            {openNote && isLong ? (
+              <button type="button" onClick={() => setOpenNote(false)}>less</button>
+            ) : null}
+          </p>
         </div>
       </section>
 
       {cards.length > 0 && (
-        <section className="sc-breakdown-v4" aria-label="Report breakdown">
-          <div className="sc-breakdown-head-v4">
+        <section className="sc-breakdown-flat-v1" aria-label="Report breakdown">
+          <div className="sc-breakdown-flat-head-v1">
             <p>Breakdown</p>
             <span>{subjects.length} areas</span>
           </div>
 
-          <div className="sc-subject-slider-v4">
+          <div className="sc-subject-flat-slider-v1">
             {cards.map(card => (
               <SubjectCard
                 key={card.key}
