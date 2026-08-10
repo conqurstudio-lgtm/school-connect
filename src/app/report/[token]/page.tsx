@@ -1146,7 +1146,7 @@ export default function ParentMagicReportPage() {
       overscrollBehavior: 'none',
       fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       color: T.ink,
-      background: '#FFFFFF',
+      background: '#E9ECE8',
     }}>
       <div className="sc-parent-report-shell sc-report-clean-shell-v276" style={{
         maxWidth: 520,
@@ -1154,7 +1154,7 @@ export default function ParentMagicReportPage() {
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
-        background: '#FFFFFF',
+        background: '#FBFAF7',
       }}>
         <style jsx global>{`
           @keyframes scParentMomentsEnterV1 {
@@ -1207,7 +1207,7 @@ export default function ParentMagicReportPage() {
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: '#FFFFFF',
+          background: '#FBFAF7',
           display: 'flex',
           alignItems: 'center',
           justifyContent: parentView === 'moments' ? 'space-between' : 'flex-end',
@@ -1282,8 +1282,8 @@ export default function ParentMagicReportPage() {
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
-          padding: '0 16px calc(18px + env(safe-area-inset-bottom, 0px))',
-          background: '#FFFFFF',
+          padding: '0 0 calc(18px + env(safe-area-inset-bottom, 0px))',
+          background: '#FBFAF7',
         }}>
           {parentView === 'moments' ? (
             <div
@@ -1316,22 +1316,13 @@ export default function ParentMagicReportPage() {
             }}
           >
             {reports[0] && (
-              <div className="sc-main-report-card-v292" style={{
-                background: '#FFFFFF',
-                borderRadius: 28,
-                padding: '6px 10px 16px',
-                border: 'none',
-                overflow: 'hidden',
-              }}>
-                <div className="sc-report-page-motion-v1">
-                  <ReportCard
+              <div className="sc-report-page-motion-v1">
+                <ReportCard
                   key={reports[0].id || `${reports[0].week_starting || 'latest-report'}-latest`}
                   report={reports[0]}
                   childName={childName}
                 />
               </div>
-
-</div>
             )}
           </div>
           )}
