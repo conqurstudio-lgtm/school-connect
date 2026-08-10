@@ -599,7 +599,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-v1 {
-          margin-top: 54px;
+          margin-top: 38px;
           padding-bottom: 8px;
         }
 
