@@ -120,8 +120,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
         <span style={{
           display: 'block',
           minWidth: 0,
-          fontSize: 13.2,
-          fontWeight: 500,
+          fontSize: 13.1,
+          fontWeight: 480,
           letterSpacing: '-0.02em',
           lineHeight: 1.15,
           color: '#1A1A1A',
@@ -170,8 +170,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 }}>
                   <span style={{
                     color: '#1A1A1A',
-                    fontSize: 12.6,
-                    fontWeight: 430,
+                    fontSize: 12,
+                    fontWeight: 480,
                     letterSpacing: '-0.015em',
                     lineHeight: 1.15,
                     whiteSpace: 'nowrap',
@@ -183,8 +183,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
 
                   <span style={{
                     color: '#8A8F96',
-                    fontSize: 11.4,
-                    fontWeight: 380,
+                    fontSize: 12.4,
+                    fontWeight: 430,
                     lineHeight: 1.15,
                   }}>
                     {performance}
@@ -194,8 +194,8 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 <span style={{
                   flexShrink: 0,
                   color: '#45484D',
-                  fontSize: 12.2,
-                  fontWeight: 500,
+                  fontSize: 11.3,
+                  fontWeight: 380,
                   letterSpacing: '-0.015em',
                   lineHeight: 1,
                 }}>
@@ -213,10 +213,10 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                 width: '100%',
                 border: 'none',
                 background: 'transparent',
-                color: '#5F6268',
+                color: '#45484D',
                 padding: '10px 0 2px',
-                fontSize: 12.2,
-                fontWeight: 560,
+                fontSize: 12.1,
+                fontWeight: 480,
                 fontFamily: 'inherit',
                 textAlign: 'left',
                 cursor: 'pointer',
