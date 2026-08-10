@@ -236,7 +236,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={BRAND}
+          stroke={active ? BRAND : '#D3D5D8'}
           strokeWidth="1.65"
           strokeLinecap="round"
           strokeDasharray={circumference}
