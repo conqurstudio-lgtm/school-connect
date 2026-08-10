@@ -1207,7 +1207,8 @@ export default function ParentMagicReportPage() {
         <header style={{
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
-          background: '#FBFAF7',
+          background: '#FFFFFF',
+          boxShadow: '0 1px 0 rgba(17,17,17,0.025)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: parentView === 'moments' ? 'space-between' : 'flex-end',

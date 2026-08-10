@@ -416,7 +416,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-flat-summary-v1 {
-          margin-top: 18px;
+          margin-top: -24px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -426,7 +426,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-flat-summary-v1 .emoji {
           font-size: 27px;
           line-height: 1;
-          margin-bottom: 12px;
+          margin-bottom: 9px;
         }
 
         .sc-score-flat-summary-v1 .status {
@@ -439,7 +439,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-report-delta-flat-v1 {
-          margin-top: 9px;
+          margin-top: 7px;
           display: inline-flex;
           align-items: center;
           gap: 5px;
@@ -458,7 +458,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1 {
           width: calc(100% - 48px);
           max-width: 370px;
-          margin: 34px auto 0;
+          margin: 24px auto 0;
           padding: 15px 16px;
           display: flex;
           align-items: flex-start;
