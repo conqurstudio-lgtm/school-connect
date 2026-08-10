@@ -187,10 +187,10 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
           >
             <feDropShadow
               dx="0"
-              dy="3"
-              stdDeviation="2.4"
+              dy="2"
+              stdDeviation="1.8"
               floodColor="#F4531F"
-              floodOpacity="0.30"
+              floodOpacity="0.16"
             />
           </filter>
         </defs>
@@ -518,12 +518,12 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-report-delta-flat-v1[data-tone="up"] svg,
         .sc-report-delta-flat-v1[data-tone="up"] strong {
-          color: #1F9D63;
+          color: #2E9B68;
         }
 
         .sc-report-delta-flat-v1[data-tone="down"] svg,
         .sc-report-delta-flat-v1[data-tone="down"] strong {
-          color: #E1483E;
+          color: #D94D45;
         }
 
         .sc-report-delta-flat-v1[data-tone="neutral"] svg,
@@ -548,8 +548,8 @@ export function ReportCard({ report, childName }: Props) {
           gap: 12px;
           border-radius: 26px;
           background: #FFFFFF;
-          border: 1px solid rgba(17,17,17,0.055);
-          box-shadow: 0 18px 48px rgba(17,17,17,0.055);
+          border: 1px solid rgba(17,17,17,0.045);
+          box-shadow: 0 14px 34px rgba(17,17,17,0.035);
           box-sizing: border-box;
         }
 
@@ -735,8 +735,11 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1.is-active {
-          background: #FFF7F3;
+          background: #FFFFFF;
           color: ${INK};
+          border-color: rgba(244,83,31,0.16);
+          box-shadow: 0 16px 38px rgba(244,83,31,0.055);
+        };
           border-color: rgba(244,83,31,0.12);
         }
 
@@ -783,19 +786,19 @@ export function ReportCard({ report, childName }: Props) {
           line-height: 1;
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
-          color: #9A9EA6;
+          color: #8F949B;
           flex-shrink: 0;
           margin-top: 2px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
-          background: rgba(31,157,99,0.055);
-          color: #7A9B88;
+          background: rgba(17,17,17,0.035);
+          color: #7F9A8B;
         }
 
         .sc-subject-delta-flat-v1.is-down {
-          background: rgba(225,72,62,0.055);
-          color: #A98885;
+          background: rgba(17,17,17,0.035);
+          color: #A48684;
         }
 
         .sc-subject-mini-ring-flat-v1 {
