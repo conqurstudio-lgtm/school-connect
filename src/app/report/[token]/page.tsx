@@ -76,6 +76,68 @@ function isReportWithinLastDays(report: any, days = 30) {
   return age >= 0 && age <= days * 24 * 60 * 60 * 1000
 }
 
+function PreviousReportScoreRing({ value }: { value: number }) {
+  const safeValue = Math.max(0, Math.min(5, Number(value) || 0))
+  const radius = 15.5
+  const circumference = 2 * Math.PI * radius
+  const progress = Math.max(0, Math.min(1, safeValue / 5))
+
+  return (
+    <span
+      aria-label={`Score ${safeValue.toFixed(1)} out of 5`}
+      style={{
+        width: 38,
+        height: 38,
+        position: 'relative',
+        flexShrink: 0,
+        display: 'inline-grid',
+        placeItems: 'center',
+      }}
+    >
+      <svg viewBox="0 0 40 40" aria-hidden="true" style={{
+        width: 38,
+        height: 38,
+        display: 'block',
+      }}>
+        <circle
+          cx="20"
+          cy="20"
+          r={radius}
+          fill="none"
+          stroke="rgba(17,17,17,0.085)"
+          strokeWidth="1.55"
+        />
+        <circle
+          cx="20"
+          cy="20"
+          r={radius}
+          fill="none"
+          stroke="#F4531F"
+          strokeWidth="1.55"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - progress)}
+          transform="rotate(-90 20 20)"
+        />
+      </svg>
+
+      <span style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'grid',
+        placeItems: 'center',
+        color: '#45484D',
+        fontSize: 10.4,
+        fontWeight: 480,
+        letterSpacing: '-0.03em',
+        lineHeight: 1,
+      }}>
+        {safeValue > 0 ? safeValue.toFixed(1) : '—'}
+      </span>
+    </span>
+  )
+}
+
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
   const [open, setOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
@@ -191,16 +253,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
                   </span>
                 </span>
 
-                <span style={{
-                  flexShrink: 0,
-                  color: '#45484D',
-                  fontSize: 11.3,
-                  fontWeight: 380,
-                  letterSpacing: '-0.015em',
-                  lineHeight: 1,
-                }}>
-                  {scoreText}
-                </span>
+                <PreviousReportScoreRing value={score} />
               </article>
             )
           })}
