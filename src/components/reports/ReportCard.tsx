@@ -330,15 +330,15 @@ export function ReportCard({ report, childName }: Props) {
       <style jsx global>{`
         .sc-report-flat-v1 {
           width: 100%;
-          max-width: 430px;
+          max-width: 393px;
           margin: 0 auto;
-          padding: 0 0 24px;
+          padding: 0 0 34px;
           color: ${INK};
           font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
         .sc-report-flat-title-v1 {
-          padding: 4px 24px 0;
+          padding: 8px 28px 0;
         }
 
         .sc-report-flat-title-v1 h2 {
@@ -364,7 +364,7 @@ export function ReportCard({ report, childName }: Props) {
           width: 70vw;
           max-width: 280px;
           aspect-ratio: 1 / 1;
-          margin: 34px auto 0;
+          margin: 42px auto 0;
         }
 
         .sc-score-gauge-svg-flat-v1 {
@@ -402,7 +402,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-flat-summary-v1 {
-          margin-top: 24px;
+          margin-top: 28px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -442,8 +442,8 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-teacher-flat-note-v1 {
-          margin-top: 38px;
-          padding: 0 24px;
+          margin-top: 46px;
+          padding: 0 28px;
           display: flex;
           align-items: flex-start;
           gap: 14px;
@@ -501,7 +501,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-v1 {
-          margin-top: 40px;
+          margin-top: 48px;
           padding-bottom: 8px;
         }
 
@@ -510,7 +510,7 @@ export function ReportCard({ report, childName }: Props) {
           align-items: baseline;
           justify-content: space-between;
           gap: 12px;
-          padding: 0 24px;
+          padding: 0 28px;
         }
 
         .sc-breakdown-flat-head-v1 p {
@@ -533,9 +533,9 @@ export function ReportCard({ report, childName }: Props) {
           display: flex;
           gap: 12px;
           overflow-x: auto;
-          padding: 0 24px 3px;
+          padding: 0 28px 4px;
           scroll-snap-type: x mandatory;
-          scroll-padding-left: 24px;
+          scroll-padding-left: 28px;
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
@@ -545,15 +545,15 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 {
-          width: 142px;
-          min-height: 136px;
+          width: 150px;
+          min-height: 144px;
           flex-shrink: 0;
           scroll-snap-align: start;
           border: none;
           border-radius: 18px;
           background: ${SURFACE};
           color: ${INK};
-          padding: 16px;
+          padding: 17px;
           text-align: left;
           font-family: inherit;
           cursor: pointer;
@@ -632,6 +632,12 @@ export function ReportCard({ report, childName }: Props) {
           .sc-subject-flat-slider-v1 {
             padding-left: 24px;
             padding-right: 24px;
+            scroll-padding-left: 24px;
+          }
+
+          .sc-subject-flat-slider-card-v1 {
+            width: 146px;
+            min-height: 140px;
           }
         }
       `}</style>
