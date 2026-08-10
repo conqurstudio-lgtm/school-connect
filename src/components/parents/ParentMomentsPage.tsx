@@ -342,6 +342,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  const [reactionBursts, setReactionBursts] = useState<any[]>([])
  // parent-moments-progressive-v425
  const [renderLimit, setRenderLimit] = useState(6)
+  const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
  const [momentsView, setMomentsView] = useState<'recent' | 'child' | 'class'>('recent')
 
  const load = async (quiet = false) => {
@@ -565,59 +566,136 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  }}>
  
 
- {true && (
- <div style={{
- display: 'flex',
- alignItems: 'center',
- gap: 22,
- width: '100%',
- padding: '0 2px',
- margin: '0 0 18px',
- borderBottom: `1px solid ${T.border}`,
- }}>
- {[
- ['recent', 'Recent'],
- ['child', 'Child'],
- ['class', 'Class'],
- ].map(([key, label]: any) => {
- const active = momentScope === key
+  <div style={{
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 12,
+  width: '100%',
+  padding: '0 2px',
+  margin: '0 0 18px',
+  position: 'relative',
+  }}>
+  <div style={{ minWidth: 0 }}>
+  <p style={{
+  margin: 0,
+  color: T.ink,
+  fontSize: 13.8,
+  fontWeight: 560,
+  letterSpacing: '-0.02em',
+  lineHeight: 1.1,
+  }}>
+  {momentScope === 'recent' ? 'Recent moments' : momentScope === 'child' ? 'Child moments' : 'Class moments'}
+  </p>
+  <p style={{
+  margin: '4px 0 0',
+  color: T.ink3,
+  fontSize: 11.6,
+  fontWeight: 500,
+  lineHeight: 1.2,
+  }}>
+  {visibleMoments.length} {visibleMoments.length === 1 ? 'update' : 'updates'}
+  </p>
+  </div>
 
- return (
- <button
- key={key}
- type="button"
- onClick={() => setMomentScope(key)}
- style={{
- position: 'relative',
- border: 'none',
- background: 'transparent',
- color: active ? T.ink : T.ink3,
- fontSize: 13.2,
- fontWeight: active ? 620 : 560,
- padding: '0 0 10px',
- margin: 0,
- cursor: 'pointer',
- fontFamily: 'inherit',
- lineHeight: 1,
- }}
- >
- {label}
- {active && (
- <span style={{
- position: 'absolute',
- left: 0,
- right: 0,
- bottom: -1,
- height: 2,
- borderRadius: 999,
- background: T.ink,
- }} />
- )}
- </button>
- )
- })}
- </div>
- )}
+  <button
+  type="button"
+  aria-label="Filter moments"
+  onClick={(event) => {
+  event.stopPropagation()
+  setMomentsMenuOpen(open => !open)
+  }}
+  style={{
+  width: 38,
+  height: 38,
+  borderRadius: 999,
+  border: 'none',
+  background: 'transparent',
+  color: T.ink,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  padding: 0,
+  fontFamily: 'inherit',
+  fontSize: 24,
+  lineHeight: 1,
+  WebkitTapHighlightColor: 'transparent',
+  }}
+  >
+  ⋯
+  </button>
+
+  {momentsMenuOpen && (
+  <>
+  <div
+  onClick={() => setMomentsMenuOpen(false)}
+  style={{
+  position: 'fixed',
+  inset: 0,
+  zIndex: 8998,
+  background: 'transparent',
+  }}
+  />
+
+  <div
+  onClick={event => event.stopPropagation()}
+  style={{
+  position: 'absolute',
+  top: 42,
+  right: 0,
+  zIndex: 8999,
+  minWidth: 172,
+  borderRadius: 18,
+  background: T.white,
+  border: `1px solid ${T.border}`,
+  boxShadow: '0 16px 42px rgba(15,23,42,0.08)',
+  padding: 6,
+  }}
+  >
+  {[
+  ['recent', 'Recent'],
+  ['child', 'Child'],
+  ['class', 'Class'],
+  ].map(([key, label]: any) => {
+  const active = momentScope === key
+
+  return (
+  <button
+  key={key}
+  type="button"
+  onClick={() => {
+  setMomentScope(key)
+  setMomentsMenuOpen(false)
+  }}
+  style={{
+  width: '100%',
+  minHeight: 38,
+  borderRadius: 13,
+  border: 'none',
+  background: active ? T.soft : 'transparent',
+  color: active ? T.ink : T.ink2,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: 10,
+  fontFamily: 'inherit',
+  fontSize: 12.8,
+  fontWeight: active ? 620 : 520,
+  cursor: 'pointer',
+  padding: '0 10px',
+  textAlign: 'left',
+  }}
+  >
+  <span>{label}</span>
+  {active ? <span style={{ fontSize: 12, color: T.ink3 }}>✓</span> : null}
+  </button>
+  )
+  })}
+  </div>
+  </>
+  )}
+  </div>
 
  {moments.length === 0 ? (
  <SCEmptyState

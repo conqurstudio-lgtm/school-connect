@@ -1242,13 +1242,21 @@ export default function ParentMagicReportPage() {
                   fontFamily: 'inherit',
                 }}
               >
-                <ChevronLeft size={20} strokeWidth={2.2} />
+                <span style={{
+                  width: 13,
+                  height: 13,
+                  borderLeft: '2.6px solid currentColor',
+                  borderBottom: '2.6px solid currentColor',
+                  borderRadius: 1.5,
+                  transform: 'rotate(45deg) translate(1px, -1px)',
+                  display: 'block',
+                }} />
               </button>
 
               <h1 style={{
                 margin: 0,
-                fontSize: 17,
-                fontWeight: 660,
+                fontSize: 16,
+                fontWeight: 620,
                 color: '#252525',
                 letterSpacing: '-0.03em',
                 lineHeight: 1,
