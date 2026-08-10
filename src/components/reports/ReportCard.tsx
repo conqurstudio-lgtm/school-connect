@@ -227,7 +227,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
-          strokeWidth="3"
+          strokeWidth="2.45"
         />
         <circle
           cx="24"
@@ -235,7 +235,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={BRAND}
-          strokeWidth="3"
+          strokeWidth="2.45"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
@@ -723,7 +723,7 @@ export function ReportCard({ report, childName }: Props) {
           margin: 14px 0 0;
           color: inherit;
           font-size: 13.2px;
-          font-weight: 600;
+          font-weight: 590;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
@@ -758,7 +758,7 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: center;
           font-style: normal;
           font-size: 11.4px;
-          font-weight: 720;
+          font-weight: 640;
           line-height: 1;
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
@@ -797,8 +797,8 @@ export function ReportCard({ report, childName }: Props) {
           place-items: center;
           margin: 0;
           color: inherit;
-          font-size: 13px;
-          font-weight: 680;
+          font-size: 12.6px;
+          font-weight: 600;
           line-height: 1;
           font-variant-numeric: tabular-nums;
         }
