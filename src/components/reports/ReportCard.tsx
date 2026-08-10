@@ -727,15 +727,15 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 p {
           margin: 0;
           color: inherit;
-          font-size: 13.1px;
-          font-weight: 570;
+          font-size: 12.4px;
+          font-weight: 540;
           line-height: 1.22;
           letter-spacing: -0.02em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 3px;
+          margin-top: 2px;
           color: ${INK_SOFT};
           font-size: 11.7px;
           font-weight: 450;
