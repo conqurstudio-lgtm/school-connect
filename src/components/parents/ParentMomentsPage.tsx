@@ -527,6 +527,133 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  }}>
  <SafeStyle />
 
+{insideReportShell && typeof document !== 'undefined' ? createPortal(
+  <div
+    className="parent-moments-top-burger-portal-v440"
+    style={{
+      position: 'fixed',
+      top: 'calc(8px + env(safe-area-inset-top, 0px))',
+      right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
+      zIndex: 2147482500,
+      width: 38,
+      height: 38,
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <button
+      type="button"
+      aria-label="Filter moments"
+      onClick={(event) => {
+        event.stopPropagation()
+        setMomentsMenuOpen(open => !open)
+      }}
+      style={{
+        width: 38,
+        height: 38,
+        borderRadius: 999,
+        border: 'none',
+        background: 'transparent',
+        color: T.ink,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        padding: 0,
+        fontFamily: 'inherit',
+        fontSize: 0,
+        lineHeight: 1,
+        WebkitTapHighlightColor: 'transparent',
+      }}
+    >
+      <span style={{
+        width: 18,
+        height: 13,
+        display: 'inline-flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'stretch',
+      }}>
+        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
+        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block', width: 13, marginLeft: 'auto' }} />
+        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
+      </span>
+    </button>
+
+    {!insideReportShell && momentsMenuOpen && (
+      <>
+        <div
+          onClick={() => setMomentsMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 2147482498,
+            background: 'transparent',
+          }}
+        />
+
+        <div
+          onClick={event => event.stopPropagation()}
+          style={{
+            position: 'fixed',
+            top: 'calc(52px + env(safe-area-inset-top, 0px))',
+            right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
+            zIndex: 2147482501,
+            minWidth: 172,
+            borderRadius: 18,
+            background: T.white,
+            border: `1px solid ${T.border}`,
+            boxShadow: '0 16px 42px rgba(15,23,42,0.08)',
+            padding: 6,
+          }}
+        >
+          {[
+            ['recent', 'Recent'],
+            ['child', 'Child'],
+            ['class', 'Class'],
+          ].map(([key, label]: any) => {
+            const active = momentScope === key
+
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  setMomentScope(key)
+                  setMomentsMenuOpen(false)
+                }}
+                style={{
+                  width: '100%',
+                  minHeight: 38,
+                  borderRadius: 13,
+                  border: 'none',
+                  background: active ? T.soft : 'transparent',
+                  color: active ? T.ink : T.ink2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 10,
+                  fontFamily: 'inherit',
+                  fontSize: 12.8,
+                  fontWeight: active ? 620 : 520,
+                  cursor: 'pointer',
+                  padding: '0 10px',
+                  textAlign: 'left',
+                }}
+              >
+                <span>{label}</span>
+                {active ? <span style={{ fontSize: 12, color: T.ink3 }}>✓</span> : null}
+              </button>
+            )
+          })}
+        </div>
+      </>
+    )}
+  </div>,
+  document.body
+) : null}
+
  <SCStartupLoader
  show={loading && moments.length === 0}
  initials={initials(child?.name || child?.full_name || 'SC')}
@@ -612,7 +739,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   border: 'none',
   background: 'transparent',
   color: T.ink,
-  display: 'inline-flex',
+  display: insideReportShell ? 'none' : 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   cursor: 'pointer',
