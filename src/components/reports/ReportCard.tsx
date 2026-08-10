@@ -227,7 +227,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
-          strokeWidth="2.45"
+          strokeWidth="2.05"
         />
         <circle
           cx="24"
@@ -235,7 +235,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={BRAND}
-          strokeWidth="2.45"
+          strokeWidth="2.05"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
@@ -591,14 +591,14 @@ export function ReportCard({ report, childName }: Props) {
           margin: 0;
           color: #5F6268;
           font-size: 12.8px;
-          font-weight: 430;
+          font-weight: 400;
           line-height: 1.48;
           letter-spacing: -0.01em;
         }
 
         .sc-teacher-flat-copy-v1 strong {
           color: #10141A;
-          font-weight: 620;
+          font-weight: 570;
                   letter-spacing: -0.02em;
 }
 
@@ -640,7 +640,7 @@ export function ReportCard({ report, childName }: Props) {
           padding: 0;
           color: #252525;
           font: inherit;
-          font-weight: 680;
+          font-weight: 560;
           cursor: pointer;
         }
 
@@ -724,7 +724,7 @@ export function ReportCard({ report, childName }: Props) {
           margin: 14px 0 0;
           color: inherit;
           font-size: 13.6px;
-          font-weight: 620;
+          font-weight: 560;
           line-height: 1.12;
           letter-spacing: -0.025em;
         }
@@ -759,7 +759,7 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: center;
           font-style: normal;
           font-size: 11.4px;
-          font-weight: 600;
+          font-weight: 540;
           line-height: 1;
           letter-spacing: -0.01em;
           background: rgba(17,17,17,0.035);
@@ -799,7 +799,7 @@ export function ReportCard({ report, childName }: Props) {
           margin: 0;
           color: inherit;
           font-size: 12.6px;
-          font-weight: 600;
+          font-weight: 560;
           line-height: 1;
           font-variant-numeric: tabular-nums;
         }
