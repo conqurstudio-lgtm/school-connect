@@ -698,9 +698,9 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
-          padding: 15px 16px 16px;
+          padding: 15px 15px 14px;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 14px 40px rgba(17,17,17,0.035);
+          box-shadow: 0 12px 34px rgba(17,17,17,0.028);
           text-align: left;
           font-family: inherit;
           cursor: pointer;
@@ -729,17 +729,17 @@ export function ReportCard({ report, childName }: Props) {
           color: inherit;
           font-size: 12.8px;
           font-weight: 560;
-          line-height: 1.16;
+          line-height: 1.14;
           letter-spacing: -0.018em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
-          margin-top: 3px;
+          margin-top: 2px;
           color: ${INK_SOFT};
-          font-size: 11.7px;
-          font-weight: 450;
-          line-height: 1.2;
+          font-size: 11.6px;
+          font-weight: 420;
+          line-height: 1.18;
         }
 
         .sc-subject-flat-slider-card-v1.is-active span {
@@ -748,7 +748,7 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-score-row-flat-v1 {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: space-between;
           gap: 8px;
           width: 100%;
@@ -756,31 +756,31 @@ export function ReportCard({ report, childName }: Props) {
 }
 
         .sc-subject-delta-flat-v1 {
-          min-height: 22px;
+          min-height: 20px;
           padding: 0 7px;
           border-radius: 999px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           font-style: normal;
-          font-size: 11px;
+          font-size: 10.7px;
           font-weight: 520;
           line-height: 1;
           letter-spacing: -0.01em;
-          background: rgba(17,17,17,0.035);
+          background: rgba(17,17,17,0.032);
           color: #8F949B;
           flex-shrink: 0;
-          margin-top: 1px;
+          margin-top: 2px;
         }
 
         .sc-subject-delta-flat-v1.is-up {
-          background: rgba(17,17,17,0.035);
+          background: rgba(17,17,17,0.032);
           color: #7F9A8B;
         }
 
         .sc-subject-delta-flat-v1.is-down {
-          background: rgba(17,17,17,0.035);
-          color: #A48684;
+          background: rgba(255,76,67,0.075);
+          color: #D65C55;
         }
 
         .sc-subject-mini-ring-flat-v1 {
@@ -804,7 +804,7 @@ export function ReportCard({ report, childName }: Props) {
           margin: 0;
           color: inherit;
           font-size: 12.2px;
-          font-weight: 540;
+          font-weight: 560;
           line-height: 1;
           font-variant-numeric: tabular-nums;
         }
