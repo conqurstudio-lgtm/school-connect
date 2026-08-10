@@ -229,7 +229,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
-          strokeWidth="3"
+          strokeWidth="2.15"
         />
         <circle
           cx="24"
@@ -237,7 +237,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={BRAND}
-          strokeWidth="3"
+          strokeWidth="2.15"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
