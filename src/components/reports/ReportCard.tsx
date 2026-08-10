@@ -357,16 +357,16 @@ export function ReportCard({ report, childName }: Props) {
         .sc-report-flat-title-v1 h2 {
           margin: 0;
           color: ${INK};
-          font-size: 30px;
-          font-weight: 520;
+          font-size: 26.5px;
+          font-weight: 420;
           line-height: 1.08;
-          letter-spacing: -0.05em;
+          letter-spacing: -0.03em;
         }
 
         .sc-report-flat-title-v1 p {
           margin: 5px 0 0;
           color: ${INK_SOFT};
-          font-size: 14px;
+          font-size: 12.2px;
           font-weight: 430;
           line-height: 1.2;
           letter-spacing: -0.01em;
@@ -400,10 +400,10 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
-          font-size: 58px;
+          font-size: 56px;
           font-weight: 420;
           line-height: 0.92;
-          letter-spacing: -0.08em;
+          letter-spacing: -0.075em;
           font-variant-numeric: tabular-nums;
         }
 
@@ -432,10 +432,10 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-flat-summary-v1 .status {
           margin: 0;
           color: ${INK};
-          font-size: 18px;
-          font-weight: 650;
+          font-size: 15.5px;
+          font-weight: 620;
           line-height: 1.15;
-          letter-spacing: -0.035em;
+          letter-spacing: -0.025em;
         }
 
         .sc-report-delta-flat-v1 {
@@ -444,7 +444,7 @@ export function ReportCard({ report, childName }: Props) {
           align-items: center;
           gap: 5px;
           color: ${INK_SOFT};
-          font-size: 13.5px;
+          font-size: 12.5px;
           font-weight: 430;
           line-height: 1;
         }
@@ -501,7 +501,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-copy-v1 p {
           margin: 0;
           color: #5F6268;
-          font-size: 13.8px;
+          font-size: 13.2px;
           font-weight: 430;
           line-height: 1.48;
           letter-spacing: -0.012em;
@@ -539,9 +539,9 @@ export function ReportCard({ report, childName }: Props) {
         .sc-breakdown-flat-head-v1 p {
           margin: 0;
           color: ${INK};
-          font-size: 20px;
-          font-weight: 650;
-          letter-spacing: -0.04em;
+          font-size: 13px;
+          font-weight: 420;
+          letter-spacing: -0.025em;
           text-transform: none;
         }
 
@@ -602,18 +602,18 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 p {
           margin: 14px 0 0;
           color: inherit;
-          font-size: 15px;
-          font-weight: 700;
+          font-size: 13.2px;
+          font-weight: 650;
           line-height: 1.12;
-          letter-spacing: -0.035em;
+          letter-spacing: -0.025em;
         }
 
         .sc-subject-flat-slider-card-v1 span {
           display: block;
           margin-top: 4px;
           color: ${INK_SOFT};
-          font-size: 12.5px;
-          font-weight: 500;
+          font-size: 11.7px;
+          font-weight: 470;
           line-height: 1.2;
         }
 
@@ -641,8 +641,8 @@ export function ReportCard({ report, childName }: Props) {
           place-items: center;
           margin: 0;
           color: inherit;
-          font-size: 14px;
-          font-weight: 700;
+          font-size: 13px;
+          font-weight: 680;
           line-height: 1;
           font-variant-numeric: tabular-nums;
         }
