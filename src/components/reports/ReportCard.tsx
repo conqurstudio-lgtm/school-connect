@@ -228,7 +228,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
+          stroke={active ? 'rgba(244,83,31,0.14)' : '#e0dfdf'}
           strokeWidth="1.65"
         />
         <circle
@@ -236,7 +236,7 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? BRAND : '#C8CBD0'}
+          stroke={active ? BRAND : '#e0dfdf'}
           strokeWidth="1.65"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -539,7 +539,7 @@ export function ReportCard({ report, childName }: Props) {
           height: 40px;
           border-radius: 999px;
           background: #F1F2F3;
-          border: 1px solid rgba(17,17,17,0.06);
+          border: 1px solid #e0dfdf;
           overflow: hidden;
           flex-shrink: 0;
           display: grid;
@@ -626,7 +626,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
           background: transparent !important;
           color: #10141A;
-          border-color: rgba(17,17,17,0.06);
+          border-color: #e0dfdf;
         }
 
         .sc-subject-tip-emoji-v1 {
@@ -712,12 +712,12 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid rgba(17,17,17,0.045);
+          border: 1px solid #e0dfdf;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
           padding: 13px 15px 13px;
-          border: 1px solid rgba(17,17,17,0.045);
+          border: 1px solid #e0dfdf;
           box-shadow: none;
           text-align: left;
           font-family: inherit;
