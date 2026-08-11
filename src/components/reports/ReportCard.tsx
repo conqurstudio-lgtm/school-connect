@@ -741,16 +741,16 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-flat-slider-card-v1 {
           width: 150px;
-          min-height: 118px;
+          min-height: 122px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #e4e4e4;
+          border: 1px solid #e0dfdf;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
           padding: 13px 15px 12px;
           border: 1px solid #e0dfdf;
-          box-shadow: 0 8px 20px rgba(17,17,17,0.014);
+          box-shadow: none;
           text-align: left;
           font-family: inherit;
           cursor: pointer;
@@ -759,7 +759,7 @@ export function ReportCard({ report, childName }: Props) {
           display: flex;
           flex-direction: column;
         
-          gap: 5px;
+          gap: 8px;
         }
 
         .sc-subject-flat-slider-card-v1:active {
@@ -769,16 +769,16 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.22);
-          box-shadow: 0 10px 24px rgba(244,83,31,0.045);
+          border-color: rgba(244,83,31,0.18);
+          box-shadow: none;
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: -1px 0 0;
+          margin: 1px 0 0;
           color: #8A8F96;
           font-size: 12.8px;
           font-weight: 420;
-          line-height: 1.08;
+          line-height: 1.12;
           letter-spacing: -0.018em;
         }
 
@@ -910,22 +910,6 @@ export function ReportCard({ report, childName }: Props) {
           font-variant-numeric: tabular-nums;
         }
 
-
-        .sc-subject-flat-slider-card-v1 .sc-subject-name-charcoal-v1,
-        .sc-subject-flat-slider-card-v1 h3,
-        .sc-subject-flat-slider-card-v1 strong.sc-subject-name-charcoal-v1 {
-          color: #050505 !important;
-          font-weight: 560 !important;
-        }
-
-
-        .sc-subject-flat-slider-card-v1 .sc-subject-name-charcoal-v1 {
-          display: block;
-          margin-top: 5px;
-          line-height: 1.08;
-          font-weight: 560 !important;
-        }
-
         @media (max-width: 420px) {
           .sc-report-flat-title-v1,
           .sc-teacher-flat-note-v1,
@@ -942,7 +926,7 @@ export function ReportCard({ report, childName }: Props) {
 
           .sc-subject-flat-slider-card-v1 {
             width: 146px;
-            min-height: 118px;
+            min-height: 122px;
           }
         }
       `}</style>
