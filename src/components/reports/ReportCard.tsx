@@ -720,7 +720,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.18);
+          border-color: rgba(244,83,31,0.24);
           box-shadow: none;
         }
 
