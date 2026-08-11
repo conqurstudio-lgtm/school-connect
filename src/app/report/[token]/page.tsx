@@ -600,7 +600,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '24px auto 0',
+        margin: '26px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -649,16 +649,16 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
         <span style={{
           display: 'block',
           width: '100%',
-          borderRadius: 26,
+          borderRadius: 24,
           overflow: 'hidden',
           background: '#FFFFFF',
           border: '1px solid rgba(17,17,17,0.055)',
-          boxShadow: '0 14px 34px rgba(17,17,17,0.035)',
+          boxShadow: '0 10px 26px rgba(17,17,17,0.026)',
         }}>
           {loading ? (
             <span style={{
               display: 'block',
-              height: 176,
+              height: 150,
               background: '#F1F2F3',
             }} />
           ) : image ? (
@@ -669,6 +669,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
                 width: '100%',
                 height: 176,
                 objectFit: 'cover',
+                objectPosition: 'center center',
                 display: 'block',
               }}
             />
@@ -679,7 +680,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
               placeItems: 'center',
               fontSize: 34,
               background: '#F7F7F8',
-              color: '#8A8F96',
+              color: '#A1A5AA',
             }}>
               ✨
             </span>
@@ -688,13 +689,13 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           <span style={{
             display: 'grid',
             gap: 4,
-            padding: '12px 14px 13px',
+            padding: '10px 13px 12px',
             background: '#FFFFFF',
           }}>
             <span style={{
               color: '#1A1A1A',
-              fontSize: 12.8,
-              fontWeight: 430,
+              fontSize: 12.5,
+              fontWeight: 400,
               letterSpacing: '-0.015em',
               lineHeight: 1.35,
               overflow: 'hidden',
@@ -708,7 +709,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
             {!loading && moments.length > 1 ? (
               <span style={{
                 color: '#8A8F96',
-                fontSize: 11.3,
+                fontSize: 11.1,
                 fontWeight: 380,
                 lineHeight: 1.15,
               }}>
