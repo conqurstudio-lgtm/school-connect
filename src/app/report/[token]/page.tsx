@@ -612,7 +612,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '26px auto 0',
+        margin: '22px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -628,6 +628,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           }
         }
       `}</style>
+
       <div
         style={{
           width: '100%',
@@ -1655,6 +1656,9 @@ export default function ParentMagicReportPage() {
                     />
                   </div>
                 ) : null}
+                <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
+
+
 
               </div>
             )}
