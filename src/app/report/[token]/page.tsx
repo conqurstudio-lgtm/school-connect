@@ -549,6 +549,203 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 }
 
 
+function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () => void }) {
+  const [loading, setLoading] = useState(true)
+  const [moments, setMoments] = useState<any[]>([])
+
+  useEffect(() => {
+    let alive = true
+
+    setLoading(true)
+
+    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
+      .then(async res => {
+        const json = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error(json?.error || 'Could not load moments')
+        if (!alive) return
+
+        setMoments(Array.isArray(json?.moments) ? json.moments.slice(0, 3) : [])
+      })
+      .catch(() => {
+        if (alive) setMoments([])
+      })
+      .finally(() => {
+        if (alive) setLoading(false)
+      })
+
+    return () => {
+      alive = false
+    }
+  }, [token])
+
+  if (!loading && moments.length === 0) return null
+
+  const first = moments[0] || null
+  const image =
+    first?.file_type === 'image'
+      ? (first?.file_url || first?.image_url || first?.media_url || '')
+      : ''
+
+  const caption =
+    first?.caption ||
+    first?.message ||
+    first?.text ||
+    first?.title ||
+    'A new class moment was shared.'
+
+  return (
+    <section
+      aria-label="Recent moments"
+      style={{
+        width: '100%',
+        maxWidth: 370,
+        margin: '18px auto 0',
+        padding: 0,
+        boxSizing: 'border-box',
+      }}
+    >
+      <button
+        type="button"
+        onClick={onOpen}
+        style={{
+          width: '100%',
+          border: 'none',
+          background: 'transparent',
+          color: '#1A1A1A',
+          padding: 0,
+          display: 'grid',
+          gap: 10,
+          cursor: 'pointer',
+          textAlign: 'left',
+          fontFamily: 'inherit',
+        }}
+      >
+        <span style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+        }}>
+          <span style={{
+            fontSize: 13.1,
+            fontWeight: 480,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.15,
+            color: '#1A1A1A',
+          }}>
+            Recent moments
+          </span>
+
+          <span style={{
+            fontSize: 12,
+            fontWeight: 480,
+            color: '#5F6268',
+            lineHeight: 1,
+          }}>
+            View
+          </span>
+        </span>
+
+        <span style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          borderTop: '1px solid rgba(17,17,17,0.07)',
+          paddingTop: 11,
+        }}>
+          {loading ? (
+            <>
+              <span style={{
+                width: 42,
+                height: 42,
+                borderRadius: 16,
+                background: '#F2F3F4',
+                flexShrink: 0,
+              }} />
+
+              <span style={{ display: 'grid', gap: 6, flex: 1 }}>
+                <span style={{
+                  width: '68%',
+                  height: 9,
+                  borderRadius: 999,
+                  background: '#EEF0F1',
+                }} />
+                <span style={{
+                  width: '46%',
+                  height: 9,
+                  borderRadius: 999,
+                  background: '#F3F4F5',
+                }} />
+              </span>
+            </>
+          ) : (
+            <>
+              <span style={{
+                width: 42,
+                height: 42,
+                borderRadius: 16,
+                background: image ? '#F3F4F5' : '#F7F7F8',
+                border: '1px solid rgba(17,17,17,0.045)',
+                overflow: 'hidden',
+                flexShrink: 0,
+                display: 'grid',
+                placeItems: 'center',
+                color: '#8A8F96',
+                fontSize: 18,
+              }}>
+                {image ? (
+                  <img
+                    src={image}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                ) : (
+                  '✨'
+                )}
+              </span>
+
+              <span style={{
+                minWidth: 0,
+                display: 'grid',
+                gap: 3,
+                flex: 1,
+              }}>
+                <span style={{
+                  color: '#1A1A1A',
+                  fontSize: 12.5,
+                  fontWeight: 430,
+                  letterSpacing: '-0.015em',
+                  lineHeight: 1.25,
+                  overflow: 'hidden',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                }}>
+                  {caption}
+                </span>
+
+                <span style={{
+                  color: '#8A8F96',
+                  fontSize: 11.3,
+                  fontWeight: 380,
+                  lineHeight: 1.15,
+                }}>
+                  {moments.length} recent {moments.length === 1 ? 'moment' : 'moments'}
+                </span>
+              </span>
+            </>
+          )}
+        </span>
+      </button>
+    </section>
+  )
+}
+
 function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant?: 'icon' | 'card' }) {
   const [creating, setCreating] = useState(false)
 
@@ -1418,6 +1615,8 @@ export default function ParentMagicReportPage() {
                     <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />
                   </div>
                 ) : null}
+
+                <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
 
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
