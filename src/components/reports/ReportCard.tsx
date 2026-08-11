@@ -744,13 +744,13 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 122px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #e0dfdf;
+          border: 1px solid #e4e4e4;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
           padding: 13px 15px 12px;
           border: 1px solid #e0dfdf;
-          box-shadow: none;
+          box-shadow: 0 10px 24px rgba(17,17,17,0.018);
           text-align: left;
           font-family: inherit;
           cursor: pointer;
@@ -759,7 +759,7 @@ export function ReportCard({ report, childName }: Props) {
           display: flex;
           flex-direction: column;
         
-          gap: 8px;
+          gap: 6px;
         }
 
         .sc-subject-flat-slider-card-v1:active {
@@ -769,16 +769,16 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.28);
-          box-shadow: none;
+          border-color: rgba(244,83,31,0.24);
+          box-shadow: 0 10px 24px rgba(244,83,31,0.045);
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: auto 0 0;
+          margin: 1px 0 0;
           color: #8A8F96;
           font-size: 12.8px;
-          font-weight: 430;
-          line-height: 1.14;
+          font-weight: 420;
+          line-height: 1.12;
           letter-spacing: -0.018em;
         }
 
@@ -915,7 +915,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 h3,
         .sc-subject-flat-slider-card-v1 strong.sc-subject-name-charcoal-v1 {
           color: #050505 !important;
-          font-weight: 650 !important;
+          font-weight: 590 !important;
         }
 
         @media (max-width: 420px) {
