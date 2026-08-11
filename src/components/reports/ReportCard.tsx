@@ -310,7 +310,7 @@ function SubjectCard({
         ) : null}
       </div>
 
-      <p>{subject.name}</p>
+      <p className="sc-subject-name-charcoal-v1">{subject.name}</p>
       <span>{subject.status}</span>
     </button>
   )
@@ -908,6 +908,14 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 560;
           line-height: 1;
           font-variant-numeric: tabular-nums;
+        }
+
+
+        .sc-subject-flat-slider-card-v1 .sc-subject-name-charcoal-v1,
+        .sc-subject-flat-slider-card-v1 h3,
+        .sc-subject-flat-slider-card-v1 strong.sc-subject-name-charcoal-v1 {
+          color: #050505 !important;
+          font-weight: 650 !important;
         }
 
         @media (max-width: 420px) {
