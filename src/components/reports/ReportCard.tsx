@@ -562,7 +562,7 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 26px;
           background: #FFFFFF;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 14px 34px rgba(17,17,17,0.035);
+          box-shadow: none;
           box-sizing: border-box;
         }
 
