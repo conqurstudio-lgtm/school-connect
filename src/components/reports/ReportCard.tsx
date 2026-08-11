@@ -529,7 +529,7 @@ export function ReportCard({ report, childName }: Props) {
           gap: 12px;
           border-radius: 26px;
           background: #FFFFFF;
-          border: 1px solid rgba(17,17,17,0.045);
+          border: 1px solid #e0dfdf;
           box-shadow: 0 14px 34px rgba(17,17,17,0.035);
           box-sizing: border-box;
         }
@@ -620,7 +620,7 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-note-v1.is-subject-tip-note {
           background: #FFFFFF;
-          border-color: rgba(17,17,17,0.055);
+          border-color: #e0dfdf;
         }
 
         .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
