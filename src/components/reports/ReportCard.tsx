@@ -443,9 +443,9 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
           font-size: 58px;
-          font-weight: 460;
+          font-weight: 430;
           line-height: 0.92;
-          letter-spacing: -0.05em;
+          letter-spacing: -0.048em;
           font-variant-numeric: tabular-nums;
         }
 
