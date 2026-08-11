@@ -1003,6 +1003,34 @@ function ReportSafeAreaStyle() {
         }
 
         .sc-report-previous-history-wrap-v1 button {
+          color: #6F7278 !important;
+          font-weight: 540 !important;
+        }
+
+        .sc-report-previous-history-wrap-v1 p,
+        .sc-report-previous-history-wrap-v1 span,
+        .sc-report-previous-history-wrap-v1 small {
+          color: #8F9399;
+          font-weight: 410;
+        }
+
+        .sc-report-previous-history-wrap-v1 strong {
+          color: #202124;
+          font-weight: 540;
+        }
+
+        .sc-report-previous-history-wrap-v1 [style*="borderTop"],
+        .sc-report-previous-history-wrap-v1 [style*="border-top"] {
+          border-color: rgba(17,17,17,0.055) !important;
+        }
+
+
+
+        .sc-report-previous-history-wrap-v1 {
+          color: #202124;
+        }
+
+        .sc-report-previous-history-wrap-v1 button {
           color: #5F6268 !important;
           font-weight: 560 !important;
         }
