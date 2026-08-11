@@ -1645,8 +1645,8 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '26px 24px 0',
-                      paddingBottom: 'calc(34px + env(safe-area-inset-bottom, 0px))',
+                      margin: '10px 24px 0',
+                      paddingBottom: 'calc(22px + env(safe-area-inset-bottom, 0px))',
                     }}
                   >
                     <PreviousReportsCard
