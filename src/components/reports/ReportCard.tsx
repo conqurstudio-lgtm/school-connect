@@ -529,7 +529,7 @@ export function ReportCard({ report, childName }: Props) {
           gap: 12px;
           border-radius: 26px;
           background: #FFFFFF;
-          border: 1px solid #e0dfdf;
+          border: 1px solid rgba(17,17,17,0.045);
           box-shadow: 0 14px 34px rgba(17,17,17,0.035);
           box-sizing: border-box;
         }
@@ -539,7 +539,7 @@ export function ReportCard({ report, childName }: Props) {
           height: 40px;
           border-radius: 999px;
           background: #F1F2F3;
-          border: 1px solid #e0dfdf;
+          border: 1px solid rgba(17,17,17,0.06);
           overflow: hidden;
           flex-shrink: 0;
           display: grid;
@@ -620,13 +620,13 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-note-v1.is-subject-tip-note {
           background: #FFFFFF;
-          border-color: #e0dfdf;
+          border-color: rgba(17,17,17,0.055);
         }
 
         .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
           background: transparent !important;
           color: #10141A;
-          border-color: #e0dfdf;
+          border-color: rgba(17,17,17,0.055);
         }
 
         .sc-subject-tip-emoji-v1 {
