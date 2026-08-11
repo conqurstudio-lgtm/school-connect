@@ -585,7 +585,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
 
     const timer = window.setInterval(() => {
       setActiveMomentIndex(current => (current + 1) % moments.length)
-    }, 5200)
+    }, 6800)
 
     return () => window.clearInterval(timer)
   }, [loading, moments.length])
@@ -616,6 +616,18 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
         boxSizing: 'border-box',
       }}
     >
+      <style jsx>{`
+        @keyframes scMomentsImageFadeIn {
+          from {
+            opacity: 0.35;
+            transform: scale(1.015);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
       <div
         style={{
           width: '100%',
@@ -644,7 +656,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           {loading ? (
             <span style={{
               display: 'block',
-              height: 150,
+              height: 188,
               background: '#F1F2F3',
             }} />
           ) : image ? (
@@ -654,15 +666,16 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
               alt=""
               style={{
                 width: '100%',
-                height: 150,
+                height: 188,
                 objectFit: 'cover',
                 objectPosition: 'center center',
                 display: 'block',
+                animation: 'scMomentsImageFadeIn 1200ms ease both',
               }}
             />
           ) : (
             <span style={{
-              height: 150,
+              height: 188,
               display: 'grid',
               placeItems: 'center',
               fontSize: 34,
