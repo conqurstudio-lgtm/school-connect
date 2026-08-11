@@ -1689,7 +1689,7 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '8px 24px 0',
+                      margin: '0 24px 0',
                     }}
                   >
                     <PreviousReportsCard

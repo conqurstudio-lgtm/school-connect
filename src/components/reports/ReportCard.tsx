@@ -700,7 +700,7 @@ export function ReportCard({ report, childName }: Props) {
           animation: scSubjectsFinalSlideInV1 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
           animation-delay: 120ms;
           will-change: transform, opacity, filter;
-          padding-bottom: 4px;
+          padding-bottom: 0px;
         }
 
         .sc-subject-flat-slider-v1::-webkit-scrollbar {
