@@ -722,15 +722,15 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 {
-          width: 150px;
-          min-height: 120px;
+          width: 138px;
+          min-height: 116px;
           flex-shrink: 0;
           scroll-snap-align: start;
           border: 1px solid rgba(17,17,17,0.045);
-          border-radius: 26px;
+          border-radius: 24px;
           background: #FFFFFF;
           color: ${INK};
-          padding: 13px 15px 13px;
+          padding: 12px 14px 12px;
           border: 1px solid rgba(17,17,17,0.045);
           box-shadow: none;
           text-align: left;
@@ -743,6 +743,8 @@ export function ReportCard({ report, childName }: Props) {
             opacity 180ms ease;
           display: flex;
           flex-direction: column;
+        
+          gap: 7px;
         }
 
         .sc-subject-flat-slider-card-v1:active {
@@ -817,8 +819,8 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
-          width: 46px;
-          height: 46px;
+          width: 42px;
+          height: 42px;
           flex-shrink: 0;
         }
 
@@ -835,7 +837,7 @@ export function ReportCard({ report, childName }: Props) {
           place-items: center;
           margin: 0;
           color: inherit;
-          font-size: 12.2px;
+          font-size: 11.8px;
           font-weight: 560;
           line-height: 1;
           font-variant-numeric: tabular-nums;
@@ -856,8 +858,8 @@ export function ReportCard({ report, childName }: Props) {
           }
 
           .sc-subject-flat-slider-card-v1 {
-            width: 146px;
-            min-height: 140px;
+            width: 138px;
+            min-height: 116px;
           }
         }
       `}</style>
