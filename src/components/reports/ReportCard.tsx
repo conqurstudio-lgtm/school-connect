@@ -530,7 +530,7 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 26px;
           background: #FFFFFF;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 14px 34px rgba(17,17,17,0.035);
+          box-shadow: 0 12px 30px rgba(17,17,17,0.028);
           box-sizing: border-box;
         }
 
@@ -723,10 +723,7 @@ export function ReportCard({ report, childName }: Props) {
           font-family: inherit;
           cursor: pointer;
           transition:
-            background 260ms ease,
-            color 260ms ease,
-            transform 180ms ease,
-            opacity 180ms ease;
+            border-color 220ms ease, transform 220ms ease, background 220ms ease;
           display: flex;
           flex-direction: column;
         }
@@ -738,7 +735,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.24);
+          border-color: rgba(244,83,31,0.28);
           box-shadow: none;
         }
 
@@ -827,6 +824,30 @@ export function ReportCard({ report, childName }: Props) {
           color: #050505;
         }
 
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"],
+        .sc-subject-flat-slider-card-v1 [class*="change"],
+        .sc-subject-flat-slider-card-v1 [class*="previous"],
+        .sc-subject-flat-slider-card-v1 [class*="prev"],
+        .sc-subject-flat-slider-card-v1 [class*="trend"] {
+          background: #f3f3f3 !important;
+          color: #050505 !important;
+          border-color: #f3f3f3 !important;
+        }
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
+          color: #050505 !important;
+        }
+
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
           width: 46px;
@@ -846,7 +867,7 @@ export function ReportCard({ report, childName }: Props) {
           display: grid;
           place-items: center;
           margin: 0;
-          color: inherit;
+          color: #050505;
           font-size: 12.2px;
           font-weight: 560;
           line-height: 1;
