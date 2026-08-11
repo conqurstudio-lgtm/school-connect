@@ -153,7 +153,7 @@ function Delta({ value }: { value: number }) {
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
-  const size = 248
+  const size = 264
   const stroke = 2.15
   const center = size / 2
   const radius = (size - stroke - 14) / 2
