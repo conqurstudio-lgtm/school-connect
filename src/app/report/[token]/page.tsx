@@ -1640,29 +1640,6 @@ export default function ParentMagicReportPage() {
                   report={reports[0]}
                   childName={childName}
                 />
-
-                {reports.length > 1 ? (
-                  <div
-                    className="sc-report-previous-history-wrap-v1"
-                    style={{
-                      margin: '-48px 24px 0',
-                    }}
-                  >
-                    <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />
-                  </div>
-                ) : null}
-
-                <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
-
-                <div
-                  className="sc-report-bottom-family-share-wrap-v1"
-                  style={{
-                    margin: reports.length > 1 ? '26px 24px 0' : '18px 24px 0',
-                    paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
-                  }}
-                >
-                  <FamilyShareButton token={token} variant="card" />
-                </div>
               </div>
             )}
           </div>
