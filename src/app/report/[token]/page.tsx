@@ -1422,7 +1422,7 @@ export default function ParentMagicReportPage() {
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
                   style={{
-                    margin: reports.length > 1 ? '16px 24px 0' : '10px 24px 0',
+                    margin: reports.length > 1 ? '26px 24px 0' : '18px 24px 0',
                     paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
                   }}
                 >
