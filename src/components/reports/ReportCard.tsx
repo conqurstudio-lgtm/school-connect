@@ -82,23 +82,55 @@ function getSubjectStatus(score: number): string {
   return 'Needs support'
 }
 
-function getSubjectTipMessage(subjectName: string, score: number, childName: string): string {
+function getSubjectTipMessage(subjectName: string, score: number, childName: string, seedKey = '') {
+  const subject = subjectName || 'this area'
   const child = childName || 'Your child'
-  const subject = subjectName || 'this subject'
 
-  if (score >= 4.5) {
-    return `${child} is doing very well in ${subject}. Keep encouraging this strength with light revision and praise at home.`
-  }
+  const steadyGrowthNotes = [
+    `${child} is building steady confidence in ${subject}. The teacher will keep supporting this through guided practice, and small improvements each week are important.`,
+    `${child} is making progress in ${subject}. Some parts still need repetition, but the foundation is developing and the learning process is on track.`,
+    `${child} is growing in ${subject} step by step. Continued classroom practice will help turn today’s understanding into stronger confidence.`,
+    `${child} is showing developing understanding in ${subject}. The focus now is consistency, practice, and celebrating the small wins along the way.`,
+    `${child} is moving forward in ${subject}. There is still room to strengthen the basics, but the progress is worth noticing and encouraging.`,
+  ]
 
-  if (score >= 3.5) {
-    return `${child} is making good progress in ${subject}. A little more practice will help build even stronger confidence.`
-  }
+  const strongGrowthNotes = [
+    `${child} is doing well in ${subject}. This is a positive area of growth, and the teacher will keep building on this strength through class activities.`,
+    `${child} is showing strong understanding in ${subject}. Continued encouragement will help this confidence become even more consistent.`,
+    `${child} is responding well in ${subject}. The progress is clear, and this is something to celebrate while still keeping the learning steady.`,
+    `${child} is showing good confidence in ${subject}. The next step is to keep stretching this strength through regular classroom practice.`,
+    `${child} is growing beautifully in ${subject}. This area shows strong effort and good learning habits that should be encouraged.`,
+  ]
 
-  if (score >= 2.5) {
-    return `${child} is showing fair progress in ${subject}. Short, consistent practice will help improve understanding.`
-  }
+  const excellentGrowthNotes = [
+    `${child} is excelling in ${subject}. This is a strength to celebrate, and the teacher will continue creating opportunities for deeper learning.`,
+    `${child} is showing excellent confidence in ${subject}. This progress reflects strong engagement and a positive learning rhythm.`,
+    `${child} is doing very well in ${subject}. This is a proud moment, and continued encouragement will help keep the momentum going.`,
+    `${child} is showing a strong grasp of ${subject}. The focus now is to keep nurturing this strength while maintaining balance across other areas.`,
+    `${child} is shining in ${subject}. This progress is worth celebrating and shows that the learning process is working well.`,
+  ]
 
-  return `${child} needs gentle support in ${subject}. Focus on small daily practice and celebrate each improvement.`
+  const supportGrowthNotes = [
+    `${child} is still building confidence in ${subject}. There is no need to panic — the teacher is supporting this with guided practice and steady encouragement.`,
+    `${child} needs more time with ${subject}, and that is part of the learning journey. The focus is on calm repetition, support, and small weekly progress.`,
+    `${child} is finding parts of ${subject} challenging, but this gives us a clear area to support. Growth is possible with patience and consistent practice.`,
+    `${child} is still developing in ${subject}. The teacher will continue helping with the basics so confidence can grow step by step.`,
+    `${child} may need extra support in ${subject}. This is not a setback — it simply shows where focused help can make the biggest difference.`,
+  ]
+
+  const bank =
+    score >= 4.6
+      ? excellentGrowthNotes
+      : score >= 4
+        ? strongGrowthNotes
+        : score >= 3
+          ? steadyGrowthNotes
+          : supportGrowthNotes
+
+  const seed = `${subject}-${child}-${score}-${seedKey}`
+  const index = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0) % bank.length
+
+  return bank[index]
 }
 
 function useCountUp(value: number) {
@@ -368,7 +400,7 @@ export function ReportCard({ report, childName }: Props) {
 
   const activeTeacherNote = noteIsOverall
     ? teacherCommentText
-    : getSubjectTipMessage(active.name, active.score, childFirstName)
+    : getSubjectTipMessage(active.name, active.score, childFirstName, String(report.id || report.report_id || report.period_start || report.week_start || report.created_at || report.date || ''))
 
   const [openNote, setOpenNote] = useState(false)
   const isLong = activeTeacherNote.length > 92
