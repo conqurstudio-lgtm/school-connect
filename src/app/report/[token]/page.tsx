@@ -612,7 +612,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '22px auto 0',
+        margin: '12px auto 0',
         boxSizing: 'border-box',
       }}
     >
