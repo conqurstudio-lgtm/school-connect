@@ -673,7 +673,21 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 500;
         }
 
-        .sc-subject-flat-slider-v1 {
+        
+        @keyframes scSubjectsFinalSlideInV1 {
+          from {
+            opacity: 0;
+            transform: translateY(18px);
+            filter: blur(1.5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+          }
+        }
+
+.sc-subject-flat-slider-v1 {
           margin-top: 18px;
           display: flex;
           gap: 12px;
@@ -683,6 +697,10 @@ export function ReportCard({ report, childName }: Props) {
           scroll-padding-left: 24px;
           -ms-overflow-style: none;
           scrollbar-width: none;
+          animation: scSubjectsFinalSlideInV1 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation-delay: 120ms;
+          will-change: transform, opacity, filter;
+          padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
         }
 
         .sc-subject-flat-slider-v1::-webkit-scrollbar {
