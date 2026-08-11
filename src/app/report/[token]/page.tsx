@@ -581,6 +581,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
   if (!loading && moments.length === 0) return null
 
   const first = moments[0] || null
+
   const image =
     first?.file_type === 'image'
       ? (first?.file_url || first?.image_url || first?.media_url || '')
@@ -593,14 +594,15 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
     first?.title ||
     'A new class moment was shared.'
 
+  const extraMoments = moments.slice(1, 3)
+
   return (
     <section
       aria-label="Recent moments"
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '18px auto 0',
-        padding: 0,
+        margin: '22px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -642,109 +644,121 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
             color: '#5F6268',
             lineHeight: 1,
           }}>
-            View
+            View all
           </span>
         </span>
 
         <span style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          borderTop: '1px solid rgba(17,17,17,0.07)',
-          paddingTop: 11,
+          display: 'block',
+          width: '100%',
+          borderRadius: 26,
+          overflow: 'hidden',
+          background: '#F7F7F8',
+          border: '1px solid rgba(17,17,17,0.055)',
+          boxShadow: '0 14px 34px rgba(17,17,17,0.035)',
         }}>
           {loading ? (
-            <>
-              <span style={{
-                width: 42,
-                height: 42,
-                borderRadius: 16,
-                background: '#F2F3F4',
-                flexShrink: 0,
-              }} />
-
-              <span style={{ display: 'grid', gap: 6, flex: 1 }}>
-                <span style={{
-                  width: '68%',
-                  height: 9,
-                  borderRadius: 999,
-                  background: '#EEF0F1',
-                }} />
-                <span style={{
-                  width: '46%',
-                  height: 9,
-                  borderRadius: 999,
-                  background: '#F3F4F5',
-                }} />
-              </span>
-            </>
+            <span style={{
+              display: 'block',
+              height: 168,
+              background: '#F1F2F3',
+            }} />
+          ) : image ? (
+            <img
+              src={image}
+              alt=""
+              style={{
+                width: '100%',
+                height: 168,
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
           ) : (
-            <>
-              <span style={{
-                width: 42,
-                height: 42,
-                borderRadius: 16,
-                background: image ? '#F3F4F5' : '#F7F7F8',
-                border: '1px solid rgba(17,17,17,0.045)',
-                overflow: 'hidden',
-                flexShrink: 0,
-                display: 'grid',
-                placeItems: 'center',
-                color: '#8A8F96',
-                fontSize: 18,
-              }}>
-                {image ? (
-                  <img
-                    src={image}
-                    alt=""
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                ) : (
-                  '✨'
-                )}
-              </span>
-
-              <span style={{
-                minWidth: 0,
-                display: 'grid',
-                gap: 3,
-                flex: 1,
-              }}>
-                <span style={{
-                  color: '#1A1A1A',
-                  fontSize: 12.5,
-                  fontWeight: 430,
-                  letterSpacing: '-0.015em',
-                  lineHeight: 1.25,
-                  overflow: 'hidden',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                }}>
-                  {caption}
-                </span>
-
-                <span style={{
-                  color: '#8A8F96',
-                  fontSize: 11.3,
-                  fontWeight: 380,
-                  lineHeight: 1.15,
-                }}>
-                  {moments.length} recent {moments.length === 1 ? 'moment' : 'moments'}
-                </span>
-              </span>
-            </>
+            <span style={{
+              height: 168,
+              display: 'grid',
+              placeItems: 'center',
+              fontSize: 34,
+              color: '#8A8F96',
+            }}>
+              ✨
+            </span>
           )}
+
+          <span style={{
+            display: 'grid',
+            gap: 10,
+            padding: '12px 14px 13px',
+            background: '#FFFFFF',
+          }}>
+            <span style={{
+              color: '#1A1A1A',
+              fontSize: 12.8,
+              fontWeight: 430,
+              letterSpacing: '-0.015em',
+              lineHeight: 1.35,
+              overflow: 'hidden',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+            }}>
+              {loading ? 'Loading the latest class moment...' : caption}
+            </span>
+
+            {!loading && extraMoments.length > 0 ? (
+              <span style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${extraMoments.length}, minmax(0, 1fr))`,
+                gap: 8,
+              }}>
+                {extraMoments.map((moment: any, index: number) => {
+                  const thumb =
+                    moment?.file_type === 'image'
+                      ? (moment?.file_url || moment?.image_url || moment?.media_url || '')
+                      : ''
+
+                  return (
+                    <span
+                      key={moment?.id || index}
+                      style={{
+                        height: 54,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                        background: '#F3F4F5',
+                        border: '1px solid rgba(17,17,17,0.045)',
+                        display: 'grid',
+                        placeItems: 'center',
+                        color: '#8A8F96',
+                        fontSize: 16,
+                      }}
+                    >
+                      {thumb ? (
+                        <img
+                          src={thumb}
+                          alt=""
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                          }}
+                        />
+                      ) : (
+                        '✨'
+                      )}
+                    </span>
+                  )
+                })}
+              </span>
+            ) : null}
+          </span>
         </span>
       </button>
     </section>
   )
 }
+
 
 function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant?: 'icon' | 'card' }) {
   const [creating, setCreating] = useState(false)
