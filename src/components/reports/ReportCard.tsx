@@ -732,7 +732,7 @@ export function ReportCard({ report, childName }: Props) {
           animation: scSubjectsFinalSlideInV1 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
           animation-delay: 120ms;
           will-change: transform, opacity, filter;
-          padding-bottom: 0px;
+          padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
         }
 
         .sc-subject-flat-slider-v1::-webkit-scrollbar {
@@ -755,11 +755,12 @@ export function ReportCard({ report, childName }: Props) {
           font-family: inherit;
           cursor: pointer;
           transition:
-            border-color 220ms ease, transform 220ms ease, background 220ms ease;
+            background 260ms ease,
+            color 260ms ease,
+            transform 180ms ease,
+            opacity 180ms ease;
           display: flex;
           flex-direction: column;
-        
-          gap: 8px;
         }
 
         .sc-subject-flat-slider-card-v1:active {
