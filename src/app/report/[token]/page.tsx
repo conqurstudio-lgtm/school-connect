@@ -594,15 +594,13 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
     first?.title ||
     'A new class moment was shared.'
 
-  const extraMoments = moments.slice(1, 3)
-
   return (
     <section
       aria-label="Recent moments"
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '22px auto 0',
+        margin: '24px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -653,14 +651,14 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           width: '100%',
           borderRadius: 26,
           overflow: 'hidden',
-          background: '#F7F7F8',
+          background: '#FFFFFF',
           border: '1px solid rgba(17,17,17,0.055)',
           boxShadow: '0 14px 34px rgba(17,17,17,0.035)',
         }}>
           {loading ? (
             <span style={{
               display: 'block',
-              height: 168,
+              height: 176,
               background: '#F1F2F3',
             }} />
           ) : image ? (
@@ -669,17 +667,18 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
               alt=""
               style={{
                 width: '100%',
-                height: 168,
+                height: 176,
                 objectFit: 'cover',
                 display: 'block',
               }}
             />
           ) : (
             <span style={{
-              height: 168,
+              height: 176,
               display: 'grid',
               placeItems: 'center',
               fontSize: 34,
+              background: '#F7F7F8',
               color: '#8A8F96',
             }}>
               ✨
@@ -688,7 +687,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
 
           <span style={{
             display: 'grid',
-            gap: 10,
+            gap: 4,
             padding: '12px 14px 13px',
             background: '#FFFFFF',
           }}>
@@ -706,50 +705,14 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
               {loading ? 'Loading the latest class moment...' : caption}
             </span>
 
-            {!loading && extraMoments.length > 0 ? (
+            {!loading && moments.length > 1 ? (
               <span style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${extraMoments.length}, minmax(0, 1fr))`,
-                gap: 8,
+                color: '#8A8F96',
+                fontSize: 11.3,
+                fontWeight: 380,
+                lineHeight: 1.15,
               }}>
-                {extraMoments.map((moment: any, index: number) => {
-                  const thumb =
-                    moment?.file_type === 'image'
-                      ? (moment?.file_url || moment?.image_url || moment?.media_url || '')
-                      : ''
-
-                  return (
-                    <span
-                      key={moment?.id || index}
-                      style={{
-                        height: 54,
-                        borderRadius: 16,
-                        overflow: 'hidden',
-                        background: '#F3F4F5',
-                        border: '1px solid rgba(17,17,17,0.045)',
-                        display: 'grid',
-                        placeItems: 'center',
-                        color: '#8A8F96',
-                        fontSize: 16,
-                      }}
-                    >
-                      {thumb ? (
-                        <img
-                          src={thumb}
-                          alt=""
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            display: 'block',
-                          }}
-                        />
-                      ) : (
-                        '✨'
-                      )}
-                    </span>
-                  )
-                })}
+                {moments.length} recent moments available
               </span>
             ) : null}
           </span>
