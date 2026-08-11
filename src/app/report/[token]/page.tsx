@@ -612,7 +612,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '12px auto 0',
+        margin: '10px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -628,6 +628,50 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           }
         }
       `}</style>
+
+      <div
+        className="sc-moments-report-head-v1"
+        style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          gap: 12,
+          margin: '0 6px 10px',
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            color: '#1A1A1A',
+            fontSize: 13.6,
+            fontWeight: 520,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.1,
+          }}
+        >
+          Class moments
+        </p>
+
+        <button
+          type="button"
+          onClick={onOpen}
+          style={{
+            border: 'none',
+            background: 'transparent',
+            padding: 0,
+            color: '#5F6268',
+            fontSize: 12,
+            fontWeight: 480,
+            letterSpacing: '-0.01em',
+            lineHeight: 1,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          View all
+        </button>
+      </div>
+
 
       <div
         style={{
