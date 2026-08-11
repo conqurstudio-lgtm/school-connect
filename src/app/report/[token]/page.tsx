@@ -719,6 +719,28 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 function ReportSafeAreaStyle() {
   return (
     <style jsx global>{`
+
+        .sc-report-previous-history-wrap-v1 {
+          color: #050505;
+        }
+
+        .sc-report-previous-history-wrap-v1 button {
+          color: #5F6268 !important;
+          font-weight: 620 !important;
+        }
+
+        .sc-report-previous-history-wrap-v1 strong {
+          color: #050505 !important;
+          font-weight: 680 !important;
+        }
+
+        .sc-report-previous-history-wrap-v1 p,
+        .sc-report-previous-history-wrap-v1 span,
+        .sc-report-previous-history-wrap-v1 small {
+          color: #8A8F96;
+        }
+
+
       @keyframes scReportPageSlideIn {
         from {
           opacity: 0;
