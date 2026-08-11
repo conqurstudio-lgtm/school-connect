@@ -590,16 +590,16 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-copy-v1 p {
           margin: 0;
-          color: #5F6268;
+          color: #74777D;
           font-size: 12.8px;
-          font-weight: 400;
+          font-weight: 390;
           line-height: 1.48;
           letter-spacing: -0.01em;
         }
 
         .sc-teacher-flat-copy-v1 strong {
-          color: #10141A;
-          font-weight: 570;
+          color: #202124;
+          font-weight: 560;
                   letter-spacing: -0.02em;
 }
 
@@ -668,9 +668,9 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-head-v1 span {
-          color: ${INK_SOFT};
+          color: #9A9DA3;
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 430;
         }
 
         
@@ -712,7 +712,7 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #e0dfdf;
+          border: 1px solid #e6e6e6;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
@@ -735,13 +735,13 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.28);
+          border-color: rgba(244,83,31,0.20);
           box-shadow: none;
         }
 
         .sc-subject-flat-slider-card-v1 p {
           margin: auto 0 0;
-          color: inherit;
+          color: #969AA0;
           font-size: 12.8px;
           font-weight: 560;
           line-height: 1.14;
@@ -848,6 +848,32 @@ export function ReportCard({ report, childName }: Props) {
           color: #050505 !important;
         }
 
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"],
+        .sc-subject-flat-slider-card-v1 [class*="change"],
+        .sc-subject-flat-slider-card-v1 [class*="previous"],
+        .sc-subject-flat-slider-card-v1 [class*="prev"],
+        .sc-subject-flat-slider-card-v1 [class*="trend"] {
+          background: #f5f5f5 !important;
+          color: #4F5257 !important;
+          border-color: #f5f5f5 !important;
+          font-weight: 520 !important;
+        }
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
+          color: #4F5257 !important;
+          font-weight: 540 !important;
+        }
+
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
           width: 46px;
@@ -867,7 +893,7 @@ export function ReportCard({ report, childName }: Props) {
           display: grid;
           place-items: center;
           margin: 0;
-          color: #050505;
+          color: #202124;
           font-size: 12.2px;
           font-weight: 560;
           line-height: 1;
