@@ -260,16 +260,16 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? 'rgba(244,83,31,0.14)' : '#e0dfdf'}
-          strokeWidth="1.65"
+          stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
+          strokeWidth="2.15"
         />
         <circle
           cx="24"
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? BRAND : '#e0dfdf'}
-          strokeWidth="1.65"
+          stroke={active ? BRAND : '#DADBDD'}
+          strokeWidth="2.15"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
@@ -741,14 +741,14 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-subject-flat-slider-card-v1 {
           width: 150px;
-          min-height: 122px;
+          min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
           border: 1px solid #e0dfdf;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
-          padding: 13px 15px 12px;
+          padding: 13px 15px 13px;
           border: 1px solid #e0dfdf;
           box-shadow: none;
           text-align: left;
@@ -769,7 +769,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.18);
+          border-color: rgba(244,83,31,0.24);
           box-shadow: none;
         }
 
@@ -833,56 +833,6 @@ export function ReportCard({ report, childName }: Props) {
           background: rgba(255,76,67,0.075);
           color: #D65C55;
         }
-        .sc-subject-flat-slider-card-v1 [class*="delta"],
-        .sc-subject-flat-slider-card-v1 [class*="change"],
-        .sc-subject-flat-slider-card-v1 [class*="previous"],
-        .sc-subject-flat-slider-card-v1 [class*="prev"],
-        .sc-subject-flat-slider-card-v1 [class*="trend"] {
-          background: #f5f5f5 !important;
-          color: #4F5257 !important;
-          border-color: #f5f5f5 !important;
-          font-weight: 520 !important;
-        }
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
-          color: #4F5257 !important;
-          font-weight: 540 !important;
-        }
-
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"],
-        .sc-subject-flat-slider-card-v1 [class*="change"],
-        .sc-subject-flat-slider-card-v1 [class*="previous"],
-        .sc-subject-flat-slider-card-v1 [class*="prev"],
-        .sc-subject-flat-slider-card-v1 [class*="trend"] {
-          background: #f3f3f3 !important;
-          color: #050505 !important;
-          border-color: #f3f3f3 !important;
-          font-weight: 560 !important;
-        }
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
-          color: #050505 !important;
-          font-weight: 560 !important;
-        }
 
         .sc-subject-mini-ring-flat-v1 {
           position: relative;
@@ -903,7 +853,7 @@ export function ReportCard({ report, childName }: Props) {
           display: grid;
           place-items: center;
           margin: 0;
-          color: #202124;
+          color: inherit;
           font-size: 12.2px;
           font-weight: 560;
           line-height: 1;
@@ -926,7 +876,7 @@ export function ReportCard({ report, childName }: Props) {
 
           .sc-subject-flat-slider-card-v1 {
             width: 146px;
-            min-height: 122px;
+            min-height: 120px;
           }
         }
       `}</style>
