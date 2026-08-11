@@ -139,7 +139,7 @@ function PreviousReportScoreRing({ value }: { value: number }) {
 }
 
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
 
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
@@ -549,284 +549,6 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 }
 
 
-function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () => void }) {
-  const [loading, setLoading] = useState(true)
-  const [moments, setMoments] = useState<any[]>([])
-  const [activeMomentIndex, setActiveMomentIndex] = useState(0)
-
-  useEffect(() => {
-    let alive = true
-
-    setLoading(true)
-
-    fetch(`/api/parent/moments?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
-      .then(async res => {
-        const json = await res.json().catch(() => ({}))
-        if (!res.ok) throw new Error(json?.error || 'Could not load moments')
-        if (!alive) return
-
-        setMoments(Array.isArray(json?.moments) ? json.moments.slice(0, 5) : [])
-        setActiveMomentIndex(0)
-      })
-      .catch(() => {
-        if (alive) setMoments([])
-      })
-      .finally(() => {
-        if (alive) setLoading(false)
-      })
-
-    return () => {
-      alive = false
-    }
-  }, [token])
-
-  useEffect(() => {
-    if (loading || moments.length <= 1) return
-
-    const timer = window.setInterval(() => {
-      setActiveMomentIndex(current => (current + 1) % moments.length)
-    }, 6800)
-
-    return () => window.clearInterval(timer)
-  }, [loading, moments.length])
-
-  if (!loading && moments.length === 0) return null
-
-  const activeMoment = moments[activeMomentIndex] || moments[0] || null
-
-  const image =
-    activeMoment?.file_type === 'image'
-      ? (activeMoment?.file_url || activeMoment?.image_url || activeMoment?.media_url || '')
-      : ''
-
-  const caption =
-    activeMoment?.caption ||
-    activeMoment?.message ||
-    activeMoment?.text ||
-    activeMoment?.title ||
-    'See the latest classroom moments and activities.'
-
-  return (
-    <section
-      aria-label="Moments highlight"
-      style={{
-        width: '100%',
-        maxWidth: 370,
-        margin: '8px auto 0',
-        boxSizing: 'border-box',
-      }}
-    >
-      <style jsx>{`
-        @keyframes scMomentsImageFadeIn {
-          from {
-            opacity: 0.35;
-            transform: scale(1.015);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-
-      <div
-        className="sc-moments-report-head-v1"
-        style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          gap: 12,
-          margin: '0 8px 12px',
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            color: '#1A1A1A',
-            fontSize: 13.6,
-            fontWeight: 520,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.1,
-          }}
-        >
-          Class moments
-        </p>
-
-        <button
-          type="button"
-          onClick={onOpen}
-          style={{
-            border: 'none',
-            background: 'transparent',
-            padding: 0,
-            color: '#5F6268',
-            fontSize: 12,
-            fontWeight: 520,
-            letterSpacing: '-0.01em',
-            lineHeight: 1,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          View all
-        </button>
-      </div>
-
-
-      <div
-        style={{
-          width: '100%',
-          borderRadius: 26,
-          overflow: 'hidden',
-          background: '#FFFFFF',
-          border: '1px solid rgba(17,17,17,0.055)',
-          boxShadow: '0 10px 26px rgba(17,17,17,0.026)',
-        }}
-      >
-        <button
-          type="button"
-          onClick={onOpen}
-          aria-label="Open moments"
-          style={{
-            width: '100%',
-            border: 'none',
-            background: loading ? '#F1F2F3' : '#F7F7F8',
-            padding: 0,
-            display: 'block',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            textAlign: 'left',
-          }}
-        >
-          {loading ? (
-            <span style={{
-              display: 'block',
-              height: 188,
-              background: '#F1F2F3',
-            }} />
-          ) : image ? (
-            <img
-              key={activeMoment?.id || activeMomentIndex}
-              src={image}
-              alt=""
-              style={{
-                width: '100%',
-                height: 188,
-                objectFit: 'cover',
-                objectPosition: 'center center',
-                display: 'block',
-                animation: 'scMomentsImageFadeIn 1200ms ease both',
-              }}
-            />
-          ) : (
-            <span style={{
-              height: 188,
-              display: 'grid',
-              placeItems: 'center',
-              fontSize: 34,
-              background: '#F7F7F8',
-              color: '#8A8F96',
-            }}>
-              ✨
-            </span>
-          )}
-        </button>
-
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12,
-          padding: '12px 13px 13px',
-          background: '#FFFFFF',
-        }}>
-          <div style={{
-            minWidth: 0,
-            display: 'grid',
-            gap: 4,
-            flex: 1,
-          }}>
-            <p style={{
-              margin: 0,
-              color: '#1A1A1A',
-              fontSize: 13,
-              fontWeight: 520,
-              letterSpacing: '-0.02em',
-              lineHeight: 1.18,
-            }}>
-              Explore your child’s class life
-            </p>
-
-            <p style={{
-              margin: 0,
-              color: '#8A8F96',
-              fontSize: 11.4,
-              fontWeight: 380,
-              lineHeight: 1.25,
-              overflow: 'hidden',
-              display: '-webkit-box',
-              WebkitLineClamp: 1,
-              WebkitBoxOrient: 'vertical',
-            }}>
-              {loading ? 'Loading the latest moment...' : caption}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={onOpen}
-            style={{
-              border: 'none',
-              borderRadius: 999,
-              background: '#252525',
-              color: '#FFFFFF',
-              minHeight: 34,
-              padding: '0 14px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 11.5,
-              fontWeight: 560,
-              letterSpacing: '-0.01em',
-              lineHeight: 1,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              flexShrink: 0,
-            }}
-          >
-            View
-          </button>
-        </div>
-
-        {!loading && moments.length > 1 ? (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 5,
-            padding: '0 0 12px',
-            background: '#FFFFFF',
-          }}>
-            {moments.slice(0, 5).map((moment: any, index: number) => (
-              <span
-                key={moment?.id || index}
-                aria-hidden="true"
-                style={{
-                  width: index === activeMomentIndex ? 14 : 5,
-                  height: 5,
-                  borderRadius: 999,
-                  background: index === activeMomentIndex ? '#252525' : 'rgba(17,17,17,0.14)',
-                  transition: 'width 220ms ease, background 220ms ease',
-                }}
-              />
-            ))}
-          </div>
-        ) : null}
-      </div>
-    </section>
-  )
-}
-
-
 function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant?: 'icon' | 'card' }) {
   const [creating, setCreating] = useState(false)
 
@@ -997,56 +719,6 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 function ReportSafeAreaStyle() {
   return (
     <style jsx global>{`
-
-        .sc-report-previous-history-wrap-v1 {
-          color: #202124;
-        }
-
-        .sc-report-previous-history-wrap-v1 button {
-          color: #6F7278 !important;
-          font-weight: 540 !important;
-        }
-
-        .sc-report-previous-history-wrap-v1 p,
-        .sc-report-previous-history-wrap-v1 span,
-        .sc-report-previous-history-wrap-v1 small {
-          color: #8F9399;
-          font-weight: 410;
-        }
-
-        .sc-report-previous-history-wrap-v1 strong {
-          color: #202124;
-          font-weight: 540;
-        }
-
-        .sc-report-previous-history-wrap-v1 [style*="borderTop"],
-        .sc-report-previous-history-wrap-v1 [style*="border-top"] {
-          border-color: rgba(17,17,17,0.055) !important;
-        }
-
-
-
-        .sc-report-previous-history-wrap-v1 {
-          color: #202124;
-        }
-
-        .sc-report-previous-history-wrap-v1 button {
-          color: #5F6268 !important;
-          font-weight: 560 !important;
-        }
-
-        .sc-report-previous-history-wrap-v1 p,
-        .sc-report-previous-history-wrap-v1 span,
-        .sc-report-previous-history-wrap-v1 small {
-          color: #8A8F96;
-        }
-
-        .sc-report-previous-history-wrap-v1 strong {
-          color: #202124;
-          font-weight: 570;
-        }
-
-
       @keyframes scReportPageSlideIn {
         from {
           opacity: 0;
@@ -1735,31 +1407,28 @@ export default function ParentMagicReportPage() {
                   report={reports[0]}
                   childName={childName}
                 />
+
                 {reports.length > 1 ? (
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '0 24px 0',
+                      margin: '-48px 24px 0',
                     }}
                   >
-                    <PreviousReportsCard
-                      reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))}
-                      childName={childName}
-                    />
+                    <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />
                   </div>
                 ) : null}
 
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
                   style={{
-                    margin: reports.length > 1 ? '34px 24px 0' : '22px 24px 0',
-                    paddingBottom: 'calc(34px + env(safe-area-inset-bottom, 0px))',
+                    margin: reports.length > 1 ? '16px 24px 0' : '10px 24px 0',
+                    paddingBottom: 'calc(20px + env(safe-area-inset-bottom, 0px))',
                   }}
                 >
                   <FamilyShareButton token={token} variant="card" />
                 </div>
-
-             </div>
+              </div>
             )}
           </div>
           )}

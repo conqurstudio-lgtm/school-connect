@@ -82,55 +82,23 @@ function getSubjectStatus(score: number): string {
   return 'Needs support'
 }
 
-function getSubjectTipMessage(subjectName: string, score: number, childName: string, seedKey = '') {
-  const subject = subjectName || 'this area'
+function getSubjectTipMessage(subjectName: string, score: number, childName: string): string {
   const child = childName || 'Your child'
+  const subject = subjectName || 'this subject'
 
-  const steadyGrowthNotes = [
-    `${child} is building steady confidence in ${subject}. The teacher will keep supporting this through guided practice, and small improvements each week are important.`,
-    `${child} is making progress in ${subject}. Some parts still need repetition, but the foundation is developing and the learning process is on track.`,
-    `${child} is growing in ${subject} step by step. Continued classroom practice will help turn today’s understanding into stronger confidence.`,
-    `${child} is showing developing understanding in ${subject}. The focus now is consistency, practice, and celebrating the small wins along the way.`,
-    `${child} is moving forward in ${subject}. There is still room to strengthen the basics, but the progress is worth noticing and encouraging.`,
-  ]
+  if (score >= 4.5) {
+    return `${child} is doing very well in ${subject}. Keep encouraging this strength with light revision and praise at home.`
+  }
 
-  const strongGrowthNotes = [
-    `${child} is doing well in ${subject}. This is a positive area of growth, and the teacher will keep building on this strength through class activities.`,
-    `${child} is showing strong understanding in ${subject}. Continued encouragement will help this confidence become even more consistent.`,
-    `${child} is responding well in ${subject}. The progress is clear, and this is something to celebrate while still keeping the learning steady.`,
-    `${child} is showing good confidence in ${subject}. The next step is to keep stretching this strength through regular classroom practice.`,
-    `${child} is growing beautifully in ${subject}. This area shows strong effort and good learning habits that should be encouraged.`,
-  ]
+  if (score >= 3.5) {
+    return `${child} is making good progress in ${subject}. A little more practice will help build even stronger confidence.`
+  }
 
-  const excellentGrowthNotes = [
-    `${child} is excelling in ${subject}. This is a strength to celebrate, and the teacher will continue creating opportunities for deeper learning.`,
-    `${child} is showing excellent confidence in ${subject}. This progress reflects strong engagement and a positive learning rhythm.`,
-    `${child} is doing very well in ${subject}. This is a proud moment, and continued encouragement will help keep the momentum going.`,
-    `${child} is showing a strong grasp of ${subject}. The focus now is to keep nurturing this strength while maintaining balance across other areas.`,
-    `${child} is shining in ${subject}. This progress is worth celebrating and shows that the learning process is working well.`,
-  ]
+  if (score >= 2.5) {
+    return `${child} is showing fair progress in ${subject}. Short, consistent practice will help improve understanding.`
+  }
 
-  const supportGrowthNotes = [
-    `${child} is still building confidence in ${subject}. There is no need to panic — the teacher is supporting this with guided practice and steady encouragement.`,
-    `${child} needs more time with ${subject}, and that is part of the learning journey. The focus is on calm repetition, support, and small weekly progress.`,
-    `${child} is finding parts of ${subject} challenging, but this gives us a clear area to support. Growth is possible with patience and consistent practice.`,
-    `${child} is still developing in ${subject}. The teacher will continue helping with the basics so confidence can grow step by step.`,
-    `${child} may need extra support in ${subject}. This is not a setback — it simply shows where focused help can make the biggest difference.`,
-  ]
-
-  const bank =
-    score >= 4.6
-      ? excellentGrowthNotes
-      : score >= 4
-        ? strongGrowthNotes
-        : score >= 3
-          ? steadyGrowthNotes
-          : supportGrowthNotes
-
-  const seed = `${subject}-${child}-${score}-${seedKey}`
-  const index = Array.from(seed).reduce((total, char) => total + char.charCodeAt(0), 0) % bank.length
-
-  return bank[index]
+  return `${child} needs gentle support in ${subject}. Focus on small daily practice and celebrate each improvement.`
 }
 
 function useCountUp(value: number) {
@@ -185,7 +153,7 @@ function Delta({ value }: { value: number }) {
 
 function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const shown = useCountUp(value)
-  const size = 246
+  const size = 248
   const stroke = 2.15
   const center = size / 2
   const radius = (size - stroke - 14) / 2
@@ -261,15 +229,15 @@ function MiniRing({ value, active }: { value: number; active: boolean }) {
           r={radius}
           fill="none"
           stroke={active ? 'rgba(244,83,31,0.14)' : '#DADBDD'}
-          strokeWidth="2.15"
+          strokeWidth="1.65"
         />
         <circle
           cx="24"
           cy="24"
           r={radius}
           fill="none"
-          stroke={active ? BRAND : '#DADBDD'}
-          strokeWidth="2.15"
+          stroke={active ? BRAND : '#C8CBD0'}
+          strokeWidth="1.65"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={circumference * (1 - progress)}
@@ -310,7 +278,7 @@ function SubjectCard({
         ) : null}
       </div>
 
-      <p className="sc-subject-name-charcoal-v1">{subject.name}</p>
+      <p>{subject.name}</p>
       <span>{subject.status}</span>
     </button>
   )
@@ -400,7 +368,7 @@ export function ReportCard({ report, childName }: Props) {
 
   const activeTeacherNote = noteIsOverall
     ? teacherCommentText
-    : getSubjectTipMessage(active.name, active.score, childFirstName, String(report.id || report.report_id || report.period_start || report.week_start || report.created_at || report.date || ''))
+    : getSubjectTipMessage(active.name, active.score, childFirstName)
 
   const [openNote, setOpenNote] = useState(false)
   const isLong = activeTeacherNote.length > 92
@@ -417,7 +385,7 @@ export function ReportCard({ report, childName }: Props) {
           width: 100%;
           max-width: 410px;
           margin: 0 auto;
-          padding: 0 0 24px;
+          padding: 0 0 44px;
           color: ${INK};
           font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
@@ -473,11 +441,11 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-gauge-center-flat-v1 span {
-          color: #252525;
+          color: ${INK};
           font-size: 58px;
-          font-weight: 430;
+          font-weight: 500;
           line-height: 0.92;
-          letter-spacing: -0.048em;
+          letter-spacing: -0.055em;
           font-variant-numeric: tabular-nums;
         }
 
@@ -554,7 +522,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1 {
           width: calc(100% - 44px);
           max-width: 368px;
-          margin: 24px auto 0;
+          margin: 30px auto 0;
           padding: 14px 16px;
           display: flex;
           align-items: center;
@@ -562,7 +530,7 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 26px;
           background: #FFFFFF;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 12px 30px rgba(17,17,17,0.03);
+          box-shadow: 0 14px 34px rgba(17,17,17,0.035);
           box-sizing: border-box;
         }
 
@@ -631,7 +599,7 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-copy-v1 strong {
           color: #10141A;
-          font-weight: 560;
+          font-weight: 570;
                   letter-spacing: -0.02em;
 }
 
@@ -658,7 +626,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1.is-subject-tip-note .sc-teacher-flat-avatar-v1 {
           background: transparent !important;
           color: #10141A;
-          border-color: rgba(17,17,17,0.055);
+          border-color: rgba(17,17,17,0.06);
         }
 
         .sc-subject-tip-emoji-v1 {
@@ -700,26 +668,12 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-head-v1 span {
-          color: #9A9DA3;
+          color: ${INK_SOFT};
           font-size: 12px;
-          font-weight: 430;
+          font-weight: 500;
         }
 
-        
-        @keyframes scSubjectsFinalSlideInV1 {
-          from {
-            opacity: 0;
-            transform: translateY(18px);
-            filter: blur(1.5px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-            filter: blur(0);
-          }
-        }
-
-.sc-subject-flat-slider-v1 {
+        .sc-subject-flat-slider-v1 {
           margin-top: 18px;
           display: flex;
           gap: 12px;
@@ -729,10 +683,6 @@ export function ReportCard({ report, childName }: Props) {
           scroll-padding-left: 24px;
           -ms-overflow-style: none;
           scrollbar-width: none;
-          animation: scSubjectsFinalSlideInV1 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
-          animation-delay: 120ms;
-          will-change: transform, opacity, filter;
-          padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
         }
 
         .sc-subject-flat-slider-v1::-webkit-scrollbar {
@@ -744,12 +694,12 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #e0dfdf;
+          border: 1px solid rgba(17,17,17,0.045);
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
           padding: 13px 15px 13px;
-          border: 1px solid #e0dfdf;
+          border: 1px solid rgba(17,17,17,0.045);
           box-shadow: none;
           text-align: left;
           font-family: inherit;
@@ -775,11 +725,11 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-card-v1 p {
-          margin: 1px 0 0;
-          color: #8A8F96;
+          margin: auto 0 0;
+          color: inherit;
           font-size: 12.8px;
-          font-weight: 420;
-          line-height: 1.12;
+          font-weight: 560;
+          line-height: 1.14;
           letter-spacing: -0.018em;
         }
 
@@ -817,12 +767,10 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 520;
           line-height: 1;
           letter-spacing: -0.01em;
-          background: #f3f3f3;
-          color: #050505;
+          background: rgba(17,17,17,0.032);
+          color: #8F949B;
           flex-shrink: 0;
           margin-top: 2px;
-        
-          border-color: #f3f3f3;
         }
 
         .sc-subject-delta-flat-v1.is-up {
@@ -877,7 +825,7 @@ export function ReportCard({ report, childName }: Props) {
 
           .sc-subject-flat-slider-card-v1 {
             width: 146px;
-            min-height: 120px;
+            min-height: 140px;
           }
         }
       `}</style>
@@ -893,8 +841,8 @@ export function ReportCard({ report, childName }: Props) {
           background: SURFACE,
           color: INK_SOFT,
           fontSize: 10.5,
-          fontWeight: 620,
-          letterSpacing: '-0.04em',
+          fontWeight: 650,
+          letterSpacing: '0.08em',
           textTransform: 'uppercase',
         }}>
           {reportStatusLabel}
