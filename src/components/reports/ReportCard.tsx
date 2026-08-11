@@ -443,9 +443,9 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
           font-size: 58px;
-          font-weight: 500;
+          font-weight: 460;
           line-height: 0.92;
-          letter-spacing: -0.055em;
+          letter-spacing: -0.05em;
           font-variant-numeric: tabular-nums;
         }
 
@@ -841,8 +841,8 @@ export function ReportCard({ report, childName }: Props) {
           background: SURFACE,
           color: INK_SOFT,
           fontSize: 10.5,
-          fontWeight: 650,
-          letterSpacing: '0.08em',
+          fontWeight: 620,
+          letterSpacing: '-0.04em',
           textTransform: 'uppercase',
         }}>
           {reportStatusLabel}
