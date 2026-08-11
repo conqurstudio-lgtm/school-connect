@@ -552,6 +552,7 @@ function ReportTeacherActionAvatar({ teacher, school, child }: any) {
 function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () => void }) {
   const [loading, setLoading] = useState(true)
   const [moments, setMoments] = useState<any[]>([])
+  const [activeMomentIndex, setActiveMomentIndex] = useState(0)
 
   useEffect(() => {
     let alive = true
@@ -564,7 +565,8 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
         if (!res.ok) throw new Error(json?.error || 'Could not load moments')
         if (!alive) return
 
-        setMoments(Array.isArray(json?.moments) ? json.moments.slice(0, 3) : [])
+        setMoments(Array.isArray(json?.moments) ? json.moments.slice(0, 5) : [])
+        setActiveMomentIndex(0)
       })
       .catch(() => {
         if (alive) setMoments([])
@@ -578,25 +580,35 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
     }
   }, [token])
 
+  useEffect(() => {
+    if (loading || moments.length <= 1) return
+
+    const timer = window.setInterval(() => {
+      setActiveMomentIndex(current => (current + 1) % moments.length)
+    }, 5200)
+
+    return () => window.clearInterval(timer)
+  }, [loading, moments.length])
+
   if (!loading && moments.length === 0) return null
 
-  const first = moments[0] || null
+  const activeMoment = moments[activeMomentIndex] || moments[0] || null
 
   const image =
-    first?.file_type === 'image'
-      ? (first?.file_url || first?.image_url || first?.media_url || '')
+    activeMoment?.file_type === 'image'
+      ? (activeMoment?.file_url || activeMoment?.image_url || activeMoment?.media_url || '')
       : ''
 
   const caption =
-    first?.caption ||
-    first?.message ||
-    first?.text ||
-    first?.title ||
-    'A new class moment was shared.'
+    activeMoment?.caption ||
+    activeMoment?.message ||
+    activeMoment?.text ||
+    activeMoment?.title ||
+    'See the latest classroom moments and activities.'
 
   return (
     <section
-      aria-label="Recent moments"
+      aria-label="Moments highlight"
       style={{
         width: '100%',
         maxWidth: 370,
@@ -604,57 +616,31 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
         boxSizing: 'border-box',
       }}
     >
-      <button
-        type="button"
-        onClick={onOpen}
+      <div
         style={{
           width: '100%',
-          border: 'none',
-          background: 'transparent',
-          color: '#1A1A1A',
-          padding: 0,
-          display: 'grid',
-          gap: 10,
-          cursor: 'pointer',
-          textAlign: 'left',
-          fontFamily: 'inherit',
-        }}
-      >
-        <span style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 12,
-        }}>
-          <span style={{
-            fontSize: 13.1,
-            fontWeight: 480,
-            letterSpacing: '-0.02em',
-            lineHeight: 1.15,
-            color: '#1A1A1A',
-          }}>
-            Recent moments
-          </span>
-
-          <span style={{
-            fontSize: 12,
-            fontWeight: 480,
-            color: '#5F6268',
-            lineHeight: 1,
-          }}>
-            View all
-          </span>
-        </span>
-
-        <span style={{
-          display: 'block',
-          width: '100%',
-          borderRadius: 24,
+          borderRadius: 26,
           overflow: 'hidden',
           background: '#FFFFFF',
           border: '1px solid rgba(17,17,17,0.055)',
           boxShadow: '0 10px 26px rgba(17,17,17,0.026)',
-        }}>
+        }}
+      >
+        <button
+          type="button"
+          onClick={onOpen}
+          aria-label="Open moments"
+          style={{
+            width: '100%',
+            border: 'none',
+            background: loading ? '#F1F2F3' : '#F7F7F8',
+            padding: 0,
+            display: 'block',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+            textAlign: 'left',
+          }}
+        >
           {loading ? (
             <span style={{
               display: 'block',
@@ -663,11 +649,12 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
             }} />
           ) : image ? (
             <img
+              key={activeMoment?.id || activeMomentIndex}
               src={image}
               alt=""
               style={{
                 width: '100%',
-                height: 176,
+                height: 150,
                 objectFit: 'cover',
                 objectPosition: 'center center',
                 display: 'block',
@@ -675,50 +662,108 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
             />
           ) : (
             <span style={{
-              height: 176,
+              height: 150,
               display: 'grid',
               placeItems: 'center',
               fontSize: 34,
               background: '#F7F7F8',
-              color: '#A1A5AA',
+              color: '#8A8F96',
             }}>
               ✨
             </span>
           )}
+        </button>
 
-          <span style={{
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '12px 13px 13px',
+          background: '#FFFFFF',
+        }}>
+          <div style={{
+            minWidth: 0,
             display: 'grid',
             gap: 4,
-            padding: '10px 13px 12px',
-            background: '#FFFFFF',
+            flex: 1,
           }}>
-            <span style={{
+            <p style={{
+              margin: 0,
               color: '#1A1A1A',
-              fontSize: 12.5,
-              fontWeight: 400,
-              letterSpacing: '-0.015em',
-              lineHeight: 1.35,
+              fontSize: 13,
+              fontWeight: 520,
+              letterSpacing: '-0.02em',
+              lineHeight: 1.18,
+            }}>
+              Explore your child’s class life
+            </p>
+
+            <p style={{
+              margin: 0,
+              color: '#8A8F96',
+              fontSize: 11.4,
+              fontWeight: 380,
+              lineHeight: 1.25,
               overflow: 'hidden',
               display: '-webkit-box',
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
             }}>
-              {loading ? 'Loading the latest class moment...' : caption}
-            </span>
+              {loading ? 'Loading the latest moment...' : caption}
+            </p>
+          </div>
 
-            {!loading && moments.length > 1 ? (
-              <span style={{
-                color: '#8A8F96',
-                fontSize: 11.1,
-                fontWeight: 380,
-                lineHeight: 1.15,
-              }}>
-                {moments.length} recent moments available
-              </span>
-            ) : null}
-          </span>
-        </span>
-      </button>
+          <button
+            type="button"
+            onClick={onOpen}
+            style={{
+              border: 'none',
+              borderRadius: 999,
+              background: '#252525',
+              color: '#FFFFFF',
+              minHeight: 34,
+              padding: '0 14px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 11.5,
+              fontWeight: 560,
+              letterSpacing: '-0.01em',
+              lineHeight: 1,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              flexShrink: 0,
+            }}
+          >
+            View
+          </button>
+        </div>
+
+        {!loading && moments.length > 1 ? (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 5,
+            padding: '0 0 12px',
+            background: '#FFFFFF',
+          }}>
+            {moments.slice(0, 5).map((moment: any, index: number) => (
+              <span
+                key={moment?.id || index}
+                aria-hidden="true"
+                style={{
+                  width: index === activeMomentIndex ? 14 : 5,
+                  height: 5,
+                  borderRadius: 999,
+                  background: index === activeMomentIndex ? '#252525' : 'rgba(17,17,17,0.14)',
+                  transition: 'width 220ms ease, background 220ms ease',
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+      </div>
     </section>
   )
 }
