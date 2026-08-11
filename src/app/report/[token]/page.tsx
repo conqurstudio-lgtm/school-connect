@@ -139,7 +139,7 @@ function PreviousReportScoreRing({ value }: { value: number }) {
 }
 
 function PreviousReportsCard({ reports, childName }: { reports: any[], childName: string }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [showMore, setShowMore] = useState(false)
 
   const safeReports = Array.isArray(reports) ? reports.filter(Boolean) : []
