@@ -1642,11 +1642,15 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
 
+                <div style={{ marginTop: 14 }}>
+                  <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
+                </div>
+
                 {reports.length > 1 ? (
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '10px 24px 0',
+                      margin: '18px 24px 0',
                       paddingBottom: 'calc(22px + env(safe-area-inset-bottom, 0px))',
                     }}
                   >
@@ -1656,11 +1660,7 @@ export default function ParentMagicReportPage() {
                     />
                   </div>
                 ) : null}
-                <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
-
-
-
-              </div>
+             </div>
             )}
           </div>
           )}
