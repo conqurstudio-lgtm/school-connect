@@ -612,7 +612,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
       style={{
         width: '100%',
         maxWidth: 370,
-        margin: '10px auto 0',
+        margin: '8px auto 0',
         boxSizing: 'border-box',
       }}
     >
@@ -636,7 +636,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
           alignItems: 'baseline',
           justifyContent: 'space-between',
           gap: 12,
-          margin: '0 6px 10px',
+          margin: '0 8px 12px',
         }}
       >
         <p
@@ -661,7 +661,7 @@ function RecentMomentsHighlight({ token, onOpen }: { token: string, onOpen: () =
             padding: 0,
             color: '#5F6268',
             fontSize: 12,
-            fontWeight: 480,
+            fontWeight: 520,
             letterSpacing: '-0.01em',
             lineHeight: 1,
             cursor: 'pointer',
@@ -1686,7 +1686,7 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
 
-                <div style={{ marginTop: 14 }}>
+                <div style={{ marginTop: 0 }}>
                   <RecentMomentsHighlight token={token || ''} onOpen={openMomentsView} />
                 </div>
 
@@ -1694,7 +1694,7 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '18px 24px 0',
+                      margin: '22px 24px 0',
                       paddingBottom: 'calc(22px + env(safe-area-inset-bottom, 0px))',
                     }}
                   >
