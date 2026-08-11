@@ -441,7 +441,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-gauge-center-flat-v1 span {
-          color: ${INK};
+          color: #252525;
           font-size: 58px;
           font-weight: 430;
           line-height: 0.92;
@@ -785,10 +785,12 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 520;
           line-height: 1;
           letter-spacing: -0.01em;
-          background: rgba(17,17,17,0.032);
-          color: #8F949B;
+          background: #f3f3f3;
+          color: #050505;
           flex-shrink: 0;
           margin-top: 2px;
+        
+          border-color: #f3f3f3;
         }
 
         .sc-subject-delta-flat-v1.is-up {
@@ -799,6 +801,30 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-delta-flat-v1.is-down {
           background: rgba(255,76,67,0.075);
           color: #D65C55;
+        }
+
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"],
+        .sc-subject-flat-slider-card-v1 [class*="change"],
+        .sc-subject-flat-slider-card-v1 [class*="previous"],
+        .sc-subject-flat-slider-card-v1 [class*="prev"],
+        .sc-subject-flat-slider-card-v1 [class*="trend"] {
+          background: #f3f3f3;
+          color: #050505;
+          border-color: #f3f3f3;
+        }
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
+          color: #050505;
         }
 
         .sc-subject-mini-ring-flat-v1 {
