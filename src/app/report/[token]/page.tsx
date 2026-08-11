@@ -1689,7 +1689,7 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '18px 24px 0',
+                      margin: '8px 24px 0',
                     }}
                   >
                     <PreviousReportsCard
@@ -1702,7 +1702,7 @@ export default function ParentMagicReportPage() {
                 <div
                   className="sc-report-bottom-family-share-wrap-v1"
                   style={{
-                    margin: reports.length > 1 ? '26px 24px 0' : '18px 24px 0',
+                    margin: reports.length > 1 ? '22px 24px 0' : '18px 24px 0',
                     paddingBottom: 'calc(34px + env(safe-area-inset-bottom, 0px))',
                   }}
                 >
