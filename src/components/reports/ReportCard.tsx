@@ -562,7 +562,7 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 26px;
           background: #FFFFFF;
           border: 1px solid rgba(17,17,17,0.045);
-          box-shadow: 0 12px 30px rgba(17,17,17,0.028);
+          box-shadow: 0 14px 34px rgba(17,17,17,0.035);
           box-sizing: border-box;
         }
 
@@ -622,16 +622,16 @@ export function ReportCard({ report, childName }: Props) {
 
         .sc-teacher-flat-copy-v1 p {
           margin: 0;
-          color: #74777D;
+          color: #5F6268;
           font-size: 12.8px;
-          font-weight: 390;
+          font-weight: 400;
           line-height: 1.48;
           letter-spacing: -0.01em;
         }
 
         .sc-teacher-flat-copy-v1 strong {
-          color: #202124;
-          font-weight: 560;
+          color: #10141A;
+          font-weight: 570;
                   letter-spacing: -0.02em;
 }
 
@@ -744,7 +744,7 @@ export function ReportCard({ report, childName }: Props) {
           min-height: 120px;
           flex-shrink: 0;
           scroll-snap-align: start;
-          border: 1px solid #e6e6e6;
+          border: 1px solid #e0dfdf;
           border-radius: 26px;
           background: #FFFFFF;
           color: ${INK};
@@ -767,15 +767,15 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1.is-active {
           background: #FFFFFF;
           color: ${INK};
-          border-color: rgba(244,83,31,0.20);
+          border-color: rgba(244,83,31,0.28);
           box-shadow: none;
         }
 
         .sc-subject-flat-slider-card-v1 p {
           margin: auto 0 0;
-          color: #969AA0;
+          color: #8A8F96;
           font-size: 12.8px;
-          font-weight: 560;
+          font-weight: 430;
           line-height: 1.14;
           letter-spacing: -0.018em;
         }
@@ -831,56 +831,6 @@ export function ReportCard({ report, childName }: Props) {
           background: rgba(255,76,67,0.075);
           color: #D65C55;
         }
-
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"],
-        .sc-subject-flat-slider-card-v1 [class*="change"],
-        .sc-subject-flat-slider-card-v1 [class*="previous"],
-        .sc-subject-flat-slider-card-v1 [class*="prev"],
-        .sc-subject-flat-slider-card-v1 [class*="trend"] {
-          background: #f3f3f3;
-          color: #050505;
-          border-color: #f3f3f3;
-        }
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
-          color: #050505;
-        }
-
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"],
-        .sc-subject-flat-slider-card-v1 [class*="change"],
-        .sc-subject-flat-slider-card-v1 [class*="previous"],
-        .sc-subject-flat-slider-card-v1 [class*="prev"],
-        .sc-subject-flat-slider-card-v1 [class*="trend"] {
-          background: #f3f3f3 !important;
-          color: #050505 !important;
-          border-color: #f3f3f3 !important;
-        }
-
-        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
-        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
-          color: #050505 !important;
-        }
-
-
         .sc-subject-flat-slider-card-v1 [class*="delta"],
         .sc-subject-flat-slider-card-v1 [class*="change"],
         .sc-subject-flat-slider-card-v1 [class*="previous"],
@@ -904,6 +854,32 @@ export function ReportCard({ report, childName }: Props) {
         .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
           color: #4F5257 !important;
           font-weight: 540 !important;
+        }
+
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"],
+        .sc-subject-flat-slider-card-v1 [class*="change"],
+        .sc-subject-flat-slider-card-v1 [class*="previous"],
+        .sc-subject-flat-slider-card-v1 [class*="prev"],
+        .sc-subject-flat-slider-card-v1 [class*="trend"] {
+          background: #f3f3f3 !important;
+          color: #050505 !important;
+          border-color: #f3f3f3 !important;
+          font-weight: 560 !important;
+        }
+
+        .sc-subject-flat-slider-card-v1 [class*="delta"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="delta"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="change"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="change"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="previous"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="prev"] strong,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] svg,
+        .sc-subject-flat-slider-card-v1 [class*="trend"] strong {
+          color: #050505 !important;
+          font-weight: 560 !important;
         }
 
         .sc-subject-mini-ring-flat-v1 {
