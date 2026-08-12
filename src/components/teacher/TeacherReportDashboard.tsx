@@ -460,7 +460,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  const [photoDraft, setPhotoDraft] = useState<any>(null)
  const [uploadingPhoto, setUploadingPhoto] = useState(false)
  const [showTeacherMoments, setShowTeacherMoments] = useState(false)
- const [showLearnersPage, setShowLearnersPage] = useState(false)
+ const [showLearnersPage, setShowLearnersPage] = useState(true)
  const [momentSummary, setMomentSummary] = useState(cachedDashboard?.momentSummary || { moments: 0, reactions: 0, recipients: 0, viewed: 0, reacted_moments: 0 })
  const [momentDraft, setMomentDraft] = useState<any>(null)
  const momentFileRef = useRef<HTMLInputElement>(null)
@@ -766,6 +766,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  onAdd={() => setShowAdd(true)}
  onOpen={openChild}
  onDeleted={load}
+ isMainHome
+ onMoments={() => setShowTeacherMoments(true)}
  />
 
  {showAdd && (
@@ -1042,13 +1044,36 @@ function TeacherLearnersPage({
  onAdd,
  onOpen,
  onDeleted,
+ isMainHome = false,
+ onMoments,
 }: any) {
+ const [teacherLearnerSearch, setTeacherLearnerSearch] = useState('')
+ const [teacherReportFilter, setTeacherReportFilter] = useState('all')
  const hasLearners = children?.length > 0
+ const safeTeacherAvatarUrl =
+ teacher?.photo_url ||
+ teacher?.avatar_url ||
+ teacher?.image_url ||
+ teacher?.teacher_photo_url ||
+ teacher?.profile_photo_url ||
+ ''
  const pendingTotal = pendingChildren?.length || 0
  const sentTotal = sentChildren?.length || 0
  const reportsSummary = hasLearners
  ? `${pendingTotal} pending · ${sentTotal} sent this week`
  : 'Weekly learner reports'
+
+ const teacherSearchTerm = teacherLearnerSearch.trim().toLowerCase()
+ const learnerMatchesTeacherSearch = (child: any) => {
+ if (!teacherSearchTerm) return true
+ return String(child?.name || '').toLowerCase().includes(teacherSearchTerm)
+ }
+ const visiblePendingChildren = teacherReportFilter === 'sent'
+ ? []
+ : (pendingChildren || []).filter(learnerMatchesTeacherSearch)
+ const visibleSentChildren = teacherReportFilter === 'pending'
+ ? []
+ : (sentChildren || []).filter(learnerMatchesTeacherSearch)
 
  return (
  <div className="teacher-safe-screen sc-screen-enter" style={{
@@ -1069,6 +1094,89 @@ function TeacherLearnersPage({
  flexDirection: 'column',
  background: T.white,
  }}>
+ {isMainHome ? (
+ <div style={{
+ padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 18px',
+ background: '#FFFFFF',
+ flexShrink: 0,
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'space-between',
+ gap: 16,
+ border: '0 solid transparent',
+ boxShadow: 'none',
+ }}>
+ <button
+ type="button"
+ aria-label="Teacher profile"
+ style={{
+ width: 50,
+ height: 50,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ background: '#F1F1F2',
+ color: T.ink2,
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ fontSize: 15,
+ fontWeight: 600,
+ overflow: 'hidden',
+ cursor: 'default',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ {safeTeacherAvatarUrl ? (
+ <img
+ src={safeTeacherAvatarUrl}
+ alt=""
+ style={{
+ width: '100%',
+ height: '100%',
+ objectFit: 'cover',
+ display: 'block',
+ borderRadius: '50%',
+ border: 'none',
+ boxShadow: 'none',
+ }}
+ />
+ ) : (
+ initials(teacher?.name)
+ )}
+ </button>
+
+ <button
+ type="button"
+ onClick={onAdd}
+ aria-label="Add learner"
+ style={{
+ width: 48,
+ height: 48,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ backgroundColor: '#ff6c33',
+ color: '#FFFFFF',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <Plus size={27} strokeWidth={1.7} color="#FFFFFF" />
+ </button>
+ </div>
+ ) : (
  <SCTopBar
  title="Reports"
  subtitle=""
@@ -1080,7 +1188,6 @@ function TeacherLearnersPage({
  type="button"
  onClick={onAdd}
  aria-label="Add learner"
- className="sc-pressable"
  style={{
  width: 38,
  height: 38,
@@ -1100,6 +1207,7 @@ function TeacherLearnersPage({
  </button>
  }
  />
+ )}
 
  <main style={{
  flex: 1,
@@ -1109,6 +1217,230 @@ function TeacherLearnersPage({
  padding: '10px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
  background: T.white,
  }}>
+
+ {isMainHome ? (
+ <section
+ className="teacher-main-tab-switcher-v1"
+ style={{
+ display: 'flex',
+ alignItems: 'flex-end',
+ gap: 16,
+ padding: '0 0 26px',
+ background: '#FFFFFF',
+ }}
+ >
+ <button
+ type="button"
+ aria-label="View reports"
+ style={{
+ border: 'none',
+ background: 'transparent',
+ padding: 0,
+ margin: 0,
+ color: T.ink,
+ fontSize: 18,
+ lineHeight: 1,
+ fontWeight: 600,
+ letterSpacing: '-0.04em',
+ fontFamily: 'inherit',
+ cursor: 'default',
+ position: 'relative',
+ }}
+ >
+ Reports
+ <span style={{
+ position: 'absolute',
+ left: 1,
+ right: 1,
+ bottom: -7,
+ height: 1.4,
+ borderRadius: 999,
+ background: T.ink,
+ }} />
+ </button>
+
+ <button
+ type="button"
+ onClick={() => onMoments?.()}
+ aria-label="View moments"
+ style={{
+ border: 'none',
+ background: 'transparent',
+ padding: 0,
+ margin: 0,
+ color: T.ink,
+ fontSize: 18,
+ lineHeight: 1,
+ fontWeight: 600,
+ letterSpacing: '-0.04em',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ }}
+ >
+ Moments
+ </button>
+ </section>
+ ) : null}
+
+ <style>{`
+ .teacher-home-search-input-v1,
+ .teacher-home-search-input-v1:hover,
+ .teacher-home-search-input-v1:focus,
+ .teacher-home-search-input-v1:focus-visible {
+ background: #f5f5f4 !important;
+ background-color: #f5f5f4 !important;
+ box-shadow: none !important;
+ -webkit-box-shadow: 0 0 0 1000px #f5f5f4 inset !important;
+ border: none !important;
+ outline: none !important;
+ border-radius: 0 !important;
+ }
+ .teacher-home-search-input-v1::placeholder {
+ color: #6a6c6c !important;
+ opacity: 1 !important;
+ font-weight: 500 !important;
+ letter-spacing: -0.02em !important;
+ }
+ .teacher-home-search-shell-v1:focus-within {
+ height: 46px !important;
+ }
+`}</style>
+
+ {isMainHome ? (
+ <section
+ className="teacher-home-search-shell-v1"
+ style={{
+ height: 40,
+ borderRadius: 999,
+ background: '#f5f5f4',
+ overflow: 'hidden',
+ display: 'grid',
+ gridTemplateColumns: '34px 1fr',
+ alignItems: 'center',
+ padding: '0 15px',
+ margin: '0 0 20px',
+ transition: 'height 180ms ease, box-shadow 180ms ease',
+ }}>
+ <svg
+ width="19"
+ height="19"
+ viewBox="0 0 24 24"
+ fill="none"
+ aria-hidden="true"
+ style={{ display: 'block' }}
+ >
+ <circle cx="11" cy="11" r="7" stroke="#6a6c6c" strokeWidth="2.2" />
+ <path d="M16.2 16.2L21 21" stroke="#6a6c6c" strokeWidth="2.2" strokeLinecap="round" />
+ </svg>
+
+ <input
+ className="teacher-home-search-input-v1"
+ value={teacherLearnerSearch}
+ onChange={event => setTeacherLearnerSearch(event.target.value)}
+ placeholder="Search learner"
+ style={{
+ width: '100%',
+ height: '100%',
+ border: 'none',
+ outline: 'none',
+ backgroundColor: '#f5f5f4',
+ boxShadow: 'none',
+ WebkitBoxShadow: '0 0 0 1000px #f5f5f4 inset',
+ color: T.ink,
+ fontSize: 16,
+ fontWeight: 520,
+ letterSpacing: '-0.02em',
+ fontFamily: 'inherit',
+ padding: 0,
+ margin: 0,
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ borderRadius: 0,
+ backgroundClip: 'padding-box',
+ }}
+ />
+ </section>
+ ) : null}
+
+ <style>{`
+ .teacher-report-filter-chip-v1[data-active="true"],
+ .teacher-report-filter-chip-v1[data-active="true"]:hover,
+ .teacher-report-filter-chip-v1[data-active="true"]:focus,
+ .teacher-report-filter-chip-v1[data-active="true"]:focus-visible,
+ .teacher-report-filter-chip-v1[data-active="true"]:active {
+ border: 0.8px solid #aecaa8 !important;
+ outline: none !important;
+ background: #d8fcd3 !important;
+ color: #175f3e !important;
+ box-shadow: none !important;
+ font-weight: 500 !important;
+ }
+ .teacher-report-filter-chip-v1[data-active="false"],
+ .teacher-report-filter-chip-v1[data-active="false"]:hover,
+ .teacher-report-filter-chip-v1[data-active="false"]:focus,
+ .teacher-report-filter-chip-v1[data-active="false"]:focus-visible,
+ .teacher-report-filter-chip-v1[data-active="false"]:active {
+ border: 0.8px solid #cccccc !important;
+ outline: none !important;
+ background: transparent !important;
+ color: #6a6c6c !important;
+ box-shadow: none !important;
+ font-weight: 500 !important;
+ }
+`}</style>
+
+{isMainHome ? (
+ <section style={{
+ display: 'flex',
+ alignItems: 'center',
+ gap: 8,
+ padding: '0 2px',
+ margin: '0 0 18px',
+ }}>
+ {[
+ { key: 'all', label: 'All', count: null },
+ { key: 'sent', label: 'Sent', count: sentTotal },
+ { key: 'pending', label: 'Pending', count: pendingTotal },
+ ].map(item => {
+ const active = teacherReportFilter === item.key
+ return (
+ <button
+ key={item.key}
+ type="button"
+ className="teacher-report-filter-chip-v1"
+ data-active={active ? 'true' : 'false'}
+ onClick={() => setTeacherReportFilter(item.key)}
+ style={{
+ height: 32,
+ borderRadius: 999,
+ border: active ? '0.8px solid #aecaa8' : '0.8px solid #cccccc',
+ outline: 'none',
+ background: active ? '#d8fcd3' : 'transparent',
+ backgroundClip: 'padding-box',
+ color: active ? '#175f3e' : '#6a6c6c',
+ boxShadow: 'none',
+ padding: '0 12px',
+ fontSize: 13,
+ fontWeight: 500,
+ letterSpacing: '-0.015em',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ display: 'inline-flex',
+ alignItems: 'center',
+ transition: 'background 160ms ease, color 160ms ease, border-color 160ms ease',
+ }}
+ >
+ <span>
+ {item.label}{item.count ? ` ${item.count}` : ''}
+ </span>
+ </button>
+ )
+ })}
+ </section>
+ ) : null}
+
+
+
  {!hasLearners ? (
  <section style={{
  padding: '30px 16px',
@@ -1144,18 +1476,20 @@ function TeacherLearnersPage({
  <div style={{ padding: '0 10px 12px' }}>
  <ChecklistGroup
  title="Pending reports"
- items={pendingChildren}
+ items={visiblePendingChildren}
  weekStart={weekStart}
  onOpen={onOpen}
  onDeleted={onDeleted}
+ hideHeader={isMainHome}
  />
 
  <ChecklistGroup
  title="Sent reports"
- items={sentChildren}
+ items={visibleSentChildren}
  weekStart={weekStart}
  onOpen={onOpen}
  onDeleted={onDeleted}
+ hideHeader={isMainHome}
  />
  </div>
  </section>
@@ -1210,13 +1544,14 @@ function EmptyRoster({ onAdd }: any) {
  )
 }
 
-function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
+function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted, hideHeader = false }: any) {
  if (!items?.length) return null
 
  const isSentGroup = String(title || '').toLowerCase().includes('sent')
 
  return (
- <div style={{ marginTop: isSentGroup ? 24 : 2 }}>
+ <div style={{ marginTop: hideHeader ? (isSentGroup ? 10 : 0) : (isSentGroup ? 24 : 2) }}>
+ {!hideHeader ? (
  <div style={{
  display: 'flex',
  alignItems: 'center',
@@ -1242,6 +1577,7 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted }: any) {
  {items.length}
  </span>
  </div>
+ ) : null}
 
  {items.map((child: any, index: number) => (
  <LearnerRow
