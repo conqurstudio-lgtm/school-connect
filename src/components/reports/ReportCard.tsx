@@ -700,13 +700,7 @@ const isLong = activeTeacherNote.length > 94
           color: #10141A;
           border-color: rgba(17,17,17,0.06);
         }
-
-        .sc-subject-tip-emoji-v1 {
-          font-size: 20px;
-          line-height: 1;
-        }
-
-        .sc-teacher-flat-copy-v1 button {
+.sc-teacher-flat-copy-v1 button {
           margin-left: 5px;
           border: none;
           background: transparent;
