@@ -619,11 +619,30 @@ const isLong = activeTeacherNote.length > 94
           font-weight: 400;
           overflow: visible;
           transform: none;
-          display: grid;
+          display: flex;
           align-items: center;
           justify-content: center;
         
           place-items: center;
+        
+          min-width: 42px;
+        
+          border-radius: 0;
+        
+          padding: 0;
+        
+          flex-shrink: 0;
+        }
+
+        
+        .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 {
+          width: 42px;
+          height: 42px;
+          overflow: visible;
+        }
+
+        .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 svg {
+          overflow: visible;
         }
 
         .sc-teacher-flat-avatar-v1.is-subject-tip span {
