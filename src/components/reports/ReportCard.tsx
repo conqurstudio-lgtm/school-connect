@@ -603,8 +603,8 @@ export function ReportCard({ report, childName }: Props) {
         }
 
                 .sc-teacher-flat-avatar-v1.is-subject-tip {
-          width: 30px;
-          height: 30px;
+          width: 42px;
+          height: 42px;
           border: none !important;
           outline: none !important;
           background: transparent !important;
@@ -614,9 +614,11 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 400;
           overflow: visible;
           transform: none;
-          display: inline-flex;
+          display: grid;
           align-items: center;
           justify-content: center;
+        
+          place-items: center;
         }
 
         .sc-teacher-flat-avatar-v1.is-subject-tip span {
@@ -993,7 +995,7 @@ export function ReportCard({ report, childName }: Props) {
           {noteIsOverall ? (
             teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>
           ) : (
-            <span className="sc-subject-tip-emoji-v1">{getScoreEmoji(active.score)}</span>
+            <MiniRing value={active.score} active={true} />
           )}
         </div>
 
