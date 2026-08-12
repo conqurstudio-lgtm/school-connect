@@ -989,7 +989,7 @@ export function ReportCard({ report, childName }: Props) {
       <section
         key={active.key}
         className={`sc-teacher-flat-note-v1 ${noteIsOverall ? 'is-overall-note' : 'is-subject-tip-note'}`}
-        aria-label={noteIsOverall ? 'Teacher note' : `${active.name} tip`}
+        aria-label={noteIsOverall ? 'Teacher note' : active.name}
       >
         <div className="sc-teacher-flat-avatar-v1" aria-hidden="true">
           {noteIsOverall ? (
@@ -1001,7 +1001,7 @@ export function ReportCard({ report, childName }: Props) {
 
         <div className="sc-teacher-flat-copy-v1">
           <p>
-            <strong>{noteIsOverall ? teacherName : `${active.name} tip`}:</strong>{' '}
+            <strong>{noteIsOverall ? teacherName : active.name}:</strong>{' '}
             {shownNote}
             {!openNote && isLong ? (
               <button type="button" onClick={() => setOpenNote(true)}>more</button>
