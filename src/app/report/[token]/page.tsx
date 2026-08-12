@@ -1440,7 +1440,7 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '54px 24px 0',
+                      margin: '18px 24px 0',
                     }}
                   >
                     <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />

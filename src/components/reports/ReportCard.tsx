@@ -759,7 +759,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
 .sc-breakdown-flat-v1 {margin-top: 38px;
-          padding-bottom: 8px;
+          padding-bottom: 0;
         }
 
         .sc-breakdown-flat-head-v1 {
@@ -786,11 +786,11 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-subject-flat-slider-v1 {
-          margin-top: 18px;
+          margin-top: 16px;
           display: flex;
           gap: 12px;
           overflow-x: auto;
-          padding: 0 24px 18px;
+          padding: 0 24px 10px;
           scroll-snap-type: x mandatory;
           scroll-padding-left: 24px;
           -ms-overflow-style: none;
