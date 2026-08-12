@@ -979,12 +979,6 @@ function ErrorState({ message }: { message: string }) {
 export default function ParentMagicReportPage() {
 
   const [showPreviousAfterBreakdown, setShowPreviousAfterBreakdown] = useState(false)
-
-  useEffect(() => {
-    setShowPreviousAfterBreakdown(false)
-  }, [token])
-
-
   useEffect(() => {
     const handleBreakdownOpen = () => setShowPreviousAfterBreakdown(true)
     window.addEventListener('school-connect-report-breakdown-open', handleBreakdownOpen)
@@ -1206,7 +1200,8 @@ export default function ParentMagicReportPage() {
 
 
   const openReportView = () => {
-   setShowPreviousAfterBreakdown(false)
+  setShowPreviousAfterBreakdown(false)
+     setShowPreviousAfterBreakdown(false)
      setShowPreviousAfterBreakdown(false)
     setParentView('report')
     if (typeof window !== 'undefined') {
@@ -1215,7 +1210,8 @@ export default function ParentMagicReportPage() {
   }
 
   const openMomentsView = () => {
-   setShowPreviousAfterBreakdown(false)
+  setShowPreviousAfterBreakdown(false)
+     setShowPreviousAfterBreakdown(false)
      setShowPreviousAfterBreakdown(false)
     setParentView('moments')
     if (typeof window !== 'undefined') {
