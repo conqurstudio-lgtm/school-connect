@@ -744,9 +744,13 @@ const isLong = activeTeacherNote.length > 94
 
         .sc-report-breakdown-plus-wrap-v1 {
           width: 100%;
-          display: flex;
+          display: grid;
           justify-content: center;
           margin: 54px 0 0;
+        
+          place-items: center;
+        
+          align-items: center;
         }
 
         .sc-report-breakdown-plus-button-v1 {
@@ -759,9 +763,9 @@ const isLong = activeTeacherNote.length > 94
           display: grid;
           align-items: center;
           justify-content: center;
-          font-size: 36px;
-          font-weight: 360;
-          line-height: 0;
+          font-size: 40px;
+          font-weight: 200;
+          line-height: 1;
           cursor: pointer;
           font-family: inherit;
           box-shadow: none;
@@ -770,6 +774,8 @@ const isLong = activeTeacherNote.length > 94
           place-items: center;
         
           padding: 0;
+        
+          letter-spacing: 0;
         }
 
         .sc-report-breakdown-plus-button-v1:active {
@@ -1075,7 +1081,7 @@ const isLong = activeTeacherNote.length > 94
               window.dispatchEvent(new CustomEvent('school-connect-report-breakdown-open'))
             }}
           >
-            +
+            ＋
           </button>
         </div>
       ) : null}

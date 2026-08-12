@@ -198,7 +198,23 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           color: '#5F6268',
           lineHeight: 1,
         }}>
-          {open ? '−' : '+'}
+          <span
+              aria-hidden="true"
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 999,
+                display: 'inline-grid',
+                placeItems: 'center',
+                fontSize: 25,
+                fontWeight: 220,
+                lineHeight: 1,
+                color: '#252525',
+                flexShrink: 0,
+              }}
+            >
+              {open ? '−' : '＋'}
+            </span>
         </span>
       </button>
 
