@@ -964,6 +964,40 @@ const isLong = activeTeacherNote.length > 94
           transform: none;
         }
 
+
+        .sc-teacher-note-ring-free-v1 {
+          width: 46px;
+          height: 46px;
+          display: grid !important;
+          place-items: center;
+          overflow: visible !important;
+          flex-shrink: 0;
+        }
+
+        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 {
+          width: 46px;
+          height: 46px;
+          overflow: visible !important;
+        }
+
+        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 svg {
+          width: 46px;
+          height: 46px;
+          overflow: visible !important;
+          display: block;
+        }
+
+        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 span {
+          position: absolute !important;
+          inset: 0 !important;
+          display: grid !important;
+          place-items: center !important;
+          transform: none !important;
+          line-height: 1 !important;
+          margin: 0 !important;
+        }
+
+
         @media (max-width: 420px) {
           .sc-report-flat-title-v1,
           .sc-teacher-flat-note-v1,
@@ -1034,7 +1068,9 @@ const isLong = activeTeacherNote.length > 94
           {noteIsOverall ? (
             teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>
           ) : (
-            <MiniRing value={active.score} active={true} />
+            <span className="sc-teacher-note-ring-free-v1">
+              <MiniRing value={active.score} active={true} />
+            </span>
           )}
         </div>
 
