@@ -134,13 +134,15 @@ function getSubjectTipMessage(subjectName: string, score: number, childName: str
 }
 
 function useCountUp(value: number) {
-  const [shown, setShown] = useState(value)
+  const [shown, setShown] = useState(0)
 
   useEffect(() => {
-    const duration = 900
+    const duration = 1050
     const start = performance.now()
-    const from = shown
+    const from = 0
     let raf = 0
+
+    setShown(0)
 
     const tick = (now: number) => {
       const elapsed = now - start
@@ -149,12 +151,16 @@ function useCountUp(value: number) {
 
       setShown(from + (value - from) * eased)
 
-      if (t < 1) raf = requestAnimationFrame(tick)
+      if (t < 1) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        setShown(value)
+      }
     }
 
     raf = requestAnimationFrame(tick)
+
     return () => cancelAnimationFrame(raf)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   return shown
@@ -190,7 +196,7 @@ function ScoreGauge({ value, max = 5 }: { value: number; max?: number }) {
   const center = size / 2
   const radius = (size - stroke - 14) / 2
   const circumference = 2 * Math.PI * radius
-  const progress = Math.max(0, Math.min(1, value / max))
+  const progress = Math.max(0, Math.min(1, shown / max))
 
   const arcRatio = 0.76
   const arcLength = circumference * arcRatio
@@ -470,23 +476,7 @@ const isLong = activeTeacherNote.length > 94
           display: block;
           overflow: visible;
         }
-
-
-        @keyframes scMainScoreRingDrawV1 {
-          from {
-            stroke-dashoffset: var(--sc-ring-start-offset);
-          }
-          to {
-            stroke-dashoffset: var(--sc-ring-end-offset);
-          }
-        }
-
-        .sc-score-gauge-progress-flat-v1 {
-          animation: scMainScoreRingDrawV1 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-          animation-delay: 140ms;
-        }
-
-        .sc-score-gauge-center-flat-v1 {
+.sc-score-gauge-center-flat-v1 {
           position: absolute;
           inset: 0;
           display: grid;
