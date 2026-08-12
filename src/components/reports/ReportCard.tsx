@@ -471,6 +471,21 @@ const isLong = activeTeacherNote.length > 94
           overflow: visible;
         }
 
+
+        @keyframes scMainScoreRingDrawV1 {
+          from {
+            stroke-dashoffset: var(--sc-ring-start-offset);
+          }
+          to {
+            stroke-dashoffset: var(--sc-ring-end-offset);
+          }
+        }
+
+        .sc-score-gauge-progress-flat-v1 {
+          animation: scMainScoreRingDrawV1 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation-delay: 140ms;
+        }
+
         .sc-score-gauge-center-flat-v1 {
           position: absolute;
           inset: 0;
