@@ -474,6 +474,8 @@ export function ReportCard({ report, childName }: Props) {
           justify-content: center;
           pointer-events: none;
           text-align: center;
+        
+          transform: translateY(18px);
         }
 
         .sc-score-gauge-center-flat-v1 span {
@@ -558,7 +560,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1 {
           width: calc(100% - 44px);
           max-width: 368px;
-          margin: 58px auto 0;
+          margin: 72px auto 0;
           padding: 14px 16px;
           display: flex;
           align-items: center;
