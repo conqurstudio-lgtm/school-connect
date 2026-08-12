@@ -421,7 +421,7 @@ export function ReportCard({ report, childName }: Props) {
           width: 100%;
           max-width: 410px;
           margin: 0 auto;
-          padding: 0 0 44px;
+          padding: 0 0 26px;
           color: ${INK};
           font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
@@ -486,7 +486,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-gauge-center-flat-v1 small {
-          margin-top: 7px;
+          margin-top: 46px;
           color: #B8BBC1;
           font-size: 13px;
           font-weight: 360;
@@ -558,14 +558,14 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1 {
           width: calc(100% - 44px);
           max-width: 368px;
-          margin: 30px auto 0;
+          margin: 58px auto 0;
           padding: 14px 16px;
           display: flex;
           align-items: center;
           gap: 12px;
           border-radius: 26px;
           background: #FFFFFF;
-          border: 1px solid rgba(17,17,17,0.045);
+          border: 1px solid rgba(17,17,17,0.055);
           box-shadow: none;
           box-sizing: border-box;
         }

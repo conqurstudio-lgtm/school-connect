@@ -719,6 +719,25 @@ function FamilyShareButton({ token, variant = 'icon' }: { token: string, variant
 function ReportSafeAreaStyle() {
   return (
     <style jsx global>{`
+
+        .sc-report-previous-history-wrap-v1 {
+          display: block;
+        }
+
+        .sc-report-previous-history-wrap-v1 > *:first-child {
+          border: 1px solid rgba(17,17,17,0.06);
+          border-radius: 999px;
+          padding: 15px 18px !important;
+          background: #FFFFFF;
+          box-sizing: border-box;
+        }
+
+        .sc-report-previous-history-wrap-v1 button {
+          color: #252525 !important;
+          font-weight: 620 !important;
+        }
+
+
       @keyframes scReportPageSlideIn {
         from {
           opacity: 0;
@@ -1412,7 +1431,7 @@ export default function ParentMagicReportPage() {
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{
-                      margin: '20px 24px 0',
+                      margin: '54px 24px 0',
                     }}
                   >
                     <PreviousReportsCard reports={reports.slice(1).filter((report: any) => isReportWithinLastDays(report, 30))} childName={childName} />
