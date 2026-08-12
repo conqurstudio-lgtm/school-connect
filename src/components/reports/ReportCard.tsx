@@ -889,12 +889,15 @@ const isLong = activeTeacherNote.length > 94
           font-size: 11.6px;
           font-weight: 420;
           line-height: 1.18;
-        
-          transform: translateY(5px);
-        }
+}
 
         .sc-subject-flat-slider-card-v1.is-active span {
           color: #7C8486;
+        }
+
+        
+        .sc-subject-flat-slider-card-v1 > span {
+          transform: translateY(5px);
         }
 
         .sc-subject-score-row-flat-v1 {
@@ -958,6 +961,8 @@ const isLong = activeTeacherNote.length > 94
           font-weight: 560;
           line-height: 1;
           font-variant-numeric: tabular-nums;
+        
+          transform: none;
         }
 
         @media (max-width: 420px) {
