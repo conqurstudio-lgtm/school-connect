@@ -644,17 +644,7 @@ const isLong = activeTeacherNote.length > 94
         .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 svg {
           overflow: visible;
         }
-
-        .sc-teacher-flat-avatar-v1.is-subject-tip span {
-          line-height: 1;
-          display: block;
-          border: none !important;
-          background: transparent !important;
-          box-shadow: none !important;
-        }
-
-
-        .sc-teacher-flat-copy-v1 {
+.sc-teacher-flat-copy-v1 {
           min-width: 0;
           flex: 1;
           padding-top: 0;
@@ -982,6 +972,50 @@ const isLong = activeTeacherNote.length > 94
             min-height: 116px;
           }
         }
+
+        /* teacher-note-mini-ring-center-fix-v1 */
+        .sc-teacher-flat-avatar-v1.is-subject-tip {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          overflow: visible !important;
+          width: 46px !important;
+          height: 46px !important;
+          min-width: 46px !important;
+          padding: 0 !important;
+          display: grid !important;
+          place-items: center !important;
+        }
+
+        .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 {
+          position: relative !important;
+          width: 42px !important;
+          height: 42px !important;
+          overflow: visible !important;
+        }
+
+        .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 svg {
+          width: 42px !important;
+          height: 42px !important;
+          display: block !important;
+          overflow: visible !important;
+        }
+
+        .sc-teacher-flat-avatar-v1.is-subject-tip .sc-subject-mini-ring-flat-v1 span {
+          position: absolute !important;
+          inset: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          display: grid !important;
+          place-items: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          transform: none !important;
+          line-height: 1 !important;
+          text-align: center !important;
+        }
+
+
       `}</style>
 
       {reportStatusLabel ? (
