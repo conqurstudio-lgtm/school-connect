@@ -878,6 +878,8 @@ const isLong = activeTeacherNote.length > 94
           font-weight: 560;
           line-height: 1.14;
           letter-spacing: -0.018em;
+        
+          transform: translateY(5px);
         }
 
         .sc-subject-flat-slider-card-v1 span {
@@ -887,6 +889,8 @@ const isLong = activeTeacherNote.length > 94
           font-size: 11.6px;
           font-weight: 420;
           line-height: 1.18;
+        
+          transform: translateY(5px);
         }
 
         .sc-subject-flat-slider-card-v1.is-active span {
