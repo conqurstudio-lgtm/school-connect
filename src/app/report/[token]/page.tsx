@@ -198,7 +198,7 @@ function PreviousReportsCard({ reports, childName }: { reports: any[], childName
           color: '#5F6268',
           lineHeight: 1,
         }}>
-          {open ? 'Hide' : 'View'}
+          {open ? '−' : '+'}
         </span>
       </button>
 
