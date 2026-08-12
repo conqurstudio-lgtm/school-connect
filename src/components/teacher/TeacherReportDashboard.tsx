@@ -1093,6 +1093,8 @@ function TeacherLearnersPage({
  display: 'flex',
  flexDirection: 'column',
  background: T.white,
+ overflowY: isMainHome ? 'auto' : 'hidden',
+ WebkitOverflowScrolling: 'touch',
  }}>
  {isMainHome ? (
  <div style={{
@@ -1210,9 +1212,9 @@ function TeacherLearnersPage({
  )}
 
  <main style={{
- flex: 1,
+ flex: isMainHome ? 'none' : 1,
  minHeight: 0,
- overflowY: 'auto',
+ overflowY: isMainHome ? 'visible' : 'auto',
  WebkitOverflowScrolling: 'touch',
  padding: '10px 16px calc(18px + env(safe-area-inset-bottom, 0px))',
  background: T.white,
