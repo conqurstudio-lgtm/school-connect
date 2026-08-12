@@ -982,7 +982,7 @@ export default function ParentMagicReportPage() {
 
   useEffect(() => {
     setShowPreviousAfterBreakdown(false)
-  }, [parentView, token])
+  }, [token])
 
 
   useEffect(() => {
@@ -1206,7 +1206,8 @@ export default function ParentMagicReportPage() {
 
 
   const openReportView = () => {
-    setShowPreviousAfterBreakdown(false)
+   setShowPreviousAfterBreakdown(false)
+     setShowPreviousAfterBreakdown(false)
     setParentView('report')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}`)
@@ -1214,7 +1215,8 @@ export default function ParentMagicReportPage() {
   }
 
   const openMomentsView = () => {
-    setShowPreviousAfterBreakdown(false)
+   setShowPreviousAfterBreakdown(false)
+     setShowPreviousAfterBreakdown(false)
     setParentView('moments')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}?view=moments`)
