@@ -498,7 +498,7 @@ const isLong = activeTeacherNote.length > 94
         .sc-score-gauge-center-flat-v1 span {
           color: ${INK};
           font-size: 58px;
-          font-weight: 500;
+          font-weight: 420;
           line-height: 0.92;
           letter-spacing: -0.055em;
           font-variant-numeric: tabular-nums;
