@@ -408,8 +408,8 @@ export function ReportCard({ report, childName }: Props) {
 
   const [openNote, setOpenNote] = useState(false)
   const [showBreakdown, setShowBreakdown] = useState(false)
-  const isLong = activeTeacherNote.length > 118
-  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 118).trim()}…` : activeTeacherNote
+  const isLong = activeTeacherNote.length > 94
+  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 94).trim()}…` : activeTeacherNote
 
   useEffect(() => {
     setOpenNote(false)
@@ -568,7 +568,7 @@ export function ReportCard({ report, childName }: Props) {
         .sc-teacher-flat-note-v1 {
           width: calc(100% - 44px);
           max-width: 368px;
-          margin: 72px auto 0;
+          margin: 60px auto 0;
           padding: 14px 16px;
           display: flex;
           align-items: center;
@@ -642,13 +642,9 @@ export function ReportCard({ report, childName }: Props) {
           line-height: 1.48;
           letter-spacing: -0.01em;
         
-          display: -webkit-box;
+          display: block;
         
-          -webkit-line-clamp: 3;
-        
-          -webkit-box-orient: vertical;
-        
-          overflow: hidden;
+          overflow: visible;
         }
 
         .sc-teacher-flat-copy-v1 strong {
@@ -701,6 +697,8 @@ export function ReportCard({ report, childName }: Props) {
           display: inline;
         
           white-space: nowrap;
+        
+          vertical-align: baseline;
         }
 
         
