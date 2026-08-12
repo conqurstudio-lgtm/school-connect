@@ -608,8 +608,8 @@ const isLong = activeTeacherNote.length > 94
         }
 
                 .sc-teacher-flat-avatar-v1.is-subject-tip {
-          width: 48px;
-          height: 48px;
+          width: 46px;
+          height: 46px;
           border: none !important;
           outline: none !important;
           background: transparent !important;
@@ -625,7 +625,7 @@ const isLong = activeTeacherNote.length > 94
         
           place-items: center;
         
-          min-width: 48px;
+          min-width: 46px;
         
           border-radius: 0;
         
@@ -963,42 +963,7 @@ const isLong = activeTeacherNote.length > 94
         
           transform: none;
         }
-
-
-        .sc-teacher-note-ring-free-v1 {
-          width: 46px;
-          height: 46px;
-          display: grid !important;
-          place-items: center;
-          overflow: visible !important;
-          flex-shrink: 0;
-        }
-
-        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 {
-          width: 46px;
-          height: 46px;
-          overflow: visible !important;
-        }
-
-        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 svg {
-          width: 46px;
-          height: 46px;
-          overflow: visible !important;
-          display: block;
-        }
-
-        .sc-teacher-note-ring-free-v1 .sc-subject-mini-ring-flat-v1 span {
-          position: absolute !important;
-          inset: 0 !important;
-          display: grid !important;
-          place-items: center !important;
-          transform: none !important;
-          line-height: 1 !important;
-          margin: 0 !important;
-        }
-
-
-        @media (max-width: 420px) {
+@media (max-width: 420px) {
           .sc-report-flat-title-v1,
           .sc-teacher-flat-note-v1,
           .sc-breakdown-flat-head-v1 {
@@ -1064,13 +1029,11 @@ const isLong = activeTeacherNote.length > 94
         className={`sc-teacher-flat-note-v1 ${noteIsOverall ? 'is-overall-note' : 'is-subject-tip-note'}`}
         aria-label={noteIsOverall ? 'Teacher note' : active.name}
       >
-        <div className="sc-teacher-flat-avatar-v1" aria-hidden="true">
+        <div className={`sc-teacher-flat-avatar-v1 ${noteIsOverall ? "" : "is-subject-tip"}`} aria-hidden="true">
           {noteIsOverall ? (
             teacherPhoto ? <img src={teacherPhoto} alt="" /> : <span>{teacherInitials}</span>
           ) : (
-            <span className="sc-teacher-note-ring-free-v1">
-              <MiniRing value={active.score} active={true} />
-            </span>
+            <MiniRing value={active.score} active={true} />
           )}
         </div>
 
