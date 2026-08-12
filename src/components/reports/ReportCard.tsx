@@ -608,8 +608,8 @@ const isLong = activeTeacherNote.length > 94
         }
 
                 .sc-teacher-flat-avatar-v1.is-subject-tip {
-          width: 42px;
-          height: 42px;
+          width: 48px;
+          height: 48px;
           border: none !important;
           outline: none !important;
           background: transparent !important;
@@ -619,13 +619,13 @@ const isLong = activeTeacherNote.length > 94
           font-weight: 400;
           overflow: visible;
           transform: none;
-          display: flex;
+          display: grid;
           align-items: center;
           justify-content: center;
         
           place-items: center;
         
-          min-width: 42px;
+          min-width: 48px;
         
           border-radius: 0;
         
@@ -879,7 +879,7 @@ const isLong = activeTeacherNote.length > 94
           line-height: 1.14;
           letter-spacing: -0.018em;
         
-          transform: translateY(5px);
+          transform: translateY(2px);
         }
 
         .sc-subject-flat-slider-card-v1 span {
@@ -897,8 +897,7 @@ const isLong = activeTeacherNote.length > 94
 
         
         .sc-subject-flat-slider-card-v1 > span {
-          transform: translateY(5px);
-        }
+}
 
         .sc-subject-score-row-flat-v1 {
           display: flex;
