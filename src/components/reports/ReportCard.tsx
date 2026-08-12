@@ -408,7 +408,12 @@ export function ReportCard({ report, childName }: Props) {
 
   const [openNote, setOpenNote] = useState(false)
   const [showBreakdown, setShowBreakdown] = useState(false)
-  const isLong = activeTeacherNote.length > 94
+  
+  useEffect(() => {
+    setOpenNote(false)
+  }, [active.key])
+
+const isLong = activeTeacherNote.length > 94
   const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 94).trim()}…` : activeTeacherNote
 
   useEffect(() => {
@@ -656,13 +661,14 @@ export function ReportCard({ report, childName }: Props) {
 }
 
         .sc-teacher-flat-note-v1 {
-          animation: scTeacherNoteSwapV1 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation: scTeacherNoteSwapV1 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          will-change: transform, opacity;
         }
 
         @keyframes scTeacherNoteSwapV1 {
           from {
             opacity: 0;
-            transform: translateY(8px);
+            transform: translateY(16px);
           }
           to {
             opacity: 1;
