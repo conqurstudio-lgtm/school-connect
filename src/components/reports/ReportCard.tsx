@@ -468,14 +468,20 @@ export function ReportCard({ report, childName }: Props) {
         .sc-score-gauge-center-flat-v1 {
           position: absolute;
           inset: 0;
-          display: flex;
+          display: grid;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           pointer-events: none;
           text-align: center;
         
-          transform: translateY(18px);
+          transform: translateY(12px);
+        
+          place-items: center;
+        
+          align-content: center;
+        
+          gap: 6px;
         }
 
         .sc-score-gauge-center-flat-v1 span {
@@ -488,7 +494,8 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-score-gauge-center-flat-v1 small {
-          margin-top: 46px;
+          margin: 0;
+          margin-top: 0;
           color: #B8BBC1;
           font-size: 13px;
           font-weight: 360;
