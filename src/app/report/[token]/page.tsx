@@ -977,6 +977,15 @@ function ErrorState({ message }: { message: string }) {
 }
 
 export default function ParentMagicReportPage() {
+
+  const [showPreviousAfterBreakdown, setShowPreviousAfterBreakdown] = useState(false)
+
+  useEffect(() => {
+    const handleBreakdownOpen = () => setShowPreviousAfterBreakdown(true)
+    window.addEventListener('school-connect-report-breakdown-open', handleBreakdownOpen)
+    return () => window.removeEventListener('school-connect-report-breakdown-open', handleBreakdownOpen)
+  }, [])
+
   const params = useParams<{ token: string }>()
   const rawToken = params?.token
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken
@@ -1427,7 +1436,7 @@ export default function ParentMagicReportPage() {
                   childName={childName}
                 />
 
-                {reports.length > 1 ? (
+                {showPreviousAfterBreakdown && reports.length > 1 ? (
                   <div
                     className="sc-report-previous-history-wrap-v1"
                     style={{

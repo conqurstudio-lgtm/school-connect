@@ -408,8 +408,8 @@ export function ReportCard({ report, childName }: Props) {
 
   const [openNote, setOpenNote] = useState(false)
   const [showBreakdown, setShowBreakdown] = useState(false)
-  const isLong = activeTeacherNote.length > 105
-  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 105).trim()}…` : activeTeacherNote
+  const isLong = activeTeacherNote.length > 118
+  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 118).trim()}…` : activeTeacherNote
 
   useEffect(() => {
     setOpenNote(false)
@@ -641,6 +641,14 @@ export function ReportCard({ report, childName }: Props) {
           font-weight: 400;
           line-height: 1.48;
           letter-spacing: -0.01em;
+        
+          display: -webkit-box;
+        
+          -webkit-line-clamp: 3;
+        
+          -webkit-box-orient: vertical;
+        
+          overflow: hidden;
         }
 
         .sc-teacher-flat-copy-v1 strong {
@@ -689,6 +697,10 @@ export function ReportCard({ report, childName }: Props) {
           font: inherit;
           font-weight: 560;
           cursor: pointer;
+        
+          display: inline;
+        
+          white-space: nowrap;
         }
 
         
@@ -719,16 +731,20 @@ export function ReportCard({ report, childName }: Props) {
           border-radius: 999px;
           background: #ff6c33;
           color: #FFFFFF;
-          display: inline-flex;
+          display: grid;
           align-items: center;
           justify-content: center;
-          font-size: 34px;
+          font-size: 36px;
           font-weight: 360;
-          line-height: 1;
+          line-height: 0;
           cursor: pointer;
           font-family: inherit;
           box-shadow: none;
           transition: transform 220ms ease, opacity 220ms ease;
+        
+          place-items: center;
+        
+          padding: 0;
         }
 
         .sc-report-breakdown-plus-button-v1:active {
@@ -1018,7 +1034,10 @@ export function ReportCard({ report, childName }: Props) {
             type="button"
             className="sc-report-breakdown-plus-button-v1"
             aria-label="Open breakdown"
-            onClick={() => setShowBreakdown(true)}
+            onClick={() => {
+              setShowBreakdown(true)
+              window.dispatchEvent(new CustomEvent('school-connect-report-breakdown-open'))
+            }}
           >
             +
           </button>
