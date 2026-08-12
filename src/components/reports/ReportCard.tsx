@@ -317,17 +317,21 @@ function SubjectCard({
 }
 
 function getSafeWarmTeacherFallback(childName: string, score: number) {
-  const name = childName || 'Your child'
+  const child = childName || 'Your child'
+
+  if (score >= 4.6) {
+    return `${child} has had a strong week of learning. The work shows confidence, growth, and areas worth celebrating.`
+  }
 
   if (score >= 4) {
-    return `${name} has had a lovely week and is showing strong progress. The confidence and effort shown in class are encouraging.`
+    return `${child} is making good progress. The teacher will keep building on these strengths while supporting the next steps.`
   }
 
   if (score >= 3) {
-    return `${name} is making steady progress this week. We are seeing good effort in class and will continue supporting confidence and consistency.`
+    return `${child} is growing steadily. Some areas still need repetition, but the learning journey is moving in the right direction.`
   }
 
-  return `${name} needs gentle support this week. We will keep working calmly and celebrate the small wins along the way.`
+  return `${child} is still building confidence. The teacher is supporting the next steps carefully, and small weekly progress matters most.`
 }
 
 export function ReportCard({ report, childName }: Props) {
@@ -403,8 +407,8 @@ export function ReportCard({ report, childName }: Props) {
     : getSubjectTipMessage(active.name, active.score, childFirstName, String(report.id || report.report_id || report.period_start || report.week_start || report.created_at || report.date || ''))
 
   const [openNote, setOpenNote] = useState(false)
-  const isLong = activeTeacherNote.length > 92
-  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 92).trim()}…` : activeTeacherNote
+  const isLong = activeTeacherNote.length > 105
+  const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 105).trim()}…` : activeTeacherNote
 
   useEffect(() => {
     setOpenNote(false)
@@ -678,6 +682,7 @@ export function ReportCard({ report, childName }: Props) {
         }
 
         .sc-breakdown-flat-v1 {
+          display: none;
           margin-top: 38px;
           padding-bottom: 8px;
         }
