@@ -981,6 +981,11 @@ export default function ParentMagicReportPage() {
   const [showPreviousAfterBreakdown, setShowPreviousAfterBreakdown] = useState(false)
 
   useEffect(() => {
+    setShowPreviousAfterBreakdown(false)
+  }, [parentView, token])
+
+
+  useEffect(() => {
     const handleBreakdownOpen = () => setShowPreviousAfterBreakdown(true)
     window.addEventListener('school-connect-report-breakdown-open', handleBreakdownOpen)
     return () => window.removeEventListener('school-connect-report-breakdown-open', handleBreakdownOpen)
@@ -1201,6 +1206,7 @@ export default function ParentMagicReportPage() {
 
 
   const openReportView = () => {
+    setShowPreviousAfterBreakdown(false)
     setParentView('report')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}`)
@@ -1208,6 +1214,7 @@ export default function ParentMagicReportPage() {
   }
 
   const openMomentsView = () => {
+    setShowPreviousAfterBreakdown(false)
     setParentView('moments')
     if (typeof window !== 'undefined') {
       window.history.pushState({}, '', `/report/${encodeURIComponent(token || '')}?view=moments`)
