@@ -407,6 +407,7 @@ export function ReportCard({ report, childName }: Props) {
     : getSubjectTipMessage(active.name, active.score, childFirstName, String(report.id || report.report_id || report.period_start || report.week_start || report.created_at || report.date || ''))
 
   const [openNote, setOpenNote] = useState(false)
+  const [showBreakdown, setShowBreakdown] = useState(false)
   const isLong = activeTeacherNote.length > 105
   const shownNote = !openNote && isLong ? `${activeTeacherNote.slice(0, 105).trim()}…` : activeTeacherNote
 
@@ -690,9 +691,60 @@ export function ReportCard({ report, childName }: Props) {
           cursor: pointer;
         }
 
+        
+        @keyframes scBreakdownRevealV1 {
+          from {
+            opacity: 0;
+            transform: translateY(18px);
+            filter: blur(2px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+          }
+        }
+
+        .sc-report-breakdown-plus-wrap-v1 {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin: 54px 0 0;
+        }
+
+        .sc-report-breakdown-plus-button-v1 {
+          width: 58px;
+          height: 58px;
+          border: none;
+          border-radius: 999px;
+          background: #ff6c33;
+          color: #FFFFFF;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 34px;
+          font-weight: 360;
+          line-height: 1;
+          cursor: pointer;
+          font-family: inherit;
+          box-shadow: none;
+          transition: transform 220ms ease, opacity 220ms ease;
+        }
+
+        .sc-report-breakdown-plus-button-v1:active {
+          transform: scale(0.94);
+        }
+
         .sc-breakdown-flat-v1 {
           display: none;
-          margin-top: 38px;
+        }
+
+        .sc-breakdown-flat-v1.is-open {
+          display: block;
+          animation: scBreakdownRevealV1 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+.sc-breakdown-flat-v1 {margin-top: 38px;
           padding-bottom: 8px;
         }
 
@@ -959,6 +1011,38 @@ export function ReportCard({ report, childName }: Props) {
           </div>
         </section>
       )}
+
+      {!showBreakdown ? (
+        <div className="sc-report-breakdown-plus-wrap-v1">
+          <button
+            type="button"
+            className="sc-report-breakdown-plus-button-v1"
+            aria-label="Open breakdown"
+            onClick={() => setShowBreakdown(true)}
+          >
+            +
+          </button>
+        </div>
+      ) : null}
+
+      <div className={`sc-breakdown-flat-v1 ${showBreakdown ? "is-open" : ""}`}>
+        <div className="sc-breakdown-flat-head-v1">
+          <p>Breakdown</p>
+          <span>Tap a subject</span>
+        </div>
+
+        <div className="sc-subject-flat-slider-v1" aria-label="Subject breakdown">
+          {subjects.map(subject => (
+            <SubjectCard
+              key={subject.key}
+              subject={subject}
+              active={activeKey === subject.key}
+              onSelect={setActiveKey}
+            />
+          ))}
+        </div>
+      </div>
+
     </section>
   )
 }
