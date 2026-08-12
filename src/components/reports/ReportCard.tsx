@@ -968,14 +968,19 @@ export function ReportCard({ report, childName }: Props) {
         <p>{formatWeek(report.week_starting)}</p>
       </div>
 
-      <ScoreGauge value={active.score} />
+      <ScoreGauge value={overall} />
 
       <div className="sc-score-flat-summary-v1">
-        <div className="emoji" aria-hidden="true">{getScoreEmoji(active.score)}</div>
-        <p className="status">{active.status}</p>
+        <div className="emoji" aria-hidden="true">{getScoreEmoji(overall)}</div>
+        <p className="status">{
+          overall >= 4.6 ? 'Excellent' :
+          overall >= 4 ? 'Strong progress' :
+          overall >= 3 ? 'Growing steadily' :
+          'Needs support'
+        }</p>
 
-        {typeof active.delta === 'number' ? (
-          <Delta value={active.delta} />
+        {typeof overallDelta === 'number' ? (
+          <Delta value={overallDelta} />
         ) : null}
       </div>
 
@@ -1033,6 +1038,12 @@ export function ReportCard({ report, childName }: Props) {
             className="sc-report-breakdown-plus-button-v1"
             aria-label="Open breakdown"
             onClick={() => {
+              const firstSubject = subjects.find(subject => subject.key !== 'overall') || subjects[0]
+
+              if (firstSubject?.key) {
+                setActiveKey(firstSubject.key)
+              }
+
               setShowBreakdown(true)
               window.dispatchEvent(new CustomEvent('school-connect-report-breakdown-open'))
             }}
