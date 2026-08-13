@@ -86,6 +86,28 @@ function SafeStyle() {
  0%, 80%, 100% { transform: scale(0.72); opacity: 0.45; }
  40% { transform: scale(1); opacity: 1; }
  }
+
+ @keyframes teacherTabUnderlineIn {
+ 0% {
+ transform: scaleX(0.72);
+ opacity: 0.75;
+ }
+ 100% {
+ transform: scaleX(1);
+ opacity: 1;
+ }
+ }
+
+ @keyframes teacherTabContentIn {
+ 0% {
+ opacity: 0.92;
+ transform: translateY(4px);
+ }
+ 100% {
+ opacity: 1;
+ transform: translateY(0);
+ }
+ }
  `}</style>
  )
 }
@@ -163,6 +185,13 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  const [momentActionLoading, setMomentActionLoading] = useState(false)
  const [momentDraft, setMomentDraft] = useState<any>(null)
  const momentFileRef = useRef<HTMLInputElement | null>(null)
+ const safeTeacherAvatarUrl =
+ teacher?.photo_url ||
+ teacher?.avatar_url ||
+ teacher?.image_url ||
+ teacher?.teacher_photo_url ||
+ teacher?.profile_photo_url ||
+ ''
 
  const load = async (quiet = false) => {
  if (!quiet) setLoading(true)
@@ -316,40 +345,203 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  display: 'flex',
  flexDirection: 'column',
  background: T.bg,
+ overflowY: 'auto',
+ WebkitOverflowScrolling: 'touch',
  }}>
- <SCTopBar
- title="Moments"
- align="left"
- compact
- left={
- <SCIconButton label="Back" onClick={onBack} tone="quiet" size={38}>
- <span style={{
- width: 13,
- height: 13,
- borderLeft: '2.6px solid currentColor',
- borderBottom: '2.6px solid currentColor',
- borderRadius: 1.5,
- transform: 'rotate(45deg) translate(1px, -1px)',
+ <div style={{
+ padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 18px',
+ background: '#FFFFFF',
+ flexShrink: 0,
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'space-between',
+ gap: 16,
+ border: '0 solid transparent',
+ boxShadow: 'none',
+ }}>
+ <button
+ type="button"
+ aria-label="Teacher profile"
+ style={{
+ width: 50,
+ height: 50,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ background: '#F1F1F2',
+ color: T.ink2,
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ fontSize: 15,
+ fontWeight: 600,
+ overflow: 'hidden',
+ cursor: 'default',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ {safeTeacherAvatarUrl ? (
+ <img
+ src={safeTeacherAvatarUrl}
+ alt=""
+ style={{
+ width: '100%',
+ height: '100%',
+ objectFit: 'cover',
  display: 'block',
- }} />
- </SCIconButton>
- }
- right={
- <SCIconButton label="Add Moment" onClick={() => momentFileRef.current?.click()} tone="quiet" size={38}>
- <Plus size={20} strokeWidth={2.05} />
- </SCIconButton>
- }
+ borderRadius: '50%',
+ border: 'none',
+ boxShadow: 'none',
+ }}
  />
+ ) : (
+ initials(teacher?.name)
+ )}
+ </button>
+
+ <button
+ type="button"
+ onClick={() => momentFileRef.current?.click()}
+ aria-label="Add Moment"
+ style={{
+ width: 48,
+ height: 48,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ backgroundColor: '#f87645',
+ color: '#FFFFFF',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <Plus size={27} strokeWidth={1.7} color="#FFFFFF" />
+ </button>
+ </div>
 
  <section style={{
- flex: 1,
+ flex: 'none',
  minHeight: 0,
- overflowY: 'auto',
+ overflowY: 'visible',
  overflowX: 'hidden',
  WebkitOverflowScrolling: 'touch',
- padding: '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ padding: '10px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
+ <section
+ className="teacher-main-tab-switcher-v1"
+ style={{
+ display: 'flex',
+ alignItems: 'flex-end',
+ gap: 16,
+ padding: '0 0 26px',
+ background: '#FFFFFF',
+ }}
+ >
+ <button
+ type="button"
+ onClick={onBack}
+ aria-label="View reports"
+ style={{
+ border: 'none',
+ background: 'transparent',
+ padding: 0,
+ margin: 0,
+ color: T.ink,
+ fontSize: 18,
+ lineHeight: 1,
+ fontWeight: 600,
+ letterSpacing: '-0.04em',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ }}
+ >
+ Reports
+ </button>
+
+ <button
+ type="button"
+ aria-label="View moments"
+ style={{
+ border: 'none',
+ background: 'transparent',
+ padding: 0,
+ margin: 0,
+ color: T.ink,
+ fontSize: 18,
+ lineHeight: 1,
+ fontWeight: 600,
+ letterSpacing: '-0.04em',
+ fontFamily: 'inherit',
+ cursor: 'default',
+ position: 'relative',
+ }}
+ >
+ Moments
+ <span style={{
+ position: 'absolute',
+ left: 1,
+ right: 1,
+ bottom: -7,
+ height: 1.4,
+ borderRadius: 999,
+ background: T.ink,
+ transformOrigin: 'left center',
+ animation: 'teacherTabUnderlineIn 150ms ease-out both',
+ }} />
+ </button>
+ </section>
+
+ <button
+ type="button"
+ onClick={() => momentFileRef.current?.click()}
+ style={{
+ width: '100%',
+ height: 40,
+ borderRadius: 999,
+ border: 'none',
+ outline: 'none',
+ background: '#f7f7f7',
+ color: '#6a6c6c',
+ display: 'grid',
+ gridTemplateColumns: '34px 1fr',
+ alignItems: 'center',
+ justifyContent: 'flex-start',
+ textAlign: 'left',
+ padding: '0 15px',
+ margin: '0 0 22px',
+ fontSize: 16,
+ fontWeight: 500,
+ letterSpacing: '-0.02em',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <Plus size={18} strokeWidth={2.05} color="#6a6c6c" />
+ <span style={{
+ display: 'block',
+ justifySelf: 'start',
+ textAlign: 'left',
+ }}>
+ Share class moment
+ </span>
+ </button>
+
+ <div style={{ animation: 'teacherTabContentIn 150ms ease-out both' }}>
  {loading ? (
  <LoadingDots />
  ) : moments.length === 0 ? (
@@ -373,6 +565,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  ))}
  </div>
  )}
+ </div>
  </section>
  </div>
 
@@ -520,7 +713,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  <div style={{
  width: 38,
  height: 38,
- borderRadius: 14,
+ borderRadius: '50%',
  background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
  color: T.accent,
  display: 'flex',

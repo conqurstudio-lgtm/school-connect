@@ -1110,7 +1110,8 @@ function TeacherLearnersPage({
  }}>
  <button
  type="button"
- aria-label="Teacher profile"
+ onClick={isMainHome ? onBack : undefined}
+ aria-label="Open teacher dashboard"
  style={{
  width: 50,
  height: 50,
@@ -1125,7 +1126,7 @@ function TeacherLearnersPage({
  fontSize: 15,
  fontWeight: 600,
  overflow: 'hidden',
- cursor: 'default',
+ cursor: isMainHome ? 'pointer' : 'default',
  padding: 0,
  flexShrink: 0,
  boxShadow: 'none',
@@ -1162,7 +1163,7 @@ function TeacherLearnersPage({
  borderRadius: '50%',
  border: '0 solid transparent',
  outline: 'none',
- backgroundColor: '#ff6c33',
+ backgroundColor: '#f87645',
  color: '#FFFFFF',
  display: 'flex',
  alignItems: 'center',
@@ -1258,6 +1259,8 @@ function TeacherLearnersPage({
  height: 1.4,
  borderRadius: 999,
  background: T.ink,
+ transformOrigin: 'left center',
+ animation: 'teacherTabUnderlineIn 150ms ease-out both',
  }} />
  </button>
 
@@ -1285,14 +1288,36 @@ function TeacherLearnersPage({
  ) : null}
 
  <style>{`
+ @keyframes teacherTabUnderlineIn {
+ 0% {
+ transform: scaleX(0.72);
+ opacity: 0.75;
+ }
+ 100% {
+ transform: scaleX(1);
+ opacity: 1;
+ }
+ }
+
+ @keyframes teacherTabContentIn {
+ 0% {
+ opacity: 0.92;
+ transform: translateY(4px);
+ }
+ 100% {
+ opacity: 1;
+ transform: translateY(0);
+ }
+ }
+
  .teacher-home-search-input-v1,
  .teacher-home-search-input-v1:hover,
  .teacher-home-search-input-v1:focus,
  .teacher-home-search-input-v1:focus-visible {
- background: #f5f5f4 !important;
- background-color: #f5f5f4 !important;
+ background: #f7f7f7 !important;
+ background-color: #f7f7f7 !important;
  box-shadow: none !important;
- -webkit-box-shadow: 0 0 0 1000px #f5f5f4 inset !important;
+ -webkit-box-shadow: 0 0 0 1000px #f7f7f7 inset !important;
  border: none !important;
  outline: none !important;
  border-radius: 0 !important;
@@ -1314,7 +1339,7 @@ function TeacherLearnersPage({
  style={{
  height: 40,
  borderRadius: 999,
- background: '#f5f5f4',
+ background: '#f7f7f7',
  overflow: 'hidden',
  display: 'grid',
  gridTemplateColumns: '34px 1fr',
@@ -1345,9 +1370,9 @@ function TeacherLearnersPage({
  height: '100%',
  border: 'none',
  outline: 'none',
- backgroundColor: '#f5f5f4',
+ backgroundColor: '#f7f7f7',
  boxShadow: 'none',
- WebkitBoxShadow: '0 0 0 1000px #f5f5f4 inset',
+ WebkitBoxShadow: '0 0 0 1000px #f7f7f7 inset',
  color: T.ink,
  fontSize: 16,
  fontWeight: 520,
@@ -1370,10 +1395,10 @@ function TeacherLearnersPage({
  .teacher-report-filter-chip-v1[data-active="true"]:focus,
  .teacher-report-filter-chip-v1[data-active="true"]:focus-visible,
  .teacher-report-filter-chip-v1[data-active="true"]:active {
- border: 0.8px solid #aecaa8 !important;
+ border: 0.8px solid #f5b69e !important;
  outline: none !important;
- background: #d8fcd3 !important;
- color: #175f3e !important;
+ background: #fff5f0 !important;
+ color: #e86435 !important;
  box-shadow: none !important;
  font-weight: 500 !important;
  }
@@ -1415,11 +1440,11 @@ function TeacherLearnersPage({
  style={{
  height: 32,
  borderRadius: 999,
- border: active ? '0.8px solid #aecaa8' : '0.8px solid #cccccc',
+ border: active ? '0.8px solid #f5b69e' : '0.8px solid #cccccc',
  outline: 'none',
- background: active ? '#d8fcd3' : 'transparent',
+ background: active ? '#fff5f0' : 'transparent',
  backgroundClip: 'padding-box',
- color: active ? '#175f3e' : '#6a6c6c',
+ color: active ? '#e86435' : '#6a6c6c',
  boxShadow: 'none',
  padding: '0 12px',
  fontSize: 13,
@@ -1474,8 +1499,9 @@ function TeacherLearnersPage({
  background: T.white,
  border: 'none',
  overflow: 'visible',
+ animation: 'teacherTabContentIn 150ms ease-out both',
  }}>
- <div style={{ padding: '0 10px 12px' }}>
+ <div style={{ padding: '0 0 12px' }}>
  <ChecklistGroup
  title="Pending reports"
  items={visiblePendingChildren}

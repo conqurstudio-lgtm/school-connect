@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { MoreVertical, Trash2 } from 'lucide-react'
+import { MoreVertical, Trash2, User } from 'lucide-react'
 
 type Props = {
   initials: string
@@ -14,6 +14,28 @@ type Props = {
   onAction?: () => void
   onRemove?: () => void
   removeLabel?: string
+}
+
+function learnerAvatarTheme(value: string) {
+  const themes = [
+    { bg: '#F8C7B8', fg: '#9B4728', ring: '#E7A997' },
+    { bg: '#D8FCD3', fg: '#175F3E', ring: '#AECAA8' },
+    { bg: '#DCEBFF', fg: '#315F9F', ring: '#B9D0F2' },
+    { bg: '#F7E2B8', fg: '#8A5B14', ring: '#E7C982' },
+    { bg: '#E8D8FF', fg: '#63409A', ring: '#CBB4EA' },
+    { bg: '#D9F5F2', fg: '#246B66', ring: '#A9DCD7' },
+    { bg: '#F8D7E4', fg: '#9A3D61', ring: '#E9B4C9' },
+    { bg: '#E7E2D8', fg: '#625A4F', ring: '#CBC3B7' },
+  ]
+
+  const source = String(value || 'learner')
+  let hash = 0
+
+  for (let i = 0; i < source.length; i += 1) {
+    hash = source.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  return themes[Math.abs(hash) % themes.length]
 }
 
 export default function SCReportRow({
@@ -32,6 +54,7 @@ export default function SCReportRow({
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const menuRef = useRef<HTMLDivElement | null>(null)
   const [mounted, setMounted] = useState(false)
+  const avatarTheme = learnerAvatarTheme(title || initials)
 
   const closeMenu = () => {
     setMenuOpen(false)
@@ -126,18 +149,19 @@ export default function SCReportRow({
           style={{
             width: 38,
             height: 38,
-            borderRadius: 15,
-            background: 'var(--sc-soft)',
-            color: 'var(--sc-ink-2)',
+            borderRadius: '50%',
+            background: avatarTheme.bg,
+            color: avatarTheme.fg,
+            border: `1px solid ${avatarTheme.ring}`,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12,
-            fontWeight: 560,
+            fontWeight: 620,
             flexShrink: 0,
           }}
         >
-          {initials}
+          <User size={20} strokeWidth={0} fill="currentColor" />
         </span>
 
         <span style={{ flex: 1, minWidth: 0 }}>
