@@ -103,7 +103,7 @@ function SchoolConnectBackButton({ onClick, label = 'Back' }: any) {
 }
 
 function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
- const [zoom, setZoom] = useState(1.18)
+ const [zoom, setZoom] = useState(1)
  const [offset, setOffset] = useState({ x: 0, y: 0 })
  const dragRef = useRef<any>(null)
 
@@ -131,7 +131,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
 
  const nextX = dragRef.current.initialX + (event.clientX - dragRef.current.startX)
  const nextY = dragRef.current.initialY + (event.clientY - dragRef.current.startY)
- const max = 64
+ const max = Math.max(90, cropSize * zoom * 0.55)
 
  setOffset({
  x: Math.max(-max, Math.min(max, nextX)),
@@ -162,7 +162,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  ctx.fillStyle = '#ffffff'
  ctx.fillRect(0, 0, outputSize, outputSize)
 
- const baseScale = Math.max(outputSize / image.naturalWidth, outputSize / image.naturalHeight)
+ const baseScale = Math.min(outputSize / image.naturalWidth, outputSize / image.naturalHeight)
  const scale = baseScale * zoom
  const drawWidth = image.naturalWidth * scale
  const drawHeight = image.naturalHeight * scale
@@ -212,7 +212,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  Adjust profile photo
  </p>
  <p style={{ fontSize: 12.8, color: T.ink3, lineHeight: 1.45, margin: '4px 0 0' }}>
- Zoom and drag until it fits the square.
+ Start with the full image, then zoom and drag to choose the best crop.
  </p>
  </div>
 
@@ -244,7 +244,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  top: '50%',
  width: '100%',
  height: '100%',
- objectFit: 'cover',
+ objectFit: 'contain',
  transform: `translate(-50%, -50%) translate(${offset.x}px, ${offset.y}px) scale(${zoom})`,
  transformOrigin: 'center',
  userSelect: 'none',
@@ -257,7 +257,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
  <span style={{ fontSize: 12.4, color: T.ink3, fontWeight: 600 }}>Zoom</span>
  <button type="button" onClick={() => {
- setZoom(1.18)
+ setZoom(1)
  setOffset({ x: 0, y: 0 })
  }} style={{
  minHeight: 44,
@@ -278,7 +278,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  <input
  type="range"
  min="1"
- max="2.8"
+ max="4"
  step="0.01"
  value={zoom}
  onChange={(event) => setZoom(Number(event.target.value))}
