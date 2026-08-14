@@ -767,6 +767,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  onOpen={openChild}
  onDeleted={load}
  isMainHome
+ onSettings={() => setShowSettings(true)}
  onMoments={() => setShowTeacherMoments(true)}
  />
 
@@ -778,6 +779,31 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  setShowLearnersPage(true)
  load()
  }}
+ />
+ )}
+
+ {showSettings && (
+ <SettingsSheet
+ teacher={teacher}
+ school={school}
+ classLabel={classLabel}
+ learnerCount={children.length}
+ momentSummary={momentSummary}
+ onClose={() => setShowSettings(false)}
+ onUpdated={(updatedTeacher: any) => {
+ setSession((current: any) => ({
+ ...current,
+ teacher: {
+ ...current.teacher,
+ ...updatedTeacher,
+ report_subjects: updatedTeacher?.report_subjects || current?.teacher?.report_subjects,
+ },
+ }))
+ setShowSettings(false)
+ load()
+ }}
+ onSignOut={signOut}
+ onPhotoSelected={handleTeacherPhotoSelected}
  />
  )}
  </>
@@ -1011,6 +1037,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  teacher={teacher}
  school={school}
  classLabel={classLabel}
+ learnerCount={children.length}
+ momentSummary={momentSummary}
  onClose={() => setShowSettings(false)}
  onUpdated={(updatedTeacher: any) => {
  setSession((current: any) => ({
@@ -1045,6 +1073,7 @@ function TeacherLearnersPage({
  onOpen,
  onDeleted,
  isMainHome = false,
+ onSettings,
  onMoments,
 }: any) {
  const [teacherLearnerSearch, setTeacherLearnerSearch] = useState('')
@@ -1110,8 +1139,8 @@ function TeacherLearnersPage({
  }}>
  <button
  type="button"
- onClick={isMainHome ? onBack : undefined}
- aria-label="Open teacher dashboard"
+ onClick={isMainHome ? onSettings : undefined}
+ aria-label="Open teacher settings"
  style={{
  width: 50,
  height: 50,
@@ -1552,10 +1581,11 @@ function MiniStat({ label, value }: any) {
  <div style={{
  padding: '9px 6px 10px',
  borderRadius: 17,
- background: T.soft,
+ background: 'transparent',
+ border: '0.8px solid #dcdcdc',
  textAlign: 'center',
  }}>
- <p style={{ fontSize: 17, fontWeight: 560, color: T.ink, margin: 0, lineHeight: 1.1 }}>
+ <p style={{ fontSize: 17, fontWeight: 560, color: '#6b6c6c', margin: 0, lineHeight: 1.1 }}>
  {value}
  </p>
  <p style={{ fontSize: 10.8, color: T.ink3, margin: '4px 0 0', whiteSpace: 'nowrap' }}>
@@ -2638,7 +2668,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
 }
 
 
-function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSignOut, onPhotoSelected }: any) {
+function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSummary = {}, onClose, onUpdated, onSignOut, onPhotoSelected }: any) {
  const fileRef = useRef<HTMLInputElement>(null)
  const [uploading, setUploading] = useState(false)
  const [showReportSubjects, setShowReportSubjects] = useState(false)
@@ -2907,53 +2937,112 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
 
  return (
  <BottomSheet onClose={onClose}>
- <SheetHeader title="Settings" subtitle="Profile and account" onClose={onClose} />
-
  <div style={{
  display: 'flex',
+ justifyContent: 'flex-end',
  alignItems: 'center',
- gap: 12,
- padding: 12,
- borderRadius: 20,
- background: T.soft,
- marginBottom: 12,
+ padding: '0 0 4px',
  }}>
- <div style={{
- width: 52,
- height: 52,
- borderRadius: 18,
- background: teacher.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
- color: T.accent,
+ <button
+ type="button"
+ onClick={onClose}
+ aria-label="Close settings"
+ style={{
+ width: 36,
+ height: 36,
+ borderRadius: '50%',
+ border: 'none',
+ background: 'transparent',
+ color: T.ink3,
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
- fontSize: 16,
- fontWeight: 560,
- overflow: 'hidden',
- flexShrink: 0,
- }}>
- {!teacher.photo_url && initials(teacher.name)}
+ cursor: 'pointer',
+ padding: 0,
+ }}
+ >
+ <X size={20} strokeWidth={1.8} />
+ </button>
  </div>
 
- <div style={{ flex: 1, minWidth: 0 }}>
- <p style={{ fontSize: 14, fontWeight: 560, color: T.ink, margin: 0 }}>
- {teacher.name && String(teacher.name).trim().toLowerCase() !== 'teacher' ? teacher.name : 'Profile details'}
- </p>
- <p style={{
- fontSize: 12.5,
- color: T.ink3,
- margin: '2px 0 0',
+ <section style={{
+ padding: '4px 0 18px',
+ textAlign: 'center',
+ }}>
+ <div style={{
+ width: 96,
+ height: 96,
+ borderRadius: '50%',
  overflow: 'hidden',
- textOverflow: 'ellipsis',
- whiteSpace: 'nowrap',
+ background: T.soft,
+ margin: '0 auto 16px',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ color: T.ink2,
+ fontSize: 24,
+ fontWeight: 600,
+ }}>
+ {teacher?.photo_url ? (
+ <img
+ src={teacher.photo_url}
+ alt=""
+ style={{
+ width: '100%',
+ height: '100%',
+ objectFit: 'cover',
+ display: 'block',
+ }}
+ />
+ ) : (
+ initials(teacher?.name)
+ )}
+ </div>
+
+ <h2 style={{
+ margin: '0 0 7px',
+ color: T.ink,
+ fontSize: 22,
+ lineHeight: 1.08,
+ fontWeight: 560,
+ letterSpacing: '-0.045em',
+ }}>
+ {teacher?.name || 'Teacher'}
+ </h2>
+
+ <p style={{
+ margin: 0,
+ color: T.ink3,
+ fontSize: 12.8,
+ lineHeight: 1.35,
  }}>
  {[school?.name && String(school.name).trim().toLowerCase() !== 'school' ? school.name : '', classLabel].filter(Boolean).join(' · ')}
  </p>
+
+ <div style={{
+ display: 'grid',
+ gridTemplateColumns: '1fr 1fr 1fr',
+ gap: 8,
+ width: '100%',
+ maxWidth: 320,
+ margin: '18px auto 0',
+ }}>
+ <MiniStat label="Learners" value={learnerCount || 0} />
+ <MiniStat label="Moments" value={momentSummary?.moments || 0} />
+ <MiniStat label="Reactions" value={momentSummary?.reactions || 0} />
  </div>
- </div>
+ </section>
 
  <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
 
+ <section style={{
+ borderRadius: 24,
+ background: '#f7f7f7',
+ overflow: 'hidden',
+ marginTop: 8,
+ marginBottom: 8,
+ border: '0.8px solid rgba(0, 0, 0, 0.04)',
+ }}>
  <button
  type="button"
  disabled={false}
@@ -2962,15 +3051,30 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
  ...softButton,
  width: '100%',
  justifyContent: 'flex-start',
- height: 44,
+ height: 48,
  border: 'none',
- background: T.white,
+ background: 'transparent',
  opacity: uploading ? 0.65 : 1,
+ borderRadius: 0,
  }}
  >
+ <span style={{
+ width: 34,
+ height: 34,
+ borderRadius: '50%',
+ background: T.soft,
+ color: T.ink2,
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ }}>
  <Camera size={15} strokeWidth={1.8} />
- Change profile photo
+ </span>
+ <span>Change profile photo</span>
  </button>
+
+ <div className="sc-thin-divider" />
 
  <button
  type="button"
@@ -2978,22 +3082,53 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
  style={{
  ...softButton,
  width: '100%',
- justifyContent: 'space-between',
- height: 44,
+ justifyContent: 'flex-start',
+ gap: 10,
+ height: 48,
  border: 'none',
- background: T.white,
- marginTop: 8,
+ background: 'transparent',
+ borderRadius: 0,
  }}
  >
- <span>Report subjects</span>
  <span style={{
- fontSize: 12,
- color: T.accent,
- fontWeight: 520,
+ display: 'inline-flex',
+ alignItems: 'center',
+ gap: 10,
+ minWidth: 0,
+ }}>
+ <span style={{
+ width: 34,
+ height: 34,
+ borderRadius: '50%',
+ background: T.soft,
+ color: T.ink2,
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ }}>
+ <GraduationCap size={16} strokeWidth={1.8} />
+ </span>
+ <span>Report subjects</span>
+ </span>
+
+ <span style={{
+ marginLeft: 8,
+ fontSize: 11.5,
+ color: '#f87645',
+ fontWeight: 620,
+ lineHeight: 1,
+ padding: '7px 10px',
+ borderRadius: 999,
+ background: '#fff1ea',
+ border: '0.8px solid #f5b69e',
+ flexShrink: 0,
  }}>
  Edit
  </span>
  </button>
+
+ <div className="sc-thin-divider" />
 
  <button
  type="button"
@@ -3002,16 +3137,29 @@ function SettingsSheet({ teacher, school, classLabel, onClose, onUpdated, onSign
  ...softButton,
  width: '100%',
  justifyContent: 'flex-start',
- height: 44,
+ height: 48,
  border: 'none',
- background: T.white,
+ background: 'transparent',
  color: T.red,
- marginTop: 8,
+ borderRadius: 0,
  }}
  >
+ <span style={{
+ width: 34,
+ height: 34,
+ borderRadius: '50%',
+ background: 'rgba(178, 34, 34, 0.08)',
+ color: T.red,
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ }}>
  <LogOut size={15} strokeWidth={1.8} />
- Sign out
+ </span>
+ <span>Sign out</span>
  </button>
+ </section>
  </BottomSheet>
  )
 }
