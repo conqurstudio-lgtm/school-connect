@@ -152,7 +152,7 @@ export default function SCReportRow({
             borderRadius: '50%',
             background: avatarTheme.bg,
             color: avatarTheme.fg,
-            border: `1px solid ${avatarTheme.ring}`,
+            border: `1px solid ${avatarTheme.bg}`,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',

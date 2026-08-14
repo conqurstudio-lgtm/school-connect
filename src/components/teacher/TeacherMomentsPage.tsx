@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
+import { FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
@@ -185,6 +185,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  const [momentActionLoading, setMomentActionLoading] = useState(false)
  const [momentDraft, setMomentDraft] = useState<any>(null)
  const momentFileRef = useRef<HTMLInputElement | null>(null)
+ const momentsScrollRef = useRef<HTMLDivElement | null>(null)
+ const lastMomentsScrollTop = useRef(0)
+ const [showFloatingBackButton, setShowFloatingBackButton] = useState(false)
  const safeTeacherAvatarUrl =
  teacher?.photo_url ||
  teacher?.avatar_url ||
@@ -192,6 +195,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  teacher?.teacher_photo_url ||
  teacher?.profile_photo_url ||
  ''
+
+ const classLabel = [teacher?.grade, teacher?.class_name].filter(Boolean).join(' · ') || 'Your class'
+ const learnerCount = Array.isArray(learners) ? learners.length : 0
 
  const load = async (quiet = false) => {
  if (!quiet) setLoading(true)
@@ -239,6 +245,30 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
 
  load(usedCache)
  }, [teacher?.id, teacher?.teacher_id, teacher?.email])
+
+ useEffect(() => {
+ const scroller = momentsScrollRef.current
+ if (!scroller) return
+
+ const handleScroll = () => {
+ const currentTop = scroller.scrollTop || 0
+ const previousTop = lastMomentsScrollTop.current
+ const isAtTop = currentTop < 32
+
+ if (isAtTop) {
+ setShowFloatingBackButton(false)
+ } else if (currentTop > previousTop + 8) {
+ setShowFloatingBackButton(false)
+ } else if (currentTop < previousTop - 8) {
+ setShowFloatingBackButton(true)
+ }
+
+ lastMomentsScrollTop.current = Math.max(0, currentTop)
+ }
+
+ scroller.addEventListener('scroll', handleScroll, { passive: true })
+ return () => scroller.removeEventListener('scroll', handleScroll)
+ }, [])
 
 
  const handleTeacherMomentFileChange = (event: any) => {
@@ -338,7 +368,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  }}>
  <SafeStyle />
 
- <div style={{
+ <div
+ ref={momentsScrollRef}
+ style={{
  maxWidth: 520,
  height: '100dvh',
  margin: '0 auto',
@@ -347,9 +379,10 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  background: T.bg,
  overflowY: 'auto',
  WebkitOverflowScrolling: 'touch',
- }}>
+ }}
+ >
  <div style={{
- padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 18px',
+ padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 14px',
  background: '#FFFFFF',
  flexShrink: 0,
  display: 'flex',
@@ -361,46 +394,30 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  }}>
  <button
  type="button"
- aria-label="Teacher profile"
+ onClick={onBack}
+ aria-label="Back to reports"
  style={{
- width: 50,
- height: 50,
+ width: 44,
+ height: 44,
  borderRadius: '50%',
- border: '0 solid transparent',
+ border: '1px solid rgba(255, 255, 255, 0.78)',
  outline: 'none',
- background: '#F1F1F2',
- color: T.ink2,
+ background: 'rgba(255, 255, 255, 0.86)',
+ color: T.ink,
+ backdropFilter: 'blur(14px)',
+ WebkitBackdropFilter: 'blur(14px)',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
- fontSize: 15,
- fontWeight: 600,
- overflow: 'hidden',
- cursor: 'default',
+ cursor: 'pointer',
  padding: 0,
  flexShrink: 0,
- boxShadow: 'none',
+ boxShadow: '0 8px 20px rgba(15, 23, 42, 0.09), 0 0 10px rgba(255, 255, 255, 0.42)',
  appearance: 'none',
  WebkitAppearance: 'none',
  }}
  >
- {safeTeacherAvatarUrl ? (
- <img
- src={safeTeacherAvatarUrl}
- alt=""
- style={{
- width: '100%',
- height: '100%',
- objectFit: 'cover',
- display: 'block',
- borderRadius: '50%',
- border: 'none',
- boxShadow: 'none',
- }}
- />
- ) : (
- initials(teacher?.name)
- )}
+ <ChevronLeft size={22} strokeWidth={2} />
  </button>
 
  <button
@@ -430,117 +447,50 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  </button>
  </div>
 
+ <button
+ type="button"
+ onClick={onBack}
+ aria-label="Back to reports"
+ style={{
+ position: 'fixed',
+ top: 'calc(34px + env(safe-area-inset-top, 0px))',
+ left: 'max(24px, calc((100vw - 520px) / 2 + 24px))',
+ zIndex: 50,
+ width: 44,
+ height: 44,
+ borderRadius: '50%',
+ border: '1px solid rgba(255, 255, 255, 0.78)',
+ outline: 'none',
+ background: 'rgba(255, 255, 255, 0.86)',
+ color: T.ink,
+ backdropFilter: 'blur(14px)',
+ WebkitBackdropFilter: 'blur(14px)',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ boxShadow: '0 8px 20px rgba(15, 23, 42, 0.09), 0 0 10px rgba(255, 255, 255, 0.42)',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ opacity: showFloatingBackButton ? 1 : 0,
+ pointerEvents: showFloatingBackButton ? 'auto' : 'none',
+ transform: showFloatingBackButton ? 'translateY(0)' : 'translateY(-18px)',
+ transition: 'opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1)',
+ }}
+ >
+ <ChevronLeft size={22} strokeWidth={2} />
+ </button>
+
  <section style={{
  flex: 'none',
  minHeight: 0,
  overflowY: 'visible',
  overflowX: 'hidden',
  WebkitOverflowScrolling: 'touch',
- padding: '10px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ padding: '4px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}>
- <section
- className="teacher-main-tab-switcher-v1"
- style={{
- display: 'flex',
- alignItems: 'flex-end',
- gap: 16,
- padding: '0 0 26px',
- background: '#FFFFFF',
- }}
- >
- <button
- type="button"
- onClick={onBack}
- aria-label="View reports"
- style={{
- border: 'none',
- background: 'transparent',
- padding: 0,
- margin: 0,
- color: T.ink,
- fontSize: 18,
- lineHeight: 1,
- fontWeight: 600,
- letterSpacing: '-0.04em',
- fontFamily: 'inherit',
- cursor: 'pointer',
- }}
- >
- Reports
- </button>
-
- <button
- type="button"
- aria-label="View moments"
- style={{
- border: 'none',
- background: 'transparent',
- padding: 0,
- margin: 0,
- color: T.ink,
- fontSize: 18,
- lineHeight: 1,
- fontWeight: 600,
- letterSpacing: '-0.04em',
- fontFamily: 'inherit',
- cursor: 'default',
- position: 'relative',
- }}
- >
- Moments
- <span style={{
- position: 'absolute',
- left: 1,
- right: 1,
- bottom: -7,
- height: 1.4,
- borderRadius: 999,
- background: T.ink,
- transformOrigin: 'left center',
- animation: 'teacherTabUnderlineIn 150ms ease-out both',
- }} />
- </button>
- </section>
-
- <button
- type="button"
- onClick={() => momentFileRef.current?.click()}
- style={{
- width: '100%',
- height: 40,
- borderRadius: 999,
- border: 'none',
- outline: 'none',
- background: '#f7f7f7',
- color: '#6a6c6c',
- display: 'grid',
- gridTemplateColumns: '34px 1fr',
- alignItems: 'center',
- justifyContent: 'flex-start',
- textAlign: 'left',
- padding: '0 15px',
- margin: '0 0 22px',
- fontSize: 16,
- fontWeight: 500,
- letterSpacing: '-0.02em',
- fontFamily: 'inherit',
- cursor: 'pointer',
- boxShadow: 'none',
- appearance: 'none',
- WebkitAppearance: 'none',
- }}
- >
- <Plus size={18} strokeWidth={2.05} color="#6a6c6c" />
- <span style={{
- display: 'block',
- justifySelf: 'start',
- textAlign: 'left',
- }}>
- Share class moment
- </span>
- </button>
-
  <div style={{ animation: 'teacherTabContentIn 150ms ease-out both' }}>
  {loading ? (
  <LoadingDots />

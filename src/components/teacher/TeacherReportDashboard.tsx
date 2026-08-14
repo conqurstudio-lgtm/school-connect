@@ -1153,6 +1153,68 @@ function TeacherLearnersPage({
  )}
  </button>
 
+ <div style={{
+ flex: 1,
+ minWidth: 0,
+ paddingRight: 4,
+ }}>
+ <p style={{
+ margin: 0,
+ color: T.ink,
+ fontSize: 15.5,
+ fontWeight: 600,
+ lineHeight: 1.15,
+ letterSpacing: '-0.025em',
+ whiteSpace: 'nowrap',
+ overflow: 'hidden',
+ textOverflow: 'ellipsis',
+ }}>
+ {teacher?.name || 'Teacher'}
+ </p>
+
+ <div style={{
+ marginTop: 6,
+ display: 'flex',
+ alignItems: 'center',
+ gap: 7,
+ minWidth: 0,
+ }}>
+ <span style={{
+ display: 'inline-flex',
+ alignItems: 'center',
+ maxWidth: '58%',
+ minWidth: 0,
+ padding: '3px 8px',
+ borderRadius: 999,
+ background: 'transparent',
+ border: '0.8px solid #D8D8D8',
+ color: T.ink,
+ fontSize: 11.5,
+ fontWeight: 600,
+ lineHeight: 1,
+ letterSpacing: '-0.01em',
+ whiteSpace: 'nowrap',
+ overflow: 'hidden',
+ textOverflow: 'ellipsis',
+ }}>
+ {classLabel}
+ </span>
+
+ <span style={{
+ color: T.ink,
+ fontSize: 12.5,
+ fontWeight: 500,
+ lineHeight: 1.1,
+ letterSpacing: '-0.01em',
+ whiteSpace: 'nowrap',
+ overflow: 'hidden',
+ textOverflow: 'ellipsis',
+ }}>
+ {children.length ? `${children.length} learner${children.length === 1 ? '' : 's'}` : ''}
+ </span>
+ </div>
+ </div>
+
  <button
  type="button"
  onClick={onAdd}
@@ -1243,8 +1305,8 @@ function TeacherLearnersPage({
  color: T.ink,
  fontSize: 18,
  lineHeight: 1,
- fontWeight: 600,
- letterSpacing: '-0.04em',
+ fontWeight: 560,
+ letterSpacing: '-0.035em',
  fontFamily: 'inherit',
  cursor: 'default',
  position: 'relative',
@@ -1276,8 +1338,8 @@ function TeacherLearnersPage({
  color: T.ink,
  fontSize: 18,
  lineHeight: 1,
- fontWeight: 600,
- letterSpacing: '-0.04em',
+ fontWeight: 560,
+ letterSpacing: '-0.035em',
  fontFamily: 'inherit',
  cursor: 'pointer',
  }}
