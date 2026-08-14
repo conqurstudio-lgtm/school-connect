@@ -752,6 +752,15 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  if (showLearnersPage) {
  return (
  <>
+ {photoDraft && (
+ <TeacherPhotoAdjustModal
+ draft={photoDraft}
+ uploading={uploadingPhoto}
+ onCancel={cancelTeacherPhotoAdjust}
+ onApply={uploadAdjustedTeacherPhoto}
+ />
+ )}
+
  <TeacherLearnersPage
  teacher={teacher}
  school={school}
@@ -2736,8 +2745,8 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  if (!file) return
 
  event.target.value = ''
- onClose()
  onPhotoSelected?.(file)
+ onClose()
  }
 
  if (showReportSubjects) {
