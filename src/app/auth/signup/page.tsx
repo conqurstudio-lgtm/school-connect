@@ -17,18 +17,18 @@ type SchoolForm = {
 const primaryButtonStyle: React.CSSProperties = {
   width: '100%',
   minHeight: 56,
-  borderRadius: 16,
+  borderRadius: 999,
   border: 'none',
-  background: '#21222D',
+  background: '#f87645',
   color: '#FFFFFF',
   fontSize: 15,
-  fontWeight: 680,
+  fontWeight: 620,
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   letterSpacing: '-0.014em',
-  boxShadow: '0 14px 28px rgba(33,34,45,0.16)',
+  boxShadow: '0 14px 28px rgba(248,118,69,0.22)',
   transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
   boxSizing: 'border-box',
   cursor: 'pointer',
@@ -71,7 +71,7 @@ export default function SchoolSignupPage() {
 
   return (
     <main
-      className="sc-page-enter"
+      className="sc-page-enter school-connect-auth-page"
       style={{
         minHeight: '100dvh',
         background: '#FFFFFF',
@@ -90,13 +90,11 @@ export default function SchoolSignupPage() {
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '38px 16px 26px',
+          justifyContent: 'flex-start',
+          padding: '42px 16px 26px',
           boxSizing: 'border-box',
         }}
       >
-        <div />
-
         <div>
           <AuthWelcomeHero
             title="Create school account"
@@ -111,7 +109,7 @@ export default function SchoolSignupPage() {
               display: 'flex',
               justifyContent: 'center',
               gap: 7,
-              margin: '-6px 0 22px',
+              margin: '-6px 0 18px',
             }}
           >
             <span
@@ -119,7 +117,7 @@ export default function SchoolSignupPage() {
                 width: step === 1 ? 18 : 7,
                 height: 7,
                 borderRadius: 999,
-                background: '#21222D',
+                background: '#f87645',
                 transition: 'width 180ms ease',
               }}
             />
@@ -128,14 +126,14 @@ export default function SchoolSignupPage() {
                 width: step === 2 ? 18 : 7,
                 height: 7,
                 borderRadius: 999,
-                background: step === 2 ? '#21222D' : '#DBDBE5',
+                background: step === 2 ? '#f87645' : '#DBDBE5',
                 transition: 'width 180ms ease, background 180ms ease',
               }}
             />
           </div>
 
           {step === 1 ? (
-            <div style={{ display: 'grid', gap: 20 }}>
+            <div style={{ display: 'grid', gap: 14 }}>
               <AuthFormField
                 label="School name"
                 name="schoolName"
@@ -201,7 +199,7 @@ export default function SchoolSignupPage() {
                       color: '#21222D',
                       fontSize: 15,
                       lineHeight: 1.35,
-                      fontWeight: 680,
+                      fontWeight: 620,
                     }}
                   >
                     {form.schoolName.trim()}
@@ -229,10 +227,10 @@ export default function SchoolSignupPage() {
                 onClick={() => setStep(1)}
                 style={{
                   minHeight: 48,
-                  borderRadius: 16,
-                  border: '1px solid rgba(33,34,45,0.06)',
-                  background: '#F4F4F6',
-                  color: '#21222D',
+                  borderRadius: 999,
+                  border: '1px solid rgba(248,118,69,0.12)',
+                  background: '#FFF3EE',
+                  color: '#f87645',
                   fontSize: 14,
                   fontWeight: 650,
                   fontFamily: 'inherit',
@@ -245,7 +243,7 @@ export default function SchoolSignupPage() {
           )}
         </div>
 
-        <div style={{ display: 'grid', gap: 12, textAlign: 'center' }}>
+        <div style={{ display: 'grid', gap: 12, textAlign: 'center', marginTop: 'auto', paddingTop: 34 }}>
           <AuthDetailText>
             Already have an account?{' '}
             <AuthTextLink href="/auth/login">
@@ -257,5 +255,5 @@ export default function SchoolSignupPage() {
         </div>
       </section>
     </main>
-  )
+)
 }

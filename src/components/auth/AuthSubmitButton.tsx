@@ -26,12 +26,12 @@ export function AuthSubmitButton({
       style={{
         minHeight: 56,
         width: '100%',
-        borderRadius: T.radius.button,
+        borderRadius: 999,
         border: 'none',
-        background: T.colors.ink,
+        background: '#f87645',
         color: T.colors.white,
         fontSize: 15,
-        fontWeight: 680,
+        fontWeight: 640,
         cursor: inactive ? 'not-allowed' : 'pointer',
         fontFamily: 'inherit',
         display: 'inline-flex',
@@ -41,7 +41,7 @@ export function AuthSubmitButton({
         letterSpacing: '-0.014em',
         marginTop: 8,
         opacity: inactive ? 0.7 : 1,
-        boxShadow: inactive ? 'none' : T.shadow.button,
+        boxShadow: inactive ? 'none' : '0 14px 28px rgba(248,118,69,0.22)',
         transition: 'transform 170ms ease, opacity 170ms ease, background 170ms ease, box-shadow 170ms ease',
       }}
     >

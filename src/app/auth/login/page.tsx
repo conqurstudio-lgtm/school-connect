@@ -23,7 +23,7 @@ export default function LoginPage({
 
   return (
     <main
-      className="sc-page-enter"
+      className="sc-page-enter school-connect-auth-page"
       style={{
         minHeight: '100dvh',
         background: '#FFFFFF',
@@ -42,13 +42,11 @@ export default function LoginPage({
           minHeight: 'calc(100dvh - 44px)',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '44px 16px 26px',
+          justifyContent: 'flex-start',
+          padding: '42px 16px 26px',
           boxSizing: 'border-box',
         }}
       >
-        <div />
-
         <div>
           <AuthWelcomeHero
             title="Welcome back"
@@ -99,7 +97,7 @@ export default function LoginPage({
             onSubmit={() => setLoading(true)}
             style={{
               display: 'grid',
-              gap: 20,
+              gap: 18,
             }}
           >
             <AuthFormField
@@ -133,6 +131,8 @@ export default function LoginPage({
             display: 'grid',
             gap: 12,
             textAlign: 'center',
+            marginTop: 'auto',
+            paddingTop: 34,
           }}
         >
           <AuthDetailText>
@@ -146,5 +146,5 @@ export default function LoginPage({
         </div>
       </section>
     </main>
-  )
+)
 }

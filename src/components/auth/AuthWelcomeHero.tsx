@@ -65,8 +65,8 @@ export function AuthWelcomeHero({
 
       <div
         style={{
-          width: compact ? 64 : 66,
-          height: compact ? 64 : 66,
+          width: compact ? 58 : 66,
+          height: compact ? 58 : 66,
           margin: compact ? '0 auto 16px' : '0 auto 20px',
           display: 'flex',
           alignItems: 'center',
@@ -94,10 +94,10 @@ export function AuthWelcomeHero({
         style={{
           margin: 0,
           color: '#050506',
-          fontSize: compact ? 22 : 21,
+          fontSize: compact ? 21 : 21,
           lineHeight: 1.08,
-          fontWeight: 570,
-          letterSpacing: '-0.022em',
+          fontWeight: 560,
+          letterSpacing: '-0.018em',
         }}
       >
         {title}
@@ -108,7 +108,7 @@ export function AuthWelcomeHero({
           style={{
             margin: compact ? '9px auto 0' : '12px auto 0',
             color: '#2A2A2C',
-            fontSize: compact ? 15 : 15.5,
+            fontSize: compact ? 14.5 : 15.5,
             lineHeight: 1.42,
             fontWeight: 400,
             maxWidth: compact ? 300 : 335,
