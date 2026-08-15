@@ -142,7 +142,7 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           <div
             style={{
               border: `1px solid ${T.border}`,
-              borderRadius: 18,
+              borderRadius: 20,
               padding: 14,
               background: T.soft,
             }}

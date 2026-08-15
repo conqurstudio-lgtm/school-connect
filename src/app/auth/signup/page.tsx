@@ -22,7 +22,7 @@ const primaryButtonStyle: React.CSSProperties = {
   background: '#f87645',
   color: '#FFFFFF',
   fontSize: 15,
-  fontWeight: 620,
+  fontWeight: 600,
   fontFamily: 'inherit',
   display: 'inline-flex',
   alignItems: 'center',
@@ -45,9 +45,20 @@ export default function SchoolSignupPage() {
   const ownerHref = useMemo(() => {
     const params = new URLSearchParams()
 
-    if (form.schoolName.trim()) params.set('schoolName', form.schoolName.trim())
-    if (form.schoolPhone.trim()) params.set('schoolPhone', form.schoolPhone.trim())
-    if (form.schoolEmail.trim()) params.set('schoolEmail', form.schoolEmail.trim())
+    if (form.schoolName.trim()) {
+      params.set('school_name', form.schoolName.trim())
+      params.set('schoolName', form.schoolName.trim())
+    }
+
+    if (form.schoolPhone.trim()) {
+      params.set('school_phone', form.schoolPhone.trim())
+      params.set('schoolPhone', form.schoolPhone.trim())
+    }
+
+    if (form.schoolEmail.trim()) {
+      params.set('school_email', form.schoolEmail.trim())
+      params.set('schoolEmail', form.schoolEmail.trim())
+    }
 
     const query = params.toString()
     return query ? `/auth/signup/owner?${query}` : '/auth/signup/owner'
@@ -91,7 +102,7 @@ export default function SchoolSignupPage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
-          padding: '42px 16px 26px',
+          padding: '36px 16px 24px',
           boxSizing: 'border-box',
         }}
       >
@@ -174,9 +185,9 @@ export default function SchoolSignupPage() {
             <div style={{ display: 'grid', gap: 18 }}>
               <div
                 style={{
-                  borderRadius: 18,
-                  background: '#F4F4F6',
-                  padding: 18,
+                  borderRadius: 20,
+                  background: '#F7F7F8',
+                  padding: 16,
                   display: 'grid',
                   gap: 12,
                 }}
@@ -199,7 +210,7 @@ export default function SchoolSignupPage() {
                       color: '#21222D',
                       fontSize: 15,
                       lineHeight: 1.35,
-                      fontWeight: 620,
+                      fontWeight: 600,
                     }}
                   >
                     {form.schoolName.trim()}
@@ -226,13 +237,13 @@ export default function SchoolSignupPage() {
                 type="button"
                 onClick={() => setStep(1)}
                 style={{
-                  minHeight: 48,
+                  minHeight: 44,
                   borderRadius: 999,
-                  border: '1px solid rgba(248,118,69,0.12)',
-                  background: '#FFF3EE',
+                  border: '1px solid rgba(248,118,69,0.14)',
+                  background: 'rgba(255,243,238,0.62)',
                   color: '#f87645',
-                  fontSize: 14,
-                  fontWeight: 650,
+                  fontSize: 13.5,
+                  fontWeight: 600,
                   fontFamily: 'inherit',
                   cursor: 'pointer',
                 }}

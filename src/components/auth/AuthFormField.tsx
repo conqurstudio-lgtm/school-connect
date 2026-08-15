@@ -96,7 +96,7 @@ export function AuthFormField({
           borderRadius: T.radius.field,
           border: `1px solid ${focused ? T.colors.borderDark : hovered ? 'rgba(33, 34, 45, 0.24)' : T.colors.border}`,
           background: T.colors.white,
-          boxShadow: 'none',
+          boxShadow: '0 1px 0 rgba(15,23,42,0.02)',
           transition: 'border-color 160ms ease',
         }}
       >
@@ -124,7 +124,7 @@ export function AuthFormField({
             background: 'transparent',
             color: T.colors.ink,
             outline: 'none',
-            boxShadow: 'none',
+            boxShadow: '0 1px 0 rgba(15,23,42,0.02)',
             appearance: 'none',
             WebkitAppearance: 'none',
             fontFamily: 'inherit',
@@ -149,7 +149,7 @@ export function AuthFormField({
               width: 32,
               height: 32,
               border: 'none',
-              borderRadius: 999,
+              borderRadius: 20,
               background: 'transparent',
               color: T.colors.faint,
               display: 'inline-flex',

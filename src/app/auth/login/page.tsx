@@ -43,7 +43,7 @@ export default function LoginPage({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
-          padding: '42px 16px 26px',
+          padding: '36px 16px 24px',
           boxSizing: 'border-box',
         }}
       >
@@ -61,7 +61,7 @@ export default function LoginPage({
                 margin: '-6px 0 18px',
                 padding: '12px 14px',
                 borderRadius: 14,
-                background: '#F4F4F6',
+                background: '#F7F7F8',
                 color: 'rgba(33, 34, 45, 0.70)',
                 fontSize: 13,
                 lineHeight: 1.45,
@@ -97,7 +97,7 @@ export default function LoginPage({
             onSubmit={() => setLoading(true)}
             style={{
               display: 'grid',
-              gap: 18,
+              gap: 14,
             }}
           >
             <AuthFormField
