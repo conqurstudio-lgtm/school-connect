@@ -23,49 +23,56 @@ export function AuthWelcomeHero({
       style={{
         textAlign: 'center',
         color: T.colors.ink,
-        marginBottom: compact ? 22 : 28,
+        marginBottom: compact ? 26 : 22,
       }}
     >
-      <div
-        style={{
-          width: isWideWelcomeImage ? '100vw' : resolvedImageSize,
-          position: 'relative',
-          left: isWideWelcomeImage ? '50%' : 'auto',
-          right: isWideWelcomeImage ? '50%' : 'auto',
-          marginLeft: isWideWelcomeImage ? '-50vw' : 'auto',
-          marginRight: isWideWelcomeImage ? '-50vw' : 'auto',
-          marginTop: compact ? 0 : -26,
-          marginBottom: compact ? 22 : 46,
-          borderRadius: isWideWelcomeImage ? 0 : T.radius.image,
-          overflow: 'visible',
-        }}
-      >
-        <Image
-          src="/images/school-connect-welcome-bubbles-hero.png"
-          alt="SchoolConnect welcome bubbles"
-          width={1600}
-          height={900}
-          priority
-          sizes="100vw"
+      {isWideWelcomeImage ? (
+        <div
           style={{
             width: '100vw',
-            maxWidth: 'none',
-            height: 'auto',
-            objectFit: 'contain',
-            objectPosition: 'center top',
-            display: 'block',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            marginLeft: '-50vw',
+            marginRight: '-50vw',
+            marginTop: 'calc(-42px - env(safe-area-inset-top, 0px))',
+            marginBottom: 26,
+            borderRadius: 0,
+            overflow: 'visible',
           }}
-        />
-      </div>
+        >
+          <Image
+            src="/images/school-connect-welcome-bubbles-hero.png"
+            alt="SchoolConnect welcome bubbles"
+            width={1600}
+            height={1033}
+            priority
+            unoptimized
+            sizes="100vw"
+            style={{
+              width: '100vw',
+              maxWidth: 'none',
+              height: 'auto',
+              objectFit: 'contain',
+              objectPosition: 'center top',
+              display: 'block',
+              margin: 0,
+              padding: 0,
+            }}
+          />
+        </div>
+      ) : null}
 
       <div
         style={{
-          width: compact ? 58 : 76,
-          height: compact ? 58 : 76,
-          margin: compact ? '0 auto 12px' : '0 auto 14px',
+          width: compact ? 66 : 70,
+          height: compact ? 66 : 70,
+          margin: compact ? '0 auto 16px' : '0 auto 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          borderRadius: 999,
+          boxShadow: compact ? 'none' : '0 18px 44px rgba(248, 118, 69, 0.18), 0 0 34px rgba(248, 118, 69, 0.10)',
         }}
       >
         <Image
@@ -87,10 +94,10 @@ export function AuthWelcomeHero({
         style={{
           margin: 0,
           color: '#050506',
-          fontSize: compact ? 19 : 22,
+          fontSize: compact ? 22 : 21,
           lineHeight: 1.08,
-          fontWeight: 540,
-          letterSpacing: '-0.028em',
+          fontWeight: 590,
+          letterSpacing: '-0.026em',
         }}
       >
         {title}
@@ -99,12 +106,12 @@ export function AuthWelcomeHero({
       {text ? (
         <p
           style={{
-            margin: compact ? '12px auto 0' : '14px auto 0',
-            color: '#111111',
-            fontSize: compact ? 14 : 16,
+            margin: compact ? '9px auto 0' : '12px auto 0',
+            color: '#2A2A2C',
+            fontSize: compact ? 15 : 15.5,
             lineHeight: 1.42,
-            fontWeight: 410,
-            maxWidth: compact ? 300 : 330,
+            fontWeight: 400,
+            maxWidth: compact ? 300 : 335,
             letterSpacing: '-0.018em',
           }}
         >
