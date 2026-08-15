@@ -42,7 +42,7 @@ export function AuthWelcomeHero({
         }}
       >
         <Image
-          src="/images/school-connect-welcome-bubbles.png"
+          src="/images/school-connect-welcome-bubbles-v2.png"
           alt=""
           width={1200}
           height={520}
