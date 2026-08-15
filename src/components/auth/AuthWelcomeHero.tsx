@@ -65,14 +65,14 @@ export function AuthWelcomeHero({
 
       <div
         style={{
-          width: compact ? 66 : 70,
-          height: compact ? 66 : 70,
+          width: compact ? 64 : 66,
+          height: compact ? 64 : 66,
           margin: compact ? '0 auto 16px' : '0 auto 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: 999,
-          boxShadow: compact ? 'none' : '0 18px 44px rgba(248, 118, 69, 0.18), 0 0 34px rgba(248, 118, 69, 0.10)',
+          boxShadow: 'none',
         }}
       >
         <Image
@@ -96,8 +96,8 @@ export function AuthWelcomeHero({
           color: '#050506',
           fontSize: compact ? 22 : 21,
           lineHeight: 1.08,
-          fontWeight: 590,
-          letterSpacing: '-0.026em',
+          fontWeight: 570,
+          letterSpacing: '-0.022em',
         }}
       >
         {title}
