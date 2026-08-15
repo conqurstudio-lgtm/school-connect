@@ -30,8 +30,8 @@ export function AuthWelcomeHero({
         style={{
           width: isWideWelcomeImage ? '100vw' : resolvedImageSize,
           maxWidth: isWideWelcomeImage ? 760 : resolvedImageSize,
-          height: isWideWelcomeImage ? 300 : resolvedImageSize,
-          margin: compact ? '0 auto 18px' : '-18px 0 34px 50%',
+          height: isWideWelcomeImage ? 330 : resolvedImageSize,
+          margin: compact ? '0 auto 18px' : '-42px 0 28px 50%',
           transform: isWideWelcomeImage ? 'translateX(-50%)' : 'none',
           borderRadius: isWideWelcomeImage ? 0 : T.radius.image,
           display: 'flex',
@@ -42,20 +42,36 @@ export function AuthWelcomeHero({
         }}
       >
         <Image
-          src="/images/school-connect-welcome-bubbles-v2.png"
+          src="/images/school-connect-welcome-bubbles-close.png"
           alt=""
           width={1200}
           height={520}
           priority
           style={{
-            width: '100%',
+            width: isWideWelcomeImage ? '118%' : '100%',
             height: '100%',
             objectFit: 'contain',
             objectPosition: 'center bottom',
             display: 'block',
+            transform: isWideWelcomeImage ? 'translateY(-8px) scale(1.16)' : 'none',
+            transformOrigin: 'center bottom',
+            animation: isWideWelcomeImage ? 'scWelcomeBubbleZoom 900ms cubic-bezier(.2,.85,.2,1) both' : 'none',
           }}
         />
       </div>
+
+      <style>{`
+        @keyframes scWelcomeBubbleZoom {
+          from {
+            transform: translateY(10px) scale(0.96);
+            opacity: 0.96;
+          }
+          to {
+            transform: translateY(-8px) scale(1.16);
+            opacity: 1;
+          }
+        }
+      `}</style>
 
       <h1
         style={{

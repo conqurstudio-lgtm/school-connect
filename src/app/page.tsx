@@ -26,12 +26,10 @@ export default function WelcomePage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '64px 16px 26px',
+          padding: '10px 16px 26px',
           boxSizing: 'border-box',
         }}
       >
-        <div />
-
         <AuthWelcomeHero
           title="School Connect"
           text="Keep school and home connected in one simple space."
