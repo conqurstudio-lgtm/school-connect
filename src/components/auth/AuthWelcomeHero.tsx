@@ -16,6 +16,7 @@ export function AuthWelcomeHero({
   imageSize,
 }: AuthWelcomeHeroProps) {
   const resolvedImageSize = imageSize ?? (compact ? 132 : 168)
+  const isWideWelcomeImage = !compact
 
   return (
     <div
@@ -27,26 +28,31 @@ export function AuthWelcomeHero({
     >
       <div
         style={{
-          width: resolvedImageSize,
-          height: resolvedImageSize,
-          margin: compact ? '0 auto 18px' : '0 auto 30px',
-          borderRadius: T.radius.image,
+          width: isWideWelcomeImage ? '100vw' : resolvedImageSize,
+          maxWidth: isWideWelcomeImage ? 760 : resolvedImageSize,
+          height: isWideWelcomeImage ? 300 : resolvedImageSize,
+          margin: compact ? '0 auto 18px' : '-18px 0 34px 50%',
+          transform: isWideWelcomeImage ? 'translateX(-50%)' : 'none',
+          borderRadius: isWideWelcomeImage ? 0 : T.radius.image,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-end',
           justifyContent: 'center',
-          overflow: 'hidden',
+          overflow: 'visible',
+          position: 'relative',
         }}
       >
         <Image
-          src="/images/school-connect-welcome-palette.png"
+          src="/images/school-connect-welcome-bubbles.png"
           alt=""
-          width={resolvedImageSize}
-          height={resolvedImageSize}
+          width={1200}
+          height={520}
           priority
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'contain',
+            objectPosition: 'center bottom',
+            display: 'block',
           }}
         />
       </div>
