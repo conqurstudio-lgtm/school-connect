@@ -31,7 +31,7 @@ export default function WelcomePage() {
         }}
       >
         <AuthWelcomeHero
-          title="School Connect"
+          title="SchoolConnect"
           text="Keep school and home connected in one simple space."
           imageSize={168}
         />
@@ -54,9 +54,9 @@ export default function WelcomePage() {
               style={{
                 width: '100%',
                 minHeight: 56,
-                borderRadius: 16,
+                borderRadius: 999,
                 border: 'none',
-                background: '#21222D',
+                background: '#f87645',
                 color: '#FFFFFF',
                 fontSize: 15,
                 fontWeight: 680,
@@ -65,7 +65,7 @@ export default function WelcomePage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 letterSpacing: '-0.014em',
-                boxShadow: '0 14px 28px rgba(33,34,45,0.16)',
+                boxShadow: '0 14px 28px rgba(248,118,69,0.22)',
                 transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
                 boxSizing: 'border-box',
                 cursor: 'pointer',
@@ -87,10 +87,10 @@ export default function WelcomePage() {
               style={{
                 width: '100%',
                 minHeight: 56,
-                borderRadius: 16,
-                border: '1px solid rgba(33,34,45,0.04)',
-                background: '#F4F4F6',
-                color: '#21222D',
+                borderRadius: 999,
+                border: '1px solid rgba(248,118,69,0.12)',
+                background: '#FFF3EE',
+                color: '#f87645',
                 fontSize: 15,
                 fontWeight: 680,
                 fontFamily: 'inherit',

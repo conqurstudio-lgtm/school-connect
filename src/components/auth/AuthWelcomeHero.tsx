@@ -10,7 +10,7 @@ type AuthWelcomeHeroProps = {
 }
 
 export function AuthWelcomeHero({
-  title = 'School Connect',
+  title = 'SchoolConnect',
   text = 'Keep school and home connected in one simple space.',
   compact = false,
   imageSize,
@@ -29,58 +29,68 @@ export function AuthWelcomeHero({
       <div
         style={{
           width: isWideWelcomeImage ? '100vw' : resolvedImageSize,
-          maxWidth: isWideWelcomeImage ? 760 : resolvedImageSize,
-          height: isWideWelcomeImage ? 330 : resolvedImageSize,
-          margin: compact ? '0 auto 18px' : '-42px 0 28px 50%',
-          transform: isWideWelcomeImage ? 'translateX(-50%)' : 'none',
-          borderRadius: isWideWelcomeImage ? 0 : T.radius.image,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          overflow: 'visible',
           position: 'relative',
+          left: isWideWelcomeImage ? '50%' : 'auto',
+          right: isWideWelcomeImage ? '50%' : 'auto',
+          marginLeft: isWideWelcomeImage ? '-50vw' : 'auto',
+          marginRight: isWideWelcomeImage ? '-50vw' : 'auto',
+          marginTop: compact ? 0 : -26,
+          marginBottom: compact ? 22 : 46,
+          borderRadius: isWideWelcomeImage ? 0 : T.radius.image,
+          overflow: 'visible',
         }}
       >
         <Image
-          src="/images/school-connect-welcome-bubbles-close.png"
-          alt=""
-          width={1200}
-          height={520}
+          src="/images/school-connect-welcome-bubbles-hero.png"
+          alt="SchoolConnect welcome bubbles"
+          width={1600}
+          height={900}
           priority
+          sizes="100vw"
           style={{
-            width: isWideWelcomeImage ? '118%' : '100%',
-            height: '100%',
+            width: '100vw',
+            maxWidth: 'none',
+            height: 'auto',
             objectFit: 'contain',
-            objectPosition: 'center bottom',
+            objectPosition: 'center top',
             display: 'block',
-            transform: isWideWelcomeImage ? 'translateY(-8px) scale(1.16)' : 'none',
-            transformOrigin: 'center bottom',
-            animation: isWideWelcomeImage ? 'scWelcomeBubbleZoom 900ms cubic-bezier(.2,.85,.2,1) both' : 'none',
           }}
         />
       </div>
 
-      <style>{`
-        @keyframes scWelcomeBubbleZoom {
-          from {
-            transform: translateY(10px) scale(0.96);
-            opacity: 0.96;
-          }
-          to {
-            transform: translateY(-8px) scale(1.16);
-            opacity: 1;
-          }
-        }
-      `}</style>
+      <div
+        style={{
+          width: compact ? 58 : 76,
+          height: compact ? 58 : 76,
+          margin: compact ? '0 auto 12px' : '0 auto 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Image
+          src="/images/school-connect-logo.png"
+          alt="SchoolConnect logo"
+          width={120}
+          height={120}
+          priority
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
+      </div>
 
       <h1
         style={{
           margin: 0,
-          color: T.colors.ink,
-          fontSize: compact ? 22 : 30,
+          color: '#050506',
+          fontSize: compact ? 19 : 22,
           lineHeight: 1.08,
-          fontWeight: 760,
-          letterSpacing: '-0.055em',
+          fontWeight: 540,
+          letterSpacing: '-0.028em',
         }}
       >
         {title}
@@ -89,11 +99,11 @@ export function AuthWelcomeHero({
       {text ? (
         <p
           style={{
-            margin: compact ? '12px auto 0' : '16px auto 0',
-            color: T.colors.inkSoft,
+            margin: compact ? '12px auto 0' : '14px auto 0',
+            color: '#111111',
             fontSize: compact ? 14 : 16,
             lineHeight: 1.42,
-            fontWeight: 430,
+            fontWeight: 410,
             maxWidth: compact ? 300 : 330,
             letterSpacing: '-0.018em',
           }}
