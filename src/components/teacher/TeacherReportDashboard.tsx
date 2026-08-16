@@ -337,7 +337,7 @@ const labelStyle: any = {
 }
 
 const primaryButton: any = {
- minHeight: 42,
+ minHeight: 38,
  borderRadius: 999,
  border: 'none',
  background: T.ink,
@@ -1136,7 +1136,7 @@ function TeacherLearnersPage({
  }}>
  {isMainHome ? (
  <div style={{
- padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 16px',
+ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 10px',
  background: '#FFFFFF',
  flexShrink: 0,
  display: 'flex',
@@ -1269,7 +1269,7 @@ function TeacherLearnersPage({
  display: 'flex',
  alignItems: 'center',
  gap: 8,
- padding: '0 2px 22px',
+ padding: '0 2px 14px',
  background: '#FFFFFF',
  }}
  >
@@ -1397,7 +1397,7 @@ function TeacherLearnersPage({
 
 <section
  style={{
- padding: '0 0 16px',
+ padding: '0 0 6px',
  background: '#FFFFFF',
  }}
 >
@@ -1557,7 +1557,7 @@ function TeacherLearnersPage({
  alignItems: 'center',
  gap: 30,
  padding: '0 12px',
- margin: '0 0 10px',
+ margin: '0 0 8px',
  
  }}
  >
@@ -1576,7 +1576,7 @@ function TeacherLearnersPage({
  aria-label={`Filter ${item.label.toLowerCase()} reports`}
  style={{
  position: 'relative',
- minHeight: 42,
+ minHeight: 38,
  border: 'none',
  outline: 'none',
  background: 'transparent',
@@ -1585,7 +1585,7 @@ function TeacherLearnersPage({
  alignItems: 'center',
  justifyContent: 'center',
  gap: 5,
- padding: '0 0 7px',
+ padding: '0 0 6px',
  margin: 0,
  fontSize: 14,
  lineHeight: 1,
@@ -1673,7 +1673,7 @@ function TeacherLearnersPage({
 
  <button type="button" onClick={onAdd} style={{
  ...primaryButton,
- minHeight: 42,
+ minHeight: 38,
  padding: '0 18px',
  }}>
  Add
@@ -1948,7 +1948,7 @@ function ReportSectionTitle({ title, subtitle, right }: any) {
  alignItems: 'center',
  justifyContent: 'space-between',
  gap: 12,
- padding: '0 0 10px',
+ padding: '0 0 6px',
  }}>
  <div style={{ minWidth: 0 }}>
  <p style={{
@@ -2590,7 +2590,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  gridTemplateColumns: '1fr auto',
  alignItems: 'center',
  gap: 12,
- padding: '0 0 10px',
+ padding: '0 0 6px',
  borderBottom: '1px solid var(--sc-border-soft)',
  marginBottom: 2,
  }}>
@@ -2636,7 +2636,7 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  </section>
 
  <section style={{
- padding: '0 0 16px',
+ padding: '0 0 6px',
  borderBottom: '1px solid var(--sc-border-soft)',
  marginBottom: 16,
  }}>
@@ -3021,7 +3021,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  placeholder="Subject or area"
  style={{
  ...inputStyle,
- minHeight: 42,
+ minHeight: 38,
  fontSize: 14,
  background: T.white,
  border: `1px solid ${T.border}`,
