@@ -969,7 +969,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  <button type="button" onClick={() => setShowAdd(true)} style={{
  ...primaryButton,
  minHeight: 40,
- padding: '0 16px',
+ padding: '0 12px',
  }}>
  Add
  </button>
@@ -980,7 +980,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  style={{
  border: 'none',
  margin: '4px 0 14px',
- padding: '0 14px',
+ padding: '0 12px',
  borderRadius: 24,
  overflow: 'hidden',
  background: T.white,
@@ -1136,7 +1136,7 @@ function TeacherLearnersPage({
  }}>
  {isMainHome ? (
  <div style={{
- padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 18px',
+ padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 16px',
  background: '#FFFFFF',
  flexShrink: 0,
  display: 'flex',
@@ -1151,8 +1151,8 @@ function TeacherLearnersPage({
  onClick={isMainHome ? onSettings : undefined}
  aria-label="Open teacher settings"
  style={{
- width: 50,
- height: 50,
+ width: 48,
+ height: 48,
  borderRadius: '50%',
  border: '0 solid transparent',
  outline: 'none',
@@ -1191,7 +1191,65 @@ function TeacherLearnersPage({
  )}
  </button>
 
+ <section
+ className="teacher-home-search-shell-v1"
+ style={{
+ flex: 1,
+ minWidth: 0,
+ height: 48,
+ borderRadius: 999,
+ background: '#FFFFFF',
+ border: '1px solid #cccccc',
+ overflow: 'hidden',
+ display: 'grid',
+ gridTemplateColumns: '34px 1fr',
+ alignItems: 'center',
+ padding: '0 12px',
+ margin: 0,
+ boxSizing: 'border-box',
+ boxShadow: 'none',
+ transition: 'border-color 180ms ease, box-shadow 180ms ease',
+ }}
+ >
+ <svg
+ width="21"
+ height="21"
+ viewBox="0 0 24 24"
+ fill="none"
+ aria-hidden="true"
+ style={{ display: 'block' }}
+ >
+ <circle cx="11" cy="11" r="7" stroke="#8B8D92" strokeWidth="2.15" />
+ <path d="M16.2 16.2L21 21" stroke="#8B8D92" strokeWidth="2.15" strokeLinecap="round" />
+ </svg>
 
+ <input
+ className="teacher-home-search-input-v1"
+ value={teacherLearnerSearch}
+ onChange={event => setTeacherLearnerSearch(event.target.value)}
+ placeholder="Search learner"
+ style={{
+ width: '100%',
+ height: '100%',
+ border: 'none',
+ outline: 'none',
+ backgroundColor: 'transparent',
+ boxShadow: 'none',
+ WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+ color: T.ink,
+ fontSize: 16,
+ fontWeight: 520,
+ letterSpacing: '-0.02em',
+ fontFamily: 'inherit',
+ padding: 0,
+ margin: 0,
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ borderRadius: 0,
+ backgroundClip: 'padding-box',
+ }}
+ />
+ </section>
 
  <button
  type="button"
@@ -1216,7 +1274,7 @@ function TeacherLearnersPage({
  WebkitAppearance: 'none',
  }}
  >
- <Plus size={27} strokeWidth={1.7} color="#FFFFFF" />
+ <Plus size={27} strokeWidth={1.8} color="#FFFFFF" />
  </button>
  </div>
  ) : (
@@ -1266,9 +1324,9 @@ function TeacherLearnersPage({
  className="teacher-main-tab-switcher-v1"
  style={{
  display: 'flex',
- alignItems: 'flex-end',
- gap: 16,
- padding: '0 0 26px',
+ alignItems: 'center',
+ gap: 8,
+ padding: '0 2px 22px',
  background: '#FFFFFF',
  }}
  >
@@ -1276,32 +1334,38 @@ function TeacherLearnersPage({
  type="button"
  aria-label="View reports"
  style={{
- border: 'none',
- background: 'transparent',
- padding: 0,
- margin: 0,
- color: T.ink,
- fontSize: 18,
+ height: 36,
+ borderRadius: 999,
+ border: '0.8px solid #efefed',
+ background: '#FFFFFF',
+ color: '#666666',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: 6,
+ padding: '0 12px',
+ fontSize: 13,
  lineHeight: 1,
- fontWeight: 560,
- letterSpacing: '-0.035em',
+ fontWeight: 500,
+ letterSpacing: '-0.01em',
  fontFamily: 'inherit',
  cursor: 'default',
- position: 'relative',
+ boxShadow: 'none',
+ whiteSpace: 'nowrap',
  }}
  >
- Reports
- <span style={{
- position: 'absolute',
- left: 1,
- right: 1,
- bottom: -7,
- height: 1.4,
- borderRadius: 999,
- background: T.ink,
- transformOrigin: 'left center',
- animation: 'teacherTabUnderlineIn 150ms ease-out both',
- }} />
+ <img
+ src="/icons/reports-scroll.svg"
+ alt=""
+ aria-hidden="true"
+ style={{
+ width: 15,
+ height: 15,
+ display: 'block',
+ flexShrink: 0,
+ }}
+ />
+ <span>Reports</span>
  </button>
 
  <button
@@ -1309,20 +1373,77 @@ function TeacherLearnersPage({
  onClick={() => onMoments?.()}
  aria-label="View moments"
  style={{
- border: 'none',
+ height: 36,
+ borderRadius: 999,
+ border: '0.8px solid #efefed',
  background: 'transparent',
- padding: 0,
- margin: 0,
- color: T.ink,
- fontSize: 18,
+ color: '#666666',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: 6,
+ padding: '0 12px',
+ fontSize: 13,
  lineHeight: 1,
- fontWeight: 560,
- letterSpacing: '-0.035em',
+ fontWeight: 500,
+ letterSpacing: '-0.01em',
  fontFamily: 'inherit',
  cursor: 'pointer',
+ boxShadow: 'none',
+ whiteSpace: 'nowrap',
  }}
  >
- Moments
+ <img
+ src="/icons/moments-camera.svg"
+ alt=""
+ aria-hidden="true"
+ style={{
+ width: 15,
+ height: 15,
+ display: 'block',
+ flexShrink: 0,
+ }}
+ />
+ <span>Moments</span>
+ </button>
+
+ <button
+ type="button"
+ onClick={() => toast('Awards coming soon')}
+ aria-label="View awards"
+ style={{
+ height: 36,
+ borderRadius: 999,
+ border: '0.8px solid #efefed',
+ background: 'transparent',
+ color: '#666666',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: 6,
+ padding: '0 12px',
+ fontSize: 13,
+ lineHeight: 1,
+ fontWeight: 500,
+ letterSpacing: '-0.01em',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ boxShadow: 'none',
+ whiteSpace: 'nowrap',
+ }}
+ >
+ <img
+ src="/icons/awards-medal.svg"
+ alt=""
+ aria-hidden="true"
+ style={{
+ width: 15,
+ height: 15,
+ display: 'block',
+ flexShrink: 0,
+ }}
+ />
+ <span>Awards</span>
  </button>
  </section>
  ) : null}
@@ -1354,10 +1475,10 @@ function TeacherLearnersPage({
  .teacher-home-search-input-v1:hover,
  .teacher-home-search-input-v1:focus,
  .teacher-home-search-input-v1:focus-visible {
- background: #f7f7f7 !important;
- background-color: #f7f7f7 !important;
+ background: transparent !important;
+ background-color: transparent !important;
  box-shadow: none !important;
- -webkit-box-shadow: 0 0 0 1000px #f7f7f7 inset !important;
+ -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
  border: none !important;
  outline: none !important;
  border-radius: 0 !important;
@@ -1369,65 +1490,11 @@ function TeacherLearnersPage({
  letter-spacing: -0.02em !important;
  }
  .teacher-home-search-shell-v1:focus-within {
- height: 46px !important;
+ height: 48px !important;
+ border-color: #cccccc !important;
+ box-shadow: 0 8px 22px rgba(15, 23, 42, 0.045) !important;
  }
 `}</style>
-
- {isMainHome ? (
- <section
- className="teacher-home-search-shell-v1"
- style={{
- height: 40,
- borderRadius: 999,
- background: '#f7f7f7',
- overflow: 'hidden',
- display: 'grid',
- gridTemplateColumns: '34px 1fr',
- alignItems: 'center',
- padding: '0 15px',
- margin: '0 0 20px',
- transition: 'height 180ms ease, box-shadow 180ms ease',
- }}>
- <svg
- width="19"
- height="19"
- viewBox="0 0 24 24"
- fill="none"
- aria-hidden="true"
- style={{ display: 'block' }}
- >
- <circle cx="11" cy="11" r="7" stroke="#6a6c6c" strokeWidth="2.2" />
- <path d="M16.2 16.2L21 21" stroke="#6a6c6c" strokeWidth="2.2" strokeLinecap="round" />
- </svg>
-
- <input
- className="teacher-home-search-input-v1"
- value={teacherLearnerSearch}
- onChange={event => setTeacherLearnerSearch(event.target.value)}
- placeholder="Search learner"
- style={{
- width: '100%',
- height: '100%',
- border: 'none',
- outline: 'none',
- backgroundColor: '#f7f7f7',
- boxShadow: 'none',
- WebkitBoxShadow: '0 0 0 1000px #f7f7f7 inset',
- color: T.ink,
- fontSize: 16,
- fontWeight: 520,
- letterSpacing: '-0.02em',
- fontFamily: 'inherit',
- padding: 0,
- margin: 0,
- appearance: 'none',
- WebkitAppearance: 'none',
- borderRadius: 0,
- backgroundClip: 'padding-box',
- }}
- />
- </section>
- ) : null}
 
  <style>{`
  .teacher-report-filter-chip-v1[data-active="true"],
@@ -1460,61 +1527,97 @@ function TeacherLearnersPage({
  <section style={{
  display: 'flex',
  alignItems: 'center',
- gap: 8,
- padding: '0 2px',
- margin: '0 0 18px',
- }}>
+ gap: 30,
+ padding: '0 12px',
+ margin: '0 0 10px',
+ 
+ }}
+ >
  {[
  { key: 'all', label: 'All', count: null },
  { key: 'sent', label: 'Sent', count: sentTotal },
  { key: 'pending', label: 'Pending', count: pendingTotal },
- ].map(item => {
+ ].map((item: any) => {
  const active = teacherReportFilter === item.key
+
  return (
  <button
  key={item.key}
  type="button"
- className="teacher-report-filter-chip-v1"
- data-active={active ? 'true' : 'false'}
  onClick={() => setTeacherReportFilter(item.key)}
+ aria-label={`Filter ${item.label.toLowerCase()} reports`}
  style={{
- height: 32,
- borderRadius: 999,
- border: active ? '0.8px solid #f5b69e' : '0.8px solid #cccccc',
+ position: 'relative',
+ minHeight: 42,
+ border: 'none',
  outline: 'none',
- background: active ? '#fff5f0' : 'transparent',
- backgroundClip: 'padding-box',
- color: active ? '#e86435' : '#6a6c6c',
- boxShadow: 'none',
- padding: '0 12px',
- fontSize: 13,
- fontWeight: 500,
- letterSpacing: '-0.015em',
+ background: 'transparent',
+ color: active ? '#4d4d4d' : '#999999',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: 5,
+ padding: '0 0 7px',
+ margin: 0,
+ fontSize: 14,
+ lineHeight: 1,
+ fontWeight: active ? 540 : 500,
+ letterSpacing: '-0.012em',
  fontFamily: 'inherit',
  cursor: 'pointer',
- display: 'inline-flex',
- alignItems: 'center',
- transition: 'background 160ms ease, color 160ms ease, border-color 160ms ease',
+ appearance: 'none',
+ WebkitAppearance: 'none',
  }}
  >
- <span style={{
+ <span
+ style={{
+ position: 'relative',
  display: 'inline-flex',
  alignItems: 'center',
- gap: 3,
- }}>
+ justifyContent: 'center',
+ }}
+>
  {item.label}
- {item.count ? (
- <span style={{
- fontSize: 10.5,
- fontWeight: 500,
+</span>
+
+ {item.count !== null && item.count > 0 ? (
+ <span
+ aria-hidden="true"
+ style={{
+ minWidth: 15,
+ height: 15,
+ borderRadius: 999,
+ background: active ? '#9A9A9D' : '#B2B2B5',
+ color: '#FFFFFF',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ fontSize: 9,
  lineHeight: 1,
- opacity: 0.82,
- transform: 'translateY(-0.5px)',
- }}>
+ fontWeight: 620,
+ padding: '0 4px',
+ transform: 'translateY(-7px)',
+ }}
+ >
  {item.count}
  </span>
  ) : null}
- </span>
+
+ {active ? (
+ <span
+ aria-hidden="true"
+ style={{
+ position: 'absolute',
+ left: '50%',
+ bottom: 3,
+ width: 6,
+ height: 6,
+ borderRadius: '50%',
+ background: '#f87645',
+ transform: item.count !== null && item.count > 0 ? 'translateX(calc(-50% - 8px))' : 'translateX(-50%)',
+ }}
+ />
+ ) : null}
  </button>
  )
  })}
@@ -1594,7 +1697,7 @@ function MiniStat({ label, value }: any) {
  border: '0.8px solid #dcdcdc',
  textAlign: 'center',
  }}>
- <p style={{ fontSize: 17, fontWeight: 560, color: '#6b6c6c', margin: 0, lineHeight: 1.1 }}>
+ <p style={{ fontSize: 16, fontWeight: 560, color: '#6b6c6c', margin: 0, lineHeight: 1.1 }}>
  {value}
  </p>
  <p style={{ fontSize: 10.8, color: T.ink3, margin: '4px 0 0', whiteSpace: 'nowrap' }}>
@@ -1616,7 +1719,7 @@ function EmptyRoster({ onAdd }: any) {
  border: `1px dashed ${T.border}`,
  borderRadius: 16,
  background: 'transparent',
- marginTop: 10,
+ marginTop: 6,
  }}>
  <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
  No learners yet
@@ -1917,7 +2020,7 @@ function ReadOnlyScoreList({ scores }: any) {
  }}
  >
  <p style={{
- fontSize: 13.5,
+ fontSize: 13,
  fontWeight: 540,
  color: T.ink,
  margin: 0,
@@ -2208,8 +2311,8 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  border: 'none',
  background: '#252525',
  color: '#FFFFFF',
- fontSize: 13.5,
- fontWeight: 650,
+ fontSize: 13,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -2227,8 +2330,8 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  border: 'none',
  background: '#F5F5F5',
  color: '#252525',
- fontSize: 13.5,
- fontWeight: 650,
+ fontSize: 13,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -2832,7 +2935,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  }}>
  <div>
  <p style={{
- fontSize: 13.5,
+ fontSize: 13,
  fontWeight: 560,
  color: T.ink,
  margin: 0,
@@ -2891,7 +2994,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  style={{
  ...inputStyle,
  minHeight: 42,
- fontSize: 15.5,
+ fontSize: 14,
  background: T.white,
  border: `1px solid ${T.border}`,
  }}
@@ -3130,7 +3233,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  padding: '7px 10px',
  borderRadius: 999,
  background: '#fff1ea',
- border: '0.8px solid #f5b69e',
+ border: '0.8px solid #efefed',
  flexShrink: 0,
  }}>
  Edit
@@ -3321,7 +3424,7 @@ function SheetHeader({ title, subtitle, onClose }: any) {
  marginBottom: 16,
  }}>
  <div style={{ minWidth: 0 }}>
- <h2 style={{ fontSize: 17, fontWeight: 580, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
+ <h2 style={{ fontSize: 16, fontWeight: 580, color: T.ink, margin: 0, letterSpacing: '-0.02em' }}>
  {title}
  </h2>
  {subtitle && (
