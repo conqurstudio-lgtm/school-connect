@@ -1191,65 +1191,8 @@ function TeacherLearnersPage({
  )}
  </button>
 
- <section
- className="teacher-home-search-shell-v1"
- style={{
- flex: 1,
- minWidth: 0,
- height: 48,
- borderRadius: 999,
- background: '#FFFFFF',
- border: '1px solid #cccccc',
- overflow: 'hidden',
- display: 'grid',
- gridTemplateColumns: '34px 1fr',
- alignItems: 'center',
- padding: '0 12px',
- margin: 0,
- boxSizing: 'border-box',
- boxShadow: 'none',
- transition: 'border-color 180ms ease, box-shadow 180ms ease',
- }}
- >
- <svg
- width="21"
- height="21"
- viewBox="0 0 24 24"
- fill="none"
- aria-hidden="true"
- style={{ display: 'block' }}
- >
- <circle cx="11" cy="11" r="7" stroke="#8B8D92" strokeWidth="2.15" />
- <path d="M16.2 16.2L21 21" stroke="#8B8D92" strokeWidth="2.15" strokeLinecap="round" />
- </svg>
+ 
 
- <input
- className="teacher-home-search-input-v1"
- value={teacherLearnerSearch}
- onChange={event => setTeacherLearnerSearch(event.target.value)}
- placeholder="Search learner"
- style={{
- width: '100%',
- height: '100%',
- border: 'none',
- outline: 'none',
- backgroundColor: 'transparent',
- boxShadow: 'none',
- WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
- color: T.ink,
- fontSize: 16,
- fontWeight: 520,
- letterSpacing: '-0.02em',
- fontFamily: 'inherit',
- padding: 0,
- margin: 0,
- appearance: 'none',
- WebkitAppearance: 'none',
- borderRadius: 0,
- backgroundClip: 'padding-box',
- }}
- />
- </section>
 
  <button
  type="button"
@@ -1350,19 +1293,20 @@ function TeacherLearnersPage({
  letterSpacing: '-0.01em',
  fontFamily: 'inherit',
  cursor: 'default',
- boxShadow: 'none',
+ boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
  }}
  >
  <img
- src="/icons/reports-scroll.svg"
+ src="/icons/reports-custom.png"
  alt=""
  aria-hidden="true"
  style={{
- width: 15,
- height: 15,
+ width: 24,
+ height: 24,
  display: 'block',
  flexShrink: 0,
+ objectFit: 'contain',
  }}
  />
  <span>Reports</span>
@@ -1389,19 +1333,20 @@ function TeacherLearnersPage({
  letterSpacing: '-0.01em',
  fontFamily: 'inherit',
  cursor: 'pointer',
- boxShadow: 'none',
+ boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
  }}
  >
  <img
- src="/icons/moments-camera.svg"
+ src="/icons/moments-custom.png"
  alt=""
  aria-hidden="true"
  style={{
- width: 15,
- height: 15,
+ width: 24,
+ height: 24,
  display: 'block',
  flexShrink: 0,
+ objectFit: 'contain',
  }}
  />
  <span>Moments</span>
@@ -1428,25 +1373,108 @@ function TeacherLearnersPage({
  letterSpacing: '-0.01em',
  fontFamily: 'inherit',
  cursor: 'pointer',
- boxShadow: 'none',
+ boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
  }}
  >
  <img
- src="/icons/awards-medal.svg"
+ src="/icons/awards-custom.png"
  alt=""
  aria-hidden="true"
  style={{
- width: 15,
- height: 15,
+ width: 24,
+ height: 24,
  display: 'block',
  flexShrink: 0,
+ objectFit: 'contain',
  }}
  />
  <span>Awards</span>
  </button>
  </section>
  ) : null}
+
+
+<section
+ style={{
+ padding: '0 0 16px',
+ background: '#FFFFFF',
+ }}
+>
+<div
+ style={{
+ borderRadius: 999,
+ boxShadow: '0 12px 30px rgba(0, 0, 0, 0.14)',
+ background: '#FFFFFF',
+ position: 'relative',
+ zIndex: 5,
+ }}
+>
+<section
+ className="teacher-home-search-shell-v1"
+ style={{
+ width: '100%',
+ minWidth: 0,
+ height: 48,
+ borderRadius: 999,
+ background: '#FFFFFF',
+ border: '1px solid #efefed',
+ overflow: 'visible',
+ display: 'grid',
+ gridTemplateColumns: '34px 1fr',
+ alignItems: 'center',
+ padding: '0 12px',
+ margin: 0,
+ boxSizing: 'border-box',
+ boxShadow: '0 8px 18px rgba(0, 0, 0, 0.075)',
+ filter: 'drop-shadow(0 12px 10px rgba(0, 0, 0, 0.055))',
+ transition: 'border-color 180ms ease, box-shadow 180ms ease',
+ position: 'relative',
+ zIndex: 2,
+ }}
+ >
+ <svg
+ width="21"
+ height="21"
+ viewBox="0 0 24 24"
+ fill="none"
+ aria-hidden="true"
+ style={{ display: 'block' }}
+ >
+ <circle cx="11" cy="11" r="7" stroke="#8B8D92" strokeWidth="2.15" />
+ <path d="M16.2 16.2L21 21" stroke="#8B8D92" strokeWidth="2.15" strokeLinecap="round" />
+ </svg>
+
+ <input
+ className="teacher-home-search-input-v1"
+ value={teacherLearnerSearch}
+ onChange={event => setTeacherLearnerSearch(event.target.value)}
+ placeholder="Search learner"
+ style={{
+ width: '100%',
+ height: '100%',
+ border: 'none',
+ outline: 'none',
+ backgroundColor: 'transparent',
+ boxShadow: '0 8px 18px rgba(0, 0, 0, 0.075)',
+ filter: 'drop-shadow(0 12px 10px rgba(0, 0, 0, 0.055))',
+ WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+ color: T.ink,
+ fontSize: 16,
+ fontWeight: 520,
+ letterSpacing: '-0.02em',
+ fontFamily: 'inherit',
+ padding: 0,
+ margin: 0,
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ borderRadius: 0,
+ backgroundClip: 'padding-box',
+ }}
+ />
+ </section>
+</div>
+</section>
 
  <style>{`
  @keyframes teacherTabUnderlineIn {
@@ -1491,7 +1519,7 @@ function TeacherLearnersPage({
  }
  .teacher-home-search-shell-v1:focus-within {
  height: 48px !important;
- border-color: #cccccc !important;
+ border-color: #efefed !important;
  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.045) !important;
  }
 `}</style>

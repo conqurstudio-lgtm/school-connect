@@ -157,7 +157,7 @@ export default function SCReportRow({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12,
-            fontWeight: 620,
+            fontWeight: 590,
             flexShrink: 0,
           }}
         >
@@ -302,7 +302,7 @@ export default function SCReportRow({
                 padding: '0 10px',
                 fontFamily: 'inherit',
                 fontSize: 12.8,
-                fontWeight: 520,
+                fontWeight: 430,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 textAlign: 'left',
