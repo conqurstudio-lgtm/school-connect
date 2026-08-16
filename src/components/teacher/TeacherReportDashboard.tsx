@@ -1426,8 +1426,8 @@ function TeacherLearnersPage({
  padding: '0 12px',
  margin: 0,
  boxSizing: 'border-box',
- boxShadow: '0 8px 18px rgba(0, 0, 0, 0.075)',
- filter: 'drop-shadow(0 12px 10px rgba(0, 0, 0, 0.055))',
+ boxShadow: 'none',
+ 
  transition: 'border-color 180ms ease, box-shadow 180ms ease',
  position: 'relative',
  zIndex: 2,
@@ -1456,8 +1456,8 @@ function TeacherLearnersPage({
  border: 'none',
  outline: 'none',
  backgroundColor: 'transparent',
- boxShadow: '0 8px 18px rgba(0, 0, 0, 0.075)',
- filter: 'drop-shadow(0 12px 10px rgba(0, 0, 0, 0.055))',
+ boxShadow: 'none',
+ 
  WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
  color: T.ink,
  fontSize: 16,
@@ -1612,19 +1612,19 @@ function TeacherLearnersPage({
  <span
  aria-hidden="true"
  style={{
- minWidth: 15,
- height: 15,
+ minWidth: 14,
+ height: 14,
  borderRadius: 999,
  background: active ? '#9A9A9D' : '#B2B2B5',
  color: '#FFFFFF',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- fontSize: 9,
+ fontSize: 8.5,
  lineHeight: 1,
  fontWeight: 620,
  padding: '0 4px',
- transform: 'translateY(-7px)',
+ transform: 'translateY(-1px)',
  }}
  >
  {item.count}
