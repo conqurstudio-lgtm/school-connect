@@ -1269,32 +1269,41 @@ function TeacherLearnersPage({
  display: 'flex',
  alignItems: 'center',
  gap: 8,
- padding: '0 2px 14px',
+ padding: '0 2px 16px',
  background: '#FFFFFF',
+ overflowX: 'auto',
+ overflowY: 'hidden',
+ WebkitOverflowScrolling: 'touch',
+ scrollbarWidth: 'none',
  }}
  >
  <button
  type="button"
  aria-label="View reports"
  style={{
- height: 36,
+ height: 56,
  borderRadius: 999,
- border: '0.8px solid #efefed',
+ border: '0.8px solid transparent',
  background: '#FFFFFF',
+ overflowX: 'auto',
+ overflowY: 'hidden',
+ WebkitOverflowScrolling: 'touch',
+ scrollbarWidth: 'none',
  color: '#666666',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 6,
- padding: '0 12px',
- fontSize: 13,
+ gap: 8,
+ padding: '0 14px',
+ fontSize: 17,
  lineHeight: 1,
- fontWeight: 500,
- letterSpacing: '-0.01em',
+ fontWeight: 560,
+ letterSpacing: '-0.015em',
  fontFamily: 'inherit',
  cursor: 'default',
  boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
+ flexShrink: 0,
  }}
  >
  <img
@@ -1302,8 +1311,8 @@ function TeacherLearnersPage({
  alt=""
  aria-hidden="true"
  style={{
- width: 24,
- height: 24,
+ width: 38,
+ height: 38,
  display: 'block',
  flexShrink: 0,
  objectFit: 'contain',
@@ -1317,33 +1326,34 @@ function TeacherLearnersPage({
  onClick={() => onMoments?.()}
  aria-label="View moments"
  style={{
- height: 36,
+ height: 56,
  borderRadius: 999,
- border: '0.8px solid #efefed',
+ border: '0.8px solid transparent',
  background: 'transparent',
  color: '#666666',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 6,
- padding: '0 12px',
- fontSize: 13,
+ gap: 8,
+ padding: '0 14px',
+ fontSize: 17,
  lineHeight: 1,
- fontWeight: 500,
- letterSpacing: '-0.01em',
+ fontWeight: 560,
+ letterSpacing: '-0.015em',
  fontFamily: 'inherit',
  cursor: 'pointer',
  boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
+ flexShrink: 0,
  }}
  >
  <img
- src="/icons/moments-custom.png"
+ src="/icons/moments-custom.png?v=3"
  alt=""
  aria-hidden="true"
  style={{
- width: 24,
- height: 24,
+ width: 38,
+ height: 38,
  display: 'block',
  flexShrink: 0,
  objectFit: 'contain',
@@ -1357,24 +1367,25 @@ function TeacherLearnersPage({
  onClick={() => toast('Awards coming soon')}
  aria-label="View awards"
  style={{
- height: 36,
+ height: 56,
  borderRadius: 999,
- border: '0.8px solid #efefed',
+ border: '0.8px solid transparent',
  background: 'transparent',
  color: '#666666',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 6,
- padding: '0 12px',
- fontSize: 13,
+ gap: 8,
+ padding: '0 14px',
+ fontSize: 17,
  lineHeight: 1,
- fontWeight: 500,
- letterSpacing: '-0.01em',
+ fontWeight: 560,
+ letterSpacing: '-0.015em',
  fontFamily: 'inherit',
  cursor: 'pointer',
  boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
  whiteSpace: 'nowrap',
+ flexShrink: 0,
  }}
  >
  <img
@@ -1382,8 +1393,8 @@ function TeacherLearnersPage({
  alt=""
  aria-hidden="true"
  style={{
- width: 24,
- height: 24,
+ width: 38,
+ height: 38,
  display: 'block',
  flexShrink: 0,
  objectFit: 'contain',
@@ -1397,7 +1408,7 @@ function TeacherLearnersPage({
 
 <section
  style={{
- padding: '0 0 6px',
+ padding: '0 0 18px',
  background: '#FFFFFF',
  }}
 >
@@ -1417,8 +1428,8 @@ function TeacherLearnersPage({
  minWidth: 0,
  height: 48,
  borderRadius: 999,
- background: '#FFFFFF',
- border: '1px solid #efefed',
+ background: '#f7f7f7',
+ border: '1px solid transparent',
  overflow: 'visible',
  display: 'grid',
  gridTemplateColumns: '34px 1fr',
@@ -1458,7 +1469,7 @@ function TeacherLearnersPage({
  backgroundColor: 'transparent',
  boxShadow: 'none',
  
- WebkitBoxShadow: '0 0 0 1000px #FFFFFF inset',
+ WebkitBoxShadow: '0 0 0 1000px #f7f7f7 inset',
  color: T.ink,
  fontSize: 16,
  fontWeight: 520,
@@ -1477,6 +1488,11 @@ function TeacherLearnersPage({
 </section>
 
  <style>{`
+
+ .teacher-main-tab-switcher-v1::-webkit-scrollbar {
+ display: none;
+ }
+
  @keyframes teacherTabUnderlineIn {
  0% {
  transform: scaleX(0.72);
@@ -1487,8 +1503,13 @@ function TeacherLearnersPage({
  opacity: 1;
  }
  }
+ 100% {
+ opacity: 1;
+ transform: translateX(0);
+ }
+ }
 
- @keyframes teacherTabContentIn {
+@keyframes teacherTabContentIn {
  0% {
  opacity: 0.92;
  transform: translateY(4px);
@@ -1506,7 +1527,7 @@ function TeacherLearnersPage({
  background: transparent !important;
  background-color: transparent !important;
  box-shadow: none !important;
- -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+ -webkit-box-shadow: 0 0 0 1000px #f7f7f7 inset !important;
  border: none !important;
  outline: none !important;
  border-radius: 0 !important;
@@ -1519,7 +1540,7 @@ function TeacherLearnersPage({
  }
  .teacher-home-search-shell-v1:focus-within {
  height: 48px !important;
- border-color: #efefed !important;
+ border-color: transparent !important;
  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.045) !important;
  }
 `}</style>
