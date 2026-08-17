@@ -20,7 +20,7 @@ import { ReportCard } from '@/components/reports/ReportCard'
 import { generateComment } from '@/lib/reports'
 
 const T = {
- ink: '#252525',
+ ink: '#222222',
  ink2: '#5F6268',
  ink3: '#9A9CA3',
  border: 'rgba(0,0,0,0.045)',
@@ -80,7 +80,7 @@ function SchoolConnectBackButton({ onClick, label = 'Back' }: any) {
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
- color: '#252525',
+ color: '#222222',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -949,7 +949,11 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  </div>
  </section>
 
- {!hasLearners ? (
+ <div
+ key={`${teacherReportFilter}-${teacherSearchTerm}`}
+ className="teacher-learner-results-animate-v1"
+>
+{!hasLearners ? (
  <section style={{
  padding: '30px 16px',
  textAlign: 'center',
@@ -1007,7 +1011,8 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  </>
  )}
 
- </main>
+ </div>
+</main>
  </div>
 
  <input
@@ -1086,6 +1091,7 @@ function TeacherLearnersPage({
  onMoments,
 }: any) {
  const [teacherLearnerSearch, setTeacherLearnerSearch] = useState('')
+ const [teacherSearchFocused, setTeacherSearchFocused] = useState(false)
  const [teacherReportFilter, setTeacherReportFilter] = useState('all')
  const hasLearners = children?.length > 0
  const safeTeacherAvatarUrl =
@@ -1102,6 +1108,7 @@ function TeacherLearnersPage({
  : 'Weekly learner reports'
 
  const teacherSearchTerm = teacherLearnerSearch.trim().toLowerCase()
+ const isTeacherSearchActive = teacherSearchFocused || teacherSearchTerm.length > 0
  const learnerMatchesTeacherSearch = (child: any) => {
  if (!teacherSearchTerm) return true
  return String(child?.name || '').toLowerCase().includes(teacherSearchTerm)
@@ -1120,7 +1127,7 @@ function TeacherLearnersPage({
  overflow: 'hidden',
  background: T.white,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
- color: '#252525',
+ color: '#222222',
  }}>
  <TeacherSafeAreaStyle />
 
@@ -1136,7 +1143,7 @@ function TeacherLearnersPage({
  }}>
  {isMainHome ? (
  <div style={{
- padding: 'calc(18px + env(safe-area-inset-top, 0px)) 24px 10px',
+ padding: isTeacherSearchActive ? 'calc(12px + env(safe-area-inset-top, 0px)) 24px 6px' : 'calc(18px + env(safe-area-inset-top, 0px)) 24px 10px',
  background: '#FFFFFF',
  flexShrink: 0,
  display: 'flex',
@@ -1145,6 +1152,7 @@ function TeacherLearnersPage({
  gap: 16,
  border: '0 solid transparent',
  boxShadow: 'none',
+ transition: 'padding 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
  }}>
  <button
  type="button"
@@ -1194,6 +1202,40 @@ function TeacherLearnersPage({
  
 
 
+ <div
+ style={{
+ display: 'flex',
+ alignItems: 'center',
+ gap: 10,
+ flexShrink: 0,
+ }}
+>
+ <button
+ type="button"
+ onClick={() => onMoments?.()}
+ aria-label="Open moments from main header"
+ style={{
+ width: 48,
+ height: 48,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ background: '#f2f2f2',
+ color: '#737273',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <Camera size={22} strokeWidth={2} color="#222222" />
+ </button>
+
  <button
  type="button"
  onClick={onAdd}
@@ -1219,6 +1261,7 @@ function TeacherLearnersPage({
  >
  <Plus size={27} strokeWidth={1.8} color="#FFFFFF" />
  </button>
+</div>
  </div>
  ) : (
  <SCTopBar
@@ -1228,6 +1271,94 @@ function TeacherLearnersPage({
  compact
  left={<SchoolConnectBackButton onClick={onBack} />}
  right={
+ <div
+ style={{
+ display: 'flex',
+ alignItems: 'center',
+ gap: 10,
+ flexShrink: 0,
+ }}
+>
+ <button
+ type="button"
+ onClick={() => onMoments?.()}
+ aria-label="Open moments"
+ style={{
+ width: 46,
+ height: 46,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ background: '#f2f2f2',
+ color: '#737273',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ flexShrink: 0,
+ padding: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <img
+ src="/icons/moments-custom.png?v=3"
+ alt=""
+ aria-hidden="true"
+ style={{
+ width: 25,
+ height: 25,
+ display: 'block',
+ objectFit: 'contain',
+ }}
+ />
+ </button>
+
+ <div
+ style={{
+ display: 'flex',
+ alignItems: 'center',
+ gap: 10,
+ flexShrink: 0,
+ }}
+>
+ <button
+ type="button"
+ onClick={() => onMoments?.()}
+ aria-label="Open moments from header"
+ style={{
+ width: 48,
+ height: 48,
+ borderRadius: '50%',
+ border: '0 solid transparent',
+ outline: 'none',
+ background: '#f2f2f2',
+ color: '#737273',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ flexShrink: 0,
+ padding: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <img
+ src="/icons/moments-custom.png?v=3"
+ alt=""
+ aria-hidden="true"
+ style={{
+ width: 28,
+ height: 28,
+ display: 'block',
+ objectFit: 'contain',
+ }}
+ />
+ </button>
+
  <button
  type="button"
  onClick={onAdd}
@@ -1249,6 +1380,8 @@ function TeacherLearnersPage({
  >
  <Plus size={20} strokeWidth={2.05} />
  </button>
+</div>
+</div>
  }
  />
  )}
@@ -1264,146 +1397,31 @@ function TeacherLearnersPage({
 
  {isMainHome ? (
  <section
- className="teacher-main-tab-switcher-v1"
  style={{
- display: 'flex',
- alignItems: 'center',
- gap: 8,
- padding: '0 2px 16px',
+ padding: isTeacherSearchActive ? '0 2px 0' : '0 2px 14px',
  background: '#FFFFFF',
- overflowX: 'auto',
- overflowY: 'hidden',
- WebkitOverflowScrolling: 'touch',
- scrollbarWidth: 'none',
+ maxHeight: isTeacherSearchActive ? 0 : 44,
+ opacity: isTeacherSearchActive ? 0 : 1,
+ transform: isTeacherSearchActive ? 'translateY(-8px)' : 'translateY(0)',
+ overflow: 'hidden',
+ transition: 'max-height 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), padding 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
  }}
  >
- <button
- type="button"
- aria-label="View reports"
+ <h1
  style={{
- height: 56,
- borderRadius: 999,
- border: '0.8px solid transparent',
- background: '#FFFFFF',
- overflowX: 'auto',
- overflowY: 'hidden',
- WebkitOverflowScrolling: 'touch',
- scrollbarWidth: 'none',
- color: '#666666',
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- gap: 8,
- padding: '0 14px',
- fontSize: 17,
- lineHeight: 1,
- fontWeight: 560,
- letterSpacing: '-0.015em',
+ margin: 0,
+ color: '#222222',
+ fontSize: 24,
+ lineHeight: 1.1,
+ fontWeight: 620,
+ letterSpacing: '-0.025em',
  fontFamily: 'inherit',
- cursor: 'default',
- boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
- whiteSpace: 'nowrap',
- flexShrink: 0,
  }}
  >
- <img
- src="/icons/reports-custom.png"
- alt=""
- aria-hidden="true"
- style={{
- width: 38,
- height: 38,
- display: 'block',
- flexShrink: 0,
- objectFit: 'contain',
- }}
- />
- <span>Reports</span>
- </button>
-
- <button
- type="button"
- onClick={() => onMoments?.()}
- aria-label="View moments"
- style={{
- height: 56,
- borderRadius: 999,
- border: '0.8px solid transparent',
- background: 'transparent',
- color: '#666666',
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- gap: 8,
- padding: '0 14px',
- fontSize: 17,
- lineHeight: 1,
- fontWeight: 560,
- letterSpacing: '-0.015em',
- fontFamily: 'inherit',
- cursor: 'pointer',
- boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
- whiteSpace: 'nowrap',
- flexShrink: 0,
- }}
- >
- <img
- src="/icons/moments-custom.png?v=3"
- alt=""
- aria-hidden="true"
- style={{
- width: 38,
- height: 38,
- display: 'block',
- flexShrink: 0,
- objectFit: 'contain',
- }}
- />
- <span>Moments</span>
- </button>
-
- <button
- type="button"
- onClick={() => toast('Awards coming soon')}
- aria-label="View awards"
- style={{
- height: 56,
- borderRadius: 999,
- border: '0.8px solid transparent',
- background: 'transparent',
- color: '#666666',
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- gap: 8,
- padding: '0 14px',
- fontSize: 17,
- lineHeight: 1,
- fontWeight: 560,
- letterSpacing: '-0.015em',
- fontFamily: 'inherit',
- cursor: 'pointer',
- boxShadow: '0 3px 9px rgba(0, 0, 0, 0.055)',
- whiteSpace: 'nowrap',
- flexShrink: 0,
- }}
- >
- <img
- src="/icons/awards-custom.png"
- alt=""
- aria-hidden="true"
- style={{
- width: 38,
- height: 38,
- display: 'block',
- flexShrink: 0,
- objectFit: 'contain',
- }}
- />
- <span>Awards</span>
- </button>
+ Reports
+ </h1>
  </section>
- ) : null}
+) : null}
 
 
 <section
@@ -1428,7 +1446,7 @@ function TeacherLearnersPage({
  minWidth: 0,
  height: 48,
  borderRadius: 999,
- background: '#f7f7f7',
+ background: '#f2f2f2',
  border: '1px solid transparent',
  overflow: 'visible',
  display: 'grid',
@@ -1439,7 +1457,8 @@ function TeacherLearnersPage({
  boxSizing: 'border-box',
  boxShadow: 'none',
  
- transition: 'border-color 180ms ease, box-shadow 180ms ease',
+ transition: 'background 220ms ease, transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 180ms ease, box-shadow 180ms ease',
+ transform: isTeacherSearchActive ? 'translateY(-2px)' : 'translateY(0)',
  position: 'relative',
  zIndex: 2,
  }}
@@ -1452,14 +1471,16 @@ function TeacherLearnersPage({
  aria-hidden="true"
  style={{ display: 'block' }}
  >
- <circle cx="11" cy="11" r="7" stroke="#8B8D92" strokeWidth="2.15" />
- <path d="M16.2 16.2L21 21" stroke="#8B8D92" strokeWidth="2.15" strokeLinecap="round" />
+ <circle cx="11" cy="11" r="7" stroke="#737273" strokeWidth="2.15" />
+ <path d="M16.2 16.2L21 21" stroke="#737273" strokeWidth="2.15" strokeLinecap="round" />
  </svg>
 
  <input
  className="teacher-home-search-input-v1"
  value={teacherLearnerSearch}
  onChange={event => setTeacherLearnerSearch(event.target.value)}
+ onFocus={() => setTeacherSearchFocused(true)}
+ onBlur={() => setTeacherSearchFocused(false)}
  placeholder="Search learner"
  style={{
  width: '100%',
@@ -1469,11 +1490,11 @@ function TeacherLearnersPage({
  backgroundColor: 'transparent',
  boxShadow: 'none',
  
- WebkitBoxShadow: '0 0 0 1000px #f7f7f7 inset',
- color: T.ink,
- fontSize: 16,
- fontWeight: 520,
- letterSpacing: '-0.02em',
+ WebkitBoxShadow: '0 0 0 1000px #f2f2f2 inset',
+ color: '#737273',
+ fontSize: 14,
+ fontWeight: 500,
+ letterSpacing: '-0.012em',
  fontFamily: 'inherit',
  padding: 0,
  margin: 0,
@@ -1489,8 +1510,20 @@ function TeacherLearnersPage({
 
  <style>{`
 
- .teacher-main-tab-switcher-v1::-webkit-scrollbar {
- display: none;
+ .teacher-learner-results-animate-v1 {
+ animation: teacherLearnerResultsSoftIn 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+ will-change: opacity, transform;
+ }
+
+ @keyframes teacherLearnerResultsSoftIn {
+ 0% {
+ opacity: 0;
+ transform: translateY(8px);
+ }
+ 100% {
+ opacity: 1;
+ transform: translateY(0);
+ }
  }
 
  @keyframes teacherTabUnderlineIn {
@@ -1527,16 +1560,16 @@ function TeacherLearnersPage({
  background: transparent !important;
  background-color: transparent !important;
  box-shadow: none !important;
- -webkit-box-shadow: 0 0 0 1000px #f7f7f7 inset !important;
+ -webkit-box-shadow: 0 0 0 1000px #f2f2f2 inset !important;
  border: none !important;
  outline: none !important;
  border-radius: 0 !important;
  }
  .teacher-home-search-input-v1::placeholder {
- color: #6a6c6c !important;
+ color: #737273 !important;
  opacity: 1 !important;
  font-weight: 500 !important;
- letter-spacing: -0.02em !important;
+ letter-spacing: -0.012em !important;
  }
  .teacher-home-search-shell-v1:focus-within {
  height: 48px !important;
@@ -1566,7 +1599,7 @@ function TeacherLearnersPage({
  border: 0.8px solid #cccccc !important;
  outline: none !important;
  background: transparent !important;
- color: #6a6c6c !important;
+ color: #737273 !important;
  box-shadow: none !important;
  font-weight: 500 !important;
  }
@@ -1601,7 +1634,7 @@ function TeacherLearnersPage({
  border: 'none',
  outline: 'none',
  background: 'transparent',
- color: active ? '#4d4d4d' : '#999999',
+ color: active ? '#222222' : '#737273',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -1636,7 +1669,7 @@ function TeacherLearnersPage({
  minWidth: 14,
  height: 14,
  borderRadius: 999,
- background: active ? '#9A9A9D' : '#B2B2B5',
+ background: active ? '#737273' : '#B2B2B5',
  color: '#FFFFFF',
  display: 'inline-flex',
  alignItems: 'center',
@@ -2004,7 +2037,7 @@ function ReportAveragePill({ value }: any) {
  minWidth: 56,
  height: 36,
  borderRadius: 999,
- background: '#F7F7F7',
+ background: '#f2f2f2',
  color: 'var(--sc-ink)',
  display: 'inline-flex',
  alignItems: 'center',
@@ -2084,7 +2117,7 @@ function ReadOnlyScoreList({ scores }: any) {
  minWidth: 42,
  height: 29,
  borderRadius: 999,
- background: '#F7F7F7',
+ background: '#f2f2f2',
  color: 'var(--sc-ink-2)',
  display: 'flex',
  alignItems: 'center',
@@ -2314,7 +2347,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  boxShadow: '0 18px 55px rgba(0,0,0,0.18)',
  border: '1px solid rgba(0,0,0,0.06)',
  padding: 16,
- color: '#252525',
+ color: '#222222',
  }}>
  <p style={{
  margin: '0 0 4px',
@@ -2358,7 +2391,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  minHeight: 44,
  borderRadius: 999,
  border: 'none',
- background: '#252525',
+ background: '#222222',
  color: '#FFFFFF',
  fontSize: 13,
  fontWeight: 620,
@@ -2378,7 +2411,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  borderRadius: 999,
  border: 'none',
  background: '#F5F5F5',
- color: '#252525',
+ color: '#222222',
  fontSize: 13,
  fontWeight: 620,
  cursor: 'pointer',
@@ -2795,7 +2828,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  minHeight: 38,
  borderRadius: 999,
  border: 'none',
- background: '#252525',
+ background: '#222222',
  color: '#FFFFFF',
  fontSize: 12.4,
  fontWeight: 620,
@@ -2814,7 +2847,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  borderRadius: 999,
  border: 'none',
  background: '#F5F5F5',
- color: '#252525',
+ color: '#222222',
  fontSize: 12.4,
  fontWeight: 620,
  cursor: 'pointer',
@@ -3198,7 +3231,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
 
  <section style={{
  borderRadius: 24,
- background: '#f7f7f7',
+ background: '#f2f2f2',
  overflow: 'hidden',
  marginTop: 8,
  marginBottom: 8,
