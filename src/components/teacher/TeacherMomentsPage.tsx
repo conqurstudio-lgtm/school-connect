@@ -8,15 +8,16 @@ import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentCompose
 import { SCBottomSheet, SCButton, SCTextArea, SCEmptyState, SCTopBar, SCIconButton } from '@/components/ui'
 
 const T = {
- ink: '#252525',
- ink2: '#5F6268',
- ink3: '#9A9CA3',
+ ink: '#222222',
+ ink2: '#737273',
+ ink3: '#737273',
  border: 'rgba(0,0,0,0.045)',
  bg: '#FFFFFF',
- soft: '#F7F7F8',
- accent: '#717171',
- accentSoft: '#F5F5F5',
+ soft: '#f2f2f2',
+ accent: '#737273',
+ accentSoft: '#f2f2f2',
  white: '#FFFFFF',
+ red: '#E25563',
 }
 
 function teacherMomentsCacheKey(teacher: any) {
@@ -131,7 +132,7 @@ function LoadingDots() {
  <div style={{
  display: 'flex',
  flexDirection: 'column',
- gap: 28,
+ gap: 24,
  padding: '4px 0 10px',
  }}>
  <style>{`
@@ -186,8 +187,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  const [momentDraft, setMomentDraft] = useState<any>(null)
  const momentFileRef = useRef<HTMLInputElement | null>(null)
  const momentsScrollRef = useRef<HTMLDivElement | null>(null)
- const lastMomentsScrollTop = useRef(0)
- const [showFloatingBackButton, setShowFloatingBackButton] = useState(false)
  const safeTeacherAvatarUrl =
  teacher?.photo_url ||
  teacher?.avatar_url ||
@@ -245,30 +244,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
 
  load(usedCache)
  }, [teacher?.id, teacher?.teacher_id, teacher?.email])
-
- useEffect(() => {
- const scroller = momentsScrollRef.current
- if (!scroller) return
-
- const handleScroll = () => {
- const currentTop = scroller.scrollTop || 0
- const previousTop = lastMomentsScrollTop.current
- const isAtTop = currentTop < 32
-
- if (isAtTop) {
- setShowFloatingBackButton(false)
- } else if (currentTop > previousTop + 8) {
- setShowFloatingBackButton(false)
- } else if (currentTop < previousTop - 8) {
- setShowFloatingBackButton(true)
- }
-
- lastMomentsScrollTop.current = Math.max(0, currentTop)
- }
-
- scroller.addEventListener('scroll', handleScroll, { passive: true })
- return () => scroller.removeEventListener('scroll', handleScroll)
- }, [])
 
 
  const handleTeacherMomentFileChange = (event: any) => {
@@ -369,7 +344,6 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  <SafeStyle />
 
  <div
- ref={momentsScrollRef}
  style={{
  maxWidth: 520,
  height: '100dvh',
@@ -377,61 +351,64 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  display: 'flex',
  flexDirection: 'column',
  background: T.bg,
- overflowY: 'auto',
+ overflow: 'hidden',
+ minHeight: 0,
  WebkitOverflowScrolling: 'touch',
  }}
  >
- <div style={{
- padding: 'calc(34px + env(safe-area-inset-top, 0px)) 24px 14px',
- background: '#FFFFFF',
- flexShrink: 0,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'space-between',
- gap: 16,
- border: '0 solid transparent',
- boxShadow: 'none',
- }}>
+ <SCTopBar
+ title="Moments"
+ align="left"
+ compact
+ left={
  <button
  type="button"
  onClick={onBack}
  aria-label="Back to reports"
  style={{
- width: 44,
- height: 44,
- borderRadius: '50%',
- border: '1px solid rgba(255, 255, 255, 0.78)',
- outline: 'none',
- background: 'rgba(255, 255, 255, 0.86)',
- color: T.ink,
- backdropFilter: 'blur(14px)',
- WebkitBackdropFilter: 'blur(14px)',
+ width: 38,
+ height: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: 'transparent',
+ color: '#222222',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
  cursor: 'pointer',
- padding: 0,
  flexShrink: 0,
- boxShadow: '0 8px 20px rgba(15, 23, 42, 0.09), 0 0 10px rgba(255, 255, 255, 0.42)',
+ padding: 0,
+ textDecoration: 'none',
  appearance: 'none',
  WebkitAppearance: 'none',
+ WebkitTapHighlightColor: 'transparent',
  }}
  >
- <ChevronLeft size={22} strokeWidth={2} />
+ <span
+ style={{
+ width: 13,
+ height: 13,
+ borderLeft: '2.6px solid currentColor',
+ borderBottom: '2.6px solid currentColor',
+ borderRadius: 1.5,
+ transform: 'rotate(45deg) translate(1px, -1px)',
+ display: 'block',
+ }}
+ />
  </button>
-
+ }
+ right={
  <button
  type="button"
  onClick={() => momentFileRef.current?.click()}
  aria-label="Add Moment"
  style={{
- width: 48,
- height: 48,
- borderRadius: '50%',
- border: '0 solid transparent',
- outline: 'none',
- backgroundColor: '#f87645',
- color: '#FFFFFF',
+ width: 38,
+ height: 38,
+ borderRadius: 999,
+ border: 'none',
+ background: 'transparent',
+ color: '#222222',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -441,56 +418,27 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  boxShadow: 'none',
  appearance: 'none',
  WebkitAppearance: 'none',
+ WebkitTapHighlightColor: 'transparent',
  }}
  >
- <Plus size={27} strokeWidth={1.7} color="#FFFFFF" />
+ <Plus size={22} strokeWidth={2.1} color="#222222" />
  </button>
- </div>
-
- <button
- type="button"
- onClick={onBack}
- aria-label="Back to reports"
+ }
+/>
+<section
+ ref={momentsScrollRef}
  style={{
- position: 'fixed',
- top: 'calc(34px + env(safe-area-inset-top, 0px))',
- left: 'max(24px, calc((100vw - 520px) / 2 + 24px))',
- zIndex: 50,
- width: 44,
- height: 44,
- borderRadius: '50%',
- border: '1px solid rgba(255, 255, 255, 0.78)',
- outline: 'none',
- background: 'rgba(255, 255, 255, 0.86)',
- color: T.ink,
- backdropFilter: 'blur(14px)',
- WebkitBackdropFilter: 'blur(14px)',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- padding: 0,
- boxShadow: '0 8px 20px rgba(15, 23, 42, 0.09), 0 0 10px rgba(255, 255, 255, 0.42)',
- appearance: 'none',
- WebkitAppearance: 'none',
- opacity: showFloatingBackButton ? 1 : 0,
- pointerEvents: showFloatingBackButton ? 'auto' : 'none',
- transform: showFloatingBackButton ? 'translateY(0)' : 'translateY(-18px)',
- transition: 'opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1)',
- }}
- >
- <ChevronLeft size={22} strokeWidth={2} />
- </button>
-
- <section style={{
- flex: 'none',
+ flex: 1,
  minHeight: 0,
- overflowY: 'visible',
+ overflowY: 'auto',
  overflowX: 'hidden',
  WebkitOverflowScrolling: 'touch',
- padding: '4px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ overscrollBehaviorY: 'contain',
+ touchAction: 'pan-y',
+ padding: '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
- }}>
+ }}
+>
  <div style={{ animation: 'teacherTabContentIn 150ms ease-out both' }}>
  {loading ? (
  <LoadingDots />
@@ -500,7 +448,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  text="Create a Moment from the plus button when there is something worth sharing."
  />
  ) : (
- <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+ <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
  {moments.map((moment, index) => (
  <TeacherPreviewMomentPost
  key={moment.id}
@@ -656,8 +604,8 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  display: 'grid',
  gridTemplateColumns: '38px 1fr',
  gap: 10,
- padding: '0 0 24px',
- borderBottom: isLast ? 'none' : `1px solid ${T.border}`,
+ padding: '0 0 22px',
+ borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.035)',
  background: 'transparent',
  }}>
  <div style={{
@@ -705,24 +653,25 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  · {shareLabel}
  </span>&nbsp;</p>
 
+ <p style={{
+ margin: '3px 0 0',
+ color: T.ink3,
+ fontSize: 11.2,
+ fontWeight: 500,
+ lineHeight: 1.25,
+ letterSpacing: '-0.006em',
+ }}>
+ {formatTimeAgo(moment.created_at)}
+ </p>
+
  <div style={{
  display: 'flex',
  alignItems: 'center',
- gap: 6,
+ gap: 4,
  flexShrink: 0,
  position: 'relative',
+ marginTop: -2,
  }}>
- <span style={{
- fontSize: 10.8,
- color: T.ink3,
- fontWeight: 520,
- whiteSpace: 'nowrap',
- lineHeight: 1.4,
- marginTop: 1,
- }}>
- {formatTimeAgo(moment.created_at)}
- </span>
-
  <button
  type="button"
  aria-label="Moment options"
@@ -731,8 +680,8 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  setMenuOpen(open => !open)
  }}
  style={{
- width: 30,
- height: 30,
+ width: 28,
+ height: 28,
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
@@ -769,7 +718,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  minWidth: 164,
  borderRadius: 16,
  background: T.white,
- boxShadow: '0 12px 34px rgba(15,23,42,0.08)',
+ boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
  border: `1px solid ${T.border}`,
  padding: 6,
  }}
@@ -879,7 +828,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  objectFit: 'contain',
  objectPosition: 'left center',
  display: 'block',
- borderRadius: 18,
+ borderRadius: 16,
  background: 'transparent',
  }}
  />
@@ -904,8 +853,8 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  }}
  >
  <div style={{
- width: 44,
- height: 44,
+ width: 38,
+ height: 38,
  borderRadius: 16,
  background: T.accentSoft,
  color: T.accent,
@@ -914,7 +863,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  justifyContent: 'center',
  flexShrink: 0,
  }}>
- <FileText size={19} strokeWidth={1.8} />
+ <FileText size={18} strokeWidth={1.8} />
  </div>
 
  <div style={{ minWidth: 0 }}>
@@ -972,22 +921,22 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
 function ReactionCount({ Icon, value, active, tone = T.accent, fillOpacity = 1 }: any) {
  return (
  <span style={{
- minWidth: 40,
- height: 40,
+ minWidth: 34,
+ height: 34,
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
- color: active ? tone : T.ink,
+ color: active ? tone : T.ink3,
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
  gap: 5,
- padding: '0 7px',
+ padding: '0 5px',
  fontSize: 13,
  fontWeight: 560,
  }}>
  <Icon
- size={19}
+ size={18}
  strokeWidth={active ? 2.25 : 2}
  fill={active ? tone : 'none'}
  fillOpacity={active ? fillOpacity : 1}
@@ -1008,7 +957,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
  <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
  <div>
- <p style={{ fontSize: 15, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
+ <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--sc-ink)', margin: 0 }}>
  Edit Moment
  </p>
  <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', lineHeight: 1.45, margin: '3px 0 0' }}>
@@ -1062,7 +1011,7 @@ function EditMomentSheet({ moment, loading, onClose, onSave }: any) {
 function DeleteMomentSheet({ loading, onClose, onDelete }: any) {
  return (
  <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
- <p style={{ fontSize: 15, fontWeight: 620, color: 'var(--sc-ink)', margin: '0 0 5px' }}>
+ <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--sc-ink)', margin: '0 0 5px' }}>
  Delete Moment?
  </p>
 
@@ -1092,7 +1041,7 @@ function ReactionSheet({ moment, onClose }: any) {
  <SCBottomSheet open={true} onClose={onClose} maxWidth={520}>
  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
  <div>
- <h2 style={{ fontSize: 16, fontWeight: 620, color: 'var(--sc-ink)', margin: 0 }}>
+ <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--sc-ink)', margin: 0 }}>
  Reactions
  </h2>
  <p style={{ fontSize: 12.5, color: 'var(--sc-ink-3)', margin: '3px 0 0' }}>
