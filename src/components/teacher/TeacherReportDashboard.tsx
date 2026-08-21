@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight, Sparkles} from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
@@ -76,7 +76,7 @@ function SchoolConnectBackButton({ onClick, label = 'Back' }: any) {
  aria-label={label}
  style={{
  width: 38,
- height: 36,
+ height: 38,
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
@@ -203,7 +203,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  width: '100%',
  maxWidth: 420,
  background: T.white,
- borderRadius: 22,
+ borderRadius: 24,
  border: 'none',
  padding: 16,
  }}>
@@ -267,7 +267,7 @@ function TeacherPhotoAdjustModal({ draft, onCancel, onApply, uploading }: any) {
  borderRadius: 999,
  padding: '6px 10px',
  fontSize: 12,
- fontWeight: 520,
+ fontWeight: 540,
  fontFamily: 'inherit',
  cursor: 'pointer',
  }}>
@@ -343,7 +343,7 @@ const primaryButton: any = {
  background: T.ink,
  color: T.white,
  fontSize: 13,
- fontWeight: 540,
+ fontWeight: 560,
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -907,7 +907,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  margin: '0 auto 16px',
  color: T.accent,
  fontSize: 25,
- fontWeight: 540,
+ fontWeight: 560,
  overflow: 'hidden',
  }}>
  {!teacher.photo_url && initials(teacher.name)}
@@ -917,7 +917,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  <h1 style={{
  fontSize: 22,
  lineHeight: 1.08,
- fontWeight: 540,
+ fontWeight: 560,
  letterSpacing: '-0.045em',
  color: T.ink,
  margin: '0 0 7px',
@@ -962,7 +962,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  background: 'transparent',
  marginBottom: 14,
  }}>
- <p style={{ fontSize: 13.8, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+ <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
  No learners yet
  </p>
 
@@ -985,7 +985,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  border: 'none',
  margin: '4px 0 14px',
  padding: '0 12px',
- borderRadius: 22,
+ borderRadius: 24,
  overflow: 'hidden',
  background: T.white,
  }}
@@ -1285,7 +1285,7 @@ function TeacherLearnersPage({
  aria-label="Open moments"
  style={{
  width: 46,
- height: 42,
+ height: 46,
  borderRadius: '50%',
  border: '0 solid transparent',
  outline: 'none',
@@ -1365,7 +1365,7 @@ function TeacherLearnersPage({
  aria-label="Add learner"
  style={{
  width: 38,
- height: 36,
+ height: 38,
  borderRadius: 999,
  border: 'none',
  background: 'transparent',
@@ -1413,7 +1413,7 @@ function TeacherLearnersPage({
  color: '#222222',
  fontSize: 24,
  lineHeight: 1.1,
- fontWeight: 580,
+ fontWeight: 620,
  letterSpacing: '-0.025em',
  fontFamily: 'inherit',
  }}
@@ -1510,158 +1510,38 @@ function TeacherLearnersPage({
 
  <style>{`
 
- textarea.teacher-ai-note-area-v1,
- textarea.teacher-ai-note-area-v1:hover,
- textarea.teacher-ai-note-area-v1:focus,
- textarea.teacher-ai-note-area-v1:focus-visible {
- font-size: 12.4px !important;
- line-height: 1.45 !important;
- font-weight: 400 !important;
- letter-spacing: -0.006em !important;
- border: none !important;
- outline: none !important;
- box-shadow: none;
- background-color: #f7f7f7 !important;
- -webkit-text-size-adjust: 100%;
+ textarea.teacher-ai-note-area-v1.is-auto {
+ font-size: 11.8px !important;
+ font-weight: 280 !important;
+ line-height: 1.5 !important;
+ color: #6f7378 !important;
+ -webkit-font-smoothing: antialiased;
  }
 
- textarea.teacher-ai-note-area-v1::placeholder {
- color: #737273 !important;
- opacity: 0.7 !important;
- font-weight: 400 !important;
- }
-
-
- textarea.teacher-ai-note-area-v1,
- textarea.teacher-ai-note-area-v1:hover,
- textarea.teacher-ai-note-area-v1:focus,
- textarea.teacher-ai-note-area-v1:focus-visible {
+ textarea.teacher-ai-note-area-v1.is-edited {
  font-size: 13px !important;
- line-height: 1.45 !important;
  font-weight: 400 !important;
- letter-spacing: -0.006em !important;
- border: none !important;
- outline: none !important;
- box-shadow: none;
- -webkit-text-size-adjust: 100%;
+ line-height: 1.45 !important;
+ color: #222222 !important;
+ -webkit-font-smoothing: antialiased;
  }
 
  textarea.teacher-ai-note-area-v1::placeholder {
- color: #737273 !important;
- opacity: 0.75 !important;
- font-weight: 400 !important;
- }
-
- .teacher-report-write-section-v1 {
- animation: teacherReportSectionSoftIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
- }
-
- .teacher-score-tap-v1:active {
- transform: scale(0.96);
+ font-weight: 300 !important;
+ color: #9CA3AF !important;
  }
 
 
  textarea.teacher-ai-note-area-v1 {
- font-size: 11.2px !important;
- line-height: 1.34 !important;
- font-weight: 400 !important;
- letter-spacing: -0.004em !important;
+ font-size: 12.6px !important;
+ font-weight: 300 !important;
+ line-height: 1.48 !important;
+ color: #6f7378;
+ -webkit-font-smoothing: antialiased;
  }
 
-
- .teacher-ai-note-area-v1 {
- font-size: 11.4px !important;
- line-height: 1.34 !important;
- font-weight: 400 !important;
- letter-spacing: -0.004em !important;
- }
-
-
- .teacher-ai-note-area-v1.is-refreshing {
- background-image: linear-gradient(
-  105deg,
-  rgba(255,255,255,0) 0%,
-  rgba(248,118,69,0.055) 42%,
-  rgba(255,255,255,0.68) 50%,
-  rgba(248,118,69,0.055) 58%,
-  rgba(255,255,255,0) 100%
- );
- background-size: 240% 100%;
- animation: teacherAINoteShimmer 1.1s ease-in-out infinite;
- caret-color: transparent;
- }
-
- @keyframes teacherAINoteShimmer {
- 0% {
- background-position: 140% 0;
- }
- 100% {
- background-position: -140% 0;
- }
- }
-
- .teacher-ai-note-area-v1 {
- font-weight: 400 !important;
- }
-
-
- .teacher-ai-note-area-v1.is-refreshing {
- caret-color: transparent;
- }
-
- .teacher-ai-note-area-v1 {
- scrollbar-width: thin;
- }
-
-
- .teacher-report-write-section-v1 {
- animation: teacherReportSectionSoftIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
- }
-
- @keyframes teacherReportSectionSoftIn {
- 0% {
- opacity: 0;
- transform: translateY(6px);
- }
- 100% {
- opacity: 1;
- transform: translateY(0);
- }
- }
-
-
- .teacher-ai-note-dot-v1 {
- width: 4px;
- height: 4px;
- border-radius: 999px;
- background: currentColor;
- display: inline-block;
- animation: teacherAINoteDotPulse 720ms ease-in-out infinite;
- }
-
- @keyframes teacherAINoteDotPulse {
- 0%, 80%, 100% {
- opacity: 0.32;
- transform: translateY(0) scale(0.85);
- }
- 40% {
- opacity: 1;
- transform: translateY(-2px) scale(1);
- }
- }
-
- .teacher-ai-note-area-v1:focus {
- border-color: rgba(34,34,34,0.22) !important;
- box-shadow: 0 0 0 4px rgba(34,34,34,0.035) !important;
- outline: none !important;
- }
-
- .teacher-score-tap-v1 {
- transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1), background 150ms ease, color 150ms ease, box-shadow 150ms ease;
- }
-
- .teacher-score-tap-v1:active {
- transform: scale(0.96);
+ textarea.teacher-ai-note-area-v1:focus {
+ font-weight: 300 !important;
  }
 
 
@@ -1831,7 +1711,7 @@ function TeacherLearnersPage({
  justifyContent: 'center',
  fontSize: 8.5,
  lineHeight: 1,
- fontWeight: 580,
+ fontWeight: 620,
  padding: '0 4px',
  transform: 'translateY(-1px)',
  }}
@@ -1872,7 +1752,7 @@ function TeacherLearnersPage({
  background: 'transparent',
  marginTop: 0,
  }}>
- <p style={{ fontSize: 13.8, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+ <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
  No learners yet
  </p>
 
@@ -1890,7 +1770,7 @@ function TeacherLearnersPage({
  </section>
  ) : (
  <section style={{
- borderRadius: 22,
+ borderRadius: 24,
  background: T.white,
  border: 'none',
  overflow: 'visible',
@@ -1934,7 +1814,7 @@ function MiniStat({ label, value }: any) {
  border: '0.8px solid #dcdcdc',
  textAlign: 'center',
  }}>
- <p style={{ fontSize: 16, fontWeight: 540, color: '#6b6c6c', margin: 0, lineHeight: 1.1 }}>
+ <p style={{ fontSize: 16, fontWeight: 560, color: '#6b6c6c', margin: 0, lineHeight: 1.1 }}>
  {value}
  </p>
  <p style={{ fontSize: 10.8, color: T.ink3, margin: '4px 0 0', whiteSpace: 'nowrap' }}>
@@ -1958,7 +1838,7 @@ function EmptyRoster({ onAdd }: any) {
  background: 'transparent',
  marginTop: 6,
  }}>
- <p style={{ fontSize: 13.8, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
+ <p style={{ fontSize: 14.5, fontWeight: 540, color: T.ink, margin: '0 0 4px' }}>
  No learners yet
  </p>
  <p style={{ fontSize: 13, color: T.ink3, lineHeight: 1.5, margin: 0 }}>
@@ -1985,7 +1865,7 @@ function ChecklistGroup({ title, items, weekStart, onOpen, onDeleted, hideHeader
  }}>
  <p style={{
  fontSize: 12.4,
- fontWeight: 540,
+ fontWeight: 560,
  color: 'var(--sc-ink)',
  margin: 0,
  }}>
@@ -2161,8 +2041,8 @@ function ReportSectionTitle({ title, subtitle, right }: any) {
  }}>
  <div style={{ minWidth: 0 }}>
  <p style={{
- fontSize: 13.6,
- fontWeight: 540,
+ fontSize: 13.8,
+ fontWeight: 580,
  color: T.ink,
  margin: 0,
  letterSpacing: '-0.01em',
@@ -2171,9 +2051,9 @@ function ReportSectionTitle({ title, subtitle, right }: any) {
  </p>
  {subtitle ? (
  <p style={{
- fontSize: 11.9,
+ fontSize: 12.3,
  color: T.ink3,
- lineHeight: 1.32,
+ lineHeight: 1.36,
  margin: '3px 0 0',
  }}>
  {subtitle}
@@ -2189,21 +2069,29 @@ function ReportSectionTitle({ title, subtitle, right }: any) {
 function ReportAveragePill({ value }: any) {
  return (
  <div style={{
- minWidth: 70,
- height: 30,
+ minWidth: 78,
+ minHeight: 38,
  borderRadius: 999,
- background: '#f2f2f2',
- color: '#222222',
+ background: '#ff7147',
+ color: '#FFFFFF',
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
  gap: 5,
- fontSize: 12,
- fontWeight: 540,
+ padding: '0 13px',
+ fontSize: 13.2,
+ fontWeight: 600,
  letterSpacing: '-0.01em',
+ boxShadow: 'none',
  }}>
- <span style={{ color: '#737273', fontWeight: 500 }}>Avg</span>
- <span style={{ color: '#222222', fontWeight: 600 }}>{value}</span>
+ <span style={{
+ color: 'rgba(255,255,255,0.78)',
+ fontSize: 12.4,
+ fontWeight: 520,
+ }}>
+ Avg
+ </span>
+ <span>{value}</span>
  </div>
  )
 }
@@ -2217,7 +2105,7 @@ function ReportQuietState({ title, text }: any) {
  borderRadius: 22,
  background: 'transparent',
  }}>
- <p style={{ fontSize: 13.8, fontWeight: 540, color: T.ink, margin: '0 0 5px' }}>
+ <p style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, margin: '0 0 5px' }}>
  {title}
  </p>
  {text ? (
@@ -2489,7 +2377,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  position: 'fixed',
  inset: 0,
  zIndex: 10000,
- background: 'rgba(0,0,0,0.18)',
+ background: 'transparent',
  display: 'flex',
  alignItems: 'flex-end',
  justifyContent: 'center',
@@ -2501,27 +2389,27 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  maxWidth: 420,
  borderRadius: 26,
  background: '#FFFFFF',
- boxShadow: '0 18px 55px rgba(0,0,0,0.18)',
- border: '1px solid rgba(0,0,0,0.06)',
+ boxShadow: '0 -8px 34px rgba(0,0,0,0.10)',
+ border: '1px solid rgba(0,0,0,0.045)',
  padding: 16,
  color: '#222222',
  }}>
  <p style={{
  margin: '0 0 4px',
- fontSize: 16,
- fontWeight: 660,
+ fontSize: 15.6,
+ fontWeight: 640,
  letterSpacing: '-0.025em',
  }}>
- Report saved
+ Send on WhatsApp
  </p>
 
  <p style={{
  margin: '0 0 16px',
- fontSize: 13,
- lineHeight: 1.45,
+ fontSize: 12.8,
+ lineHeight: 1.42,
  color: '#6B6F76',
  }}>
- Automatic WhatsApp was not sent. Please open WhatsApp and send the parent link manually.
+ Report saved. Open WhatsApp to send the parent link when ready.
  </p>
 
  {!whatsappUrl ? (
@@ -2531,7 +2419,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  color: '#B42318',
  lineHeight: 1.35,
  }}>
- Parent WhatsApp number is missing or invalid.
+ The parent WhatsApp number is missing or invalid.
  </p>
  ) : null}
 
@@ -2551,7 +2439,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  background: '#222222',
  color: '#FFFFFF',
  fontSize: 13,
- fontWeight: 580,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -2570,7 +2458,7 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  background: '#F5F5F5',
  color: '#222222',
  fontSize: 13,
- fontWeight: 580,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -2588,8 +2476,9 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  const subjectsKey = subjects.join('|')
  const [week, setWeek] = useState(weekStart)
  const [scores, setScores] = useState<Record<string, number>>(() => scoresForSubjects(subjects))
- const [comment, setComment] = useState(() => generateComment(scoresForSubjects(subjects), child?.name || 'Learner'))
- const [noteEdited, setNoteEdited] = useState(false)
+ const [comment, setComment] = useState('')
+ const [noteTouched, setNoteTouched] = useState(false)
+ const [displayedAiNote, setDisplayedAiNote] = useState('')
  const [noteAnimating, setNoteAnimating] = useState(false)
  const [saving, setSaving] = useState(false)
  const [magicLink, setMagicLink] = useState('')
@@ -2600,11 +2489,10 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
 
  useEffect(() => {
  setWeek(weekStart)
- const nextScores = scoresForSubjects(subjects)
- setScores(nextScores)
- setComment(generateComment(nextScores, child?.name || 'Learner'))
- setNoteEdited(false)
- setNoteAnimating(false)
+ setScores(current => scoresForSubjects(subjects, current))
+ setComment('')
+ setNoteTouched(false)
+ setDisplayedAiNote('')
  setMagicLink('')
  setPreviewing(false)
  setManualWhatsAppFallback(null)
@@ -2620,38 +2508,38 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  .finally(() => setHistoryLoading(false))
  }, [child.id, weekStart, subjectsKey])
 
- useEffect(() => {
- if (noteEdited) return
+ const draftAvg = averageScore(scores)
+ const draftAvgLabel = draftAvg == null ? '—' : draftAvg.toFixed(1)
+ const aiTeacherNote = generateComment(scores, child?.name || 'Learner')
 
- const nextNote = generateComment(scores, child?.name || 'Learner')
+// teacher-note-ai-typing-effect-v1
+useEffect(() => {
+ if (noteTouched) return
+
  let typingTimer: any = null
-
  setNoteAnimating(true)
- setComment('')
+ setDisplayedAiNote('')
 
  const startTimer = window.setTimeout(() => {
  let index = 0
- const step = Math.max(1, Math.ceil(nextNote.length / 90))
+ const step = Math.max(1, Math.ceil(aiTeacherNote.length / 85))
 
  typingTimer = window.setInterval(() => {
- index = Math.min(nextNote.length, index + step)
- setComment(nextNote.slice(0, index))
+ index = Math.min(aiTeacherNote.length, index + step)
+ setDisplayedAiNote(aiTeacherNote.slice(0, index))
 
- if (index >= nextNote.length) {
+ if (index >= aiTeacherNote.length) {
  window.clearInterval(typingTimer)
  setNoteAnimating(false)
  }
- }, 12)
+ }, 14)
  }, 120)
 
  return () => {
  window.clearTimeout(startTimer)
  if (typingTimer) window.clearInterval(typingTimer)
  }
-}, [scores, noteEdited, child?.name])
-
- const draftAvg = averageScore(scores)
- const draftAvgLabel = draftAvg == null ? '—' : draftAvg.toFixed(1)
+}, [aiTeacherNote, noteTouched])
  const previousScoresForPreview = history.find((item: any) => item?.week_starting !== week)?.scores || null
  const draftReport = {
  id: 'draft-parent-preview',
@@ -2791,8 +2679,8 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  if (previewing) {
  return (
  <TeacherReportScreenFrame
- title="Parent preview"
- subtitle={child?.name || 'Learner'}
+ title="Preview"
+ subtitle="" 
  onBack={() => setPreviewing(false)}
  footer={previewFooter}
  >
@@ -2820,50 +2708,55 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  onBack={onBack}
  footer={writeFooter}
  >
- <section className="teacher-report-write-section-v1" style={{
- padding: '4px 0 10px',
- marginBottom: 12,
+ <section style={{
+ padding: '4px 0 14px',
+ marginBottom: 14,
  borderBottom: '1px solid var(--sc-border-soft)',
  }}>
  <ReportSectionTitle
- title="Weekly progress"
- subtitle="Update the scores, review the note, then send."
+ title="Report scores"
+ subtitle="Tap a number for each area."
  right={<ReportAveragePill value={draftAvgLabel} />}
-/>
+ />
+
+ <div style={{
+ height: 1,
+ background: 'var(--sc-border-soft)',
+ margin: '12px 0 12px',
+ }} />
 
  <label style={{
- display: 'flex',
+ display: 'grid',
+ gridTemplateColumns: '1fr auto',
  alignItems: 'center',
- justifyContent: 'space-between',
  gap: 12,
- padding: '0 0 10px',
- borderBottom: '1px solid rgba(0,0,0,0.035)',
- marginBottom: 0,
+ padding: '0 0 8px',
+ borderBottom: '1px solid var(--sc-border-soft)',
+ marginBottom: 2,
  position: 'relative',
  cursor: 'pointer',
  }}>
  <span style={{
- fontSize: 11,
- fontWeight: 500,
- color: '#737273',
+ fontSize: 13.1,
+ fontWeight: 540,
+ color: T.ink,
  lineHeight: 1.2,
- letterSpacing: '-0.004em',
  }}>
- Report week
+ Week
  </span>
 
  <span style={{
- minHeight: 26,
+ minHeight: 30,
  borderRadius: 999,
- padding: '0 10px',
- background: '#f2f2f2',
- color: '#737273',
+ padding: '0 12px',
+ background: T.soft,
+ color: T.ink2,
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- fontSize: 11,
- fontWeight: 500,
- letterSpacing: '-0.006em',
+ fontSize: 12.8,
+ fontWeight: 520,
+ letterSpacing: '-0.01em',
  }}>
  {new Date(`${week}T00:00:00`).toLocaleDateString('en-ZA', {
  day: 'numeric',
@@ -2885,7 +2778,8 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  }}
  />
  </label>
-<div style={{ display: 'flex', flexDirection: 'column' }}>
+
+ <div style={{ display: 'flex', flexDirection: 'column' }}>
  {subjects.map((subject, index) => (
  <SCScoreRow
  key={subject}
@@ -2898,102 +2792,54 @@ function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, o
  </div>
  </section>
 
- <section className="teacher-report-write-section-v1" style={{
- padding: '17px 0 8px',
- borderBottom: '1px solid rgba(0,0,0,0.035)',
- marginBottom: 0,
+ <section style={{
+ padding: '6px 0 8px',
+ borderBottom: '1px solid var(--sc-border-soft)',
+ marginBottom: 12,
  }}>
- <div style={{
- display: 'flex',
- alignItems: 'center',
- gap: 8,
- marginBottom: 4,
- }}>
- <span style={{
- width: 20,
- height: 20,
- borderRadius: 999,
- background: '#f2f2f2',
- color: '#737273',
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- flexShrink: 0,
- }}>
- <Sparkles size={12} strokeWidth={1.7} />
- </span>
-
- <p style={{
- margin: 0,
- color: '#222222',
- fontSize: 14,
- fontWeight: 540,
- letterSpacing: '-0.012em',
- lineHeight: 1.2,
- }}>
- Parent note
- </p>
-
- {noteAnimating ? (
- <span style={{
- marginLeft: 'auto',
- display: 'inline-flex',
- alignItems: 'center',
- gap: 4,
- color: '#737273',
- }}>
- <span className="teacher-ai-note-dot-v1" />
- <span className="teacher-ai-note-dot-v1" style={{ animationDelay: '90ms' }} />
- <span className="teacher-ai-note-dot-v1" style={{ animationDelay: '180ms' }} />
- </span>
- ) : null}
- </div>
-
- <p style={{
- margin: '0 0 10px',
- color: '#737273',
- fontSize: 11.6,
- fontWeight: 400,
- lineHeight: 1.3,
- letterSpacing: '-0.004em',
- }}>
- Auto-written for the parent. Edit before sending if needed.
- </p>
-
- <textarea
- className={`sc-teacher-note-input-v387 teacher-ai-note-area-v1 ${noteAnimating ? 'is-refreshing' : ''}`}
- value={comment}
+<ReportSectionTitle
+ title="Teacher note"
+ subtitle="Review the auto note. Edit it or leave it as is."
+ />
+<textarea
+ className={`sc-teacher-note-input-v387 teacher-ai-note-area-v1 ${noteTouched ? 'is-edited' : 'is-auto'} ${noteAnimating ? 'is-refreshing' : ''}`}
+ value={noteTouched ? comment : (displayedAiNote || aiTeacherNote)}
+ onFocus={() => {
+ if (!noteTouched) {
+ setNoteTouched(true)
+ setComment(displayedAiNote || aiTeacherNote)
+ }
+ }}
  onChange={e => {
- setNoteEdited(true)
+ setNoteTouched(true)
  setComment(e.target.value)
  }}
  rows={5}
- placeholder="A short parent-friendly note will appear here."
+ placeholder="AI suggested note will appear here."
  style={{
- width: '100%',
- boxSizing: 'border-box',
+ ...inputStyle,
  resize: 'none',
- minHeight: 148,
- maxHeight: 196,
- overflowY: 'auto',
- border: 'none',
- outline: 'none',
- borderRadius: 18,
+ minHeight: 132,
+ lineHeight: 1.48,
  background: '#f7f7f7',
- padding: '15px 16px',
- color: noteEdited ? '#222222' : '#737273',
- fontFamily: 'inherit',
- fontSize: 12.4,
- fontWeight: 400,
- lineHeight: 1.45,
- letterSpacing: '-0.006em',
- boxShadow: noteAnimating ? '0 0 0 4px rgba(248,118,69,0.035)' : 'none',
- opacity: noteAnimating ? 0.92 : 1,
- filter: noteAnimating ? 'blur(0.2px)' : 'blur(0)',
- transition: 'box-shadow 220ms ease, opacity 180ms ease, filter 220ms ease',
+ border: 'none',
+ boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.035)',
+ borderRadius: 18,
+ padding: '14px 15px',
+ transition: 'opacity 180ms ease, filter 220ms ease',
+ opacity: noteAnimating ? 0.9 : 1,
+ filter: noteAnimating ? 'blur(0.15px)' : 'blur(0)',
+ fontSize: 12.6,
+ fontWeight: 300,
+ letterSpacing: '-0.004em',
+ WebkitFontSmoothing: 'antialiased',
+ color: noteTouched ? '#222222' : '#6f7378',
  }}
  />
  </section>
+
+ 
+
 
  {manualWhatsAppFallback ? (
  <ManualWhatsAppFallbackModal
@@ -3052,7 +2898,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  alignItems: 'center',
  }}>
  <div style={{ minWidth: 0 }}>
- <p style={{ fontSize: 13.2, fontWeight: 540, color: T.ink, margin: 0 }}>
+ <p style={{ fontSize: 13.2, fontWeight: 560, color: T.ink, margin: 0 }}>
  {formatWeek(report.week_starting)}
  </p>
  <p style={{
@@ -3085,7 +2931,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  background: '#222222',
  color: '#FFFFFF',
  fontSize: 12.4,
- fontWeight: 580,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -3103,7 +2949,7 @@ function HistoryCard({ report, child, magicLink, isLast = false }: any) {
  background: '#F5F5F5',
  color: '#222222',
  fontSize: 12.4,
- fontWeight: 580,
+ fontWeight: 620,
  cursor: 'pointer',
  fontFamily: 'inherit',
  }}
@@ -3272,7 +3118,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  <div>
  <p style={{
  fontSize: 13,
- fontWeight: 540,
+ fontWeight: 560,
  color: T.ink,
  margin: 0,
  }}>
@@ -3452,7 +3298,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  color: T.ink,
  fontSize: 22,
  lineHeight: 1.08,
- fontWeight: 540,
+ fontWeight: 560,
  letterSpacing: '-0.045em',
  }}>
  {teacher?.name || 'Teacher'}
@@ -3484,7 +3330,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{ display: 'none' }} />
 
  <section style={{
- borderRadius: 22,
+ borderRadius: 24,
  background: '#f2f2f2',
  overflow: 'hidden',
  marginTop: 8,
@@ -3564,7 +3410,7 @@ function SettingsSheet({ teacher, school, classLabel, learnerCount = 0, momentSu
  marginLeft: 8,
  fontSize: 11.5,
  color: '#f87645',
- fontWeight: 580,
+ fontWeight: 620,
  lineHeight: 1,
  padding: '7px 10px',
  borderRadius: 999,
@@ -3805,7 +3651,7 @@ const emptyCard: any = {
  textAlign: 'center',
  background: T.white,
  border: 'none',
- borderRadius: 22,
+ borderRadius: 24,
  padding: '34px 24px',
 }
 
