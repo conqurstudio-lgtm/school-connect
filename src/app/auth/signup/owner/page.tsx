@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 import { AuthFormField } from '@/components/auth/AuthFormField'
-
 import { AuthPrivacyLine } from '@/components/auth/AuthDetailText'
+
 const T = {
   white: '#FFFFFF',
   ink: '#21222D',
@@ -35,7 +35,8 @@ const primaryButton: React.CSSProperties = {
   letterSpacing: '-0.012em',
   marginTop: 8,
   boxShadow: '0 14px 28px rgba(33,34,45,0.18)',
-  transition: 'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
+  transition:
+    'transform 170ms ease, background 170ms ease, box-shadow 170ms ease',
 }
 
 const secondaryButton: React.CSSProperties = {
@@ -56,15 +57,42 @@ const secondaryButton: React.CSSProperties = {
   letterSpacing: '-0.01em',
 }
 
-function first(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value[0] : value || ''
+function first(
+  value: string | string[] | undefined
+) {
+  return Array.isArray(value)
+    ? value[0]
+    : value || ''
 }
 
-export default function OwnerSignupPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
-  const schoolName = first(searchParams.school_name).trim()
-  const schoolPhone = first(searchParams.school_phone).trim()
-  const schoolEmail = first(searchParams.school_email).trim()
-  const error = first(searchParams.error).trim()
+export default function OwnerSignupPage({
+  searchParams,
+}: {
+  searchParams: Record<
+    string,
+    string | string[] | undefined
+  >
+}) {
+  const schoolName = first(
+    searchParams.school_name
+  ).trim()
+
+  const schoolPhone = first(
+    searchParams.school_phone
+  ).trim()
+
+  const schoolEmail = first(
+    searchParams.school_email
+  ).trim()
+
+  const error = first(
+    searchParams.error
+  ).trim()
+
+  const hasBranches =
+    first(searchParams.has_branches) === 'yes'
+      ? 'yes'
+      : 'no'
 
   return (
     <main
@@ -75,8 +103,10 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        padding:
+          'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
+        fontFamily:
+          'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         boxSizing: 'border-box',
         color: T.ink,
       }}
@@ -100,7 +130,14 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
           />
         </div>
 
-        <form method="POST" action="/api/auth/create-school-owner-form" style={{ display: 'grid', gap: 20 }}>
+        <form
+          method="POST"
+          action="/api/auth/create-school-owner-form"
+          style={{
+            display: 'grid',
+            gap: 20,
+          }}
+        >
           {error ? (
             <div
               style={{
@@ -135,9 +172,29 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             </div>
           ) : null}
 
-          <input type="hidden" name="school_name" value={schoolName} />
-          <input type="hidden" name="school_phone" value={schoolPhone} />
-          <input type="hidden" name="school_email" value={schoolEmail} />
+          <input
+            type="hidden"
+            name="school_name"
+            value={schoolName}
+          />
+
+          <input
+            type="hidden"
+            name="school_phone"
+            value={schoolPhone}
+          />
+
+          <input
+            type="hidden"
+            name="school_email"
+            value={schoolEmail}
+          />
+
+          <input
+            type="hidden"
+            name="has_branches"
+            value={hasBranches}
+          />
 
           <div
             style={{
@@ -147,8 +204,28 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
               background: T.soft,
             }}
           >
-            <p style={{ margin: 0, color: T.ink, fontSize: 12.8, fontWeight: 610 }}>{schoolName || 'School not set'}</p>
-            <p style={{ margin: '3px 0 0', color: T.ink3, fontSize: 11.8 }}>{schoolPhone || schoolEmail || 'School details'}</p>
+            <p
+              style={{
+                margin: 0,
+                color: T.ink,
+                fontSize: 12.8,
+                fontWeight: 610,
+              }}
+            >
+              {schoolName || 'School not set'}
+            </p>
+
+            <p
+              style={{
+                margin: '3px 0 0',
+                color: T.ink3,
+                fontSize: 11.8,
+              }}
+            >
+              {schoolPhone ||
+                schoolEmail ||
+                'School details'}
+            </p>
           </div>
 
           <AuthFormField
@@ -180,11 +257,23 @@ export default function OwnerSignupPage({ searchParams }: { searchParams: Record
             required
           />
 
-          <button type="submit" className="sc-pressable" style={{ ...primaryButton, opacity: schoolName ? 1 : 0.55 }} disabled={!schoolName}>
+          <button
+            type="submit"
+            className="sc-pressable"
+            style={{
+              ...primaryButton,
+              opacity: schoolName ? 1 : 0.55,
+            }}
+            disabled={!schoolName}
+          >
             Create account
           </button>
 
-          <Link href="/auth/signup" className="sc-pressable" style={secondaryButton}>
+          <Link
+            href="/auth/signup"
+            className="sc-pressable"
+            style={secondaryButton}
+          >
             Back
           </Link>
 
