@@ -362,8 +362,12 @@ export default function SchoolGroupPage() {
 
           <button
             type="button"
-            disabled
-            title="Branch creation comes next"
+            onClick={() =>
+              router.push(
+                '/school/group/add'
+              )
+            }
+            title="Add school"
             style={{
               height: 42,
               borderRadius: 999,
@@ -379,8 +383,7 @@ export default function SchoolGroupPage() {
               fontSize: 13,
               fontWeight: 600,
               fontFamily: 'inherit',
-              opacity: 0.55,
-              cursor: 'not-allowed',
+              cursor: 'pointer',
             }}
           >
             <Plus size={16} />
@@ -551,6 +554,7 @@ export default function SchoolGroupPage() {
                       <MapPin
                         size={12}
                       />
+
                       {[
                         school.address,
                         school.province,
