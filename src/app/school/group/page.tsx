@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
   Building2,
+  Clock3,
   Crown,
   MapPin,
   Plus,
@@ -22,15 +23,36 @@ type GroupSchool = {
   member_type: 'primary' | 'branch'
 }
 
+type PendingInvite = {
+  id: string
+  group_id: string
+  school_id?: string | null
+  status: 'pending'
+  expires_at?: string | null
+  created_at?: string | null
+
+  school_name?: string | null
+  school_phone?: string | null
+  school_email?: string | null
+  school_province?: string | null
+  school_address?: string | null
+
+  principal_name?: string | null
+  principal_email?: string | null
+}
+
 type GroupData = {
   ok: boolean
   is_group_owner: boolean
+
   group: {
     id: string
     name: string
     primary_school_id: string
   } | null
+
   schools: GroupSchool[]
+  pending_invites: PendingInvite[]
 }
 
 const T = {
@@ -42,6 +64,8 @@ const T = {
   border: 'rgba(33,34,45,0.08)',
   accent: '#f87645',
   accentSoft: '#FFF3EE',
+  pending: '#B7791F',
+  pendingSoft: '#FFF9E8',
 }
 
 function initials(name: string) {
@@ -86,12 +110,11 @@ export default function SchoolGroupPage() {
 
         if (!mounted) return
 
-        if (
-          response.status === 401
-        ) {
+        if (response.status === 401) {
           router.replace(
             '/auth/login'
           )
+
           return
         }
 
@@ -102,16 +125,31 @@ export default function SchoolGroupPage() {
           )
         }
 
-        if (
-          !result.is_group_owner
-        ) {
+        if (!result.is_group_owner) {
           router.replace(
             '/school'
           )
+
           return
         }
 
-        setData(result)
+        setData({
+          ...result,
+
+          schools:
+            Array.isArray(
+              result?.schools
+            )
+              ? result.schools
+              : [],
+
+          pending_invites:
+            Array.isArray(
+              result?.pending_invites
+            )
+              ? result.pending_invites
+              : [],
+        })
       } catch (err: any) {
         if (!mounted) return
 
@@ -151,10 +189,13 @@ export default function SchoolGroupPage() {
             width: 28,
             height: 28,
             borderRadius: '50%',
+
             border:
               '2px solid rgba(33,34,45,0.08)',
+
             borderTopColor:
               T.accent,
+
             animation:
               'spin 0.7s linear infinite',
           }}
@@ -236,13 +277,25 @@ export default function SchoolGroupPage() {
     return null
   }
 
+  const acceptedCount =
+    data.schools.length
+
+  const pendingCount =
+    data.pending_invites.length
+
+  const totalCount =
+    acceptedCount +
+    pendingCount
+
   return (
     <main
       style={{
         minHeight: '100dvh',
         background: T.white,
+
         fontFamily:
           'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+
         color: T.ink,
       }}
     >
@@ -251,8 +304,10 @@ export default function SchoolGroupPage() {
           width: '100%',
           maxWidth: 720,
           margin: '0 auto',
+
           padding:
             'max(22px, env(safe-area-inset-top)) 18px max(30px, env(safe-area-inset-bottom))',
+
           boxSizing: 'border-box',
         }}
       >
@@ -265,11 +320,16 @@ export default function SchoolGroupPage() {
             width: 42,
             height: 42,
             borderRadius: '50%',
-            border: `1px solid ${T.border}`,
+
+            border:
+              `1px solid ${T.border}`,
+
             background: T.white,
+
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+
             cursor: 'pointer',
             color: T.ink,
           }}
@@ -288,9 +348,12 @@ export default function SchoolGroupPage() {
               color: T.ink3,
               fontSize: 12,
               fontWeight: 600,
+
               textTransform:
                 'uppercase',
-              letterSpacing: '0.07em',
+
+              letterSpacing:
+                '0.07em',
             }}
           >
             School Group
@@ -300,9 +363,11 @@ export default function SchoolGroupPage() {
             style={{
               margin: '7px 0 0',
               color: T.ink,
+
               fontSize: 27,
               lineHeight: 1.2,
               fontWeight: 650,
+
               letterSpacing:
                 '-0.035em',
             }}
@@ -326,10 +391,13 @@ export default function SchoolGroupPage() {
         <div
           style={{
             marginTop: 28,
+
             display: 'flex',
             alignItems: 'center',
+
             justifyContent:
               'space-between',
+
             gap: 14,
           }}
         >
@@ -352,11 +420,14 @@ export default function SchoolGroupPage() {
                 fontSize: 12.5,
               }}
             >
-              {data.schools.length}{' '}
-              {data.schools.length ===
-              1
+              {totalCount}{' '}
+              {totalCount === 1
                 ? 'school'
                 : 'schools'}
+
+              {pendingCount > 0
+                ? ` · ${pendingCount} pending`
+                : ''}
             </p>
           </div>
 
@@ -374,12 +445,21 @@ export default function SchoolGroupPage() {
               border: 'none',
               background: T.accent,
               color: T.white,
-              padding: '0 16px',
-              display: 'inline-flex',
-              alignItems: 'center',
+
+              padding:
+                '0 16px',
+
+              display:
+                'inline-flex',
+
+              alignItems:
+                'center',
+
               justifyContent:
                 'center',
+
               gap: 7,
+
               fontSize: 13,
               fontWeight: 600,
               fontFamily: 'inherit',
@@ -401,15 +481,27 @@ export default function SchoolGroupPage() {
           {data.schools.map(
             (school) => (
               <div
-                key={school.id}
+                key={
+                  school.id
+                }
                 style={{
-                  borderRadius: 24,
-                  border: `1px solid ${T.border}`,
-                  background: T.white,
+                  borderRadius:
+                    24,
+
+                  border:
+                    `1px solid ${T.border}`,
+
+                  background:
+                    T.white,
+
                   padding: 16,
-                  display: 'flex',
+
+                  display:
+                    'flex',
+
                   alignItems:
                     'center',
+
                   gap: 14,
                 }}
               >
@@ -417,20 +509,35 @@ export default function SchoolGroupPage() {
                   style={{
                     width: 54,
                     height: 54,
+
                     flexShrink: 0,
-                    borderRadius: 18,
+
+                    borderRadius:
+                      18,
+
                     overflow:
                       'hidden',
+
                     background:
                       T.soft,
-                    display: 'flex',
+
+                    display:
+                      'flex',
+
                     alignItems:
                       'center',
+
                     justifyContent:
                       'center',
-                    color: T.ink2,
-                    fontSize: 15,
-                    fontWeight: 650,
+
+                    color:
+                      T.ink2,
+
+                    fontSize:
+                      15,
+
+                    fontWeight:
+                      650,
                   }}
                 >
                   {school.logo_url ? (
@@ -440,8 +547,12 @@ export default function SchoolGroupPage() {
                       }
                       alt=""
                       style={{
-                        width: '100%',
-                        height: '100%',
+                        width:
+                          '100%',
+
+                        height:
+                          '100%',
+
                         objectFit:
                           'cover',
                       }}
@@ -461,19 +572,29 @@ export default function SchoolGroupPage() {
                 >
                   <div
                     style={{
-                      display: 'flex',
+                      display:
+                        'flex',
+
                       alignItems:
                         'center',
-                      flexWrap: 'wrap',
+
+                      flexWrap:
+                        'wrap',
+
                       gap: 7,
                     }}
                   >
                     <p
                       style={{
                         margin: 0,
-                        color: T.ink,
-                        fontSize: 14.5,
-                        fontWeight: 620,
+                        color:
+                          T.ink,
+
+                        fontSize:
+                          14.5,
+
+                        fontWeight:
+                          620,
                       }}
                     >
                       {school.name}
@@ -483,55 +604,83 @@ export default function SchoolGroupPage() {
                     'primary' ? (
                       <span
                         style={{
-                          minHeight: 24,
+                          minHeight:
+                            24,
+
                           borderRadius:
                             999,
+
                           background:
                             T.accentSoft,
+
                           color:
                             T.accent,
+
                           display:
                             'inline-flex',
+
                           alignItems:
                             'center',
+
                           gap: 5,
+
                           padding:
                             '0 9px',
-                          fontSize: 10.5,
+
+                          fontSize:
+                            10.5,
+
                           fontWeight:
                             650,
                         }}
                       >
                         <Crown
-                          size={11}
+                          size={
+                            11
+                          }
                         />
+
                         Main school
                       </span>
                     ) : (
                       <span
                         style={{
-                          minHeight: 24,
+                          minHeight:
+                            24,
+
                           borderRadius:
                             999,
+
                           background:
                             T.soft,
+
                           color:
                             T.ink2,
+
                           display:
                             'inline-flex',
+
                           alignItems:
                             'center',
+
                           gap: 5,
+
                           padding:
                             '0 9px',
-                          fontSize: 10.5,
+
+                          fontSize:
+                            10.5,
+
                           fontWeight:
                             650,
                         }}
                       >
                         <Building2
-                          size={11}
+                          size={
+                            11
+                          }
                         />
+
                         Branch
                       </span>
                     )}
@@ -543,16 +692,26 @@ export default function SchoolGroupPage() {
                       style={{
                         margin:
                           '6px 0 0',
-                        color: T.ink3,
-                        fontSize: 12,
-                        display: 'flex',
+
+                        color:
+                          T.ink3,
+
+                        fontSize:
+                          12,
+
+                        display:
+                          'flex',
+
                         alignItems:
                           'center',
+
                         gap: 5,
                       }}
                     >
                       <MapPin
-                        size={12}
+                        size={
+                          12
+                        }
                       />
 
                       {[
@@ -562,7 +721,9 @@ export default function SchoolGroupPage() {
                         .filter(
                           Boolean
                         )
-                        .join(' · ')}
+                        .join(
+                          ' · '
+                        )}
                     </p>
                   )}
 
@@ -572,8 +733,12 @@ export default function SchoolGroupPage() {
                       style={{
                         margin:
                           '5px 0 0',
-                        color: T.ink3,
-                        fontSize: 12,
+
+                        color:
+                          T.ink3,
+
+                        fontSize:
+                          12,
                       }}
                     >
                       {school.email ||
@@ -583,6 +748,244 @@ export default function SchoolGroupPage() {
                 </div>
               </div>
             )
+          )}
+
+          {data.pending_invites.map(
+            (invite) => {
+              const location = [
+                invite.school_address,
+                invite.school_province,
+              ]
+                .filter(Boolean)
+                .join(' · ')
+
+              return (
+                <div
+                  key={
+                    invite.id
+                  }
+                  style={{
+                    borderRadius:
+                      24,
+
+                    border:
+                      `1px solid ${T.border}`,
+
+                    background:
+                      T.white,
+
+                    padding: 16,
+
+                    display:
+                      'flex',
+
+                    alignItems:
+                      'center',
+
+                    gap: 14,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 54,
+                      height: 54,
+
+                      flexShrink: 0,
+
+                      borderRadius:
+                        18,
+
+                      background:
+                        T.pendingSoft,
+
+                      display:
+                        'flex',
+
+                      alignItems:
+                        'center',
+
+                      justifyContent:
+                        'center',
+
+                      color:
+                        T.pending,
+
+                      fontSize:
+                        15,
+
+                      fontWeight:
+                        650,
+                    }}
+                  >
+                    {initials(
+                      invite.school_name ||
+                        'SC'
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      minWidth: 0,
+                      flex: 1,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display:
+                          'flex',
+
+                        alignItems:
+                          'center',
+
+                        flexWrap:
+                          'wrap',
+
+                        gap: 7,
+                      }}
+                    >
+                      <p
+                        style={{
+                          margin: 0,
+
+                          color:
+                            T.ink,
+
+                          fontSize:
+                            14.5,
+
+                          fontWeight:
+                            620,
+                        }}
+                      >
+                        {invite.school_name ||
+                          'New school'}
+                      </p>
+
+                      <span
+                        style={{
+                          minHeight:
+                            24,
+
+                          borderRadius:
+                            999,
+
+                          background:
+                            T.pendingSoft,
+
+                          color:
+                            T.pending,
+
+                          display:
+                            'inline-flex',
+
+                          alignItems:
+                            'center',
+
+                          gap: 5,
+
+                          padding:
+                            '0 9px',
+
+                          fontSize:
+                            10.5,
+
+                          fontWeight:
+                            650,
+                        }}
+                      >
+                        <Clock3
+                          size={
+                            11
+                          }
+                        />
+
+                        Pending invitation
+                      </span>
+                    </div>
+
+                    {location && (
+                      <p
+                        style={{
+                          margin:
+                            '6px 0 0',
+
+                          color:
+                            T.ink3,
+
+                          fontSize:
+                            12,
+
+                          display:
+                            'flex',
+
+                          alignItems:
+                            'center',
+
+                          gap: 5,
+                        }}
+                      >
+                        <MapPin
+                          size={
+                            12
+                          }
+                        />
+
+                        {location}
+                      </p>
+                    )}
+
+                    {(invite.principal_name ||
+                      invite.principal_email) && (
+                      <p
+                        style={{
+                          margin:
+                            '5px 0 0',
+
+                          color:
+                            T.ink3,
+
+                          fontSize:
+                            12,
+
+                          lineHeight:
+                            1.4,
+                        }}
+                      >
+                        Principal:{' '}
+                        {invite.principal_name ||
+                          invite.principal_email}
+
+                        {invite.principal_name &&
+                        invite.principal_email
+                          ? ` · ${invite.principal_email}`
+                          : ''}
+                      </p>
+                    )}
+
+                    {!invite.principal_name &&
+                      !invite.principal_email &&
+                      (invite.school_email ||
+                        invite.school_phone) && (
+                        <p
+                          style={{
+                            margin:
+                              '5px 0 0',
+
+                            color:
+                              T.ink3,
+
+                            fontSize:
+                              12,
+                          }}
+                        >
+                          {invite.school_email ||
+                            invite.school_phone}
+                        </p>
+                      )}
+                  </div>
+                </div>
+              )
+            }
           )}
         </div>
       </div>

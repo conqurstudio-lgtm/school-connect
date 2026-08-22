@@ -8,8 +8,11 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 function serviceClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL
+
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!url) {
     throw new Error(
@@ -23,39 +26,50 @@ function serviceClient() {
     )
   }
 
-  return createClient(url, serviceKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
+  return createClient(
+    url,
+    serviceKey,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  )
 }
 
 async function getLoggedInUser(
   request: NextRequest
 ) {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+  const supabase =
+    createServerClient(
+      process.env
+        .NEXT_PUBLIC_SUPABASE_URL!,
+      process.env
+        .NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
 
-        setAll() {
-          // Read-only API.
+          setAll() {
+            // Read-only API.
+          },
         },
-      },
-    }
-  )
+      }
+    )
 
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser()
+  } =
+    await supabase.auth.getUser()
 
-  if (error || !user) {
+  if (
+    error ||
+    !user
+  ) {
     return null
   }
 
@@ -66,12 +80,16 @@ export async function GET(
   request: NextRequest
 ) {
   try {
-    const user = await getLoggedInUser(request)
+    const user =
+      await getLoggedInUser(
+        request
+      )
 
     if (!user) {
       return NextResponse.json(
         {
-          error: 'Unauthorized',
+          error:
+            'Unauthorized',
         },
         {
           status: 401,
@@ -79,17 +97,23 @@ export async function GET(
       )
     }
 
-    const sb = serviceClient()
+    const sb =
+      serviceClient()
 
-    // ---------------------------------------------------------
-    // 1. CHECK WHETHER THIS USER OWNS A GROUP
-    // ---------------------------------------------------------
+    /*
+    |--------------------------------------------------------------------------
+    | 1. CHECK WHETHER THIS USER OWNS A GROUP
+    |--------------------------------------------------------------------------
+    */
 
     const {
       data: group,
-      error: groupError,
+      error:
+        groupError,
     } = await sb
-      .from('school_groups')
+      .from(
+        'school_groups'
+      )
       .select(
         `
           id,
@@ -123,9 +147,11 @@ export async function GET(
       )
     }
 
-    // ---------------------------------------------------------
-    // 2. STANDALONE SCHOOL
-    // ---------------------------------------------------------
+    /*
+    |--------------------------------------------------------------------------
+    | 2. STANDALONE / BRANCH SCHOOL
+    |--------------------------------------------------------------------------
+    */
 
     if (!group) {
       return NextResponse.json({
@@ -133,18 +159,24 @@ export async function GET(
         is_group_owner: false,
         group: null,
         schools: [],
+        pending_invites: [],
       })
     }
 
-    // ---------------------------------------------------------
-    // 3. LOAD GROUP MEMBERS
-    // ---------------------------------------------------------
+    /*
+    |--------------------------------------------------------------------------
+    | 3. LOAD ACCEPTED GROUP MEMBERS
+    |--------------------------------------------------------------------------
+    */
 
     const {
       data: members,
-      error: membersError,
+      error:
+        membersError,
     } = await sb
-      .from('school_group_members')
+      .from(
+        'school_group_members'
+      )
       .select(
         `
           id,
@@ -182,27 +214,41 @@ export async function GET(
       )
     }
 
-    const schoolIds = (
-      members || []
-    )
-      .map(
-        (member: any) =>
-          member.school_id
+    const schoolIds =
+      (
+        members ||
+        []
       )
-      .filter(Boolean)
+        .map(
+          (
+            member: any
+          ) =>
+            member.school_id
+        )
+        .filter(Boolean)
 
-    // ---------------------------------------------------------
-    // 4. LOAD NORMAL SCHOOL RECORDS
-    // ---------------------------------------------------------
+    /*
+    |--------------------------------------------------------------------------
+    | 4. LOAD NORMAL SCHOOL RECORDS
+    |--------------------------------------------------------------------------
+    */
 
-    let schools: any[] = []
+    let schools: any[] =
+      []
 
-    if (schoolIds.length > 0) {
+    if (
+      schoolIds.length >
+      0
+    ) {
       const {
-        data: schoolRows,
-        error: schoolsError,
+        data:
+          schoolRows,
+        error:
+          schoolsError,
       } = await sb
-        .from('schools')
+        .from(
+          'schools'
+        )
         .select(
           `
             id,
@@ -224,7 +270,9 @@ export async function GET(
           schoolIds
         )
 
-      if (schoolsError) {
+      if (
+        schoolsError
+      ) {
         console.error(
           '[school-group] school lookup failed:',
           schoolsError
@@ -241,40 +289,209 @@ export async function GET(
         )
       }
 
-      schools = (
-        members || []
-      ).map(
-        (member: any) => {
-          const school = (
-            schoolRows || []
-          ).find(
-            (row: any) =>
-              row.id ===
-              member.school_id
-          )
+      schools =
+        (
+          members ||
+          []
+        ).map(
+          (
+            member: any
+          ) => {
+            const school =
+              (
+                schoolRows ||
+                []
+              ).find(
+                (
+                  row: any
+                ) =>
+                  row.id ===
+                  member.school_id
+              )
 
-          return {
-            ...school,
-            membership_id:
-              member.id,
-            member_type:
-              member.member_type,
+            return {
+              ...school,
+
+              membership_id:
+                member.id,
+
+              member_type:
+                member.member_type,
+            }
           }
+        )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 5. LOAD PENDING BRANCH INVITATIONS
+    |--------------------------------------------------------------------------
+    |
+    | These are schools that the group owner has added, but the principal
+    | has not completed their School Connect account yet.
+    |
+    | school_id remains null until the principal accepts the invitation.
+    |
+    */
+
+    const {
+      data:
+        pendingInviteRows,
+      error:
+        pendingInvitesError,
+    } = await sb
+      .from(
+        'school_group_invites'
+      )
+      .select(
+        `
+          id,
+          group_id,
+          school_id,
+          email,
+          status,
+          expires_at,
+          accepted_at,
+          created_at,
+          school_name,
+          school_phone,
+          school_email,
+          school_province,
+          school_address,
+          principal_name
+        `
+      )
+      .eq(
+        'group_id',
+        group.id
+      )
+      .eq(
+        'status',
+        'pending'
+      )
+      .is(
+        'school_id',
+        null
+      )
+      .order(
+        'created_at',
+        {
+          ascending: false,
+        }
+      )
+
+    if (
+      pendingInvitesError
+    ) {
+      console.error(
+        '[school-group] pending invite lookup failed:',
+        pendingInvitesError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not load pending school invitations.',
+        },
+        {
+          status: 500,
         }
       )
     }
 
-    // ---------------------------------------------------------
-    // 5. RETURN GROUP OVERVIEW
-    // ---------------------------------------------------------
+    const now =
+      Date.now()
+
+    const pendingInvites =
+      (
+        pendingInviteRows ||
+        []
+      )
+        .filter(
+          (
+            invite: any
+          ) => {
+            if (
+              !invite.expires_at
+            ) {
+              return true
+            }
+
+            return (
+              new Date(
+                invite.expires_at
+              ).getTime() >
+              now
+            )
+          }
+        )
+        .map(
+          (
+            invite: any
+          ) => ({
+            id:
+              invite.id,
+
+            group_id:
+              invite.group_id,
+
+            school_id:
+              invite.school_id,
+
+            status:
+              invite.status,
+
+            expires_at:
+              invite.expires_at,
+
+            created_at:
+              invite.created_at,
+
+            school_name:
+              invite.school_name,
+
+            school_phone:
+              invite.school_phone,
+
+            school_email:
+              invite.school_email,
+
+            school_province:
+              invite.school_province,
+
+            school_address:
+              invite.school_address,
+
+            principal_name:
+              invite.principal_name,
+
+            principal_email:
+              invite.email,
+          })
+        )
+
+    /*
+    |--------------------------------------------------------------------------
+    | 6. RETURN GROUP OVERVIEW
+    |--------------------------------------------------------------------------
+    */
 
     return NextResponse.json({
       ok: true,
-      is_group_owner: true,
+
+      is_group_owner:
+        true,
+
       group,
+
       schools,
+
+      pending_invites:
+        pendingInvites,
     })
-  } catch (error: any) {
+  } catch (
+    error: any
+  ) {
     console.error(
       '[school-group] unexpected error:',
       error
