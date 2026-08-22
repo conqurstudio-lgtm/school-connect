@@ -9,6 +9,7 @@ import {
 import {
   useParams,
   useRouter,
+  useSearchParams,
 } from 'next/navigation'
 
 import {
@@ -77,6 +78,12 @@ type InviteData = {
 export default function PrincipalInvitePage() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const existingMode =
+    searchParams.get(
+      'existing'
+    ) === '1'
 
   const token =
     String(
@@ -259,6 +266,103 @@ export default function PrincipalInvitePage() {
       setError(
         err?.message ||
           'Could not complete account setup.'
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  async function handleExistingAccount() {
+    if (submitting) {
+      return
+    }
+
+    setError('')
+
+    if (!existingMode) {
+      const returnPath =
+        `/school/group/invite/${encodeURIComponent(
+          token
+        )}?existing=1`
+
+      router.push(
+        `/auth/login?redirectTo=${encodeURIComponent(
+          returnPath
+        )}`
+      )
+
+      return
+    }
+
+    if (!fullName.trim()) {
+      setError(
+        'Please enter your full name.'
+      )
+      return
+    }
+
+    try {
+      setSubmitting(true)
+
+      const response =
+        await fetch(
+          `/api/school/group/invites/${encodeURIComponent(
+            token
+          )}/accept`,
+          {
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body: JSON.stringify({
+              mode:
+                'existing',
+
+              full_name:
+                fullName.trim(),
+            }),
+          }
+        )
+
+      const result =
+        await response.json()
+
+      if (!response.ok) {
+        if (
+          response.status ===
+          401
+        ) {
+          const returnPath =
+            `/school/group/invite/${encodeURIComponent(
+              token
+            )}?existing=1`
+
+          router.push(
+            `/auth/login?redirectTo=${encodeURIComponent(
+              returnPath
+            )}`
+          )
+
+          return
+        }
+
+        throw new Error(
+          result?.error ||
+            'Could not link this invitation to your account.'
+        )
+      }
+
+      router.replace(
+        result?.login_url ||
+          '/school'
+      )
+    } catch (err: any) {
+      setError(
+        err?.message ||
+          'Could not link this invitation to your account.'
       )
     } finally {
       setSubmitting(false)
@@ -822,6 +926,93 @@ export default function PrincipalInvitePage() {
             )}
           </button>
         </form>
+
+        <div
+          style={{
+            marginTop: 18,
+            paddingTop: 18,
+            borderTop:
+              `1px solid ${T.border}`,
+            textAlign: 'center',
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              color: T.ink2,
+              fontSize: 12.5,
+              lineHeight: 1.5,
+            }}
+          >
+            {existingMode
+              ? 'Already signed in? Continue with the School Connect account that matches the invited email.'
+              : 'Already have a School Connect account? Sign in instead of creating another account.'}
+          </p>
+
+          <button
+            type="button"
+            disabled={
+              submitting
+            }
+            onClick={
+              handleExistingAccount
+            }
+            style={{
+              width: '100%',
+              minHeight: 48,
+              marginTop: 12,
+              borderRadius: 999,
+              border:
+                `1px solid ${T.border}`,
+              background:
+                T.white,
+              color:
+                T.accent,
+              fontFamily:
+                'inherit',
+              fontSize: 13.5,
+              fontWeight: 620,
+              cursor:
+                submitting
+                  ? 'wait'
+                  : 'pointer',
+            }}
+          >
+            {existingMode
+              ? submitting
+                ? 'Linking account…'
+                : 'Continue with signed-in account'
+              : 'I already have an account'}
+          </button>
+
+          {existingMode && (
+            <button
+              type="button"
+              onClick={() => {
+                router.replace(
+                  `/school/group/invite/${encodeURIComponent(
+                    token
+                  )}`
+                )
+              }}
+              style={{
+                marginTop: 10,
+                border: 'none',
+                background:
+                  'transparent',
+                color:
+                  T.ink3,
+                fontFamily:
+                  'inherit',
+                fontSize: 12,
+                cursor:
+                  'pointer',
+              }}
+            >
+              Create a new account instead
+            </button>
+          )}
+        </div>
 
         <div
           style={{

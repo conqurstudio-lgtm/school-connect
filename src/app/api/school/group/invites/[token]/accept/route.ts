@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createServerClient } from '@supabase/ssr'
 import { randomBytes } from 'crypto'
 
 export const dynamic = 'force-dynamic'
@@ -36,6 +37,45 @@ function serviceClient() {
       },
     }
   )
+}
+
+
+async function getLoggedInUser(
+  request: NextRequest
+) {
+  const supabase =
+    createServerClient(
+      process.env
+        .NEXT_PUBLIC_SUPABASE_URL!,
+      process.env
+        .NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+
+          setAll() {
+            // Read-only authentication check.
+          },
+        },
+      }
+    )
+
+  const {
+    data: { user },
+    error,
+  } =
+    await supabase.auth.getUser()
+
+  if (
+    error ||
+    !user
+  ) {
+    return null
+  }
+
+  return user
 }
 
 function cleanText(value: unknown) {
@@ -204,6 +244,7 @@ async function cleanupFailedSetup(
     userId?: string | null
     schoolId?: string | null
     membershipId?: string | null
+    restoreProfile?: any | null
   }
 ) {
   if (
@@ -248,6 +289,25 @@ async function cleanupFailedSetup(
           values.schoolId
         )
     } catch {}
+
+    if (
+      values.restoreProfile
+        ?.id
+    ) {
+      try {
+        await sb
+          .from(
+            'profiles'
+          )
+          .upsert(
+            values.restoreProfile,
+            {
+              onConflict:
+                'id',
+            }
+          )
+      } catch {}
+    }
   }
 
   if (
@@ -278,6 +338,12 @@ export async function POST(
   let createdUserId:
     | string
     | null = null
+
+  let createdNewAuthUser =
+    false
+
+  let existingProfileSnapshot:
+    any = null
 
   let createdSchoolId:
     | string
@@ -337,6 +403,11 @@ export async function POST(
       )
     }
 
+    const mode =
+      cleanText(
+        body.mode
+      ) || 'new'
+
     const fullName =
       cleanText(
         body.full_name
@@ -361,8 +432,9 @@ export async function POST(
     }
 
     if (
+      mode !== 'existing' &&
       password.length <
-      8
+        8
     ) {
       return NextResponse.json(
         {
@@ -649,6 +721,125 @@ export async function POST(
 
     /*
     |--------------------------------------------------------------------------
+    | 6A. EXISTING ACCOUNT CLAIM
+    |--------------------------------------------------------------------------
+    */
+
+    if (mode === 'existing') {
+      const loggedInUser =
+        await getLoggedInUser(
+          request
+        )
+
+      if (!loggedInUser) {
+        return NextResponse.json(
+          {
+            error:
+              'Please sign in with the invited principal account first.',
+          },
+          {
+            status: 401,
+          }
+        )
+      }
+
+      const invitedEmail =
+        String(
+          invite.email || ''
+        )
+          .trim()
+          .toLowerCase()
+
+      const loggedInEmail =
+        String(
+          loggedInUser.email || ''
+        )
+          .trim()
+          .toLowerCase()
+
+      if (
+        !loggedInEmail ||
+        loggedInEmail !==
+          invitedEmail
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              'The signed-in account does not match the principal email on this invitation.',
+          },
+          {
+            status: 403,
+          }
+        )
+      }
+
+      const {
+        data:
+          existingProfile,
+        error:
+          existingProfileError,
+      } = await sb
+        .from(
+          'profiles'
+        )
+        .select(
+          'id, role, full_name, email, school_id, managed_school_id'
+        )
+        .eq(
+          'id',
+          loggedInUser.id
+        )
+        .maybeSingle()
+
+      if (existingProfileError) {
+        console.error(
+          '[branch-accept] existing profile lookup failed:',
+          existingProfileError
+        )
+
+        return NextResponse.json(
+          {
+            error:
+              'Could not verify the existing principal account.',
+          },
+          {
+            status: 500,
+          }
+        )
+      }
+
+      existingProfileSnapshot =
+        existingProfile
+          ? {
+              ...existingProfile,
+            }
+          : null
+
+      const existingSchoolId =
+        existingProfile
+          ?.managed_school_id ||
+        existingProfile
+          ?.school_id ||
+        null
+
+      if (existingSchoolId) {
+        return NextResponse.json(
+          {
+            error:
+              'This School Connect account is already linked to another school. Please use an account that is not currently assigned to a school.',
+          },
+          {
+            status: 409,
+          }
+        )
+      }
+
+      createdUserId =
+        loggedInUser.id
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | 6. CREATE NORMAL PRINCIPAL AUTH ACCOUNT
     |--------------------------------------------------------------------------
     |
@@ -657,15 +848,20 @@ export async function POST(
     |
     */
 
-    const {
-      data:
-        createdAuth,
-      error:
-        authError,
-    } = await sb
-      .auth
-      .admin
-      .createUser({
+    let createdAuth:
+      any = null
+
+    let authError:
+      any = null
+
+    if (
+      mode !== 'existing'
+    ) {
+      const result =
+        await sb
+          .auth
+          .admin
+          .createUser({
         email:
           String(
             invite.email
@@ -692,14 +888,20 @@ export async function POST(
             source:
               'school_group_invite',
           },
-      })
+        })
 
-    if (
-      authError ||
-      !createdAuth
-        ?.user
-        ?.id
-    ) {
+      createdAuth =
+        result.data
+
+      authError =
+        result.error
+
+      if (
+        authError ||
+        !createdAuth
+          ?.user
+          ?.id
+      ) {
       const message =
         authError
           ?.message ||
@@ -714,7 +916,7 @@ export async function POST(
         {
           error:
             duplicate
-              ? 'An account already exists with this principal email. Please use a different principal email for this test.'
+              ? 'An account already exists with this principal email. Use the existing School Connect account option below.'
               : message,
         },
         {
@@ -724,10 +926,14 @@ export async function POST(
               : 500,
         }
       )
-    }
+      }
 
-    createdUserId =
-      createdAuth.user.id
+      createdUserId =
+        createdAuth.user.id
+
+      createdNewAuthUser =
+        true
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -894,7 +1100,12 @@ export async function POST(
         sb,
         {
           userId:
-            createdUserId,
+            createdNewAuthUser
+              ? createdUserId
+              : null,
+
+          restoreProfile:
+            existingProfileSnapshot,
         }
       )
 
@@ -952,7 +1163,12 @@ export async function POST(
         sb,
         {
           userId:
-            createdUserId,
+            createdNewAuthUser
+              ? createdUserId
+              : null,
+
+          restoreProfile:
+            existingProfileSnapshot,
 
           schoolId:
             createdSchoolId,
@@ -1022,7 +1238,12 @@ export async function POST(
         sb,
         {
           userId:
-            createdUserId,
+            createdNewAuthUser
+              ? createdUserId
+              : null,
+
+          restoreProfile:
+            existingProfileSnapshot,
 
           schoolId:
             createdSchoolId,
@@ -1111,7 +1332,12 @@ export async function POST(
         sb,
         {
           userId:
-            createdUserId,
+            createdNewAuthUser
+              ? createdUserId
+              : null,
+
+          restoreProfile:
+            existingProfileSnapshot,
 
           schoolId:
             createdSchoolId,
@@ -1154,7 +1380,9 @@ export async function POST(
         ok: true,
 
         message:
-          'Principal account and school created successfully.',
+          mode === 'existing'
+            ? 'Existing principal account linked successfully.'
+            : 'Principal account and school created successfully.',
 
         principal: {
           id:
@@ -1199,16 +1427,18 @@ export async function POST(
         },
 
         login_url:
-          `/auth/login?created=1&email=${encodeURIComponent(
-            String(
-              invite.email
-            )
-              .trim()
-              .toLowerCase()
-          )}&school=${encodeURIComponent(
-            school.name ||
-              invite.school_name
-          )}`,
+          mode === 'existing'
+            ? '/school'
+            : `/auth/login?created=1&email=${encodeURIComponent(
+                String(
+                  invite.email
+                )
+                  .trim()
+                  .toLowerCase()
+              )}&school=${encodeURIComponent(
+                school.name ||
+                  invite.school_name
+              )}`,
       },
       {
         status: 201,

@@ -3,7 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-import { AuthDetailText, AuthPrivacyLine, AuthTextLink } from '@/components/auth/AuthDetailText'
+import {
+  AuthDetailText,
+  AuthPrivacyLine,
+  AuthTextLink,
+} from '@/components/auth/AuthDetailText'
+
 import { AuthFormField } from '@/components/auth/AuthFormField'
 import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
@@ -14,12 +19,24 @@ export default function LoginPage({
   searchParams?: {
     created?: string
     error?: string
+    redirectTo?: string
   }
 }) {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] =
+    useState(false)
 
-  const created = searchParams?.created === '1'
-  const error = searchParams?.error
+  const created =
+    searchParams?.created === '1'
+
+  const error =
+    searchParams?.error
+
+  const redirectTo =
+    searchParams?.redirectTo &&
+    searchParams.redirectTo.startsWith('/') &&
+    !searchParams.redirectTo.startsWith('//')
+      ? searchParams.redirectTo
+      : '/school'
 
   return (
     <main
@@ -29,8 +46,13 @@ export default function LoginPage({
         background: '#FFFFFF',
         display: 'flex',
         justifyContent: 'center',
-        padding: 'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+
+        padding:
+          'max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom))',
+
+        fontFamily:
+          'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+
         boxSizing: 'border-box',
         color: '#21222D',
       }}
@@ -39,12 +61,20 @@ export default function LoginPage({
         style={{
           width: '100%',
           maxWidth: 390,
-          minHeight: 'calc(100dvh - 44px)',
+
+          minHeight:
+            'calc(100dvh - 44px)',
+
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-start',
-          padding: '36px 16px 24px',
-          boxSizing: 'border-box',
+          justifyContent:
+            'flex-start',
+
+          padding:
+            '36px 16px 24px',
+
+          boxSizing:
+            'border-box',
         }}
       >
         <div>
@@ -58,15 +88,32 @@ export default function LoginPage({
           {created ? (
             <div
               style={{
-                margin: '-6px 0 18px',
-                padding: '12px 14px',
-                borderRadius: 14,
-                background: '#F7F7F8',
-                color: 'rgba(33, 34, 45, 0.70)',
-                fontSize: 13,
-                lineHeight: 1.45,
-                textAlign: 'center',
-                fontWeight: 500,
+                margin:
+                  '-6px 0 18px',
+
+                padding:
+                  '12px 14px',
+
+                borderRadius:
+                  14,
+
+                background:
+                  '#F7F7F8',
+
+                color:
+                  'rgba(33, 34, 45, 0.70)',
+
+                fontSize:
+                  13,
+
+                lineHeight:
+                  1.45,
+
+                textAlign:
+                  'center',
+
+                fontWeight:
+                  500,
               }}
             >
               Account created. Sign in to continue.
@@ -76,15 +123,32 @@ export default function LoginPage({
           {error ? (
             <div
               style={{
-                margin: '-6px 0 18px',
-                padding: '12px 14px',
-                borderRadius: 14,
-                background: '#FFF1F2',
-                color: '#9F1239',
-                fontSize: 13,
-                lineHeight: 1.45,
-                textAlign: 'center',
-                fontWeight: 500,
+                margin:
+                  '-6px 0 18px',
+
+                padding:
+                  '12px 14px',
+
+                borderRadius:
+                  14,
+
+                background:
+                  '#FFF1F2',
+
+                color:
+                  '#9F1239',
+
+                fontSize:
+                  13,
+
+                lineHeight:
+                  1.45,
+
+                textAlign:
+                  'center',
+
+                fontWeight:
+                  500,
               }}
             >
               Sign in failed. Check your details and try again.
@@ -94,12 +158,20 @@ export default function LoginPage({
           <form
             method="POST"
             action="/api/auth/login-redirect"
-            onSubmit={() => setLoading(true)}
+            onSubmit={() =>
+              setLoading(true)
+            }
             style={{
               display: 'grid',
               gap: 14,
             }}
           >
+            <input
+              type="hidden"
+              name="redirectTo"
+              value={redirectTo}
+            />
+
             <AuthFormField
               label="Email"
               name="email"
@@ -120,8 +192,12 @@ export default function LoginPage({
               required
             />
 
-            <AuthSubmitButton loading={loading}>
-              {loading ? 'Signing in…' : 'Sign in'}
+            <AuthSubmitButton
+              loading={loading}
+            >
+              {loading
+                ? 'Signing in…'
+                : 'Sign in'}
             </AuthSubmitButton>
           </form>
         </div>
@@ -146,5 +222,5 @@ export default function LoginPage({
         </div>
       </section>
     </main>
-)
+  )
 }
