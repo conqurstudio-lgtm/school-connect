@@ -326,12 +326,6 @@ export async function GET(
     |--------------------------------------------------------------------------
     | 5. LOAD PENDING BRANCH INVITATIONS
     |--------------------------------------------------------------------------
-    |
-    | These are schools that the group owner has added, but the principal
-    | has not completed their School Connect account yet.
-    |
-    | school_id remains null until the principal accepts the invitation.
-    |
     */
 
     const {
@@ -349,6 +343,7 @@ export async function GET(
           group_id,
           school_id,
           email,
+          token,
           status,
           expires_at,
           accepted_at,
@@ -437,6 +432,9 @@ export async function GET(
 
             school_id:
               invite.school_id,
+
+            token:
+              invite.token,
 
             status:
               invite.status,

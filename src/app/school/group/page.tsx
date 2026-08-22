@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
   Building2,
+  Check,
   Clock3,
+  Copy,
   Crown,
   MapPin,
   Plus,
@@ -27,6 +29,7 @@ type PendingInvite = {
   id: string
   group_id: string
   school_id?: string | null
+  token?: string | null
   status: 'pending'
   expires_at?: string | null
   created_at?: string | null
@@ -77,6 +80,24 @@ function initials(name: string) {
     .toUpperCase()
 }
 
+function fallbackCopy(text: string) {
+  const textarea =
+    document.createElement('textarea')
+
+  textarea.value = text
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+
+  document.body.appendChild(textarea)
+
+  textarea.focus()
+  textarea.select()
+
+  document.execCommand('copy')
+
+  document.body.removeChild(textarea)
+}
+
 export default function SchoolGroupPage() {
   const router = useRouter()
 
@@ -88,6 +109,11 @@ export default function SchoolGroupPage() {
 
   const [error, setError] =
     useState('')
+
+  const [
+    copiedInviteId,
+    setCopiedInviteId,
+  ] = useState<string | null>(null)
 
   useEffect(() => {
     let mounted = true
@@ -170,6 +196,61 @@ export default function SchoolGroupPage() {
       mounted = false
     }
   }, [router])
+
+  async function copyInviteLink(
+    invite: PendingInvite
+  ) {
+    if (!invite.token) return
+
+    const link =
+      `${window.location.origin}` +
+      `/school/group/invite/${invite.token}`
+
+    try {
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+        await navigator.clipboard.writeText(
+          link
+        )
+      } else {
+        fallbackCopy(link)
+      }
+
+      setCopiedInviteId(
+        invite.id
+      )
+
+      window.setTimeout(() => {
+        setCopiedInviteId(
+          (current) =>
+            current === invite.id
+              ? null
+              : current
+        )
+      }, 2200)
+    } catch {
+      try {
+        fallbackCopy(link)
+
+        setCopiedInviteId(
+          invite.id
+        )
+
+        window.setTimeout(() => {
+          setCopiedInviteId(
+            (current) =>
+              current === invite.id
+                ? null
+                : current
+          )
+        }, 2200)
+      } catch {
+        // Leave button unchanged if copy fails.
+      }
+    }
+  }
 
   if (loading) {
     return (
@@ -759,6 +840,10 @@ export default function SchoolGroupPage() {
                 .filter(Boolean)
                 .join(' · ')
 
+              const copied =
+                copiedInviteId ===
+                invite.id
+
               return (
                 <div
                   key={
@@ -982,6 +1067,83 @@ export default function SchoolGroupPage() {
                             invite.school_phone}
                         </p>
                       )}
+
+                    {invite.token && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyInviteLink(
+                            invite
+                          )
+                        }
+                        style={{
+                          marginTop: 11,
+
+                          minHeight:
+                            34,
+
+                          borderRadius:
+                            999,
+
+                          border:
+                            `1px solid ${T.border}`,
+
+                          background:
+                            copied
+                              ? T.accentSoft
+                              : T.soft,
+
+                          color:
+                            copied
+                              ? T.accent
+                              : T.ink2,
+
+                          padding:
+                            '0 12px',
+
+                          display:
+                            'inline-flex',
+
+                          alignItems:
+                            'center',
+
+                          justifyContent:
+                            'center',
+
+                          gap: 6,
+
+                          fontFamily:
+                            'inherit',
+
+                          fontSize:
+                            11.5,
+
+                          fontWeight:
+                            650,
+
+                          cursor:
+                            'pointer',
+                        }}
+                      >
+                        {copied ? (
+                          <Check
+                            size={
+                              13
+                            }
+                          />
+                        ) : (
+                          <Copy
+                            size={
+                              13
+                            }
+                          />
+                        )}
+
+                        {copied
+                          ? 'Invite link copied'
+                          : 'Copy invite link'}
+                      </button>
+                    )}
                   </div>
                 </div>
               )
