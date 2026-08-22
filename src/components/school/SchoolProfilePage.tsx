@@ -818,10 +818,50 @@ function SettingsSheet({ school, isAdmin, onClose, onEditProfile, onLogoClick, u
 export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, userId, bootLoading = false }: SchoolProfilePageProps) {
   const [school, setSchool] = useState(initialSchool)
   const [schoolClientReady, setSchoolClientReady] = useState(false)
+  const [isGroupOwner, setIsGroupOwner] = useState(false)
 
   useEffect(() => {
     setSchoolClientReady(true)
   }, [])
+
+  useEffect(() => {
+    if (!isAdmin) {
+      setIsGroupOwner(false)
+      return
+    }
+
+    let alive = true
+
+    async function loadGroupOwnerStatus() {
+      try {
+        const response = await fetch('/api/school/group', {
+          method: 'GET',
+          cache: 'no-store',
+        })
+
+        if (!response.ok) {
+          if (alive) setIsGroupOwner(false)
+          return
+        }
+
+        const result = await response.json()
+
+        if (alive) {
+          setIsGroupOwner(result?.is_group_owner === true)
+        }
+      } catch {
+        if (alive) {
+          setIsGroupOwner(false)
+        }
+      }
+    }
+
+    loadGroupOwnerStatus()
+
+    return () => {
+      alive = false
+    }
+  }, [isAdmin, school.id])
 
   useEffect(() => {
     const cachedCount = readCachedTeacherCount(initialSchool.id)
@@ -1190,6 +1230,66 @@ export function SchoolProfilePage({ school: initialSchool, profile, isAdmin, use
               <MiniStat label="Admin" value={<User size={18} strokeWidth={2.25} />} />
             </div>
           </SectionCard>
+
+          {isAdmin && isGroupOwner && (
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = '/school/group'
+              }}
+              style={{
+                width: '100%',
+                minHeight: 68,
+                borderRadius: 22,
+                border: `1px solid ${T.border}`,
+                background: T.accentSoft,
+                padding: '13px 16px',
+                marginBottom: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 12,
+                fontFamily: 'inherit',
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              <div style={{ minWidth: 0 }}>
+                <p
+                  style={{
+                    margin: 0,
+                    color: T.ink,
+                    fontSize: 14,
+                    fontWeight: 600,
+                  }}
+                >
+                  Our Schools
+                </p>
+
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    color: T.ink3,
+                    fontSize: 12.2,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  Manage branches and invitations
+                </p>
+              </div>
+
+              <span
+                style={{
+                  flexShrink: 0,
+                  color: T.accent,
+                  fontSize: 12.5,
+                  fontWeight: 650,
+                }}
+              >
+                View
+              </span>
+            </button>
+          )}
 
           {isAdmin && (
             <TeachersAccordion
