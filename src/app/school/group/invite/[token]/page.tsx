@@ -1,16 +1,21 @@
 'use client'
 
 import {
+  FormEvent,
   useEffect,
   useState,
 } from 'react'
+
 import {
   useParams,
+  useRouter,
 } from 'next/navigation'
+
 import {
   Building2,
   CheckCircle2,
   Clock3,
+  Loader2,
   Mail,
   MapPin,
   Phone,
@@ -39,6 +44,7 @@ type InviteData = {
 
   invite: {
     id: string
+
     status:
       | 'pending'
       | 'accepted'
@@ -70,6 +76,7 @@ type InviteData = {
 
 export default function PrincipalInvitePage() {
   const params = useParams()
+  const router = useRouter()
 
   const token =
     String(
@@ -86,6 +93,22 @@ export default function PrincipalInvitePage() {
 
   const [error, setError] =
     useState('')
+
+  const [fullName, setFullName] =
+    useState('')
+
+  const [password, setPassword] =
+    useState('')
+
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState('')
+
+  const [
+    submitting,
+    setSubmitting,
+  ] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -127,6 +150,11 @@ export default function PrincipalInvitePage() {
         }
 
         setData(result)
+
+        setFullName(
+          result?.invite
+            ?.principal_name || ''
+        )
       } catch (err: any) {
         if (!mounted) {
           return
@@ -149,6 +177,93 @@ export default function PrincipalInvitePage() {
       mounted = false
     }
   }, [token])
+
+  async function handleSubmit(
+    event: FormEvent
+  ) {
+    event.preventDefault()
+
+    if (submitting) {
+      return
+    }
+
+    setError('')
+
+    if (!fullName.trim()) {
+      setError(
+        'Please enter your full name.'
+      )
+      return
+    }
+
+    if (password.length < 8) {
+      setError(
+        'Password must be at least 8 characters.'
+      )
+      return
+    }
+
+    if (
+      password !==
+      confirmPassword
+    ) {
+      setError(
+        'The passwords do not match.'
+      )
+      return
+    }
+
+    try {
+      setSubmitting(true)
+
+      const response =
+        await fetch(
+          `/api/school/group/invites/${encodeURIComponent(
+            token
+          )}/accept`,
+          {
+            method: 'POST',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body: JSON.stringify({
+              full_name:
+                fullName.trim(),
+
+              password,
+            }),
+          }
+        )
+
+      const result =
+        await response.json()
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error ||
+            'Could not complete account setup.'
+        )
+      }
+
+      const loginUrl =
+        result?.login_url ||
+        '/auth/login'
+
+      router.replace(
+        loginUrl
+      )
+    } catch (err: any) {
+      setError(
+        err?.message ||
+          'Could not complete account setup.'
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -190,7 +305,10 @@ export default function PrincipalInvitePage() {
     )
   }
 
-  if (error || !data) {
+  if (
+    error &&
+    !data
+  ) {
     return (
       <PageShell>
         <StatusCard
@@ -202,7 +320,9 @@ export default function PrincipalInvitePage() {
           iconBackground={
             T.dangerSoft
           }
-          iconColor={T.danger}
+          iconColor={
+            T.danger
+          }
           title="Invitation unavailable"
           description={
             error ||
@@ -211,6 +331,10 @@ export default function PrincipalInvitePage() {
         />
       </PageShell>
     )
+  }
+
+  if (!data) {
+    return null
   }
 
   if (
@@ -228,7 +352,9 @@ export default function PrincipalInvitePage() {
           iconBackground={
             T.dangerSoft
           }
-          iconColor={T.danger}
+          iconColor={
+            T.danger
+          }
           title="Invitation expired"
           description="This principal invitation has expired. Please ask the School Group administrator to send you a new invitation."
         />
@@ -251,7 +377,9 @@ export default function PrincipalInvitePage() {
           iconBackground={
             T.dangerSoft
           }
-          iconColor={T.danger}
+          iconColor={
+            T.danger
+          }
           title="Invitation cancelled"
           description="This invitation is no longer active. Please contact the School Group administrator."
         />
@@ -274,9 +402,11 @@ export default function PrincipalInvitePage() {
           iconBackground={
             T.successSoft
           }
-          iconColor={T.success}
+          iconColor={
+            T.success
+          }
           title="Invitation already accepted"
-          description="This school has already been set up."
+          description="This school has already been set up. You can sign in using the principal account."
         />
       </PageShell>
     )
@@ -313,7 +443,8 @@ export default function PrincipalInvitePage() {
 
         <p
           style={{
-            margin: '22px 0 0',
+            margin:
+              '22px 0 0',
             color: T.ink3,
             fontSize: 12,
             fontWeight: 600,
@@ -337,15 +468,16 @@ export default function PrincipalInvitePage() {
               '-0.04em',
           }}
         >
-          You&apos;ve been invited
-          to manage{' '}
+          You&apos;ve been
+          invited to manage{' '}
           {school?.name ||
             'a school'}
         </h1>
 
         <p
           style={{
-            margin: '11px 0 0',
+            margin:
+              '11px 0 0',
             color: T.ink2,
             fontSize: 14,
             lineHeight: 1.55,
@@ -355,9 +487,10 @@ export default function PrincipalInvitePage() {
             .principal_name
             ? `${data.invite.principal_name}, `
             : ''}
-          you have been invited to
-          become the administrator
-          of this school under{' '}
+          you have been invited
+          to become the
+          administrator of this
+          school under{' '}
           <strong>
             {data.group.name}
           </strong>
@@ -377,7 +510,8 @@ export default function PrincipalInvitePage() {
               padding: 18,
               background: T.soft,
               display: 'flex',
-              alignItems: 'center',
+              alignItems:
+                'center',
               gap: 14,
             }}
           >
@@ -387,13 +521,15 @@ export default function PrincipalInvitePage() {
                 height: 48,
                 flexShrink: 0,
                 borderRadius: 16,
-                background: T.white,
+                background:
+                  T.white,
                 display: 'flex',
                 alignItems:
                   'center',
                 justifyContent:
                   'center',
-                color: T.accent,
+                color:
+                  T.accent,
               }}
             >
               <Building2
@@ -511,12 +647,181 @@ export default function PrincipalInvitePage() {
                   school.address,
                   school.province,
                 ]
-                  .filter(Boolean)
+                  .filter(
+                    Boolean
+                  )
                   .join(', ')}
               />
             )}
           </div>
         </div>
+
+        <div
+          style={{
+            marginTop: 24,
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              color: T.ink,
+              fontSize: 17,
+              fontWeight: 630,
+            }}
+          >
+            Create your admin account
+          </p>
+
+          <p
+            style={{
+              margin:
+                '6px 0 0',
+              color: T.ink3,
+              fontSize: 12.5,
+              lineHeight: 1.5,
+            }}
+          >
+            Use the invited email
+            address and choose your
+            password.
+          </p>
+        </div>
+
+        <form
+          onSubmit={
+            handleSubmit
+          }
+          style={{
+            marginTop: 18,
+            display: 'grid',
+            gap: 14,
+          }}
+        >
+          <Field
+            label="Full name"
+            value={fullName}
+            required
+            placeholder="Your full name"
+            onChange={
+              setFullName
+            }
+          />
+
+          <Field
+            label="Email"
+            value={
+              data.invite
+                .principal_email ||
+              ''
+            }
+            placeholder=""
+            type="email"
+            disabled
+            onChange={() => {}}
+          />
+
+          <Field
+            label="Password"
+            value={password}
+            required
+            placeholder="At least 8 characters"
+            type="password"
+            onChange={
+              setPassword
+            }
+          />
+
+          <Field
+            label="Confirm password"
+            value={
+              confirmPassword
+            }
+            required
+            placeholder="Enter password again"
+            type="password"
+            onChange={
+              setConfirmPassword
+            }
+          />
+
+          {error && (
+            <div
+              style={{
+                padding:
+                  '12px 14px',
+                borderRadius: 16,
+                background:
+                  T.dangerSoft,
+                color:
+                  T.danger,
+                fontSize: 12.5,
+                lineHeight: 1.5,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={
+              submitting
+            }
+            style={{
+              width: '100%',
+              height: 51,
+              marginTop: 4,
+              borderRadius: 999,
+              border: 'none',
+
+              background:
+                submitting
+                  ? '#F7AD91'
+                  : T.accent,
+
+              color: T.white,
+
+              display: 'flex',
+              alignItems:
+                'center',
+              justifyContent:
+                'center',
+              gap: 8,
+
+              fontFamily:
+                'inherit',
+              fontSize: 14,
+              fontWeight: 620,
+
+              cursor:
+                submitting
+                  ? 'wait'
+                  : 'pointer',
+            }}
+          >
+            {submitting ? (
+              <>
+                <Loader2
+                  size={17}
+                  style={{
+                    animation:
+                      'spin 0.8s linear infinite',
+                  }}
+                />
+
+                Creating account...
+              </>
+            ) : (
+              <>
+                <ShieldCheck
+                  size={17}
+                />
+
+                Create admin account
+              </>
+            )}
+          </button>
+        </form>
 
         <div
           style={{
@@ -535,63 +840,40 @@ export default function PrincipalInvitePage() {
               fontWeight: 620,
             }}
           >
-            What happens next?
+            Your school stays independent
           </p>
 
           <p
             style={{
-              margin: '6px 0 0',
+              margin:
+                '6px 0 0',
               color: T.ink2,
               fontSize: 12.5,
               lineHeight: 1.55,
             }}
           >
-            You will create your
-            School Connect admin
-            account. After setup,
-            this school becomes your
-            normal school dashboard,
-            where you can manage
+            After setup you will
+            manage this school
+            normally, including
             teachers, learners,
             reports, Moments and
-            parents.
+            parents. You will not
+            have access to add or
+            manage other schools in
+            the group.
           </p>
         </div>
-
-        <button
-          type="button"
-          disabled
-          style={{
-            width: '100%',
-            height: 51,
-            marginTop: 22,
-            borderRadius: 999,
-            border: 'none',
-            background: T.accent,
-            color: T.white,
-            fontFamily: 'inherit',
-            fontSize: 14,
-            fontWeight: 620,
-            opacity: 0.55,
-            cursor: 'not-allowed',
-          }}
-        >
-          Continue account setup
-        </button>
-
-        <p
-          style={{
-            margin:
-              '10px 0 0',
-            textAlign: 'center',
-            color: T.ink3,
-            fontSize: 11.5,
-          }}
-        >
-          Account setup will be
-          connected in the next step.
-        </p>
       </div>
+
+      <style jsx global>{`
+        @keyframes spin {
+          to {
+            transform: rotate(
+              360deg
+            );
+          }
+        }
+      `}</style>
     </PageShell>
   )
 }
@@ -599,7 +881,8 @@ export default function PrincipalInvitePage() {
 function PageShell({
   children,
 }: {
-  children: React.ReactNode
+  children:
+    React.ReactNode
 }) {
   return (
     <main
@@ -618,12 +901,107 @@ function PageShell({
           margin: '0 auto',
           padding:
             'max(24px, env(safe-area-inset-top)) 18px max(38px, env(safe-area-inset-bottom))',
-          boxSizing: 'border-box',
+          boxSizing:
+            'border-box',
         }}
       >
         {children}
       </div>
     </main>
+  )
+}
+
+function Field({
+  label,
+  value,
+  placeholder,
+  onChange,
+  required = false,
+  type = 'text',
+  disabled = false,
+}: {
+  label: string
+  value: string
+  placeholder: string
+  onChange: (
+    value: string
+  ) => void
+  required?: boolean
+  type?: string
+  disabled?: boolean
+}) {
+  return (
+    <label
+      style={{
+        display: 'grid',
+        gap: 7,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 12.5,
+          color: T.ink2,
+          fontWeight: 600,
+        }}
+      >
+        {label}
+
+        {required && (
+          <span
+            style={{
+              color:
+                T.accent,
+              marginLeft: 3,
+            }}
+          >
+            *
+          </span>
+        )}
+      </span>
+
+      <input
+        type={type}
+        value={value}
+        required={required}
+        disabled={disabled}
+        placeholder={
+          placeholder
+        }
+        onChange={(
+          event
+        ) =>
+          onChange(
+            event.target.value
+          )
+        }
+        style={{
+          width: '100%',
+          height: 48,
+          borderRadius: 16,
+          border: `1px solid ${T.border}`,
+          background:
+            disabled
+              ? '#F2F2F3'
+              : T.soft,
+          color:
+            disabled
+              ? T.ink3
+              : T.ink,
+          padding:
+            '0 14px',
+          boxSizing:
+            'border-box',
+          outline: 'none',
+          fontFamily:
+            'inherit',
+          fontSize: 14,
+          cursor:
+            disabled
+              ? 'not-allowed'
+              : 'text',
+        }}
+      />
+    </label>
   )
 }
 
@@ -651,10 +1029,12 @@ function Detail({
           height: 30,
           flexShrink: 0,
           borderRadius: 10,
-          background: T.soft,
+          background:
+            T.soft,
           color: T.ink3,
           display: 'flex',
-          alignItems: 'center',
+          alignItems:
+            'center',
           justifyContent:
             'center',
         }}
@@ -680,7 +1060,8 @@ function Detail({
 
         <p
           style={{
-            margin: '3px 0 0',
+            margin:
+              '3px 0 0',
             fontSize: 13.5,
             color: T.ink,
             lineHeight: 1.45,
@@ -719,20 +1100,24 @@ function StatusCard({
       <div
         style={{
           width: '100%',
-          textAlign: 'center',
+          textAlign:
+            'center',
         }}
       >
         <div
           style={{
             width: 66,
             height: 66,
-            margin: '0 auto',
+            margin:
+              '0 auto',
             borderRadius: 22,
             background:
               iconBackground,
-            color: iconColor,
+            color:
+              iconColor,
             display: 'flex',
-            alignItems: 'center',
+            alignItems:
+              'center',
             justifyContent:
               'center',
           }}
@@ -742,7 +1127,8 @@ function StatusCard({
 
         <h1
           style={{
-            margin: '20px 0 0',
+            margin:
+              '20px 0 0',
             color: T.ink,
             fontSize: 25,
             fontWeight: 650,
