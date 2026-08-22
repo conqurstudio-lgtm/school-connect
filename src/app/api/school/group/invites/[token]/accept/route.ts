@@ -783,7 +783,7 @@ export async function POST(
           'profiles'
         )
         .select(
-          'id, role, full_name, email, school_id, managed_school_id'
+          '*'
         )
         .eq(
           'id',
