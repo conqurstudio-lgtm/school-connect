@@ -1,6 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import {
+  useEffect,
+  useState,
+} from 'react'
 import Link from 'next/link'
 
 import {
@@ -13,30 +16,50 @@ import { AuthFormField } from '@/components/auth/AuthFormField'
 import { AuthSubmitButton } from '@/components/auth/AuthSubmitButton'
 import { AuthWelcomeHero } from '@/components/auth/AuthWelcomeHero'
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: {
-    created?: string
-    error?: string
-    redirectTo?: string
-  }
-}) {
+export default function LoginPage() {
   const [loading, setLoading] =
     useState(false)
 
-  const created =
-    searchParams?.created === '1'
+  const [created, setCreated] =
+    useState(false)
 
-  const error =
-    searchParams?.error
+  const [error, setError] =
+    useState<string | null>(
+      null
+    )
 
-  const redirectTo =
-    searchParams?.redirectTo &&
-    searchParams.redirectTo.startsWith('/') &&
-    !searchParams.redirectTo.startsWith('//')
-      ? searchParams.redirectTo
-      : '/school'
+  const [
+    redirectTo,
+    setRedirectTo,
+  ] = useState('/school')
+
+  useEffect(() => {
+    const params =
+      new URLSearchParams(
+        window.location.search
+      )
+
+    setCreated(
+      params.get('created') === '1'
+    )
+
+    setError(
+      params.get('error')
+    )
+
+    const requestedRedirect =
+      params.get('redirectTo') ||
+      ''
+
+    if (
+      requestedRedirect.startsWith('/') &&
+      !requestedRedirect.startsWith('//')
+    ) {
+      setRedirectTo(
+        requestedRedirect
+      )
+    }
+  }, [])
 
   return (
     <main
