@@ -509,3 +509,290 @@ export async function POST(
     )
   }
 }
+
+export async function DELETE(
+  request: NextRequest
+) {
+  try {
+    /*
+    |--------------------------------------------------------------------------
+    | 1. CONFIRM LOGGED-IN USER
+    |--------------------------------------------------------------------------
+    */
+
+    const user =
+      await getLoggedInUser(
+        request
+      )
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          error:
+            'Unauthorized',
+        },
+        {
+          status: 401,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 2. READ INVITATION ID
+    |--------------------------------------------------------------------------
+    */
+
+    let body: any = {}
+
+    try {
+      body =
+        await request.json()
+    } catch {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid request body.',
+        },
+        {
+          status: 400,
+        }
+      )
+    }
+
+    const inviteId =
+      cleanText(
+        body.invite_id
+      )
+
+    if (!inviteId) {
+      return NextResponse.json(
+        {
+          error:
+            'Invitation ID is required.',
+        },
+        {
+          status: 400,
+        }
+      )
+    }
+
+    const sb =
+      serviceClient()
+
+    /*
+    |--------------------------------------------------------------------------
+    | 3. CONFIRM USER OWNS THE GROUP
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      data: group,
+      error: groupError,
+    } = await sb
+      .from(
+        'school_groups'
+      )
+      .select(
+        'id, owner_user_id'
+      )
+      .eq(
+        'owner_user_id',
+        user.id
+      )
+      .maybeSingle()
+
+    if (groupError) {
+      console.error(
+        '[school-group-invite-revoke] group lookup failed:',
+        groupError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not confirm school group.',
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    if (!group) {
+      return NextResponse.json(
+        {
+          error:
+            'Only the School Group owner can revoke invitations.',
+        },
+        {
+          status: 403,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 4. LOAD INVITATION FROM THIS GROUP
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      data: invite,
+      error: inviteError,
+    } = await sb
+      .from(
+        'school_group_invites'
+      )
+      .select(
+        `
+          id,
+          group_id,
+          school_id,
+          school_name,
+          email,
+          status
+        `
+      )
+      .eq(
+        'id',
+        inviteId
+      )
+      .eq(
+        'group_id',
+        group.id
+      )
+      .maybeSingle()
+
+    if (inviteError) {
+      console.error(
+        '[school-group-invite-revoke] invite lookup failed:',
+        inviteError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not load this invitation.',
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    if (!invite) {
+      return NextResponse.json(
+        {
+          error:
+            'Invitation not found.',
+        },
+        {
+          status: 404,
+        }
+      )
+    }
+
+    if (
+      invite.status !==
+      'pending'
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'Only pending invitations can be revoked.',
+        },
+        {
+          status: 409,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 5. REVOKE — KEEP RECORD FOR HISTORY
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      data: revokedInvite,
+      error: revokeError,
+    } = await sb
+      .from(
+        'school_group_invites'
+      )
+      .update({
+        status:
+          'revoked',
+      })
+      .eq(
+        'id',
+        invite.id
+      )
+      .eq(
+        'group_id',
+        group.id
+      )
+      .eq(
+        'status',
+        'pending'
+      )
+      .select(
+        `
+          id,
+          school_name,
+          email,
+          status
+        `
+      )
+      .maybeSingle()
+
+    if (
+      revokeError ||
+      !revokedInvite
+    ) {
+      console.error(
+        '[school-group-invite-revoke] revoke failed:',
+        revokeError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            revokeError?.message ||
+            'The invitation could not be revoked.',
+        },
+        {
+          status: 409,
+        }
+      )
+    }
+
+    return NextResponse.json({
+      ok: true,
+
+      message:
+        'Invitation revoked.',
+
+      invite:
+        revokedInvite,
+    })
+  } catch (error: any) {
+    console.error(
+      '[school-group-invite-revoke] unexpected error:',
+      error
+    )
+
+    return NextResponse.json(
+      {
+        error:
+          error?.message ||
+          'Could not revoke invitation.',
+      },
+      {
+        status: 500,
+      }
+    )
+  }
+}
+

@@ -11,6 +11,7 @@ import {
   Crown,
   MapPin,
   Plus,
+  Trash2,
 } from 'lucide-react'
 
 type GroupSchool = {
@@ -113,6 +114,11 @@ export default function SchoolGroupPage() {
   const [
     copiedInviteId,
     setCopiedInviteId,
+  ] = useState<string | null>(null)
+
+  const [
+    revokingInviteId,
+    setRevokingInviteId,
   ] = useState<string | null>(null)
 
   useEffect(() => {
@@ -249,6 +255,107 @@ export default function SchoolGroupPage() {
       } catch {
         // Leave button unchanged if copy fails.
       }
+    }
+  }
+
+  async function revokeInvite(
+    invite: PendingInvite
+  ) {
+    if (
+      revokingInviteId ===
+      invite.id
+    ) {
+      return
+    }
+
+    const schoolName =
+      invite.school_name ||
+      'this school'
+
+    const confirmed =
+      window.confirm(
+        `Revoke the invitation for ${schoolName}? The current invitation link will stop working.`
+      )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setRevokingInviteId(
+        invite.id
+      )
+
+      const response =
+        await fetch(
+          '/api/school/group/invites',
+          {
+            method: 'DELETE',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body: JSON.stringify({
+              invite_id:
+                invite.id,
+            }),
+          }
+        )
+
+      const result =
+        await response.json()
+
+      if (
+        response.status ===
+        401
+      ) {
+        router.replace(
+          '/auth/login'
+        )
+
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error ||
+            'Could not revoke invitation.'
+        )
+      }
+
+      setData(
+        (current) => {
+          if (!current) {
+            return current
+          }
+
+          return {
+            ...current,
+
+            pending_invites:
+              current.pending_invites.filter(
+                (item) =>
+                  item.id !==
+                  invite.id
+              ),
+          }
+        }
+      )
+    } catch (err: any) {
+      window.alert(
+        err?.message ||
+          'Could not revoke invitation.'
+      )
+    } finally {
+      setRevokingInviteId(
+        (current) =>
+          current ===
+          invite.id
+            ? null
+            : current
+      )
     }
   }
 
@@ -1144,6 +1251,84 @@ export default function SchoolGroupPage() {
                           : 'Copy invite link'}
                       </button>
                     )}
+
+                    <button
+                      type="button"
+                      disabled={
+                        revokingInviteId ===
+                        invite.id
+                      }
+                      onClick={() =>
+                        revokeInvite(
+                          invite
+                        )
+                      }
+                      style={{
+                        marginTop: 11,
+                        marginLeft: 8,
+
+                        minHeight:
+                          34,
+
+                        borderRadius:
+                          999,
+
+                        border:
+                          `1px solid ${T.border}`,
+
+                        background:
+                          T.white,
+
+                        color:
+                          '#B42318',
+
+                        padding:
+                          '0 12px',
+
+                        display:
+                          'inline-flex',
+
+                        alignItems:
+                          'center',
+
+                        justifyContent:
+                          'center',
+
+                        gap: 6,
+
+                        fontFamily:
+                          'inherit',
+
+                        fontSize:
+                          11.5,
+
+                        fontWeight:
+                          650,
+
+                        cursor:
+                          revokingInviteId ===
+                          invite.id
+                            ? 'default'
+                            : 'pointer',
+
+                        opacity:
+                          revokingInviteId ===
+                          invite.id
+                            ? 0.55
+                            : 1,
+                      }}
+                    >
+                      <Trash2
+                        size={
+                          13
+                        }
+                      />
+
+                      {revokingInviteId ===
+                      invite.id
+                        ? 'Revoking...'
+                        : 'Revoke'}
+                    </button>
                   </div>
                 </div>
               )
