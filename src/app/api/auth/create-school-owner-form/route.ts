@@ -410,6 +410,9 @@ export async function POST(
   // 4. CREATE GROUP ONLY WHEN USER CHOSE YES
   // ----------------------------------------------------------
 
+  let createdGroupId:
+    string | null = null
+
   if (
     form.has_branches === 'yes'
   ) {
@@ -445,6 +448,9 @@ export async function POST(
           'The school was created, but the school group could not be created.'
       )
     }
+
+    createdGroupId =
+      group.id
 
     const {
       error: memberError,
@@ -482,7 +488,143 @@ export async function POST(
   }
 
   // ----------------------------------------------------------
-  // 5. SUCCESS
+  // 5. CREATE 30-DAY FULL-ACCESS TRIAL
+  // ----------------------------------------------------------
+
+  const trialStartedAt =
+    new Date()
+
+  const trialEndsAt =
+    new Date(
+      trialStartedAt.getTime() +
+        30 *
+          24 *
+          60 *
+          60 *
+          1000
+    )
+
+  const isGroupSignup =
+    form.has_branches === 'yes' &&
+    !!createdGroupId
+
+  const trialPayload =
+    isGroupSignup
+      ? {
+          school_id:
+            null,
+
+          group_id:
+            createdGroupId,
+
+          plan_code:
+            'group_elite',
+
+          status:
+            'trialing',
+
+          monthly_price_cents:
+            0,
+
+          currency:
+            'ZAR',
+
+          is_founding_rate:
+            false,
+
+          trial_started_at:
+            trialStartedAt.toISOString(),
+
+          trial_ends_at:
+            trialEndsAt.toISOString(),
+        }
+      : {
+          school_id:
+            school.id,
+
+          group_id:
+            null,
+
+          plan_code:
+            'school',
+
+          status:
+            'trialing',
+
+          monthly_price_cents:
+            0,
+
+          currency:
+            'ZAR',
+
+          is_founding_rate:
+            false,
+
+          trial_started_at:
+            trialStartedAt.toISOString(),
+
+          trial_ends_at:
+            trialEndsAt.toISOString(),
+        }
+
+  const {
+    error: trialError,
+  } = await sb
+    .from(
+      'school_subscriptions'
+    )
+    .insert(
+      trialPayload
+    )
+
+  if (trialError) {
+    console.error(
+      '[school-signup] trial creation failed:',
+      trialError
+    )
+
+    if (createdGroupId) {
+      try {
+        await sb
+          .from(
+            'school_group_members'
+          )
+          .delete()
+          .eq(
+            'group_id',
+            createdGroupId
+          )
+      } catch {}
+
+      try {
+        await sb
+          .from(
+            'school_groups'
+          )
+          .delete()
+          .eq(
+            'id',
+            createdGroupId
+          )
+      } catch {}
+    }
+
+    await cleanupNewSignup(
+      sb,
+      ownerId,
+      school.id
+    )
+
+    return withError(
+      req,
+      form,
+      trialError.message ||
+        'Your account could not start its 30-day trial.'
+    )
+  }
+
+  // ----------------------------------------------------------
+  // 6. SUCCESS
   // ----------------------------------------------------------
 
   const params =
