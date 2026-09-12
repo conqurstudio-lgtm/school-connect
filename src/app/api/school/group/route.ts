@@ -507,3 +507,289 @@ export async function GET(
     )
   }
 }
+
+export async function DELETE(
+  request: NextRequest
+) {
+  try {
+    /*
+    |--------------------------------------------------------------------------
+    | 1. CONFIRM LOGGED-IN USER
+    |--------------------------------------------------------------------------
+    */
+
+    const user =
+      await getLoggedInUser(
+        request
+      )
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          error:
+            'Unauthorized',
+        },
+        {
+          status: 401,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 2. READ MEMBERSHIP ID
+    |--------------------------------------------------------------------------
+    */
+
+    let body: any = {}
+
+    try {
+      body =
+        await request.json()
+    } catch {
+      return NextResponse.json(
+        {
+          error:
+            'Invalid request body.',
+        },
+        {
+          status: 400,
+        }
+      )
+    }
+
+    const membershipId =
+      String(
+        body.membership_id ||
+        ''
+      ).trim()
+
+    if (!membershipId) {
+      return NextResponse.json(
+        {
+          error:
+            'School membership ID is required.',
+        },
+        {
+          status: 400,
+        }
+      )
+    }
+
+    const sb =
+      serviceClient()
+
+    /*
+    |--------------------------------------------------------------------------
+    | 3. CONFIRM THIS USER OWNS THE GROUP
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      data: group,
+      error: groupError,
+    } = await sb
+      .from(
+        'school_groups'
+      )
+      .select(
+        `
+          id,
+          primary_school_id,
+          owner_user_id
+        `
+      )
+      .eq(
+        'owner_user_id',
+        user.id
+      )
+      .maybeSingle()
+
+    if (groupError) {
+      console.error(
+        '[school-group-remove] group lookup failed:',
+        groupError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not confirm school group.',
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    if (!group) {
+      return NextResponse.json(
+        {
+          error:
+            'Only the School Group owner can remove a branch.',
+        },
+        {
+          status: 403,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 4. LOAD MEMBERSHIP FROM THIS GROUP
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      data: membership,
+      error: membershipError,
+    } = await sb
+      .from(
+        'school_group_members'
+      )
+      .select(
+        `
+          id,
+          group_id,
+          school_id,
+          member_type
+        `
+      )
+      .eq(
+        'id',
+        membershipId
+      )
+      .eq(
+        'group_id',
+        group.id
+      )
+      .maybeSingle()
+
+    if (membershipError) {
+      console.error(
+        '[school-group-remove] membership lookup failed:',
+        membershipError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not load this school membership.',
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    if (!membership) {
+      return NextResponse.json(
+        {
+          error:
+            'School membership not found.',
+        },
+        {
+          status: 404,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 5. NEVER ALLOW THE MAIN SCHOOL TO BE REMOVED
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+      membership.member_type ===
+        'primary' ||
+      membership.school_id ===
+        group.primary_school_id
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            'The main school cannot be removed from its own School Group.',
+        },
+        {
+          status: 409,
+        }
+      )
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | 6. REMOVE ONLY THE GROUP MEMBERSHIP
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    |
+    | We do NOT delete the school.
+    | We do NOT delete the principal.
+    | We do NOT delete teachers, learners, reports, Moments or parent data.
+    |
+    | The branch simply becomes a standalone School Connect school.
+    |--------------------------------------------------------------------------
+    */
+
+    const {
+      error: deleteError,
+    } = await sb
+      .from(
+        'school_group_members'
+      )
+      .delete()
+      .eq(
+        'id',
+        membership.id
+      )
+      .eq(
+        'group_id',
+        group.id
+      )
+
+    if (deleteError) {
+      console.error(
+        '[school-group-remove] unlink failed:',
+        deleteError
+      )
+
+      return NextResponse.json(
+        {
+          error:
+            'Could not remove this school from the group.',
+        },
+        {
+          status: 500,
+        }
+      )
+    }
+
+    return NextResponse.json({
+      ok: true,
+
+      message:
+        'School removed from group.',
+
+      school_id:
+        membership.school_id,
+    })
+  } catch (error: any) {
+    console.error(
+      '[school-group-remove] unexpected error:',
+      error
+    )
+
+    return NextResponse.json(
+      {
+        error:
+          error?.message ||
+          'Could not remove this school from the group.',
+      },
+      {
+        status: 500,
+      }
+    )
+  }
+}
+

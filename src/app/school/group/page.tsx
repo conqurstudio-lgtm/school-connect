@@ -23,6 +23,7 @@ type GroupSchool = {
   email?: string | null
   province?: string | null
   address?: string | null
+  membership_id: string
   member_type: 'primary' | 'branch'
 }
 
@@ -119,6 +120,11 @@ export default function SchoolGroupPage() {
   const [
     revokingInviteId,
     setRevokingInviteId,
+  ] = useState<string | null>(null)
+
+  const [
+    removingSchoolId,
+    setRemovingSchoolId,
   ] = useState<string | null>(null)
 
   useEffect(() => {
@@ -353,6 +359,110 @@ export default function SchoolGroupPage() {
         (current) =>
           current ===
           invite.id
+            ? null
+            : current
+      )
+    }
+  }
+
+  async function removeBranch(
+    school: GroupSchool
+  ) {
+    if (
+      school.member_type !==
+      'branch'
+    ) {
+      return
+    }
+
+    if (
+      removingSchoolId ===
+      school.id
+    ) {
+      return
+    }
+
+    const confirmed =
+      window.confirm(
+        `Remove ${school.name} from this School Group? The school and all of its data will remain available to its own administrator as a standalone school.`
+      )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setRemovingSchoolId(
+        school.id
+      )
+
+      const response =
+        await fetch(
+          '/api/school/group',
+          {
+            method: 'DELETE',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body: JSON.stringify({
+              membership_id:
+                school.membership_id,
+            }),
+          }
+        )
+
+      const result =
+        await response.json()
+
+      if (
+        response.status ===
+        401
+      ) {
+        router.replace(
+          '/auth/login'
+        )
+
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error ||
+            'Could not remove this school from the group.'
+        )
+      }
+
+      setData(
+        (current) => {
+          if (!current) {
+            return current
+          }
+
+          return {
+            ...current,
+
+            schools:
+              current.schools.filter(
+                (item) =>
+                  item.id !==
+                  school.id
+              ),
+          }
+        }
+      )
+    } catch (err: any) {
+      window.alert(
+        err?.message ||
+          'Could not remove this school from the group.'
+      )
+    } finally {
+      setRemovingSchoolId(
+        (current) =>
+          current ===
+          school.id
             ? null
             : current
       )
@@ -932,6 +1042,86 @@ export default function SchoolGroupPage() {
                       {school.email ||
                         school.phone}
                     </p>
+                  )}
+
+                  {school.member_type !==
+                    'primary' && (
+                    <button
+                      type="button"
+                      disabled={
+                        removingSchoolId ===
+                        school.id
+                      }
+                      onClick={() =>
+                        removeBranch(
+                          school
+                        )
+                      }
+                      style={{
+                        marginTop: 11,
+
+                        minHeight:
+                          34,
+
+                        borderRadius:
+                          999,
+
+                        border:
+                          `1px solid ${T.border}`,
+
+                        background:
+                          T.white,
+
+                        color:
+                          '#B42318',
+
+                        padding:
+                          '0 12px',
+
+                        display:
+                          'inline-flex',
+
+                        alignItems:
+                          'center',
+
+                        justifyContent:
+                          'center',
+
+                        gap: 6,
+
+                        fontFamily:
+                          'inherit',
+
+                        fontSize:
+                          11.5,
+
+                        fontWeight:
+                          650,
+
+                        cursor:
+                          removingSchoolId ===
+                          school.id
+                            ? 'default'
+                            : 'pointer',
+
+                        opacity:
+                          removingSchoolId ===
+                          school.id
+                            ? 0.55
+                            : 1,
+                      }}
+                    >
+                      <Trash2
+                        size={
+                          13
+                        }
+                      />
+
+                      {removingSchoolId ===
+                      school.id
+                        ? 'Removing...'
+                        : 'Remove from group'}
+                    </button>
                   )}
                 </div>
               </div>
