@@ -1,5 +1,8 @@
 // @ts-nocheck
+// school-connect-private-moments-storage-v1
+// school-connect-private-moments-signed-url-fix-v2
 // parent-moments-scope-fix-v421
+// school-connect-parent-private-moment-media-proxy-v1
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -13,6 +16,48 @@ function adminClient() {
     { auth: { persistSession: false } }
   )
 }
+
+const MOMENTS_BUCKET = 'school-moments'
+const MOMENT_URL_TTL_SECONDS = 60 * 60 * 6
+
+async function signMomentRows(sb: any, moments: any[]) {
+  const rows = Array.isArray(moments) ? moments : []
+
+  return await Promise.all(rows.map(async (moment: any) => {
+    const path = String(moment?.file_path || '').trim()
+
+    if (!path) return moment
+
+    // New V1 private Moments: sign the object path every time it is returned.
+    // Use createSignedUrl per object so we never depend on batch response indexing.
+    try {
+      const { data, error } = await sb.storage
+        .from(MOMENTS_BUCKET)
+        .createSignedUrl(path, MOMENT_URL_TTL_SECONDS)
+
+      const signedUrl = String(data?.signedUrl || data?.signedURL || '').trim()
+
+      if (!error && signedUrl) {
+        return {
+          ...moment,
+          file_url: signedUrl,
+        }
+      }
+    } catch {}
+
+    // Legacy Moments may still live in public school-assets.
+    // Only use an existing full URL as a fallback; never send a bare private path
+    // to the browser because <img src="moments/..."> will fail.
+    const legacyUrl = String(moment?.file_url || '').trim()
+    const isFullUrl = /^https?:\/\//i.test(legacyUrl)
+
+    return {
+      ...moment,
+      file_url: isFullUrl ? legacyUrl : null,
+    }
+  }))
+}
+
 
 async function firstWorking<T>(tasks: Array<() => Promise<T | null>>) {
   for (const task of tasks) {
@@ -28,95 +73,40 @@ async function firstWorking<T>(tasks: Array<() => Promise<T | null>>) {
 }
 
 async function resolveChildFromToken(sb: any, token: string) {
-  // Different earlier builds used slightly different token storage.
-  // Keep all lookups safe so Moments works with the same link that reports use.
+  if (!token) return null
 
-  return await firstWorking([
-    async () => {
-      const { data } = await sb
-        .from('child_parent_links')
-        .select('id, child_id, is_active')
-        .eq('token', token)
-        .eq('is_active', true)
-        .maybeSingle()
+  // V1 privacy lock:
+  // Moments may only be accessed through the child's current active
+  // permanent parent link. Legacy report/magic tokens must not unlock photos.
+  const { data: link, error: linkError } = await sb
+    .from('child_parent_links')
+    .select('id,child_id,school_id,teacher_id,is_active')
+    .eq('token', token)
+    .eq('is_active', true)
+    .maybeSingle()
 
-      if (!data?.child_id) return null
+  if (linkError || !link?.child_id) return null
 
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
-        .eq('id', data.child_id)
-        .maybeSingle()
+  const { data: child, error: childError } = await sb
+    .from('children')
+    .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
+    .eq('id', link.child_id)
+    .maybeSingle()
 
-      return child || null
-    },
+  if (childError || !child) return null
 
-    async () => {
-      const { data } = await sb
-        .from('children')
-        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
-        .eq('parent_token', token)
-        .maybeSingle()
+  // Prevent a stale/mismatched link from crossing schools.
+  if (link.school_id && child.school_id !== link.school_id) return null
 
-      return data || null
-    },
-
-    async () => {
-      const { data } = await sb
-        .from('children')
-        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
-        .eq('magic_token', token)
-        .maybeSingle()
-
-      return data || null
-    },
-
-    async () => {
-      const { data: report } = await sb
-        .from('child_reports')
-        .select('child_id')
-        .eq('magic_token', token)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (!report?.child_id) return null
-
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
-        .eq('id', report.child_id)
-        .maybeSingle()
-
-      return child || null
-    },
-
-    async () => {
-      const { data: report } = await sb
-        .from('reports')
-        .select('child_id')
-        .eq('magic_token', token)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (!report?.child_id) return null
-
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
-        .eq('id', report.child_id)
-        .maybeSingle()
-
-      return child || null
-    },
-  ])
+  return child
 }
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const token = String(url.searchParams.get('token') || '').trim()
   const peek = url.searchParams.get('peek') === '1'
+  const cursor = String(url.searchParams.get('cursor') || '').trim()
+  const PAGE_SIZE = 10
 
   if (!token) {
     return NextResponse.json({ error: 'token required' }, { status: 400 })
@@ -132,15 +122,30 @@ export async function GET(req: NextRequest) {
     }, { status: 404 })
   }
 
-  const { data: recipients, error: recError } = await sb
+  let recipientQuery = sb
     .from('moment_recipients')
     .select('id,moment_id,child_id,viewed_at,created_at')
     .eq('child_id', child.id)
     .order('created_at', { ascending: false })
+    .limit(PAGE_SIZE + 1)
+
+  if (cursor) {
+    recipientQuery = recipientQuery.lt('created_at', cursor)
+  }
+
+  const { data: recipientPage, error: recError } = await recipientQuery
 
   if (recError) {
     return NextResponse.json({ error: recError.message }, { status: 500 })
   }
+
+  const hasMore = (recipientPage || []).length > PAGE_SIZE
+  const recipients = (recipientPage || []).slice(0, PAGE_SIZE)
+
+  const nextCursor =
+    hasMore && recipients.length
+      ? String(recipients[recipients.length - 1]?.created_at || '')
+      : null
 
   // parent-moments-privacy-lock-v430
   // Parents should only see Moments where their child is an explicit recipient.
@@ -152,7 +157,12 @@ export async function GET(req: NextRequest) {
   const momentIds = Array.from(new Set(directMomentIds))
 
   if (!momentIds.length) {
-    return NextResponse.json({ child, moments: [] })
+    return NextResponse.json({
+      child,
+      moments: [],
+      next_cursor: null,
+      has_more: false,
+    })
   }
 
   const { data: moments, error: momentsError } = await sb
@@ -165,7 +175,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: momentsError.message }, { status: 500 })
   }
 
-  const teacherIds = Array.from(new Set((moments || []).map((moment: any) => moment.teacher_id).filter(Boolean)))
+  // Parent images are served securely through /api/parent/moments/media.
+  // Do not generate signed URLs for every Moment during feed loading.
+  const safeMoments = moments || []
+
+  const teacherIds = Array.from(new Set((safeMoments || []).map((moment: any) => moment.teacher_id).filter(Boolean)))
 
   let teacherMap: any = {}
   if (teacherIds.length) {
@@ -241,7 +255,7 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const rows = (moments || []).map((moment: any) => {
+  const rows = (safeMoments || []).map((moment: any) => {
     const reactionCounts = reactionCountMap[moment.id] || { heart: 0, like: 0, smile: 0 }
     const reactionTotal = Number(reactionCounts.heart || 0) +
       Number(reactionCounts.like || 0) +
@@ -286,16 +300,35 @@ export async function GET(req: NextRequest) {
   }).filter(Boolean)
 
   // Important: do this after building rows so the first page load can still show the new-dot state correctly.
-  if (!peek && (recipients || []).some((row: any) => !row.viewed_at)) {
-    await sb
-      .from('moment_recipients')
-      .update({ viewed_at: new Date().toISOString() })
-      .eq('child_id', child.id)
-      .is('viewed_at', null)
+  if (!peek) {
+    const unseenRecipientIds = (recipients || [])
+      .filter((row: any) => !row.viewed_at)
+      .map((row: any) => row.id)
+      .filter(Boolean)
+
+    if (unseenRecipientIds.length) {
+      await sb
+        .from('moment_recipients')
+        .update({ viewed_at: new Date().toISOString() })
+        .in('id', unseenRecipientIds)
+    }
   }
+
+  const securedRows = (rows || []).map((moment: any) => {
+    const filePath = String(moment?.file_path || '').trim()
+
+    if (!filePath) return moment
+
+    return {
+      ...moment,
+      file_url: `/api/parent/moments/media?token=${encodeURIComponent(token)}&moment_id=${encodeURIComponent(moment.id)}`,
+    }
+  })
 
   return NextResponse.json({
     child,
-    moments: rows,
+    moments: securedRows,
+    next_cursor: nextCursor,
+    has_more: hasMore,
   })
 }

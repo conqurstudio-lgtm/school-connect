@@ -60,6 +60,7 @@ function tokenValue() {
 function publicOrigin(req: NextRequest) {
   return (
     req.headers.get('origin') ||
+    req.nextUrl.origin ||
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     ''
@@ -142,10 +143,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'child is not in your roster' }, { status: 403 })
   }
 
-  if (!child.parent_whatsapp) {
-    return NextResponse.json({ error: 'This learner does not have a parent WhatsApp number' }, { status: 400 })
-  }
-
   const comment = manualComment || generateComment(scores)
 
   const { data: existing } = await sb
@@ -207,21 +204,23 @@ export async function POST(req: NextRequest) {
 
     const message = `${child.name}'s weekly update is ready.\n\nView it here:\n${magicLink}`
 
-    await sb.from('whatsapp_notifications').insert({
-      report_id: savedReport.id,
-      school_id: teacher.school_id,
-      child_id: child.id,
-      parent_whatsapp: child.parent_whatsapp,
-      message,
-      magic_link: magicLink,
-      status: 'pending',
-    })
+    if (child.parent_whatsapp) {
+      await sb.from('whatsapp_notifications').insert({
+        report_id: savedReport.id,
+        school_id: teacher.school_id,
+        child_id: child.id,
+        parent_whatsapp: child.parent_whatsapp,
+        message,
+        magic_link: magicLink,
+        status: 'pending',
+      })
+    }
 
     return NextResponse.json({
       report: savedReport,
       magic_link: magicLink,
       parent_link_type: 'child_permanent',
-      whatsapp_status: 'queued',
+      whatsapp_status: child.parent_whatsapp ? 'queued' : 'not_configured',
       updated: Boolean(existing?.id),
       created: !existing?.id,
     })

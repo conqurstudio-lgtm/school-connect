@@ -26,9 +26,9 @@ function addDays(days: number) {
 function publicOrigin(req: NextRequest) {
   return (
     req.headers.get('origin') ||
+    req.nextUrl.origin ||
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    req.nextUrl.origin ||
     ''
   ).replace(/\/$/, '')
 }

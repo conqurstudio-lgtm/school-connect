@@ -31,86 +31,30 @@ async function firstWorking<T>(tasks: Array<() => Promise<T | null>>) {
 async function resolveChildFromToken(sb: any, token: string) {
   if (!token) return null
 
-  return await firstWorking([
-    async () => {
-      const { data } = await sb
-        .from('child_parent_links')
-        .select('id, child_id, is_active')
-        .eq('token', token)
-        .eq('is_active', true)
-        .maybeSingle()
+  // V1 privacy lock:
+  // Moments may only be accessed through the child's current active
+  // permanent parent link. Legacy report/magic tokens must not unlock photos.
+  const { data: link, error: linkError } = await sb
+    .from('child_parent_links')
+    .select('id,child_id,school_id,teacher_id,is_active')
+    .eq('token', token)
+    .eq('is_active', true)
+    .maybeSingle()
 
-      if (!data?.child_id) return null
+  if (linkError || !link?.child_id) return null
 
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
-        .eq('id', data.child_id)
-        .maybeSingle()
+  const { data: child, error: childError } = await sb
+    .from('children')
+    .select('id,name,school_id,grade,class_name,parent_whatsapp,parent_email')
+    .eq('id', link.child_id)
+    .maybeSingle()
 
-      return child || null
-    },
+  if (childError || !child) return null
 
-    async () => {
-      const { data } = await sb
-        .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
-        .eq('parent_token', token)
-        .maybeSingle()
+  // Prevent a stale/mismatched link from crossing schools.
+  if (link.school_id && child.school_id !== link.school_id) return null
 
-      return data || null
-    },
-
-    async () => {
-      const { data } = await sb
-        .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
-        .eq('magic_token', token)
-        .maybeSingle()
-
-      return data || null
-    },
-
-    async () => {
-      const { data: report } = await sb
-        .from('child_reports')
-        .select('child_id')
-        .eq('magic_token', token)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (!report?.child_id) return null
-
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
-        .eq('id', report.child_id)
-        .maybeSingle()
-
-      return child || null
-    },
-
-    async () => {
-      const { data: report } = await sb
-        .from('reports')
-        .select('child_id')
-        .eq('magic_token', token)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (!report?.child_id) return null
-
-      const { data: child } = await sb
-        .from('children')
-        .select('id,name,school_id,parent_whatsapp,parent_email')
-        .eq('id', report.child_id)
-        .maybeSingle()
-
-      return child || null
-    },
-  ])
+  return child
 }
 
 

@@ -100,7 +100,11 @@ export async function GET(
 
   const sb = adminClient()
 
-  const familyShare = await loadFamilyShare(sb, token)
+  // Speed-first: resolve the two current link types together.
+  const [familyShare, childLink] = await Promise.all([
+    loadFamilyShare(sb, token),
+    loadChildPermanentLink(sb, token),
+  ])
 
   if (familyShare) {
     if (familyShare.expires_at && new Date(familyShare.expires_at).getTime() < Date.now()) {
@@ -175,44 +179,77 @@ export async function GET(
     })
   }
 
-  const childLink = await loadChildPermanentLink(sb, token)
-
   if (childLink) {
-    const [{ data: child }, school] = await Promise.all([
-      sb.from('children').select('*').eq('id', childLink.child_id).maybeSingle(),
+    // Speed-first: fetch the independent data together.
+    // Six weekly reports covers the visible 30-day history plus
+    // an older report for comparison scores.
+    const [
+      { data: child },
+      school,
+      { data: reports, error: reportsError },
+    ] = await Promise.all([
+      sb.from('children')
+        .select('id,name,grade,class_name')
+        .eq('id', childLink.child_id)
+        .maybeSingle(),
+
       loadSchoolProfile(sb, childLink.school_id),
+
+      sb.from('child_reports')
+        .select('*')
+        .eq('child_id', childLink.child_id)
+        .eq('status', 'published')
+        .order('week_starting', { ascending: false })
+        .order('published_at', { ascending: false })
+        .limit(6),
     ])
 
-    if (!child) return NextResponse.json({ error: 'Child not found' }, { status: 404 })
-
-    const { data: reports, error: reportsError } = await sb
-      .from('child_reports')
-      .select('*')
-      .eq('child_id', child.id)
-      .eq('status', 'published')
-      .order('week_starting', { ascending: false })
-      .order('published_at', { ascending: false })
+    if (!child) {
+      return NextResponse.json(
+        { error: 'Child not found' },
+        { status: 404 }
+      )
+    }
 
     if (reportsError) {
-      return NextResponse.json({ error: reportsError.message }, { status: 500 })
+      return NextResponse.json(
+        { error: reportsError.message },
+        { status: 500 }
+      )
     }
 
     const latest = reports?.[0] || null
-    if (!latest) return NextResponse.json({ error: 'No report has been published yet' }, { status: 404 })
+
+    if (!latest) {
+      return NextResponse.json(
+        { error: 'No report has been published yet' },
+        { status: 404 }
+      )
+    }
 
     const teacherId = latest.teacher_id || childLink.teacher_id
-    const { data: teacher } = teacherId
-      ? await sb.from('teachers').select('*').eq('id', teacherId).maybeSingle()
-      : { data: null }
 
-    await sb
-      .from('child_parent_links')
-      .update({
-        last_viewed_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', childLink.id)
+    // Teacher details and view tracking do not depend on each other,
+    // so avoid another unnecessary sequential wait.
+    const [
+      teacherResult,
+    ] = await Promise.all([
+      teacherId
+        ? sb.from('teachers')
+            .select('id,name,photo_url')
+            .eq('id', teacherId)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
 
+      sb.from('child_parent_links')
+        .update({
+          last_viewed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', childLink.id),
+    ])
+
+    const teacher = teacherResult.data || null
     const reportsWithHistory = attachPreviousScores(reports || [])
 
     return NextResponse.json({
@@ -244,8 +281,14 @@ export async function GET(
   if (!report) return NextResponse.json({ error: 'Report not found' }, { status: 404 })
 
   const [{ data: child }, { data: teacher }, { data: school }, { data: reports }] = await Promise.all([
-    sb.from('children').select('*').eq('id', report.child_id).maybeSingle(),
-    sb.from('teachers').select('*').eq('id', report.teacher_id).maybeSingle(),
+    sb.from('children')
+      .select('id,name,grade,class_name')
+      .eq('id', report.child_id)
+      .maybeSingle(),
+    sb.from('teachers')
+      .select('id,name,photo_url')
+      .eq('id', report.teacher_id)
+      .maybeSingle(),
     loadSchoolProfile(sb, report.school_id),
     sb
       .from('child_reports')

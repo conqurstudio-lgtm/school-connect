@@ -6,7 +6,6 @@ import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SCEmptyState, SCTopBar } from '@/components/ui'
-import SCStartupLoader from '@/components/ui/SCStartupLoader'
 
 const T = {
  ink: '#252525',
@@ -338,11 +337,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  const [moments, setMoments] = useState<any[]>([])
  const [momentScope, setMomentScope] = useState<'recent' | 'child' | 'class'>('recent')
  const [openImage, setOpenImage] = useState('')
+ const [momentViewer, setMomentViewer] = useState<any>(null)
  const [reacting, setReacting] = useState('')
  const [reactionBursts, setReactionBursts] = useState<any[]>([])
- // parent-moments-progressive-v425
- const [renderLimit, setRenderLimit] = useState(6)
-  const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
+ const [nextCursor, setNextCursor] = useState<string | null>(null)
+ const [hasMoreMoments, setHasMoreMoments] = useState(false)
+ const [loadingMore, setLoadingMore] = useState(false)
+ const momentsScrollRef = useRef<HTMLElement | null>(null)
+ const loadMoreRef = useRef<HTMLDivElement | null>(null)
+ const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
  const [momentsView, setMomentsView] = useState<'recent' | 'child' | 'class'>('recent')
 
  const load = async (quiet = false) => {
@@ -359,11 +362,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
  setChild(nextChild)
  setMoments(nextMoments)
+ setNextCursor(json.next_cursor || null)
+ setHasMoreMoments(Boolean(json.has_more))
 
  try {
  window.localStorage.setItem(parentMomentsCacheKey(token), JSON.stringify({
  child: nextChild,
  moments: nextMoments,
+ next_cursor: json.next_cursor || null,
+ has_more: Boolean(json.has_more),
  saved_at: new Date().toISOString(),
  }))
  } catch {}
@@ -377,28 +384,43 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  useEffect(() => {
   let usedCache = false
 
-  // Inside the parent report shell, do not show cached Moments first.
-  // This prevents deleted teacher posts from flashing before the fresh fetch finishes.
-  if (insideReportShell) {
-    setLoading(true)
-    setMoments([])
-    load(false)
-    return
-  }
-
   try {
     const raw = window.localStorage.getItem(parentMomentsCacheKey(token))
+
     if (raw) {
       const cached = JSON.parse(raw)
-      if (cached?.moments) {
+      const savedAt = new Date(cached?.saved_at || 0).getTime()
+      const age = Date.now() - savedAt
+
+      // Normal standalone Moments may keep using its existing cache.
+      // Inside the report shell, only trust very fresh prefetched data.
+      const cacheIsFreshEnough =
+        !insideReportShell ||
+        (
+          Number.isFinite(savedAt) &&
+          age >= 0 &&
+          age < 60 * 1000
+        )
+
+      if (cached?.moments && cacheIsFreshEnough) {
         setChild(cached.child || null)
         setMoments(cached.moments || [])
+        setNextCursor(cached.next_cursor || null)
+        setHasMoreMoments(Boolean(cached.has_more))
         setLoading(false)
         usedCache = true
       }
     }
   } catch {}
 
+  if (insideReportShell && !usedCache) {
+    setLoading(true)
+    setMoments([])
+    load(false)
+    return
+  }
+
+  // Cached Moments appear immediately while fresh data replaces them quietly.
   load(usedCache)
   }, [token, insideReportShell])
 
@@ -508,21 +530,150 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  const classMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'class')
  const visibleMoments = momentScope === 'recent' ? moments : (momentScope === 'child' ? childMoments : classMoments)
 
- const renderedMoments = visibleMoments.slice(0, renderLimit)
+ const renderedMoments = visibleMoments
+
+ const galleryImageMoments = insideReportShell
+   ? renderedMoments.filter((moment: any) => moment.file_type === 'image' && moment.file_url)
+   : []
+
+ const galleryOtherMoments = insideReportShell
+   ? renderedMoments.filter((moment: any) => moment.file_type !== 'image')
+   : []
+
+ const viewerMoment = insideReportShell && momentViewer?.momentId
+   ? visibleMoments.find(
+       (moment: any) => moment.id === momentViewer.momentId
+     ) || null
+   : null
+
+ const openMomentViewer = (
+   momentId: string,
+   rect: DOMRect | {
+     top: number
+     left: number
+     width: number
+     height: number
+   }
+ ) => {
+   const moment = visibleMoments.find(
+     (item: any) => item.id === momentId
+   )
+
+   if (!moment) return
+
+   setMomentViewer({
+     momentId,
+     origin: {
+       top: rect.top,
+       left: rect.left,
+       width: rect.width,
+       height: rect.height,
+     },
+   })
+ }
 
  useEffect(() => {
- setRenderLimit(6)
- }, [momentScope, moments.length])
+   setMomentViewer(null)
+ }, [momentScope])
+
+ const loadOlderMoments = async () => {
+   if (
+     loadingMore ||
+     !hasMoreMoments ||
+     !nextCursor
+   ) return
+
+   setLoadingMore(true)
+
+   try {
+     const res = await fetch(
+       `/api/parent/moments?token=${encodeURIComponent(token)}&cursor=${encodeURIComponent(nextCursor)}`,
+       { cache: 'no-store' }
+     )
+
+     const json = await res.json().catch(() => ({}))
+
+     if (!res.ok) {
+       throw new Error(json.error || 'Could not load older Moments')
+     }
+
+     const incoming = Array.isArray(json.moments)
+       ? json.moments
+       : []
+
+     setMoments(current => {
+       const seen = new Set(
+         current.map((moment: any) => moment.id)
+       )
+
+       const merged = [
+         ...current,
+         ...incoming.filter(
+           (moment: any) => !seen.has(moment.id)
+         ),
+       ]
+
+       try {
+         window.localStorage.setItem(
+           parentMomentsCacheKey(token),
+           JSON.stringify({
+             child,
+             moments: merged,
+             next_cursor: json.next_cursor || null,
+             has_more: Boolean(json.has_more),
+             saved_at: new Date().toISOString(),
+           })
+         )
+       } catch {}
+
+       return merged
+     })
+
+     setNextCursor(json.next_cursor || null)
+     setHasMoreMoments(Boolean(json.has_more))
+   } catch (error: any) {
+     console.error(
+       error?.message || 'Could not load older Moments'
+     )
+   } finally {
+     setLoadingMore(false)
+   }
+ }
 
  useEffect(() => {
- if (renderLimit >= visibleMoments.length) return
+   const root = momentsScrollRef.current
+   const target = loadMoreRef.current
 
- const timer = window.setTimeout(() => {
- setRenderLimit((current) => Math.min(current + 3, visibleMoments.length))
- }, 160)
+   if (
+     !root ||
+     !target ||
+     !hasMoreMoments ||
+     !nextCursor
+   ) return
 
- return () => window.clearTimeout(timer)
- }, [renderLimit, visibleMoments.length, momentScope])
+   const observer = new IntersectionObserver(
+     entries => {
+       if (entries[0]?.isIntersecting) {
+         loadOlderMoments()
+       }
+     },
+     {
+       root,
+       rootMargin: '500px 0px',
+       threshold: 0.01,
+     }
+   )
+
+   observer.observe(target)
+
+   return () => observer.disconnect()
+ }, [
+   hasMoreMoments,
+   nextCursor,
+   loadingMore,
+   token,
+   child,
+ ])
 
  return (
  <main className="sc-screen-enter" style={{
@@ -667,11 +818,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   document.body
 ) : null}
 
- <SCStartupLoader
- show={loading && moments.length === 0}
- initials={initials(child?.name || child?.full_name || 'SC')}
- />
-
  <div style={{
  maxWidth: 520,
  height: insideReportShell ? '100%' : '100dvh',
@@ -696,7 +842,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  />
  ) : null}
 
- <section style={{
+ <section
+ ref={momentsScrollRef}
+ style={{
  flex: 1,
  minHeight: 0,
  overflowY: 'auto',
@@ -883,30 +1031,113 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   )}
   </div>
 
- {moments.length === 0 ? (
- <SCEmptyState
- title={loading ? 'Loading Moments' : 'No Moments yet'}
- text={loading ? 'Getting the latest updates.' : 'Moments shared by the teacher will appear here.'}
- />
+ {visibleMoments.length === 0 ? (
+   loading ? (
+     insideReportShell ? <MomentGalleryShell /> : null
+   ) : (
+     <SCEmptyState
+       title="No Moments yet"
+       text="Moments shared by the teacher will appear here."
+     />
+   )
+ ) : insideReportShell ? (
+   <div style={{
+     width: '100%',
+     boxSizing: 'border-box',
+   }}>
+     {galleryImageMoments.length > 0 ? (
+       <MomentGalleryGrid
+         moments={galleryImageMoments}
+         allMoments={renderedMoments}
+         onOpen={openMomentViewer}
+       />
+     ) : null}
+
+     {galleryOtherMoments.length > 0 ? (
+       <div style={{
+         display: 'flex',
+         flexDirection: 'column',
+         gap: 22,
+         marginTop:
+           galleryImageMoments.length > 0
+             ? 22
+             : 0,
+       }}>
+         {galleryOtherMoments.map((moment: any, index: number) => (
+           <MomentPost
+             key={moment.id}
+             moment={moment}
+             isLast={index === galleryOtherMoments.length - 1}
+             onImage={setOpenImage}
+             onReact={react}
+             reacting={reacting === moment.id}
+             imageIndex={index}
+             bursts={reactionBursts.filter(
+               item => item.momentId === moment.id
+             )}
+             insideReportShell={true}
+           />
+         ))}
+       </div>
+     ) : null}
+   </div>
  ) : (
- <div style={{ display: 'flex', flexDirection: 'column', gap: insideReportShell ? 22 : 28 }}>
- {renderedMoments.map((moment, index) => (
- <MomentPost
- key={moment.id}
- moment={moment}
- isLast={index === renderedMoments.length - 1}
- onImage={setOpenImage}
- onReact={react}
- reacting={reacting === moment.id}
- imageIndex={index}
- bursts={reactionBursts.filter(item => item.momentId === moment.id)}
- insideReportShell={insideReportShell}
- />
- ))}
- </div>
+   <div style={{
+     display: 'flex',
+     flexDirection: 'column',
+     gap: 28,
+   }}>
+     {renderedMoments.map((moment, index) => (
+       <MomentPost
+         key={moment.id}
+         moment={moment}
+         isLast={index === renderedMoments.length - 1}
+         onImage={setOpenImage}
+         onReact={react}
+         reacting={reacting === moment.id}
+         imageIndex={index}
+         bursts={reactionBursts.filter(item => item.momentId === moment.id)}
+         insideReportShell={false}
+       />
+     ))}
+   </div>
  )}
+ {hasMoreMoments ? (
+   <div
+     ref={loadMoreRef}
+     aria-hidden="true"
+     style={{
+       width: '100%',
+       height: 1,
+       pointerEvents: 'none',
+     }}
+   />
+ ) : null}
+
  </section>
  </div>
+
+ {insideReportShell &&
+ viewerMoment &&
+ momentViewer?.origin &&
+ typeof document !== 'undefined'
+   ? createPortal(
+       <MomentWhiteViewer
+         moment={viewerMoment}
+         moments={visibleMoments.filter(
+           (item: any) =>
+             item.file_type === 'image' &&
+             item.file_url
+         )}
+         origin={momentViewer.origin}
+         onClosed={() => setMomentViewer(null)}
+         onReact={react}
+         reactingId={reacting}
+         bursts={reactionBursts}
+       />,
+       document.body
+     )
+   : null}
 
  {openImage && createPortal(
  <div
@@ -1053,7 +1284,1126 @@ function ParentReactionFXButton({
 }
 
 
-function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], imageIndex = 0, insideReportShell = false }: any) {
+function MomentGalleryShell() {
+ const left = [
+   { ratio: '4 / 5', caption: '72%' },
+   { ratio: '4 / 6', caption: '84%' },
+   { ratio: '4 / 4.6', caption: '66%' },
+ ]
+
+ const right = [
+   { ratio: '4 / 5.4', caption: '78%' },
+   { ratio: '4 / 5', caption: '88%' },
+   { ratio: '4 / 6.1', caption: '70%' },
+ ]
+
+ const renderColumn = (items: any[]) => (
+   <div style={{
+     display: 'flex',
+     flexDirection: 'column',
+     gap: 8,
+     minWidth: 0,
+   }}>
+     {items.map((item: any, index: number) => (
+       <div
+         key={index}
+         aria-hidden="true"
+         style={{
+           width: '100%',
+           minWidth: 0,
+         }}
+       >
+         <div style={{
+           width: '100%',
+           aspectRatio: item.ratio,
+           borderRadius: 18,
+           background: '#F5F4F1',
+         }} />
+
+         <div style={{
+           width: item.caption,
+           height: 13,
+           margin: '8px 5px 5px',
+           borderRadius: 999,
+           background: '#F1F0ED',
+         }} />
+       </div>
+     ))}
+   </div>
+ )
+
+ return (
+   <div
+     aria-hidden="true"
+     style={{
+       display: 'grid',
+       gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+       gap: 8,
+       alignItems: 'start',
+       width: '100%',
+     }}
+   >
+     {renderColumn(left)}
+     {renderColumn(right)}
+   </div>
+ )
+}
+
+
+function MomentGalleryGrid({
+ moments = [],
+ allMoments = [],
+ onOpen,
+}: any) {
+ const left = moments.filter((_: any, index: number) => index % 2 === 0)
+ const right = moments.filter((_: any, index: number) => index % 2 === 1)
+
+ const renderColumn = (items: any[]) => (
+   <div style={{
+     display: 'flex',
+     flexDirection: 'column',
+     gap: 8,
+     minWidth: 0,
+   }}>
+     {items.map((moment: any) => {
+       const imageIndex = allMoments.findIndex(
+         (item: any) => item.id === moment.id
+       )
+
+       return (
+         <MomentGalleryTile
+           key={moment.id}
+           moment={moment}
+           imageIndex={imageIndex}
+           onOpen={(rect: any) => onOpen(moment.id, rect)}
+         />
+       )
+     })}
+   </div>
+ )
+
+ return (
+   <div style={{
+     display: 'grid',
+     gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+     gap: 8,
+     alignItems: 'start',
+     width: '100%',
+   }}>
+     {renderColumn(left)}
+     {renderColumn(right)}
+   </div>
+ )
+}
+
+
+function MomentSpotlightCard({
+ moment,
+ onClose,
+ onReact,
+ reacting,
+ bursts = [],
+}: any) {
+ const teacherName = moment.teacher?.name || 'Teacher'
+
+ const teacherPhoto =
+   moment.teacher?.photo_url ||
+   moment.teacher?.avatar_url ||
+   moment.teacher?.image_url ||
+   ''
+
+ const isPrivate =
+   moment.share_mode === 'child' ||
+   moment.moment_scope === 'child'
+
+ const shareLabel = isPrivate
+   ? 'Shared with parent'
+   : 'Shared with class'
+
+ return (
+   <article style={{
+     width: '100%',
+     boxSizing: 'border-box',
+     background: '#FFFFFF',
+     borderRadius: 24,
+     border: '1px solid rgba(17,17,17,0.055)',
+     boxShadow: '0 10px 30px rgba(15,23,42,0.04)',
+     overflow: 'hidden',
+   }}>
+     <div style={{
+       display: 'flex',
+       alignItems: 'center',
+       gap: 10,
+       padding: '12px 12px 10px',
+     }}>
+       <div style={{
+         width: 36,
+         height: 36,
+         borderRadius: '50%',
+         flexShrink: 0,
+         background: teacherPhoto
+           ? `url(${teacherPhoto}) center/cover`
+           : T.soft,
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+         color: T.ink2,
+         fontSize: 11,
+         fontWeight: 650,
+         overflow: 'hidden',
+       }}>
+         {!teacherPhoto ? initials(teacherName) : null}
+       </div>
+
+       <div style={{
+         minWidth: 0,
+         flex: 1,
+       }}>
+         <div style={{
+           display: 'flex',
+           alignItems: 'baseline',
+           gap: 5,
+           minWidth: 0,
+         }}>
+           <span style={{
+             color: T.ink,
+             fontSize: 13.8,
+             fontWeight: 650,
+             overflow: 'hidden',
+             textOverflow: 'ellipsis',
+             whiteSpace: 'nowrap',
+           }}>
+             {teacherName}
+           </span>
+
+           <span style={{
+             color: T.ink3,
+             fontSize: 11.5,
+             whiteSpace: 'nowrap',
+           }}>
+             · {shareLabel}
+           </span>
+         </div>
+
+         <span style={{
+           display: 'block',
+           color: T.ink3,
+           fontSize: 10.8,
+           marginTop: 2,
+         }}>
+           {formatTimeAgo(moment.created_at)}
+         </span>
+       </div>
+
+       <button
+         type="button"
+         onClick={onClose}
+         aria-label="Close Moment"
+         style={{
+           width: 32,
+           height: 32,
+           borderRadius: 999,
+           border: 'none',
+           background: T.soft,
+           color: T.ink2,
+           display: 'inline-flex',
+           alignItems: 'center',
+           justifyContent: 'center',
+           padding: 0,
+           cursor: 'pointer',
+           fontFamily: 'inherit',
+           fontSize: 18,
+           flexShrink: 0,
+         }}
+       >
+         ×
+       </button>
+     </div>
+
+     {moment.note ? (
+       <p style={{
+         margin: '1px 14px 12px',
+         color: T.ink,
+         fontSize: 13.8,
+         lineHeight: 1.5,
+         whiteSpace: 'pre-wrap',
+       }}>
+         {moment.note}
+       </p>
+     ) : null}
+
+     <div style={{
+       width: '100%',
+       position: 'relative',
+       padding: '0 10px',
+       boxSizing: 'border-box',
+     }}>
+       <img
+         src={moment.file_url}
+         alt=""
+         loading="eager"
+         decoding="async"
+         fetchPriority="high"
+         style={{
+           width: '100%',
+           height: 'auto',
+           display: 'block',
+           objectFit: 'contain',
+           borderRadius: 22,
+           background: '#F7F6F3',
+         }}
+       />
+
+       <ReactionBurstLayer
+         bursts={bursts}
+         insideReportShell={true}
+       />
+     </div>
+
+     <div style={{
+       display: 'flex',
+       alignItems: 'center',
+       gap: 8,
+       padding: '11px 13px 14px',
+     }}>
+       {[
+         ['heart', Heart],
+         ['like', ThumbsUp],
+         ['smile', Smile],
+       ].map(([key, Icon]: any) => {
+         const active = moment.reaction === key
+         const count = Number(moment.reaction_counts?.[key] || 0)
+
+         return (
+           <ParentReactionFXButton
+             key={key}
+             moment={moment}
+             reactionKey={key}
+             Icon={Icon}
+             active={active}
+             count={count}
+             reacting={reacting}
+             onReact={onReact}
+           />
+         )
+       })}
+     </div>
+   </article>
+ )
+}
+
+
+function MomentWhiteViewer({
+ moment,
+ moments = [],
+ origin,
+ onClosed,
+ onReact,
+ reactingId,
+ bursts = [],
+}: any) {
+ const [phase, setPhase] =
+   useState<'opening' | 'open' | 'closing'>('opening')
+
+ const [heroDone, setHeroDone] = useState(false)
+ const [captionOpen, setCaptionOpen] = useState(false)
+ const [targetRect, setTargetRect] = useState(origin)
+
+ const teacherName = moment.teacher?.name || 'Teacher'
+
+ const teacherPhoto =
+   moment.teacher?.photo_url ||
+   moment.teacher?.avatar_url ||
+   moment.teacher?.image_url ||
+   ''
+
+ const isPrivate =
+   moment.share_mode === 'child' ||
+   moment.moment_scope === 'child'
+
+ const shareLabel = isPrivate
+   ? 'Shared with parent'
+   : 'Shared with class'
+
+ const note = String(moment.note || '').trim()
+
+ const hasLongCaption =
+   note.length > 135 ||
+   note.split('\n').length > 3
+
+ const sourceMoments = Array.isArray(moments)
+   ? moments
+   : []
+
+ const selectedIndex = sourceMoments.findIndex(
+   (item: any) => item.id === moment.id
+ )
+
+ const newerMoments =
+   selectedIndex > 0
+     ? sourceMoments.slice(0, selectedIndex)
+     : []
+
+ const olderMoments =
+   selectedIndex >= 0
+     ? sourceMoments.slice(selectedIndex + 1)
+     : sourceMoments.filter(
+         (item: any) => item.id !== moment.id
+       )
+
+ useEffect(() => {
+   let heroTimer = 0
+   let frame1 = 0
+   let frame2 = 0
+
+   frame1 = window.requestAnimationFrame(() => {
+     const target = document.getElementById(
+       'sc-moment-viewer-image-target-v2'
+     )
+
+     if (!target) {
+       setPhase('open')
+       setHeroDone(true)
+       return
+     }
+
+     const scrollRoot = target.closest('[role="dialog"]') as HTMLElement | null
+
+     if (scrollRoot && selectedIndex > 0) {
+       const rootRect = scrollRoot.getBoundingClientRect()
+       const firstRect = target.getBoundingClientRect()
+
+       const absoluteTargetTop =
+         scrollRoot.scrollTop +
+         (firstRect.top - rootRect.top)
+
+       const centeredOffset = Math.max(
+         16,
+         (scrollRoot.clientHeight - target.clientHeight) / 2
+       )
+
+       scrollRoot.scrollTop = Math.max(
+         0,
+         absoluteTargetTop - centeredOffset
+       )
+     }
+
+     frame2 = window.requestAnimationFrame(() => {
+       const rect = target.getBoundingClientRect()
+
+       setTargetRect({
+         top: rect.top,
+         left: rect.left,
+         width: rect.width,
+         height: rect.height,
+       })
+
+       setPhase('open')
+
+       heroTimer = window.setTimeout(() => {
+         setHeroDone(true)
+       }, 250)
+     })
+   })
+
+   return () => {
+     window.cancelAnimationFrame(frame1)
+     window.cancelAnimationFrame(frame2)
+     window.clearTimeout(heroTimer)
+   }
+ }, [])
+
+ const closeViewer = () => {
+   const target = document.getElementById(
+     'sc-moment-viewer-image-target-v2'
+   )
+
+   if (target) {
+     const rect = target.getBoundingClientRect()
+
+     setTargetRect({
+       top: rect.top,
+       left: rect.left,
+       width: rect.width,
+       height: rect.height,
+     })
+   }
+
+   setHeroDone(false)
+
+   window.requestAnimationFrame(() => {
+     window.requestAnimationFrame(() => {
+       setPhase('closing')
+
+       window.setTimeout(() => {
+         onClosed()
+       }, 250)
+     })
+   })
+ }
+
+ const heroRect =
+   phase === 'closing'
+     ? origin
+     : targetRect
+
+ return (
+   <div
+     role="dialog"
+     aria-modal="true"
+     aria-label="Moment viewer"
+     style={{
+       position: 'fixed',
+       inset: 0,
+       zIndex: 2147483000,
+       background: '#FFFFFF',
+       overflowY: 'auto',
+       overscrollBehavior: 'contain',
+       WebkitOverflowScrolling: 'touch',
+       opacity: phase === 'closing' ? 0 : 1,
+       transition: 'opacity 220ms ease',
+       isolation: 'isolate',
+     }}
+   >
+     <div style={{
+       width: '100%',
+       maxWidth: 520,
+       minHeight: '100dvh',
+       margin: '0 auto',
+       padding:
+         'env(safe-area-inset-top, 0px) 14px calc(28px + env(safe-area-inset-bottom, 0px))',
+       boxSizing: 'border-box',
+       background: '#FFFFFF',
+     }}>
+
+       <div style={{
+         position: 'sticky',
+         top: 'calc(14px + env(safe-area-inset-top, 0px))',
+         zIndex: 100,
+         height: 0,
+         pointerEvents: 'none',
+       }}>
+         <button
+           type="button"
+           onClick={closeViewer}
+           aria-label="Back to Moments"
+           style={{
+             width: 44,
+             height: 44,
+             marginLeft: 12,
+             borderRadius: 15,
+             border: '1px solid rgba(17,17,17,0.06)',
+             background: 'rgba(255,255,255,0.97)',
+             color: T.ink,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             padding: 0,
+             cursor: 'pointer',
+             boxShadow: '0 8px 28px rgba(15,23,42,0.14)',
+             backdropFilter: 'blur(12px)',
+             WebkitBackdropFilter: 'blur(12px)',
+             pointerEvents: 'auto',
+           }}
+         >
+           <ChevronLeft size={24} strokeWidth={2.15} />
+         </button>
+       </div>
+
+       <div style={{ height: 8 }} />
+
+       {newerMoments.map((item: any, index: number) => (
+         <MomentViewerScrollItem
+           key={item.id}
+           moment={item}
+           onReact={onReact}
+           reacting={reactingId === item.id}
+           bursts={bursts.filter(
+             (burst: any) => burst.momentId === item.id
+           )}
+           hideTopDivider={index === 0}
+         />
+       ))}
+
+       {newerMoments.length > 0 ? (
+         <div style={{
+           height: 32,
+         }} />
+       ) : null}
+
+       {/* selected Moment stays in its true timeline position */}
+       <div
+         id="sc-moment-viewer-image-target-v2"
+         style={{
+           width: '100%',
+           height: 'min(58dvh, 520px)',
+           minHeight: 300,
+           borderRadius: 26,
+           overflow: 'hidden',
+           background: '#F7F6F3',
+           visibility: heroDone ? 'visible' : 'hidden',
+           position: 'relative',
+         }}
+       >
+         <img
+           src={moment.file_url}
+           alt=""
+           loading="eager"
+           decoding="async"
+           fetchPriority="high"
+           style={{
+             width: '100%',
+             height: '100%',
+             objectFit: 'cover',
+             objectPosition: 'center',
+             display: 'block',
+           }}
+         />
+
+         <ReactionBurstLayer
+           bursts={bursts}
+           insideReportShell={true}
+         />
+       </div>
+
+       <div
+         style={{
+           opacity:
+             heroDone && phase === 'open'
+               ? 1
+               : 0,
+           transition: 'opacity 150ms ease',
+         }}
+       >
+         {/* teacher + date below image */}
+         <div style={{
+           display: 'flex',
+           alignItems: 'center',
+           gap: 10,
+           padding: '17px 4px 0',
+         }}>
+           <div style={{
+             width: 36,
+             height: 36,
+             borderRadius: '50%',
+             flexShrink: 0,
+             background: teacherPhoto
+               ? `url(${teacherPhoto}) center/cover`
+               : T.soft,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             color: T.ink2,
+             fontSize: 11,
+             fontWeight: 650,
+             overflow: 'hidden',
+           }}>
+             {!teacherPhoto
+               ? initials(teacherName)
+               : null}
+           </div>
+
+           <div style={{
+             flex: 1,
+             minWidth: 0,
+           }}>
+             <div style={{
+               display: 'flex',
+               alignItems: 'baseline',
+               gap: 5,
+               minWidth: 0,
+             }}>
+               <span style={{
+                 color: T.ink,
+                 fontSize: 14,
+                 fontWeight: 660,
+                 overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+               }}>
+                 {teacherName}
+               </span>
+
+               <span style={{
+                 color: T.ink3,
+                 fontSize: 11.3,
+                 whiteSpace: 'nowrap',
+               }}>
+                 · {formatTimeAgo(moment.created_at)}
+               </span>
+             </div>
+
+             <span style={{
+               color: T.ink3,
+               fontSize: 10.8,
+               display: 'block',
+               marginTop: 2,
+               lineHeight: 1.25,
+             }}>
+               {shareLabel}
+             </span>
+           </div>
+         </div>
+
+         {/* caption below identity */}
+         {note ? (
+           <div style={{
+             margin: '14px 4px 0',
+           }}>
+             <p style={{
+               margin: 0,
+               color: T.ink,
+               fontSize: 13.8,
+               lineHeight: 1.52,
+               whiteSpace: 'pre-wrap',
+               ...(captionOpen
+                 ? {}
+                 : {
+                     display: '-webkit-box',
+                     WebkitLineClamp: 3,
+                     WebkitBoxOrient: 'vertical',
+                     overflow: 'hidden',
+                   }),
+             }}>
+               {note}
+             </p>
+
+             {hasLongCaption ? (
+               <button
+                 type="button"
+                 onClick={() =>
+                   setCaptionOpen(current => !current)
+                 }
+                 style={{
+                   marginTop: 5,
+                   padding: 0,
+                   border: 'none',
+                   background: 'transparent',
+                   color: T.ink2,
+                   fontFamily: 'inherit',
+                   fontSize: 12.2,
+                   fontWeight: 650,
+                   cursor: 'pointer',
+                 }}
+               >
+                 {captionOpen
+                   ? 'Show less'
+                   : 'Read more'}
+               </button>
+             ) : null}
+           </div>
+         ) : null}
+
+         {/* reactions as the final clean action row */}
+         <div style={{
+           position: 'relative',
+           display: 'flex',
+           alignItems: 'center',
+           gap: 10,
+           marginTop: 12,
+           padding: '4px 4px 6px',
+         }}>
+           {[
+             ['heart', Heart],
+             ['like', ThumbsUp],
+             ['smile', Smile],
+           ].map(([key, Icon]: any) => {
+             const active =
+               moment.reaction === key
+
+             const count = Number(
+               moment.reaction_counts?.[key] || 0
+             )
+
+             return (
+               <ParentReactionFXButton
+                 key={key}
+                 moment={moment}
+                 reactionKey={key}
+                 Icon={Icon}
+                 active={active}
+                 count={count}
+                 reacting={reactingId === moment.id}
+                 onReact={onReact}
+               />
+             )
+           })}
+         </div>
+       </div>
+
+       {olderMoments.map((item: any) => (
+         <MomentViewerScrollItem
+           key={item.id}
+           moment={item}
+           onReact={onReact}
+           reacting={reactingId === item.id}
+           bursts={bursts.filter(
+             (burst: any) => burst.momentId === item.id
+           )}
+         />
+       ))}
+     </div>
+
+     {!heroDone ? (
+       <img
+         src={moment.file_url}
+         alt=""
+         decoding="async"
+         fetchPriority="high"
+         style={{
+           position: 'fixed',
+           zIndex: 2,
+           top: heroRect.top,
+           left: heroRect.left,
+           width: heroRect.width,
+           height: heroRect.height,
+           objectFit: 'cover',
+           borderRadius:
+             phase === 'opening' ||
+             phase === 'closing'
+               ? 18
+               : 26,
+           display: 'block',
+           background: '#F7F6F3',
+           boxShadow:
+             phase === 'open'
+               ? '0 18px 48px rgba(15,23,42,0.08)'
+               : '0 4px 14px rgba(15,23,42,0.025)',
+           transition:
+             'top 240ms cubic-bezier(0.16,1,0.3,1), left 240ms cubic-bezier(0.16,1,0.3,1), width 240ms cubic-bezier(0.16,1,0.3,1), height 240ms cubic-bezier(0.16,1,0.3,1), border-radius 240ms ease, box-shadow 240ms ease',
+           pointerEvents: 'none',
+         }}
+       />
+     ) : null}
+   </div>
+ )
+}
+
+function MomentViewerScrollItem({
+ moment,
+ onReact,
+ reacting,
+ bursts = [],
+ hideTopDivider = false,
+}: any) {
+ const [captionOpen, setCaptionOpen] = useState(false)
+
+ const teacherName =
+   moment.teacher?.name || 'Teacher'
+
+ const teacherPhoto =
+   moment.teacher?.photo_url ||
+   moment.teacher?.avatar_url ||
+   moment.teacher?.image_url ||
+   ''
+
+ const isPrivate =
+   moment.share_mode === 'child' ||
+   moment.moment_scope === 'child'
+
+ const shareLabel = isPrivate
+   ? 'Shared with parent'
+   : 'Shared with class'
+
+ const note = String(moment.note || '').trim()
+
+ const hasLongCaption =
+   note.length > 135 ||
+   note.split('\n').length > 3
+
+ return (
+   <section style={{
+     marginTop: hideTopDivider ? 0 : 16,
+     paddingTop: hideTopDivider ? 0 : 16,
+     borderTop: 'none',
+   }}>
+     {/* next photo */}
+     <div style={{
+       width: '100%',
+       height: 'min(58dvh, 520px)',
+       minHeight: 300,
+       borderRadius: 26,
+       overflow: 'hidden',
+       background: '#F7F6F3',
+       position: 'relative',
+     }}>
+       <img
+         src={moment.file_url}
+         alt=""
+         loading="lazy"
+         decoding="async"
+         style={{
+           width: '100%',
+           height: '100%',
+           objectFit: 'cover',
+           objectPosition: 'center',
+           display: 'block',
+         }}
+       />
+
+       <ReactionBurstLayer
+         bursts={bursts}
+         insideReportShell={true}
+       />
+     </div>
+
+     {/* teacher + date */}
+     <div style={{
+       display: 'flex',
+       alignItems: 'center',
+       gap: 10,
+       padding: '17px 4px 0',
+     }}>
+       <div style={{
+         width: 36,
+         height: 36,
+         borderRadius: '50%',
+         flexShrink: 0,
+         background: teacherPhoto
+           ? `url(${teacherPhoto}) center/cover`
+           : T.soft,
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+         color: T.ink2,
+         fontSize: 11,
+         fontWeight: 650,
+         overflow: 'hidden',
+       }}>
+         {!teacherPhoto
+           ? initials(teacherName)
+           : null}
+       </div>
+
+       <div style={{
+         flex: 1,
+         minWidth: 0,
+       }}>
+         <div style={{
+           display: 'flex',
+           alignItems: 'baseline',
+           gap: 5,
+           minWidth: 0,
+         }}>
+           <span style={{
+             color: T.ink,
+             fontSize: 14,
+             fontWeight: 660,
+             overflow: 'hidden',
+             textOverflow: 'ellipsis',
+             whiteSpace: 'nowrap',
+           }}>
+             {teacherName}
+           </span>
+
+           <span style={{
+             color: T.ink3,
+             fontSize: 11.3,
+             whiteSpace: 'nowrap',
+           }}>
+             · {formatTimeAgo(moment.created_at)}
+           </span>
+         </div>
+
+         <span style={{
+           color: T.ink3,
+           fontSize: 10.8,
+           display: 'block',
+           marginTop: 2,
+           lineHeight: 1.25,
+         }}>
+           {shareLabel}
+         </span>
+       </div>
+     </div>
+
+     {/* caption */}
+     {note ? (
+       <div style={{
+         margin: '14px 4px 0',
+       }}>
+         <p style={{
+           margin: 0,
+           color: T.ink,
+           fontSize: 13.8,
+           lineHeight: 1.52,
+           whiteSpace: 'pre-wrap',
+           ...(captionOpen
+             ? {}
+             : {
+                 display: '-webkit-box',
+                 WebkitLineClamp: 3,
+                 WebkitBoxOrient: 'vertical',
+                 overflow: 'hidden',
+               }),
+         }}>
+           {note}
+         </p>
+
+         {hasLongCaption ? (
+           <button
+             type="button"
+             onClick={() =>
+               setCaptionOpen(current => !current)
+             }
+             style={{
+               marginTop: 5,
+               padding: 0,
+               border: 'none',
+               background: 'transparent',
+               color: T.ink2,
+               fontFamily: 'inherit',
+               fontSize: 12.2,
+               fontWeight: 650,
+               cursor: 'pointer',
+             }}
+           >
+             {captionOpen
+               ? 'Show less'
+               : 'Read more'}
+           </button>
+         ) : null}
+       </div>
+     ) : null}
+
+     {/* reactions stay connected to caption */}
+     <div style={{
+       position: 'relative',
+       display: 'flex',
+       alignItems: 'center',
+       gap: 10,
+       marginTop: 12,
+       padding: '4px 4px 6px',
+     }}>
+       {[
+         ['heart', Heart],
+         ['like', ThumbsUp],
+         ['smile', Smile],
+       ].map(([key, Icon]: any) => {
+         const active =
+           moment.reaction === key
+
+         const count = Number(
+           moment.reaction_counts?.[key] || 0
+         )
+
+         return (
+           <ParentReactionFXButton
+             key={key}
+             moment={moment}
+             reactionKey={key}
+             Icon={Icon}
+             active={active}
+             count={count}
+             reacting={reacting}
+             onReact={onReact}
+           />
+         )
+       })}
+     </div>
+   </section>
+ )
+}
+
+
+function MomentGalleryTile({
+ moment,
+ imageIndex = 0,
+ selected = false,
+ onOpen,
+}: any) {
+ const [imageReady, setImageReady] = useState(false)
+
+ const imageWidth = Number(moment.image_width || 0)
+ const imageHeight = Number(moment.image_height || 0)
+
+ const hasDimensions =
+   imageWidth > 0 &&
+   imageHeight > 0
+
+ const image = (
+   <img
+     src={moment.file_url}
+     alt=""
+     loading={imageIndex >= 0 && imageIndex < 2 ? 'eager' : 'lazy'}
+     decoding="async"
+     fetchPriority={imageIndex >= 0 && imageIndex < 2 ? 'high' : 'auto'}
+     onLoad={() => setImageReady(true)}
+     style={{
+       width: '100%',
+       height: hasDimensions ? '100%' : 'auto',
+       display: 'block',
+       objectFit: 'cover',
+       borderRadius: 18,
+       background: '#F5F4F1',
+       opacity: imageReady ? 1 : 0,
+       transition: 'opacity 180ms ease-out',
+       ...(hasDimensions
+         ? {
+             position: 'absolute',
+             inset: 0,
+           }
+         : {}),
+     }}
+   />
+ )
+
+ return (
+   <button
+     type="button"
+     onClick={(event) => {
+       const rect = event.currentTarget.getBoundingClientRect()
+       onOpen(rect)
+     }}
+     aria-label="Open Moment"
+     style={{
+       width: '100%',
+       display: 'block',
+       padding: 0,
+       margin: 0,
+       border: 'none',
+       borderRadius: 0,
+       background: 'transparent',
+       overflow: 'visible',
+       cursor: 'pointer',
+       fontFamily: 'inherit',
+       textAlign: 'left',
+       boxSizing: 'border-box',
+       WebkitTapHighlightColor: 'transparent',
+       boxShadow: 'none',
+     }}
+   >
+     {hasDimensions ? (
+       <div style={{
+         position: 'relative',
+         width: '100%',
+         aspectRatio: `${imageWidth} / ${imageHeight}`,
+         borderRadius: 18,
+         overflow: 'hidden',
+         background: '#F5F4F1',
+       }}>
+         {image}
+       </div>
+     ) : (
+       image
+     )}
+
+   </button>
+ )
+}
+
+
+function MomentPost({
+ moment,
+ isLast,
+ onImage,
+ onReact,
+ reacting,
+ bursts = [],
+ imageIndex = 0,
+ insideReportShell = false,
+ disableImageOpen = false,
+}: any) {
  const teacherName = moment.teacher?.name || 'Teacher'
  const isPrivate = moment.share_mode === 'child'
  const isImage = moment.file_type === 'image'
@@ -1084,7 +2434,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  const childTeacherLabel = childFirstName === 'Your child'
  ? 'Your child’s teacher'
  : `${childFirstName}${childFirstName.toLowerCase().endsWith('s') ? '’' : '’s'} teacher`
- const [imageReady, setImageReady] = useState(false)
+
 
  return (
  <article className="sc-parent-moment-post-v414" style={{
@@ -1273,7 +2623,9 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  {isImage ? (
  <button
  type="button"
- onClick={() => onImage(moment.file_url)}
+ onClick={() => {
+   if (!disableImageOpen) onImage(moment.file_url)
+ }}
   style={{
   display: 'inline-flex',
   width: 'fit-content',
@@ -1281,7 +2633,7 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   padding: 0,
   border: 'none',
   background: 'transparent',
-  cursor: 'zoom-in',
+  cursor: disableImageOpen ? 'default' : 'zoom-in',
   fontFamily: 'inherit',
   textAlign: 'left',
   alignItems: 'flex-start',
@@ -1294,7 +2646,6 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
  loading={imageIndex === 0 ? 'eager' : 'lazy'}
  decoding="async"
  fetchPriority={imageIndex === 0 ? 'high' : 'auto'}
- onLoad={() => setImageReady(true)}
   style={{
   width: 'auto',
   maxWidth: '100%',
@@ -1305,8 +2656,6 @@ function MomentPost({ moment, isLast, onImage, onReact, reacting, bursts = [], i
   display: 'block',
   borderRadius: 18,
   background: 'transparent',
-  opacity: imageReady ? 1 : 0,
-  transition: 'opacity 220ms ease',
   }}
  />
  </button>

@@ -1,12 +1,16 @@
 // @ts-nocheck
+// school-connect-private-moments-storage-v1
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import sharp from 'sharp'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 export const runtime = 'nodejs'
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024
+const MOMENTS_BUCKET = 'school-moments'
+const MOMENT_URL_TTL_SECONDS = 60 * 60 * 6
 
 function adminClient() {
   return createClient(
@@ -107,17 +111,47 @@ export async function POST(req: NextRequest) {
   if (!buffer.length) return NextResponse.json({ error: 'Invalid file content' }, { status: 400 })
   if (buffer.length > MAX_FILE_BYTES) return NextResponse.json({ error: 'Moment file must be under 8 MB' }, { status: 400 })
 
+  let imageWidth: number | null = null
+  let imageHeight: number | null = null
+
+  if (String(mimeType || '').toLowerCase().startsWith('image/')) {
+    try {
+      const metadata = await sharp(buffer).metadata()
+
+      imageWidth =
+        typeof metadata.width === 'number'
+          ? metadata.width
+          : null
+
+      imageHeight =
+        typeof metadata.height === 'number'
+          ? metadata.height
+          : null
+    } catch {
+      // Keep upload behaviour unchanged if dimensions cannot be read.
+    }
+  }
+
   const ext = extFromMime(mimeType, fileName)
   const storagePath = `moments/${teacher.school_id}/${teacher.id}/${Date.now()}.${ext}`
 
   const { error: uploadError } = await sb.storage
-    .from('school-assets')
+    .from(MOMENTS_BUCKET)
     .upload(storagePath, buffer, { upsert: true, contentType: mimeType })
 
   if (uploadError) return NextResponse.json({ error: uploadError.message }, { status: 500 })
 
-  const { data: publicData } = sb.storage.from('school-assets').getPublicUrl(storagePath)
-  const fileUrl = publicData.publicUrl
+  const { data: signedData, error: signedError } = await sb.storage
+    .from(MOMENTS_BUCKET)
+    .createSignedUrl(storagePath, MOMENT_URL_TTL_SECONDS)
+
+  if (signedError || !signedData?.signedUrl) {
+    await sb.storage.from(MOMENTS_BUCKET).remove([storagePath])
+    return NextResponse.json({ error: signedError?.message || 'Could not secure Moment media' }, { status: 500 })
+  }
+
+  // Store only the private object path. The browser receives a temporary signed URL.
+  const fileUrl = storagePath
 
   const { data: moment, error: momentError } = await sb
     .from('moments')
@@ -131,6 +165,8 @@ export async function POST(req: NextRequest) {
       file_name: fileName,
       file_type: fileTypeFromMime(mimeType),
       mime_type: mimeType,
+      image_width: imageWidth,
+      image_height: imageHeight,
     })
     .select('*')
     .single()
@@ -147,7 +183,13 @@ export async function POST(req: NextRequest) {
   const { error: recError } = await sb.from('moment_recipients').insert(recipientRows)
   if (recError) return NextResponse.json({ error: recError.message }, { status: 500 })
 
-  return NextResponse.json({ moment, recipients: recipientRows.length })
+  return NextResponse.json({
+    moment: {
+      ...moment,
+      file_url: signedData.signedUrl,
+    },
+    recipients: recipientRows.length,
+  })
 }
 
 
@@ -238,7 +280,10 @@ export async function DELETE(req: NextRequest) {
   }
 
   if (moment.file_path) {
-    await sb.storage.from('school-assets').remove([moment.file_path])
+    await Promise.allSettled([
+      sb.storage.from(MOMENTS_BUCKET).remove([moment.file_path]),
+      sb.storage.from('school-assets').remove([moment.file_path]),
+    ])
   }
 
   return NextResponse.json({ ok: true, deleted: momentId })

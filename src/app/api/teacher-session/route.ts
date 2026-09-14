@@ -66,7 +66,7 @@ async function getReportSummarySafely(sb: any, childIds: string[], teacherId: st
 
   if (error) return {}
 
-  const map: Record<string, { count: number; latest?: string | null }> = {}
+  const map: Record<string, { count: number; latest?: string | null; latest_week_starting?: string | null }> = {}
 
   for (const report of data || []) {
     const key = report.child_id
@@ -76,6 +76,7 @@ async function getReportSummarySafely(sb: any, childIds: string[], teacherId: st
     const stamp = report.published_at || report.week_starting
     if (!map[key].latest || String(stamp) > String(map[key].latest)) {
       map[key].latest = stamp
+      map[key].latest_week_starting = report.week_starting || null
     }
   }
 
@@ -133,6 +134,7 @@ export async function GET(req: NextRequest) {
       parent_email: child.parent_email || '',
       report_count: reportMap[child.id]?.count || 0,
       latest_report_at: reportMap[child.id]?.latest || null,
+      latest_week_starting: reportMap[child.id]?.latest_week_starting || null,
     }))
 
     const res = NextResponse.json({

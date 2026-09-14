@@ -1,4 +1,6 @@
 // @ts-nocheck
+// school-connect-private-moments-storage-v1
+// school-connect-private-moments-signed-url-fix-v2
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -12,6 +14,48 @@ function adminClient() {
     { auth: { persistSession: false } }
   )
 }
+
+const MOMENTS_BUCKET = 'school-moments'
+const MOMENT_URL_TTL_SECONDS = 60 * 60 * 6
+
+async function signMomentRows(sb: any, moments: any[]) {
+  const rows = Array.isArray(moments) ? moments : []
+
+  return await Promise.all(rows.map(async (moment: any) => {
+    const path = String(moment?.file_path || '').trim()
+
+    if (!path) return moment
+
+    // New V1 private Moments: sign the object path every time it is returned.
+    // Use createSignedUrl per object so we never depend on batch response indexing.
+    try {
+      const { data, error } = await sb.storage
+        .from(MOMENTS_BUCKET)
+        .createSignedUrl(path, MOMENT_URL_TTL_SECONDS)
+
+      const signedUrl = String(data?.signedUrl || data?.signedURL || '').trim()
+
+      if (!error && signedUrl) {
+        return {
+          ...moment,
+          file_url: signedUrl,
+        }
+      }
+    } catch {}
+
+    // Legacy Moments may still live in public school-assets.
+    // Only use an existing full URL as a fallback; never send a bare private path
+    // to the browser because <img src="moments/..."> will fail.
+    const legacyUrl = String(moment?.file_url || '').trim()
+    const isFullUrl = /^https?:\/\//i.test(legacyUrl)
+
+    return {
+      ...moment,
+      file_url: isFullUrl ? legacyUrl : null,
+    }
+  }))
+}
+
 
 async function getTeacher(req: NextRequest) {
   const token = req.cookies.get('teacher_token')?.value
@@ -127,7 +171,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: momentsError.message }, { status: 500 })
   }
 
-  const rows = await buildMomentRows(sb, moments || [])
+  const safeMoments = await signMomentRows(sb, moments || [])
+  const rows = await buildMomentRows(sb, safeMoments)
 
   const recipientKeys = new Set<string>()
   const viewedKeys = new Set<string>()

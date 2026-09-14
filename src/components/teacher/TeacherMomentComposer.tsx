@@ -1,5 +1,6 @@
 // @ts-nocheck
 'use client'
+// school-connect-v1-moments-instant-v2
 
 import { useEffect, useMemo, useState } from 'react'
 import { Check, FileText, Send, ShieldAlert, X } from 'lucide-react'
@@ -96,21 +97,63 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
   const sendMoment = async () => {
     if (!file) return toast.error('Choose a file first')
 
-    const childIds = shareMode === 'all' ? learners.map((child: any) => child.id) : selectedIds
-    if (!childIds.length) return toast.error('Choose who should receive this Moment')
+    const childIds = shareMode === 'all'
+      ? learners.map((child: any) => child.id)
+      : selectedIds
+
+    if (!childIds.length) {
+      return toast.error('Choose who should receive this Moment')
+    }
 
     let confirmAll = false
+
     if (shareMode === 'all') {
-      const ok = confirm('Share to all parents?\n\nThis Moment will be visible to every parent in this class. Please confirm that the content is safe to share with everyone.')
+      const ok = confirm(
+        'Share to all parents?\\n\\nThis Moment will be visible to every parent in this class. Please confirm that the content is safe to share with everyone.'
+      )
       if (!ok) return
       confirmAll = true
     }
 
+    if (sending) return
     setSending(true)
-    const tid = toast.loading('Sharing Moment...')
+
+    let dataUrl = ''
 
     try {
-      const dataUrl = await readFileAsDataUrl(file)
+      dataUrl = await readFileAsDataUrl(file)
+    } catch {
+      setSending(false)
+      return toast.error('Could not prepare this Moment')
+    }
+
+    const tempId = `moment-pending-${Date.now()}`
+
+    const optimisticMoment = {
+      id: tempId,
+      share_mode: shareMode,
+      note: note.trim() || null,
+      file_url: dataUrl,
+      file_name: file.name,
+      file_type: isImage ? 'image' : 'document',
+      mime_type: file.type || 'application/octet-stream',
+      created_at: new Date().toISOString(),
+      recipient_count: childIds.length,
+      recipients: [],
+      reactions: [],
+      reaction_count: 0,
+      reaction_counts: { heart: 0, like: 0, smile: 0 },
+      __pending: true,
+    }
+
+    onCreated?.({
+      phase: 'optimistic',
+      temp_id: tempId,
+      moment: optimisticMoment,
+    })
+    onClose?.()
+
+    try {
       const res = await fetch('/api/teacher/moments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -128,11 +171,26 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
       const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json.error || 'Could not share Moment')
 
-      toast.success('Moment shared', { id: tid })
-      onCreated?.()
-      onClose?.()
+      onCreated?.({
+        phase: 'confirmed',
+        temp_id: tempId,
+        moment: {
+          ...json.moment,
+          recipient_count: Number(json.recipients || childIds.length),
+          recipients: [],
+          reactions: [],
+          reaction_count: 0,
+          reaction_counts: { heart: 0, like: 0, smile: 0 },
+        },
+      })
+
+      toast.success('Moment shared')
     } catch (error: any) {
-      toast.error(error.message || 'Could not share Moment', { id: tid })
+      onCreated?.({
+        phase: 'failed',
+        temp_id: tempId,
+      })
+      toast.error(error.message || 'Could not share Moment')
     }
 
     setSending(false)

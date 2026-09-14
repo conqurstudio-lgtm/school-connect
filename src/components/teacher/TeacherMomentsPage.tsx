@@ -1,5 +1,7 @@
 // @ts-nocheck
 'use client'
+// school-connect-v1-moments-no-blink-v1
+// school-connect-v1-moments-instant-v2
 
 import { useEffect, useRef, useState } from 'react'
 import { FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal, ChevronLeft } from 'lucide-react'
@@ -177,7 +179,7 @@ function LoadingDots() {
 }
 
 export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }: any) {
- const [loading, setLoading] = useState(true)
+ const [momentsReady, setMomentsReady] = useState(false)
  const [moments, setMoments] = useState<any[]>([])
  const [openImage, setOpenImage] = useState('')
  const [reactionMoment, setReactionMoment] = useState<any>(null)
@@ -197,54 +199,80 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
 
  const classLabel = [teacher?.grade, teacher?.class_name].filter(Boolean).join(' · ') || 'Your class'
  const learnerCount = Array.isArray(learners) ? learners.length : 0
+ const load = async (quiet = true) => {
+  try {
+    const res = await fetch('/api/teacher/moments/list', { cache: 'no-store' })
+    const json = await res.json().catch(() => ({}))
 
- const load = async (quiet = false) => {
- if (!quiet) setLoading(true)
+    if (!res.ok) throw new Error(json.error || 'Could not load Moments')
 
- try {
- const res = await fetch('/api/teacher/moments/list', { cache: 'no-store' })
- const json = await res.json().catch(() => ({}))
+    const nextMoments = json.moments || []
 
- if (!res.ok) throw new Error(json.error || 'Could not load Moments')
+    setMoments(current => {
+      const byId = new Map((current || []).map((item: any) => [item.id, item]))
 
- const nextMoments = json.moments || []
+      const merged = (nextMoments || []).map((serverItem: any) => {
+        const local = byId.get(serverItem.id)
 
- setMoments(nextMoments)
- onChanged?.(json.summary)
+        if (!local) return serverItem
 
- try {
- window.localStorage.setItem(teacherMomentsCacheKey(teacher), JSON.stringify({
- moments: nextMoments,
- summary: json.summary || null,
- saved_at: new Date().toISOString(),
- }))
- } catch {}
- } catch (error: any) {
- if (!quiet) toast.error(error.message || 'Could not load Moments')
- }
+        // While the server image is still warming up, keep the already-visible
+        // local preview instead of flashing the card away and back.
+        if (local.__syncing) {
+          return {
+            ...serverItem,
+            file_url: local.file_url || serverItem.file_url,
+            __syncing: true,
+          }
+        }
 
- setLoading(false)
+        return {
+          ...local,
+          ...serverItem,
+        }
+      })
+
+      // Keep any optimistic Moment that Supabase has not returned yet.
+      const serverIds = new Set((nextMoments || []).map((item: any) => item.id))
+      const pending = (current || []).filter(
+        (item: any) => item.__pending && !serverIds.has(item.id)
+      )
+
+      return [...pending, ...merged]
+    })
+    setMomentsReady(true)
+    onChanged?.(json.summary)
+
+    try {
+      window.localStorage.setItem(teacherMomentsCacheKey(teacher), JSON.stringify({
+        moments: nextMoments,
+        summary: json.summary || null,
+        saved_at: new Date().toISOString(),
+      }))
+    } catch {}
+  } catch (error: any) {
+    setMomentsReady(true)
+    if (!quiet) toast.error(error.message || 'Could not load Moments')
+  }
  }
 
  useEffect(() => {
- let usedCache = false
+  try {
+    const raw = window.localStorage.getItem(teacherMomentsCacheKey(teacher))
 
- try {
- const raw = window.localStorage.getItem(teacherMomentsCacheKey(teacher))
- if (raw) {
- const cached = JSON.parse(raw)
- if (cached?.moments) {
- setMoments(cached.moments || [])
- if (cached.summary) onChanged?.(cached.summary)
- setLoading(false)
- usedCache = true
- }
- }
- } catch {}
+    if (raw) {
+      const cached = JSON.parse(raw)
 
- load(usedCache)
+      if (cached?.moments) {
+        setMoments(cached.moments || [])
+        if (cached.summary) onChanged?.(cached.summary)
+        setMomentsReady(true)
+      }
+    }
+  } catch {}
+
+  void load(true)
  }, [teacher?.id, teacher?.teacher_id, teacher?.email])
-
 
  const handleTeacherMomentFileChange = (event: any) => {
  const file = event.target.files?.[0]
@@ -273,62 +301,71 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
 
 
  const saveMomentEdit = async (note: string) => {
- if (!editingMoment?.id) return
+  if (!editingMoment?.id) return
 
- setMomentActionLoading(true)
+  const editingId = editingMoment.id
+  const previousMoment = editingMoment
+  const nextNote = String(note || '').trim() || null
 
- try {
- const res = await fetch('/api/teacher/moments', {
- method: 'PATCH',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({
- moment_id: editingMoment.id,
- note,
- }),
- })
+  setMoments(items => items.map(item => (
+    item.id === editingId ? { ...item, note: nextNote } : item
+  )))
+  setEditingMoment(null)
+  setMomentActionLoading(true)
 
- const json = await res.json().catch(() => ({}))
- if (!res.ok) throw new Error(json.error || 'Could not update Moment')
+  try {
+    const res = await fetch('/api/teacher/moments', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        moment_id: editingId,
+        note,
+      }),
+    })
 
- setMoments(items => items.map(item => (
- item.id === editingMoment.id ? { ...item, note: json.moment?.note || null } : item
- )))
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(json.error || 'Could not update Moment')
 
- setEditingMoment(null)
- toast.success('Moment updated')
- } catch (error: any) {
- toast.error(error.message || 'Could not update Moment')
- }
+    toast.success('Moment updated')
+  } catch (error: any) {
+    setMoments(items => items.map(item => (
+      item.id === editingId ? previousMoment : item
+    )))
+    toast.error(error.message || 'Could not update Moment')
+  }
 
- setMomentActionLoading(false)
+  setMomentActionLoading(false)
  }
 
  const deleteTeacherMoment = async () => {
- if (!deletingMoment?.id) return
+  if (!deletingMoment?.id) return
 
- setMomentActionLoading(true)
+  const removing = deletingMoment
+  const removingId = deletingMoment.id
 
- try {
- const res = await fetch('/api/teacher/moments', {
- method: 'DELETE',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({
- moment_id: deletingMoment.id,
- }),
- })
+  setMoments(items => items.filter(item => item.id !== removingId))
+  setDeletingMoment(null)
+  setMomentActionLoading(true)
 
- const json = await res.json().catch(() => ({}))
- if (!res.ok) throw new Error(json.error || 'Could not delete Moment')
+  try {
+    const res = await fetch('/api/teacher/moments', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        moment_id: removingId,
+      }),
+    })
 
- setMoments(items => items.filter(item => item.id !== deletingMoment.id))
- setDeletingMoment(null)
- toast.success('Moment deleted')
- load()
- } catch (error: any) {
- toast.error(error.message || 'Could not delete Moment')
- }
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(json.error || 'Could not delete Moment')
 
- setMomentActionLoading(false)
+    toast.success('Moment deleted')
+  } catch (error: any) {
+    setMoments(items => [removing, ...items])
+    toast.error(error.message || 'Could not delete Moment')
+  }
+
+  setMomentActionLoading(false)
  }
 
  return (
@@ -440,9 +477,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  }}
 >
  <div style={{ animation: 'teacherTabContentIn 150ms ease-out both' }}>
- {loading ? (
- <LoadingDots />
- ) : moments.length === 0 ? (
+ {!momentsReady ? null : moments.length === 0 ? (
  <SCEmptyState
  title="No Moments shared yet"
  text="Create a Moment from the plus button when there is something worth sharing."
@@ -559,10 +594,65 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  draft={momentDraft}
  learners={learners}
  onClose={() => setMomentDraft(null)}
- onCreated={(summary: any) => {
+ onCreated={(payload: any) => {
  setMomentDraft(null)
- load()
- onChanged?.(summary)
+
+ if (payload?.phase === 'optimistic' && payload?.moment) {
+  setMoments(items => [payload.moment, ...items])
+  setMomentsReady(true)
+  return
+ }
+
+ if (payload?.phase === 'confirmed' && payload?.moment) {
+  const serverMoment = payload.moment
+  const serverUrl = String(serverMoment?.file_url || '')
+
+  setMoments(items => items.map(item => (
+   item.id === payload.temp_id
+    ? {
+       ...serverMoment,
+       file_url: item.file_url || serverUrl,
+       __pending: false,
+       __syncing: Boolean(serverUrl && item.file_url && item.file_url !== serverUrl),
+      }
+    : item
+  )))
+
+  // Keep the local preview visible until the permanent Supabase image is ready.
+  if (serverUrl && typeof window !== 'undefined') {
+   const image = new Image()
+
+   image.onload = () => {
+    setMoments(items => items.map(item => (
+     item.id === serverMoment.id
+      ? { ...item, file_url: serverUrl, __syncing: false }
+      : item
+    )))
+   }
+
+   image.onerror = () => {
+    setMoments(items => items.map(item => (
+     item.id === serverMoment.id
+      ? { ...item, __syncing: false }
+      : item
+    )))
+   }
+
+   image.src = serverUrl
+  } else {
+   setMoments(items => items.map(item => (
+    item.id === serverMoment.id
+     ? { ...item, __syncing: false }
+     : item
+   )))
+  }
+
+  return
+ }
+
+ if (payload?.phase === 'failed') {
+  setMoments(items => items.filter(item => item.id !== payload.temp_id))
+ }
  }}
  />
  )}
@@ -577,6 +667,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  const shareLabel = isPrivate ? 'Shared with parent' : 'Shared with class'
  const reactionTotal = Number(moment.reaction_count || 0)
  const [menuOpen, setMenuOpen] = useState(false)
+ const isSyncingMoment = Boolean(moment?.__pending || moment?.__syncing)
 
  useEffect(() => {
  if (!menuOpen) return
@@ -601,6 +692,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
 
  return (
  <article style={{
+ position: 'relative',
  display: 'grid',
  gridTemplateColumns: '38px 1fr',
  gap: 10,
@@ -608,6 +700,39 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.035)',
  background: 'transparent',
  }}>
+
+ <style>{`
+ @keyframes scMomentSyncBar {
+  from { transform: translateX(0); opacity: 0.45; }
+  to { transform: translateX(160%); opacity: 0.9; }
+ }
+ `}</style>
+
+ {isSyncingMoment ? (
+  <div
+   aria-hidden="true"
+   style={{
+    position: 'absolute',
+    inset: '-2px 0 auto 48px',
+    height: 3,
+    borderRadius: 999,
+    overflow: 'hidden',
+    pointerEvents: 'none',
+    zIndex: 2,
+    opacity: 0.8,
+   }}
+  >
+   <div
+    style={{
+     width: '38%',
+     height: '100%',
+     borderRadius: 999,
+     background: '#D7D7D7',
+     animation: 'scMomentSyncBar 900ms ease-in-out infinite alternate',
+    }}
+   />
+  </div>
+ ) : null}
  <div style={{
  width: 38,
  height: 38,

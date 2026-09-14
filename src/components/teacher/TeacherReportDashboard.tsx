@@ -1,9 +1,20 @@
 // @ts-nocheck
 'use client'
+// school-connect-v1-search-add-height-match-v1
+// school-connect-v1-search-add-layout-v1
+// school-connect-v1-moments-switch-icon-v1
+// school-connect-v1-header-action-polish-v1
+// school-connect-quick-mark-pill-v1
+// school-connect-quick-mark-icon-only-v1
+// school-connect-quick-mark-clean-v1
+// school-connect-instant-safe-neutral-v1
+// school-connect-instant-button-repair-v1
+// school-connect-v1-speed-batch-v1
+// school-connect-v1-instant-steady-v1
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight, Sparkles} from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, ChevronDown, Copy, GraduationCap, LogOut, Plus, Settings, Eye, MoreHorizontal, Users, X, ChevronRight, Sparkles, CheckCheck, Images, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
 import { TeacherMomentsPage } from '@/components/teacher/TeacherMomentsPage'
@@ -451,10 +462,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  const cachedDashboard = readTeacherStartupCache(initialToken)
  const [session, setSession] = useState(initialSession || cachedDashboard?.session || null)
  const [loading, setLoading] = useState(!initialSession && !cachedDashboard?.session)
- const [bootLoading, setBootLoading] = useState(true)
- const [showTeacherStartup, setShowTeacherStartup] = useState(true)
- const [teacherStartupLeaving, setTeacherStartupLeaving] = useState(false)
- const startupStartedRef = useRef(Date.now())
  const [showAdd, setShowAdd] = useState(false)
  const [showSettings, setShowSettings] = useState(false)
  const [photoDraft, setPhotoDraft] = useState<any>(null)
@@ -536,21 +543,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  }
  }
 
- const loadStatuses = async (children: any[]) => {
- try {
- const res = await fetch('/api/teacher/report-status', { cache: 'no-store' })
- const json = await res.json().catch(() => ({}))
- const latest = json.latestByChild || {}
-
- return children.map((child: any) => ({
- ...child,
- ...(latest[child.id] || {}),
- }))
- } catch {
- return children
- }
- }
-
  const load = async () => {
  try {
  const url = initialToken
@@ -565,11 +557,9 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  return
  }
 
- const mergedChildren = await loadStatuses(json.children || [])
-
  const nextSession = {
  ...json,
- children: mergedChildren,
+ children: json.children || [],
  }
 
  setSession(nextSession)
@@ -577,31 +567,19 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  loadMomentSummary(nextSession)
  } finally {
  setLoading(false)
- setBootLoading(false)
  }
  }
 
  useEffect(() => {
+ if (initialSession?.teacher?.id) {
+ setLoading(false)
+ writeTeacherStartupCache(initialToken, initialSession, momentSummary)
+ loadMomentSummary(initialSession)
+ return
+ }
+
  load()
  }, [])
-
- 
-
- useEffect(() => {
- if (!showTeacherStartup) return
- if (loading || bootLoading) return
-
- const elapsed = Date.now() - startupStartedRef.current
- const wait = Math.max(0, 420 - elapsed)
-
- const startLeaving = window.setTimeout(() => setTeacherStartupLeaving(true), wait)
- const finish = window.setTimeout(() => setShowTeacherStartup(false), wait + 220)
-
- return () => {
- window.clearTimeout(startLeaving)
- window.clearTimeout(finish)
- }
- }, [loading, bootLoading, showTeacherStartup])
 
  const signOut = async () => {
  await fetch('/api/teacher-session', { method: 'POST' })
@@ -690,6 +668,82 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  setPreviewChild(null)
  }
 
+ const updateChildrenLocally = (updater: (rows: any[]) => any[]) => {
+ setSession((current: any) => {
+ if (!current) return current
+
+ const nextSession = {
+ ...current,
+ children: updater(Array.isArray(current.children) ? current.children : []),
+ }
+
+ writeTeacherStartupCache(initialToken, nextSession, momentSummary)
+ return nextSession
+ })
+ }
+
+ const markSteadyProgress = (childIds: string[]) => {
+ const ids = Array.from(new Set((childIds || []).filter(Boolean)))
+ if (!ids.length) return
+
+ const idSet = new Set(ids)
+ const before = new Map(
+ children
+ .filter((child: any) => idSet.has(child.id))
+ .map((child: any) => [
+ child.id,
+ {
+ latest_week_starting: child.latest_week_starting || null,
+ latest_report_at: child.latest_report_at || null,
+ },
+ ])
+ )
+
+ const stampedAt = new Date().toISOString()
+
+ updateChildrenLocally((rows: any[]) => rows.map((child: any) => (
+ idSet.has(child.id)
+ ? {
+ ...child,
+ latest_week_starting: weekStart,
+ latest_report_at: stampedAt,
+ }
+ : child
+ )))
+
+ toast.success(`${ids.length} ${ids.length === 1 ? 'report' : 'reports'} marked steady`)
+
+ void (async () => {
+ try {
+ const res = await fetch('/api/teacher/child-report/batch', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({
+ child_ids: ids,
+ week_starting: weekStart,
+ mode: 'steady',
+ }),
+ })
+
+ const json = await res.json().catch(() => ({}))
+ if (!res.ok) throw new Error(json.error || 'Could not save steady progress')
+ } catch (error: any) {
+ updateChildrenLocally((rows: any[]) => rows.map((child: any) => {
+ const snapshot = before.get(child.id)
+ if (!snapshot) return child
+
+ return {
+ ...child,
+ latest_week_starting: snapshot.latest_week_starting,
+ latest_report_at: snapshot.latest_report_at,
+ }
+ }))
+
+ toast.error(error.message || 'Could not save steady progress')
+ }
+ })()
+ }
+
  const nextPendingAfter = (child: any) => {
  const currentIndex = children.findIndex((c: any) => c.id === child.id)
  const after = children.slice(currentIndex + 1).find((c: any) => !isMarkedThisWeek(c, weekStart))
@@ -736,9 +790,16 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  children={children}
  weekStart={weekStart}
  onBack={() => setActiveChild(null)}
- onSaved={async (updatedChild: any) => {
- await load()
+ onSaved={(updatedChild: any) => {
+ updateChildrenLocally((rows: any[]) => rows.map((child: any) => (
+ child.id === updatedChild.id ? { ...child, ...updatedChild } : child
+ )))
  setActiveChild((current: any) => current?.id === updatedChild.id ? { ...current, ...updatedChild } : current)
+ }}
+ onSaveFailed={(originalChild: any) => {
+ updateChildrenLocally((rows: any[]) => rows.map((child: any) => (
+ child.id === originalChild.id ? { ...child, ...originalChild } : child
+ )))
  }}
  onNext={(currentChild: any) => {
  const next = nextPendingAfter(currentChild)
@@ -778,6 +839,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  isMainHome
  onSettings={() => setShowSettings(true)}
  onMoments={() => setShowTeacherMoments(true)}
+ onBatchSteady={markSteadyProgress}
  />
 
  {showAdd && (
@@ -830,10 +892,6 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  }}>
  <TeacherSafeAreaStyle />
 
- {showTeacherStartup && (
- <TeacherStartupLoader teacher={teacher} overlay leaving={teacherStartupLeaving} />
- )}
-
  {photoDraft && (
  <TeacherPhotoAdjustModal
  draft={photoDraft}
@@ -843,7 +901,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  />
  )}
 
- <div className={`teacher-page-shell ${showTeacherStartup ? '' : 'is-ready'}`} style={{
+ <div className="teacher-page-shell is-ready" style={{
  maxWidth: 520,
  height: '100dvh',
  margin: '0 auto',
@@ -993,7 +1051,7 @@ export function TeacherReportDashboard({ initialSession = null, initialToken = '
  <SCActionRow
  icon={<Users size={18} strokeWidth={1.7} />}
  title="Weekly reports"
- subtitle={children.length > 0 && pendingCount === 0 ? 'All reports sent.' : 'Write learner updates.'}
+ subtitle={children.length > 0 && pendingCount === 0 ? 'All reports done.' : 'Write learner updates.'}
  onClick={() => setShowLearnersPage(true)}
  />
 
@@ -1089,10 +1147,13 @@ function TeacherLearnersPage({
  isMainHome = false,
  onSettings,
  onMoments,
+ onBatchSteady,
 }: any) {
  const [teacherLearnerSearch, setTeacherLearnerSearch] = useState('')
  const [teacherSearchFocused, setTeacherSearchFocused] = useState(false)
  const [teacherReportFilter, setTeacherReportFilter] = useState('all')
+ const [showBatchSteady, setShowBatchSteady] = useState(false)
+ const [batchSelectedIds, setBatchSelectedIds] = useState<string[]>([])
  const hasLearners = children?.length > 0
  const safeTeacherAvatarUrl =
  teacher?.photo_url ||
@@ -1104,7 +1165,7 @@ function TeacherLearnersPage({
  const pendingTotal = pendingChildren?.length || 0
  const sentTotal = sentChildren?.length || 0
  const reportsSummary = hasLearners
- ? `${pendingTotal} pending · ${sentTotal} sent this week`
+ ? `${pendingTotal} pending · ${sentTotal} done this week`
  : 'Weekly learner reports'
 
  const teacherSearchTerm = teacherLearnerSearch.trim().toLowerCase()
@@ -1119,6 +1180,19 @@ function TeacherLearnersPage({
  const visibleSentChildren = teacherReportFilter === 'pending'
  ? []
  : (sentChildren || []).filter(learnerMatchesTeacherSearch)
+
+ const openBatchSteady = () => {
+ setBatchSelectedIds((pendingChildren || []).map((child: any) => child.id).filter(Boolean))
+ setShowBatchSteady(true)
+ }
+
+ const toggleBatchLearner = (id: string) => {
+ setBatchSelectedIds((current) => (
+ current.includes(id)
+ ? current.filter((item) => item !== id)
+ : [...current, id]
+ ))
+ }
 
  return (
  <div className="teacher-safe-screen sc-screen-enter" style={{
@@ -1213,15 +1287,16 @@ function TeacherLearnersPage({
  <button
  type="button"
  onClick={() => onMoments?.()}
- aria-label="Open moments from main header"
+ aria-label="Switch to Moments"
+ title="Moments"
  style={{
- width: 48,
- height: 48,
- borderRadius: '50%',
- border: '0 solid transparent',
+ width: 44,
+ height: 44,
+ borderRadius: 999,
+ border: 'none',
  outline: 'none',
- background: '#f2f2f2',
- color: '#737273',
+ background: 'transparent',
+ color: '#222222',
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -1233,34 +1308,10 @@ function TeacherLearnersPage({
  WebkitAppearance: 'none',
  }}
  >
- <Camera size={22} strokeWidth={2} color="#222222" />
+ <RefreshCw size={29} strokeWidth={1.75} color="#222222" />
  </button>
 
- <button
- type="button"
- onClick={onAdd}
- aria-label="Add learner"
- style={{
- width: 48,
- height: 48,
- borderRadius: '50%',
- border: '0 solid transparent',
- outline: 'none',
- backgroundColor: '#f87645',
- color: '#FFFFFF',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- padding: 0,
- flexShrink: 0,
- boxShadow: 'none',
- appearance: 'none',
- WebkitAppearance: 'none',
- }}
- >
- <Plus size={27} strokeWidth={1.8} color="#FFFFFF" />
- </button>
+ 
 </div>
  </div>
  ) : (
@@ -1426,7 +1477,7 @@ function TeacherLearnersPage({
 
 <section
  style={{
- padding: '0 0 18px',
+ padding: '0 0 16px',
  background: '#FFFFFF',
  }}
 >
@@ -1439,10 +1490,20 @@ function TeacherLearnersPage({
  zIndex: 5,
  }}
 >
+<div
+ style={{
+ display: 'flex',
+ alignItems: 'center',
+ gap: 10,
+ width: '100%',
+ }}
+>
 <section
  className="teacher-home-search-shell-v1"
  style={{
  width: '100%',
+ flex: 1,
+ minWidth: 0,
  minWidth: 0,
  height: 48,
  borderRadius: 999,
@@ -1505,6 +1566,33 @@ function TeacherLearnersPage({
  }}
  />
  </section>
+
+ <button
+ type="button"
+ onClick={onAdd}
+ aria-label="Add learner"
+ style={{
+ width: 54,
+ height: 48,
+ borderRadius: 24,
+ border: '0 solid transparent',
+ outline: 'none',
+ backgroundColor: '#f87645',
+ color: '#FFFFFF',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ cursor: 'pointer',
+ padding: 0,
+ flexShrink: 0,
+ boxShadow: 'none',
+ appearance: 'none',
+ WebkitAppearance: 'none',
+ }}
+ >
+ <Plus size={24} strokeWidth={1.85} color="#FFFFFF" />
+ </button>
+</div>
 </div>
 </section>
 
@@ -1638,6 +1726,19 @@ function TeacherLearnersPage({
  box-shadow: none !important;
  font-weight: 500 !important;
  }
+
+ @keyframes teacherInstantMarkHint {
+ 0%, 100% { transform: scale(1); }
+ 50% { transform: scale(1.08); }
+ }
+
+ .teacher-instant-mark-button-v1 {
+ animation: teacherInstantMarkHint 720ms ease-in-out 2;
+ }
+
+ @media (prefers-reduced-motion: reduce) {
+ .teacher-instant-mark-button-v1 { animation: none; }
+ }
 `}</style>
 
 {isMainHome ? (
@@ -1652,7 +1753,7 @@ function TeacherLearnersPage({
  >
  {[
  { key: 'all', label: 'All', count: null },
- { key: 'sent', label: 'Sent', count: sentTotal },
+ { key: 'sent', label: 'Done', count: sentTotal },
  { key: 'pending', label: 'Pending', count: pendingTotal },
  ].map((item: any) => {
  const active = teacherReportFilter === item.key
@@ -1738,7 +1839,35 @@ function TeacherLearnersPage({
  </button>
  )
  })}
- </section>
+ 
+ {pendingTotal > 0 ? (
+ <button
+ type="button"
+ onClick={() => { setBatchSelectedIds([]); setShowBatchSteady(true) }}
+ aria-label="Quick mark"
+ title="Quick mark"
+ style={{
+ width: 38,
+ height: 30,
+ marginLeft: 'auto',
+ borderRadius: 18,
+ border: '1px solid #DADADA',
+ background: 'transparent',
+ color: '#737273',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ padding: 0,
+ cursor: 'pointer',
+ boxShadow: 'none',
+ WebkitTapHighlightColor: 'transparent',
+ }}
+ >
+ <CheckCheck size={17} strokeWidth={2} />
+ </button>
+ ) : null}
+</section>
  ) : null}
 
 
@@ -1798,12 +1927,164 @@ function TeacherLearnersPage({
  </section>
  )}
  </main>
+
+ {showBatchSteady ? (
+ <BatchSteadySheet
+ learners={pendingChildren || []}
+ selectedIds={batchSelectedIds}
+ onToggle={toggleBatchLearner}
+ onSelectAll={() => setBatchSelectedIds((pendingChildren || []).map((child: any) => child.id).filter(Boolean))}
+ onClear={() => setBatchSelectedIds([])}
+ onClose={() => setShowBatchSteady(false)}
+ onApply={() => {
+ const selected = [...batchSelectedIds]
+ setShowBatchSteady(false)
+ onBatchSteady?.(selected)
+ }}
+ />
+ ) : null}
  </div>
  </div>
  )
 }
 
+function BatchSteadySheet({
+ learners,
+ selectedIds,
+ onToggle,
+ onSelectAll,
+ onClear,
+ onClose,
+ onApply,
+}: any) {
+ const selected = new Set(selectedIds || [])
+ const count = selected.size
 
+ return (
+ <BottomSheet onClose={onClose}>
+ <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+ <div>
+ <p style={{ margin: 0, fontSize: 17, fontWeight: 620, color: T.ink }}>
+ Quick mark
+ </p>
+ <p style={{ margin: '4px 0 0', fontSize: 12.6, lineHeight: 1.45, color: T.ink3 }}>
+ Select learners making steady progress.
+ </p>
+ </div>
+
+ <div style={{
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'space-between',
+ gap: 10,
+ }}>
+ <p style={{ margin: 0, fontSize: 12.3, color: T.ink3 }}>
+ {count} selected
+ </p>
+
+ <div style={{ display: 'flex', gap: 6 }}>
+ <button
+ type="button"
+ onClick={onSelectAll}
+ style={{
+ ...softButton,
+ minHeight: 34,
+ padding: '0 10px',
+ background: T.soft,
+ fontSize: 11.8,
+ }}
+ >
+ All
+ </button>
+
+ <button
+ type="button"
+ onClick={onClear}
+ style={{
+ ...softButton,
+ minHeight: 34,
+ padding: '0 10px',
+ background: T.soft,
+ fontSize: 11.8,
+ }}
+ >
+ Clear
+ </button>
+ </div>
+ </div>
+
+ <div style={{
+ maxHeight: 320,
+ overflowY: 'auto',
+ borderTop: '1px solid var(--sc-border-soft)',
+ borderBottom: '1px solid var(--sc-border-soft)',
+ }}>
+ {(learners || []).map((child: any, index: number) => {
+ const active = selected.has(child.id)
+
+ return (
+ <button
+ key={child.id}
+ type="button"
+ onClick={() => onToggle(child.id)}
+ style={{
+ width: '100%',
+ minHeight: 50,
+ border: 'none',
+ borderBottom: index === learners.length - 1 ? 'none' : '1px solid var(--sc-border-soft)',
+ background: '#FFFFFF',
+ display: 'flex',
+ alignItems: 'center',
+ gap: 11,
+ padding: '0 2px',
+ fontFamily: 'inherit',
+ cursor: 'pointer',
+ textAlign: 'left',
+ }}
+ >
+ <span style={{
+ width: 26,
+ height: 26,
+ borderRadius: 999,
+ background: active ? '#222222' : '#f2f2f2',
+ color: active ? '#FFFFFF' : '#737273',
+ display: 'inline-flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ flexShrink: 0,
+ fontSize: 13,
+ fontWeight: 700,
+ }}>
+ {active ? '✓' : ''}
+ </span>
+
+ <span style={{
+ fontSize: 13.5,
+ fontWeight: 560,
+ color: T.ink,
+ }}>
+ {child.name}
+ </span>
+ </button>
+ )
+ })}
+ </div>
+
+ <SCButton
+ tone="primary"
+ fullWidth
+ onClick={onApply}
+ disabled={!count}
+ style={{ minHeight: 44 }}
+ >
+ {count
+ ? `Mark ${count} ${count === 1 ? 'learner' : 'learners'} as steady`
+ : 'Select learners'}
+ </SCButton>
+ </div>
+ </BottomSheet>
+ )
+}
 
 function MiniStat({ label, value }: any) {
  return (
@@ -1922,8 +2203,8 @@ function LearnerRow({ child, weekStart, isLast, onOpen, onDeleted }: any) {
  <SCReportRow
  initials={initials(child.name)}
  title={child.name}
- subtitle={done ? 'Sent this week' : 'Pending this week'}
- actionLabel={done ? 'View' : 'Write'}
+ subtitle={done ? 'Done this week' : 'Pending this week'}
+ actionLabel={done ? 'Review' : 'Write'}
  isLast={isLast}
  onOpen={onOpen}
  onAction={onOpen}
@@ -2471,199 +2752,71 @@ function ManualWhatsAppFallbackModal({ child, reportLink, onClose, onDone }: any
  )
 }
 
-function TeacherReportWorkspace({ child, children, teacher, weekStart, onBack, onSaved, onNext }: any) {
+function TeacherReportWorkspace({ child, teacher, weekStart, onBack, onSaved, onSaveFailed }: any) {
  const subjects = normalizeReportSubjects(teacher?.report_subjects)
  const subjectsKey = subjects.join('|')
- const [week, setWeek] = useState(weekStart)
  const [scores, setScores] = useState<Record<string, number>>(() => scoresForSubjects(subjects))
  const [comment, setComment] = useState('')
  const [noteTouched, setNoteTouched] = useState(false)
- const [displayedAiNote, setDisplayedAiNote] = useState('')
- const [noteAnimating, setNoteAnimating] = useState(false)
  const [saving, setSaving] = useState(false)
- const [magicLink, setMagicLink] = useState('')
- const [history, setHistory] = useState<any[]>([])
- const [historyLoading, setHistoryLoading] = useState(true)
- const [previewing, setPreviewing] = useState(false)
- const [manualWhatsAppFallback, setManualWhatsAppFallback] = useState<any>(null)
 
  useEffect(() => {
- setWeek(weekStart)
- setScores(current => scoresForSubjects(subjects, current))
+ setScores(scoresForSubjects(subjects))
  setComment('')
  setNoteTouched(false)
- setDisplayedAiNote('')
- setMagicLink('')
- setPreviewing(false)
- setManualWhatsAppFallback(null)
- setHistoryLoading(true)
-
- fetch(`/api/teacher/report-history?child_id=${encodeURIComponent(child.id)}`, { cache: 'no-store' })
- .then(res => res.json())
- .then(json => {
- setHistory(json.reports || [])
- if (json.magic_link) setMagicLink(String(json.magic_link || ''))
- })
- .catch(() => setHistory([]))
- .finally(() => setHistoryLoading(false))
+ setSaving(false)
  }, [child.id, weekStart, subjectsKey])
 
  const draftAvg = averageScore(scores)
  const draftAvgLabel = draftAvg == null ? '—' : draftAvg.toFixed(1)
  const aiTeacherNote = generateComment(scores, child?.name || 'Learner')
+ const finalComment = comment.trim() || aiTeacherNote
 
-// teacher-note-ai-typing-effect-v1
-useEffect(() => {
- if (noteTouched) return
-
- let typingTimer: any = null
- setNoteAnimating(true)
- setDisplayedAiNote('')
-
- const startTimer = window.setTimeout(() => {
- let index = 0
- const step = Math.max(1, Math.ceil(aiTeacherNote.length / 85))
-
- typingTimer = window.setInterval(() => {
- index = Math.min(aiTeacherNote.length, index + step)
- setDisplayedAiNote(aiTeacherNote.slice(0, index))
-
- if (index >= aiTeacherNote.length) {
- window.clearInterval(typingTimer)
- setNoteAnimating(false)
- }
- }, 14)
- }, 120)
-
- return () => {
- window.clearTimeout(startTimer)
- if (typingTimer) window.clearInterval(typingTimer)
- }
-}, [aiTeacherNote, noteTouched])
- const previousScoresForPreview = history.find((item: any) => item?.week_starting !== week)?.scores || null
- const draftReport = {
- id: 'draft-parent-preview',
- child_name: child?.name || 'Learner',
- teacher_name: teacher?.name || 'Teacher',
- teacher_photo_url: teacher?.photo_url || teacher?.avatar_url || teacher?.image_url || null,
- school_name: teacher?.school_name || teacher?.school?.name || teacher?.school || null,
- week_starting: week,
- scores,
- previous_scores: previousScoresForPreview,
- comment: comment.trim() || generateComment(scores, child?.name || 'Learner'),
- display_position: 'latest',
- }
-
- const submit = async () => {
+ const submit = () => {
  if (saving) return
 
  setSaving(true)
- const tid = toast.loading('Sending report...')
 
+ const updatedChild = {
+ ...child,
+ latest_week_starting: weekStart,
+ latest_report_at: new Date().toISOString(),
+ }
+
+ onSaved?.(updatedChild)
+ onBack?.()
+
+ void (async () => {
  try {
  const res = await fetch('/api/teacher/child-report', {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
  body: JSON.stringify({
  child_id: child.id,
- week_starting: week,
+ week_starting: weekStart,
  scores,
- comment: comment.trim() || generateComment(scores, child?.name || 'Learner'),
+ comment: finalComment,
  }),
  })
 
  const json = await res.json().catch(() => ({}))
+ const saved = Boolean(json.report?.id)
 
- const fallbackLink = String(json.magic_link || magicLink || '')
- const hasSavedReport = Boolean(json.report?.id || fallbackLink)
-
- // Only treat it as a real error if the report/link was not created.
- // If the report was saved but WhatsApp was not sent, we use the manual fallback modal.
- if (!res.ok && !hasSavedReport) {
- throw new Error(json.error || 'Could not send report')
+ if (!res.ok && !saved) {
+ throw new Error(json.error || 'Could not save report')
  }
 
- if (fallbackLink) setMagicLink(fallbackLink)
-
- const whatsappStatus = String(json.whatsapp_status || '').toLowerCase()
- const automaticWhatsAppSent = ['sent', 'delivered', 'read'].includes(whatsappStatus)
- const shouldShowManualFallback = Boolean(fallbackLink) && !automaticWhatsAppSent
-
- const updatedChild = {
- ...child,
- latest_week_starting: week,
- latest_report_at: new Date().toISOString(),
- }
-
- if (automaticWhatsAppSent) {
- toast.success('Report sent to parent', { id: tid })
- } else {
- toast.dismiss(tid)
- }
-
- await onSaved(updatedChild)
-
- setHistory((current) => [
- json.report,
- ...current.filter((item) => item.id !== json.report?.id),
- ].filter(Boolean))
-
- if (shouldShowManualFallback) {
- setManualWhatsAppFallback({
- child,
- reportLink: fallbackLink,
- status: whatsappStatus || 'pending',
- })
- return
- }
-
- onBack?.()
- } catch (e: any) {
- toast.error(e.message || 'Could not send report', { id: tid })
+ toast.success('Report saved')
+ } catch (error: any) {
+ onSaveFailed?.(child)
+ toast.error(error.message || 'Could not save report')
  } finally {
  setSaving(false)
  }
+ })()
  }
 
-  const copyLink = async () => {
- if (!magicLink) {
- toast.error('Save a report first')
- return
- }
-
- await navigator.clipboard.writeText(magicLink)
- toast.success('Parent link copied')
- }
-
- const writeFooter = (
- <SCButton
- tone="primary"
- fullWidth
- onClick={() => setPreviewing(true)}
- disabled={saving}
- style={{ minHeight: 44 }}
- >
- Done
- </SCButton>
- )
-
- const previewFooter = (
- <div style={{
- display: 'grid',
- gridTemplateColumns: '0.9fr 1.1fr',
- gap: 8,
- alignItems: 'center',
- }}>
- <SCButton
- tone="secondary"
- fullWidth
- onClick={() => setPreviewing(false)}
- disabled={saving}
- style={{ minHeight: 44 }}
- >
- Back to edit
- </SCButton>
-
+ const footer = (
  <SCButton
  tone="primary"
  fullWidth
@@ -2671,42 +2824,16 @@ useEffect(() => {
  disabled={saving}
  style={{ minHeight: 44 }}
  >
- {saving ? 'Sending...' : 'Send to parent'}
+ Done
  </SCButton>
- </div>
  )
-
- if (previewing) {
- return (
- <TeacherReportScreenFrame
- title="Preview"
- subtitle="" 
- onBack={() => setPreviewing(false)}
- footer={previewFooter}
- >
- <TeacherParentReportCardPreview report={draftReport} child={child} teacher={teacher} />
-
- {manualWhatsAppFallback ? (
- <ManualWhatsAppFallbackModal
- child={child}
- reportLink={manualWhatsAppFallback.reportLink}
- onClose={() => setManualWhatsAppFallback(null)}
- onDone={() => {
- setManualWhatsAppFallback(null)
- onBack?.()
- }}
- />
- ) : null}
- </TeacherReportScreenFrame>
- )
- }
 
  return (
  <TeacherReportScreenFrame
  title={child.name}
  subtitle=""
  onBack={onBack}
- footer={writeFooter}
+ footer={footer}
  >
  <section style={{
  padding: '4px 0 14px',
@@ -2722,62 +2849,8 @@ useEffect(() => {
  <div style={{
  height: 1,
  background: 'var(--sc-border-soft)',
- margin: '12px 0 12px',
+ margin: '12px 0 6px',
  }} />
-
- <label style={{
- display: 'grid',
- gridTemplateColumns: '1fr auto',
- alignItems: 'center',
- gap: 12,
- padding: '0 0 8px',
- borderBottom: '1px solid var(--sc-border-soft)',
- marginBottom: 2,
- position: 'relative',
- cursor: 'pointer',
- }}>
- <span style={{
- fontSize: 13.1,
- fontWeight: 540,
- color: T.ink,
- lineHeight: 1.2,
- }}>
- Week
- </span>
-
- <span style={{
- minHeight: 30,
- borderRadius: 999,
- padding: '0 12px',
- background: T.soft,
- color: T.ink2,
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- fontSize: 12.8,
- fontWeight: 520,
- letterSpacing: '-0.01em',
- }}>
- {new Date(`${week}T00:00:00`).toLocaleDateString('en-ZA', {
- day: 'numeric',
- month: 'short',
- year: 'numeric',
- })}
- </span>
-
- <input
- type="date"
- value={week}
- onChange={e => setWeek(e.target.value)}
- aria-label="Report week"
- style={{
- position: 'absolute',
- inset: 0,
- opacity: 0,
- cursor: 'pointer',
- }}
- />
- </label>
 
  <div style={{ display: 'flex', flexDirection: 'column' }}>
  {subjects.map((subject, index) => (
@@ -2794,64 +2867,46 @@ useEffect(() => {
 
  <section style={{
  padding: '6px 0 8px',
- borderBottom: '1px solid var(--sc-border-soft)',
  marginBottom: 12,
  }}>
-<ReportSectionTitle
+ <ReportSectionTitle
  title="Teacher note"
- subtitle="Review the auto note. Edit it or leave it as is."
+ subtitle="Optional — edit only when something needs attention."
  />
-<textarea
- className={`sc-teacher-note-input-v387 teacher-ai-note-area-v1 ${noteTouched ? 'is-edited' : 'is-auto'} ${noteAnimating ? 'is-refreshing' : ''}`}
- value={noteTouched ? comment : (displayedAiNote || aiTeacherNote)}
+
+ <textarea
+ className={`sc-teacher-note-input-v387 teacher-ai-note-area-v1 ${noteTouched ? 'is-edited' : 'is-auto'}`}
+ value={noteTouched ? comment : aiTeacherNote}
  onFocus={() => {
  if (!noteTouched) {
  setNoteTouched(true)
- setComment(displayedAiNote || aiTeacherNote)
+ setComment(aiTeacherNote)
  }
  }}
  onChange={e => {
  setNoteTouched(true)
  setComment(e.target.value)
  }}
- rows={5}
- placeholder="AI suggested note will appear here."
+ rows={4}
+ placeholder="Add a short note if needed."
  style={{
  ...inputStyle,
  resize: 'none',
- minHeight: 132,
+ minHeight: 112,
  lineHeight: 1.48,
  background: '#f7f7f7',
  border: 'none',
  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.035)',
  borderRadius: 18,
  padding: '14px 15px',
- transition: 'opacity 180ms ease, filter 220ms ease',
- opacity: noteAnimating ? 0.9 : 1,
- filter: noteAnimating ? 'blur(0.15px)' : 'blur(0)',
- fontSize: 12.6,
- fontWeight: 300,
+ fontSize: 12.8,
+ fontWeight: noteTouched ? 400 : 300,
  letterSpacing: '-0.004em',
  WebkitFontSmoothing: 'antialiased',
  color: noteTouched ? '#222222' : '#6f7378',
  }}
  />
  </section>
-
- 
-
-
- {manualWhatsAppFallback ? (
- <ManualWhatsAppFallbackModal
- child={child}
- reportLink={manualWhatsAppFallback.reportLink}
- onClose={() => setManualWhatsAppFallback(null)}
- onDone={() => {
- setManualWhatsAppFallback(null)
- onBack?.()
- }}
- />
- ) : null}
  </TeacherReportScreenFrame>
  )
 }

@@ -604,21 +604,21 @@ function ReportSafeAreaStyle() {
       }
 
       .sc-report-page-motion-v1 {
-        animation: scReportPageSlideIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: scReportPageSlideIn 150ms ease-out both;
       }
 
       .sc-report-lower-card-motion-v1,
       .sc-report-subject-panel-inline {
-        animation: scReportLowerCardIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation: scReportLowerCardIn 180ms ease-out both;
         will-change: transform, opacity;
       }
 
       .sc-family-share-card-v2 {
-        animation-delay: 60ms;
+        animation-delay: 0ms;
       }
 
       .sc-previous-reports-history-card-v1 {
-        animation-delay: 120ms;
+        animation-delay: 20ms;
       }
 
 
@@ -730,33 +730,48 @@ function ReportSafeAreaStyle() {
 
 function LoadingState() {
   return (
-    <main style={centerPage}>
-      <ReportSafeAreaStyle />
+    <main
+      aria-label="Opening report"
+      style={{
+        minHeight: '100dvh',
+        height: '100dvh',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+      }}
+    >
+      <style>{`
+        @keyframes scSoftReportOpen {
+          0% {
+            opacity: 0.45;
+            transform: scale(0.97);
+            box-shadow: 0 10px 34px rgba(15,23,42,0.045);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 18px 54px rgba(15,23,42,0.10);
+          }
+          100% {
+            opacity: 0.55;
+            transform: scale(0.985);
+            box-shadow: 0 12px 38px rgba(15,23,42,0.055);
+          }
+        }
+      `}</style>
 
-      <section
-        aria-label="Loading report"
+      <div
         style={{
-          width: 96,
-          minHeight: 96,
-          borderRadius: 30,
-          background: 'rgba(255,255,255,0.72)',
-          backdropFilter: 'blur(18px)',
-          WebkitBackdropFilter: 'blur(18px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          animation: 'scReportLoaderFade 260ms ease-out both',
+          width: 72,
+          height: 72,
+          borderRadius: 24,
+          background: '#FFFFFF',
+          border: '1px solid rgba(15,23,42,0.025)',
+          animation: 'scSoftReportOpen 900ms ease-in-out infinite',
         }}
-      >
-        <div style={{
-          width: 34,
-          height: 34,
-          borderRadius: 999,
-          border: '2px solid rgba(37,37,37,0.10)',
-          borderTopColor: '#252525',
-          animation: 'scReportLoaderSpin 780ms linear infinite',
-        }} />
-      </section>
+      />
     </main>
   )
 }
@@ -870,19 +885,17 @@ export default function ParentMagicReportPage() {
       style.textContent = `
         @keyframes scReportPageSlideInRuntime {
           from {
-            opacity: 0;
-            transform: translateY(18px) scale(0.992);
-            filter: blur(1px);
+            opacity: 0.96;
+            transform: translateY(2px);
           }
           to {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
+            transform: translateY(0);
           }
         }
 
         .sc-report-page-motion-v1 {
-          animation: scReportPageSlideInRuntime 560ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+          animation: scReportPageSlideInRuntime 150ms ease-out both !important;
           will-change: transform, opacity;
         }
 
@@ -996,6 +1009,36 @@ export default function ParentMagicReportPage() {
     }
 
     let alive = true
+    let showedCachedReport = false
+
+    const cacheKey = `sc-report-session:${token}`
+
+    // Speed-first: show a recent report immediately when this browser
+    // session has already opened it, then refresh quietly in the background.
+    try {
+      const raw = window.sessionStorage.getItem(cacheKey)
+
+      if (raw) {
+        const cached = JSON.parse(raw)
+        const age = Date.now() - Number(cached?.saved_at || 0)
+
+        // Keep this deliberately short because report data is private.
+        if (
+          age >= 0 &&
+          age < 5 * 60 * 1000 &&
+          cached?.payload?.report
+        ) {
+          showedCachedReport = true
+          setPayload(cached.payload)
+          setError('')
+          setLoading(false)
+        } else {
+          window.sessionStorage.removeItem(cacheKey)
+        }
+      }
+    } catch {
+      // Session cache is only a speed enhancement.
+    }
 
     fetch(`/api/report/${encodeURIComponent(token)}`, { cache: 'no-store' })
       .then(async res => {
@@ -1004,24 +1047,93 @@ export default function ParentMagicReportPage() {
         if (!alive) return
 
         if (!res.ok) {
+          try {
+            window.sessionStorage.removeItem(cacheKey)
+          } catch {}
+
+          setPayload(null)
           setError(json.error || 'This report link is invalid or has expired.')
           return
         }
 
         setPayload(json)
+        setError('')
+
+        // Only cache the current permanent parent report link.
+        // Temporary/family-share links stay network-only.
+        if (json?.link_type === 'child_permanent' && json?.report) {
+          try {
+            window.sessionStorage.setItem(
+              cacheKey,
+              JSON.stringify({
+                saved_at: Date.now(),
+                payload: json,
+              })
+            )
+          } catch {}
+        }
       })
       .catch(() => {
-        if (alive) setError('Could not open this report right now.')
+        // If useful cached content is already visible, keep it visible.
+        if (alive && !showedCachedReport) {
+          setError('Could not open this report right now.')
+        }
       })
       .finally(() => {
-        if (alive) setLoading(false)
+        if (alive && !showedCachedReport) {
+          setLoading(false)
+        }
       })
 
     return () => {
       alive = false
     }
   }, [token])
-  if (loading) return <LoadingState />
+
+  // Speed-first: while the parent reads the report,
+  // quietly prepare Moments for the likely next tap.
+  useEffect(() => {
+    if (!token || !payload?.report) return
+
+    const controller = new AbortController()
+
+    const prefetchMoments = async () => {
+      try {
+        const res = await fetch(
+          `/api/parent/moments?token=${encodeURIComponent(token)}`,
+          {
+            cache: 'no-store',
+            signal: controller.signal,
+          }
+        )
+
+        if (!res.ok) return
+
+        const json = await res.json().catch(() => null)
+        if (!json) return
+
+        window.localStorage.setItem(
+          `school-connect:parent-moments:${token}:v1`,
+          JSON.stringify({
+            child: json.child || null,
+            moments: json.moments || [],
+            saved_at: new Date().toISOString(),
+            prefetched: true,
+          })
+        )
+      } catch {
+        // Prefetch is only a speed enhancement.
+      }
+    }
+
+    prefetchMoments()
+
+    return () => {
+      controller.abort()
+    }
+  }, [token, payload?.report?.id])
+
+  if (loading && !payload) return <LoadingState />
   if (error || !payload?.report) return <ErrorState message={error} />
 
 
