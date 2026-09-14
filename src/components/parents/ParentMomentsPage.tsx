@@ -1301,7 +1301,7 @@ function MomentGalleryShell() {
    <div style={{
      display: 'flex',
      flexDirection: 'column',
-     gap: 8,
+     gap: 'clamp(4px, calc(4px + (100vw - 390px) * 0.05), 7px)',
      minWidth: 0,
    }}>
      {items.map((item: any, index: number) => (
@@ -1320,13 +1320,7 @@ function MomentGalleryShell() {
            background: '#F5F4F1',
          }} />
 
-         <div style={{
-           width: item.caption,
-           height: 13,
-           margin: '8px 5px 5px',
-           borderRadius: 999,
-           background: '#F1F0ED',
-         }} />
+
        </div>
      ))}
    </div>
@@ -1338,7 +1332,7 @@ function MomentGalleryShell() {
      style={{
        display: 'grid',
        gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-       gap: 8,
+       gap: 'clamp(4px, calc(4px + (100vw - 390px) * 0.05), 7px)',
        alignItems: 'start',
        width: '100%',
      }}
@@ -1362,7 +1356,7 @@ function MomentGalleryGrid({
    <div style={{
      display: 'flex',
      flexDirection: 'column',
-     gap: 8,
+     gap: 'clamp(4px, calc(4px + (100vw - 390px) * 0.05), 7px)',
      minWidth: 0,
    }}>
      {items.map((moment: any) => {
@@ -1386,7 +1380,7 @@ function MomentGalleryGrid({
    <div style={{
      display: 'grid',
      gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-     gap: 8,
+     gap: 'clamp(4px, calc(4px + (100vw - 390px) * 0.05), 7px)',
      alignItems: 'start',
      width: '100%',
    }}>
@@ -1677,14 +1671,14 @@ function MomentWhiteViewer({
          scrollRoot.scrollTop +
          (firstRect.top - rootRect.top)
 
-       const centeredOffset = Math.max(
-         16,
-         (scrollRoot.clientHeight - target.clientHeight) / 2
-       )
+       // Open the tapped Moment near the top of the viewer instead
+       // of centering it. Newer Moments remain above and can still
+       // be reached by scrolling upward.
+       const selectedTopOffset = 8
 
        scrollRoot.scrollTop = Math.max(
          0,
-         absoluteTargetTop - centeredOffset
+         absoluteTargetTop - selectedTopOffset
        )
      }
 
@@ -1771,7 +1765,7 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         'env(safe-area-inset-top, 0px) 14px calc(28px + env(safe-area-inset-bottom, 0px))',
+         'env(safe-area-inset-top, 0px) clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>

@@ -1336,7 +1336,7 @@ export default function ParentMagicReportPage() {
           overscrollBehaviorY: 'contain',
           touchAction: 'pan-y',
           padding: parentView === 'moments'
-            ? '0 16px calc(18px + env(safe-area-inset-bottom, 0px))'
+            ? '0 clamp(2px, calc(2px + (100vw - 390px) * 0.18), 12px) calc(18px + env(safe-area-inset-bottom, 0px))'
             : '0 0 calc(18px + env(safe-area-inset-bottom, 0px))',
           background: parentView === 'moments' ? '#FFFFFF' : '#FBFAF7',
         }}>
