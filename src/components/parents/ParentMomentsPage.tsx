@@ -221,9 +221,9 @@ function ReactionBurstLayer({ bursts = [], insideReportShell = false }: any) {
  key={burst.id}
  style={{
  position: 'absolute',
- left: `${50 + ((index % 3) - 1) * 9}%`,
- top: '58%',
- fontSize: 34,
+ right: `${14 + (index % 3) * 8}px`,
+ bottom: `${14 + (index % 2) * 5}px`,
+ fontSize: 30,
  lineHeight: 1,
  filter: 'drop-shadow(0 10px 18px rgba(0,0,0,0.16))',
  animation: 'parentMomentReactionFly 820ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
@@ -345,8 +345,11 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  const [loadingMore, setLoadingMore] = useState(false)
  const momentsScrollRef = useRef<HTMLElement | null>(null)
  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+ const directFeedOpenedRef = useRef(false)
+ const gridReturnMomentIdRef = useRef<string | null>(null)
+ const returningFromGridRef = useRef(false)
+ const gridRevealRef = useRef<HTMLDivElement | null>(null)
  const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
- const [momentsView, setMomentsView] = useState<'recent' | 'child' | 'class'>('recent')
 
  const load = async (quiet = false) => {
  if (!quiet) setLoading(true)
@@ -563,6 +566,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
    setMomentViewer({
      momentId,
+     source: 'grid',
      origin: {
        top: rect.top,
        left: rect.left,
@@ -573,6 +577,73 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  }
 
  useEffect(() => {
+   if (
+     !insideReportShell ||
+     loading ||
+     directFeedOpenedRef.current ||
+     momentViewer
+   ) {
+     return
+   }
+
+   const firstMoment = galleryImageMoments[0]
+
+   if (!firstMoment || typeof window === 'undefined') {
+     return
+   }
+
+   directFeedOpenedRef.current = true
+
+   const viewportWidth = Math.max(
+     320,
+     window.innerWidth || 390
+   )
+
+   const viewportHeight = Math.max(
+     568,
+     window.innerHeight || 844
+   )
+
+   const edge = 4
+
+   const width = Math.min(
+     520,
+     viewportWidth - edge * 2
+   )
+
+   const left = Math.max(
+     edge,
+     (viewportWidth - width) / 2
+   )
+
+   const height = Math.max(
+     300,
+     Math.min(viewportHeight * 0.58, 520)
+   )
+
+   setMomentViewer({
+     momentId: firstMoment.id,
+     source: 'feed',
+     origin: {
+       top: 8,
+       left,
+       width,
+       height,
+     },
+   })
+ }, [
+   insideReportShell,
+   loading,
+   galleryImageMoments,
+   momentViewer,
+ ])
+
+ useEffect(() => {
+   if (returningFromGridRef.current) {
+     returningFromGridRef.current = false
+     return
+   }
+
    setMomentViewer(null)
  }, [momentScope])
 
@@ -675,10 +746,88 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
    child,
  ])
 
+ const returnGridToFeed = () => {
+   if (
+     !insideReportShell ||
+     typeof window === 'undefined'
+   ) {
+     return
+   }
+
+   const imageMoments = moments.filter(
+     (item: any) =>
+       item.file_type === 'image' &&
+       item.file_url
+   )
+
+   const rememberedId =
+     gridReturnMomentIdRef.current
+
+   const rememberedMoment =
+     rememberedId
+       ? imageMoments.find(
+           (item: any) =>
+             item.id === rememberedId
+         )
+       : null
+
+   const targetMoment =
+     rememberedMoment ||
+     imageMoments[0]
+
+   if (!targetMoment) return
+
+   const viewportWidth = Math.max(
+     320,
+     window.innerWidth || 390
+   )
+
+   const viewportHeight = Math.max(
+     568,
+     window.innerHeight || 844
+   )
+
+   const edge = 4
+
+   const width = Math.min(
+     520,
+     viewportWidth - edge * 2
+   )
+
+   const left = Math.max(
+     edge,
+     (viewportWidth - width) / 2
+   )
+
+   const height = Math.max(
+     300,
+     Math.min(
+       viewportHeight * 0.58,
+       520
+     )
+   )
+
+   if (momentScope !== 'recent') {
+     returningFromGridRef.current = true
+     setMomentScope('recent')
+   }
+
+   setMomentViewer({
+     momentId: targetMoment.id,
+     source: 'feed',
+     origin: {
+       top: 8,
+       left,
+       width,
+       height,
+     },
+   })
+ }
+
  return (
  <main className="sc-screen-enter" style={{
- minHeight: insideReportShell ? 'calc(100dvh - 54px - env(safe-area-inset-top, 0px))' : '100dvh',
- height: insideReportShell ? 'calc(100dvh - 54px - env(safe-area-inset-top, 0px))' : '100dvh',
+ minHeight: insideReportShell ? '100dvh' : '100dvh',
+ height: insideReportShell ? '100dvh' : '100dvh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
@@ -690,130 +839,139 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
 
 {insideReportShell && typeof document !== 'undefined' ? createPortal(
   <div
-    className="parent-moments-top-burger-portal-v440"
     style={{
       position: 'fixed',
-      top: 'calc(8px + env(safe-area-inset-top, 0px))',
+      top: 'calc(14px + env(safe-area-inset-top, 0px))',
+      left: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
       right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
       zIndex: 2147482500,
-      width: 38,
-      height: 38,
-      display: 'inline-flex',
+      height: 44,
+      display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      pointerEvents: 'none',
     }}
   >
+    <div
+      role="tablist"
+      aria-label="Moment collection"
+      style={{
+        height: 44,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        pointerEvents: 'auto',
+      }}
+    >
+      {[
+        ['class', 'Class'],
+        ['child', 'Child'],
+      ].map(([key, label]: any) => {
+        const active =
+          momentScope === key
+
+        return (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() =>
+              setMomentScope(key)
+            }
+            style={{
+              position: 'relative',
+              height: 44,
+              padding: '0 14px',
+              borderRadius: 15,
+              border: 'none',
+              background: 'rgba(24,26,30,0.085)',
+              color: '#FFFFFF',
+              fontFamily: 'inherit',
+              fontSize: 12.5,
+              fontWeight: active ? 650 : 600,
+              opacity: 1,
+              letterSpacing: '-0.01em',
+              cursor: 'pointer',
+              boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+              backdropFilter: 'blur(16px) saturate(1.16)',
+              WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            <span
+              style={{
+                color: '#FFFFFF',
+                mixBlendMode: 'difference',
+              }}
+            >
+              {label}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+
     <button
       type="button"
-      aria-label="Filter moments"
-      onClick={(event) => {
-        event.stopPropagation()
-        setMomentsMenuOpen(open => !open)
-      }}
+      onClick={returnGridToFeed}
+      aria-label="Close grid and return to Moments"
       style={{
-        width: 38,
-        height: 38,
-        borderRadius: 999,
+        width: 44,
+        height: 44,
+        borderRadius: 15,
         border: 'none',
-        background: 'transparent',
-        color: T.ink,
+        background: 'rgba(24,26,30,0.085)',
+        color: 'rgba(255,255,255,0.96)',
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
-        cursor: 'pointer',
+        flexShrink: 0,
         padding: 0,
-        fontFamily: 'inherit',
-        fontSize: 0,
-        lineHeight: 1,
-        WebkitTapHighlightColor: 'transparent',
+        cursor: 'pointer',
         pointerEvents: 'auto',
-        position: 'relative',
-        zIndex: 2147482502,
+        boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+        backdropFilter: 'blur(16px) saturate(1.16)',
+        WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+        WebkitTapHighlightColor:
+          'transparent',
       }}
     >
-      <span style={{
-        width: 18,
-        height: 13,
-        display: 'inline-flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'stretch',
-      }}>
-        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
-        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block', width: 13, marginLeft: 'auto' }} />
-        <span style={{ height: 2, borderRadius: 999, background: 'currentColor', display: 'block' }} />
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'relative',
+          width: 17,
+          height: 17,
+          display: 'block',
+          color: '#FFFFFF',
+          mixBlendMode: 'difference',
+        }}
+      >
+        <span style={{
+          position: 'absolute',
+          left: 8,
+          top: 1,
+          width: 1.5,
+          height: 15,
+          borderRadius: 999,
+          background: 'currentColor',
+          transform: 'rotate(45deg)',
+        }} />
+
+        <span style={{
+          position: 'absolute',
+          left: 8,
+          top: 1,
+          width: 1.5,
+          height: 15,
+          borderRadius: 999,
+          background: 'currentColor',
+          transform: 'rotate(-45deg)',
+        }} />
       </span>
     </button>
-
-    {momentsMenuOpen && (
-      <>
-        <div
-          onClick={() => setMomentsMenuOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 2147482498,
-            background: 'transparent',
-          }}
-        />
-
-        <div
-          onClick={event => event.stopPropagation()}
-          style={{
-            position: 'fixed',
-            top: 'calc(52px + env(safe-area-inset-top, 0px))',
-            right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
-            zIndex: 2147482501,
-            minWidth: 172,
-            borderRadius: 18,
-            background: T.white,
-            border: `1px solid ${T.border}`,
-            boxShadow: '0 16px 42px rgba(15,23,42,0.08)',
-            padding: 6,
-          }}
-        >
-          {[
-            ['recent', 'Recent'],
-            ['child', 'Child'],
-            ['class', 'Class'],
-          ].map(([key, label]: any) => {
-            const active = momentScope === key
-
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => {
-                  setMomentScope(key)
-                  setMomentsMenuOpen(false)
-                }}
-                style={{
-                  width: '100%',
-                  minHeight: 38,
-                  borderRadius: 13,
-                  border: 'none',
-                  background: active ? T.soft : 'transparent',
-                  color: active ? T.ink : T.ink2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 10,
-                  fontFamily: 'inherit',
-                  fontSize: 12.8,
-                  fontWeight: active ? 620 : 520,
-                  cursor: 'pointer',
-                  padding: '0 10px',
-                  textAlign: 'left',
-                }}
-              >
-                <span>{label}</span>
-                {active ? <span style={{ fontSize: 12, color: T.ink3 }}>✓</span> : null}
-              </button>
-            )
-          })}
-        </div>
-      </>
-    )}
   </div>,
   document.body
 ) : null}
@@ -1041,10 +1199,13 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
      />
    )
  ) : insideReportShell ? (
-   <div style={{
-     width: '100%',
-     boxSizing: 'border-box',
-   }}>
+   <div
+     ref={gridRevealRef}
+     style={{
+       width: '100%',
+       boxSizing: 'border-box',
+     }}
+   >
      {galleryImageMoments.length > 0 ? (
        <MomentGalleryGrid
          moments={galleryImageMoments}
@@ -1130,7 +1291,61 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
              item.file_url
          )}
          origin={momentViewer.origin}
-         onClosed={() => setMomentViewer(null)}
+         closeImmediately={momentViewer?.source === 'feed'}
+         onShowGrid={() => {
+           gridReturnMomentIdRef.current =
+             momentViewer?.momentId || null
+
+           if (momentScope === 'recent') {
+             setMomentScope('class')
+           }
+
+           setMomentViewer(null)
+
+           if (
+             typeof window !== 'undefined' &&
+             !window.matchMedia?.(
+               '(prefers-reduced-motion: reduce)'
+             ).matches
+           ) {
+             window.requestAnimationFrame(() => {
+               window.requestAnimationFrame(() => {
+                 gridRevealRef.current?.animate(
+                   [
+                     {
+                       opacity: 0,
+                       transform:
+                         'scale(1.025) translateY(6px)',
+                       filter: 'blur(3px)',
+                     },
+                     {
+                       opacity: 1,
+                       transform:
+                         'scale(1) translateY(0)',
+                       filter: 'blur(0px)',
+                     },
+                   ],
+                   {
+                     duration: 280,
+                     easing:
+                       'cubic-bezier(0.16, 1, 0.3, 1)',
+                   }
+                 )
+               })
+             })
+           }
+         }}
+         onClosed={() => {
+           if (
+             momentViewer?.source === 'feed' &&
+             typeof onClose === 'function'
+           ) {
+             onClose()
+             return
+           }
+
+           setMomentViewer(null)
+         }}
          onReact={react}
          reactingId={reacting}
          bursts={reactionBursts}
@@ -1201,7 +1416,6 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
   display: 'block',
   borderRadius: 0,
   background: '#101114',
-  boxShadow: 'none',
   }}
  />
  </div>,
@@ -1247,13 +1461,13 @@ function ParentReactionFXButton({
  display: 'inline-flex',
  alignItems: 'center',
  justifyContent: 'center',
- gap: 5,
- padding: '0 7px',
+ gap: 4,
+ padding: '0 5px',
  cursor: reacting === moment?.id ? 'default' : 'pointer',
  opacity: reacting === moment?.id ? 0.66 : 1,
  fontFamily: 'inherit',
- fontSize: 13,
- fontWeight: 560,
+ fontSize: 12,
+ fontWeight: 500,
  lineHeight: 1,
  boxShadow: 'none',
  WebkitTapHighlightColor: 'transparent',
@@ -1263,8 +1477,8 @@ function ParentReactionFXButton({
  }}
  >
  <Icon
- size={19}
- strokeWidth={active ? 1.9 : 1.55}
+ size={17}
+ strokeWidth={active ? 1.85 : 1.55}
  fill={active && reactionKey !== 'like' ? color : 'none'}
  fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
  />
@@ -1272,8 +1486,8 @@ function ParentReactionFXButton({
  {count > 0 ? (
  <span style={{
  color: active ? color : T.ink,
- fontSize: 12.8,
- fontWeight: 650,
+ fontSize: 11.7,
+ fontWeight: 600,
  lineHeight: 1,
  }}>
  {count}
@@ -1591,7 +1805,9 @@ function MomentWhiteViewer({
  moment,
  moments = [],
  origin,
+ closeImmediately = false,
  onClosed,
+ onShowGrid,
  onReact,
  reactingId,
  bursts = [],
@@ -1600,7 +1816,6 @@ function MomentWhiteViewer({
    useState<'opening' | 'open' | 'closing'>('opening')
 
  const [heroDone, setHeroDone] = useState(false)
- const [captionOpen, setCaptionOpen] = useState(false)
  const [targetRect, setTargetRect] = useState(origin)
 
  const teacherName = moment.teacher?.name || 'Teacher'
@@ -1620,10 +1835,6 @@ function MomentWhiteViewer({
    : 'Shared with class'
 
  const note = String(moment.note || '').trim()
-
- const hasLongCaption =
-   note.length > 135 ||
-   note.split('\n').length > 3
 
  const sourceMoments = Array.isArray(moments)
    ? moments
@@ -1708,6 +1919,11 @@ function MomentWhiteViewer({
  }, [])
 
  const closeViewer = () => {
+   if (closeImmediately) {
+     onClosed()
+     return
+   }
+
    const target = document.getElementById(
      'sc-moment-viewer-image-target-v2'
    )
@@ -1776,6 +1992,9 @@ function MomentWhiteViewer({
          zIndex: 100,
          height: 0,
          pointerEvents: 'none',
+         display: 'flex',
+         alignItems: 'flex-start',
+         justifyContent: 'space-between',
        }}>
          <button
            type="button"
@@ -1786,21 +2005,110 @@ function MomentWhiteViewer({
              height: 44,
              marginLeft: 12,
              borderRadius: 15,
-             border: '1px solid rgba(17,17,17,0.06)',
-             background: 'rgba(255,255,255,0.97)',
-             color: T.ink,
+             border: 'none',
+             background: 'rgba(24,26,30,0.085)',
+             color: 'rgba(255,255,255,0.96)',
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
              padding: 0,
              cursor: 'pointer',
-             boxShadow: '0 8px 28px rgba(15,23,42,0.14)',
-             backdropFilter: 'blur(12px)',
-             WebkitBackdropFilter: 'blur(12px)',
+             boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+             backdropFilter: 'blur(16px) saturate(1.16)',
+             WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
              pointerEvents: 'auto',
            }}
          >
-           <ChevronLeft size={24} strokeWidth={2.15} />
+           <span
+             style={{
+               display: 'flex',
+               color: '#FFFFFF',
+               mixBlendMode: 'difference',
+             }}
+           >
+             <ChevronLeft size={24} strokeWidth={2.15} />
+           </span>
+         </button>
+
+         <button
+           type="button"
+           onClick={onShowGrid}
+           aria-label="View Moments grid"
+           style={{
+             width: 44,
+             height: 44,
+             marginRight: 12,
+             borderRadius: 15,
+             border: 'none',
+             background: 'rgba(24,26,30,0.085)',
+             color: 'rgba(255,255,255,0.96)',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             padding: 0,
+             cursor: 'pointer',
+             boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+             backdropFilter: 'blur(16px) saturate(1.16)',
+             WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+             pointerEvents: 'auto',
+             WebkitTapHighlightColor: 'transparent',
+           }}
+         >
+           <span
+             aria-hidden="true"
+             style={{
+               width: 18,
+               height: 18,
+               position: 'relative',
+               display: 'block',
+               color: '#FFFFFF',
+               mixBlendMode: 'difference',
+             }}
+           >
+             <span style={{
+               position: 'absolute',
+               left: 0,
+               top: 0,
+               width: 7.5,
+               height: 10.5,
+               border: '1.6px solid currentColor',
+               borderRadius: 3.2,
+               boxSizing: 'border-box',
+             }} />
+
+             <span style={{
+               position: 'absolute',
+               right: 0,
+               top: 0,
+               width: 8,
+               height: 5.5,
+               border: '1.6px solid currentColor',
+               borderRadius: 3.2,
+               boxSizing: 'border-box',
+             }} />
+
+             <span style={{
+               position: 'absolute',
+               left: 0,
+               bottom: 0,
+               width: 7.5,
+               height: 5.5,
+               border: '1.6px solid currentColor',
+               borderRadius: 3.2,
+               boxSizing: 'border-box',
+             }} />
+
+             <span style={{
+               position: 'absolute',
+               right: 0,
+               bottom: 0,
+               width: 8,
+               height: 10.5,
+               border: '1.6px solid currentColor',
+               borderRadius: 3.2,
+               boxSizing: 'border-box',
+             }} />
+           </span>
          </button>
        </div>
 
@@ -1869,160 +2177,142 @@ function MomentWhiteViewer({
            transition: 'opacity 150ms ease',
          }}
        >
-         {/* teacher + date below image */}
+         {/* compact identity + reactions below image */}
          <div style={{
            display: 'flex',
            alignItems: 'center',
+           justifyContent: 'space-between',
            gap: 10,
-           padding: '17px 4px 0',
+           padding: '12px 4px 0',
          }}>
            <div style={{
-             width: 36,
-             height: 36,
-             borderRadius: '50%',
-             flexShrink: 0,
-             background: teacherPhoto
-               ? `url(${teacherPhoto}) center/cover`
-               : T.soft,
              display: 'flex',
              alignItems: 'center',
-             justifyContent: 'center',
-             color: T.ink2,
-             fontSize: 11,
-             fontWeight: 650,
-             overflow: 'hidden',
-           }}>
-             {!teacherPhoto
-               ? initials(teacherName)
-               : null}
-           </div>
-
-           <div style={{
+             gap: 9,
              flex: 1,
              minWidth: 0,
            }}>
              <div style={{
+               width: 34,
+               height: 34,
+               borderRadius: '50%',
+               flexShrink: 0,
+               background: teacherPhoto
+                 ? `url(${teacherPhoto}) center/cover`
+                 : T.soft,
                display: 'flex',
-               alignItems: 'baseline',
-               gap: 5,
-               minWidth: 0,
+               alignItems: 'center',
+               justifyContent: 'center',
+               color: T.ink2,
+               fontSize: 11,
+               fontWeight: 650,
+               overflow: 'hidden',
              }}>
-               <span style={{
-                 color: T.ink,
-                 fontSize: 14,
-                 fontWeight: 660,
-                 overflow: 'hidden',
-                 textOverflow: 'ellipsis',
-                 whiteSpace: 'nowrap',
-               }}>
-                 {teacherName}
-               </span>
-
-               <span style={{
-                 color: T.ink3,
-                 fontSize: 11.3,
-                 whiteSpace: 'nowrap',
-               }}>
-                 · {formatTimeAgo(moment.created_at)}
-               </span>
+               {!teacherPhoto
+                 ? initials(teacherName)
+                 : null}
              </div>
 
-             <span style={{
-               color: T.ink3,
-               fontSize: 10.8,
-               display: 'block',
-               marginTop: 2,
-               lineHeight: 1.25,
+             <div style={{
+               flex: 1,
+               minWidth: 0,
              }}>
-               {shareLabel}
-             </span>
+               <div style={{
+                 display: 'flex',
+                 alignItems: 'baseline',
+                 gap: 5,
+                 minWidth: 0,
+               }}>
+                 <span style={{
+                   color: T.ink,
+                   fontSize: 13.4,
+                   fontWeight: 600,
+                   overflow: 'hidden',
+                   textOverflow: 'ellipsis',
+                   whiteSpace: 'nowrap',
+                 }}>
+                   {teacherName}
+                 </span>
+
+                 <span style={{
+                   color: '#74777D',
+                   fontSize: 11.1,
+                   fontWeight: 400,
+                   whiteSpace: 'nowrap',
+                 }}>
+                   · {formatTimeAgo(moment.created_at)}
+                 </span>
+               </div>
+
+               <span style={{
+                 color: '#74777D',
+                 fontSize: 10.7,
+                 fontWeight: 400,
+                 display: 'block',
+                 marginTop: 2,
+                 lineHeight: 1.25,
+               }}>
+                 {shareLabel}
+               </span>
+             </div>
+           </div>
+
+           <div style={{
+             position: 'relative',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'flex-end',
+             gap: 6,
+             flexShrink: 0,
+             padding: 0,
+           }}>
+             {[
+               ['heart', Heart],
+               ['like', ThumbsUp],
+               ['smile', Smile],
+             ].map(([key, Icon]: any) => {
+               const active =
+                 moment.reaction === key
+
+               const count = Number(
+                 moment.reaction_counts?.[key] || 0
+               )
+
+               return (
+                 <ParentReactionFXButton
+                   key={key}
+                   moment={moment}
+                   reactionKey={key}
+                   Icon={Icon}
+                   active={active}
+                   count={count}
+                   reacting={reactingId === moment.id}
+                   onReact={onReact}
+                 />
+               )
+             })}
            </div>
          </div>
 
          {/* caption below identity */}
          {note ? (
            <div style={{
-             margin: '14px 4px 0',
+             margin: '10px 4px 0',
            }}>
              <p style={{
                margin: 0,
-               color: T.ink,
-               fontSize: 13.8,
-               lineHeight: 1.52,
+               color: '#303236',
+               fontSize: 12.9,
+               fontWeight: 400,
+               lineHeight: 1.46,
                whiteSpace: 'pre-wrap',
-               ...(captionOpen
-                 ? {}
-                 : {
-                     display: '-webkit-box',
-                     WebkitLineClamp: 3,
-                     WebkitBoxOrient: 'vertical',
-                     overflow: 'hidden',
-                   }),
              }}>
                {note}
              </p>
-
-             {hasLongCaption ? (
-               <button
-                 type="button"
-                 onClick={() =>
-                   setCaptionOpen(current => !current)
-                 }
-                 style={{
-                   marginTop: 5,
-                   padding: 0,
-                   border: 'none',
-                   background: 'transparent',
-                   color: T.ink2,
-                   fontFamily: 'inherit',
-                   fontSize: 12.2,
-                   fontWeight: 650,
-                   cursor: 'pointer',
-                 }}
-               >
-                 {captionOpen
-                   ? 'Show less'
-                   : 'Read more'}
-               </button>
-             ) : null}
            </div>
          ) : null}
 
-         {/* reactions as the final clean action row */}
-         <div style={{
-           position: 'relative',
-           display: 'flex',
-           alignItems: 'center',
-           gap: 10,
-           marginTop: 12,
-           padding: '4px 4px 6px',
-         }}>
-           {[
-             ['heart', Heart],
-             ['like', ThumbsUp],
-             ['smile', Smile],
-           ].map(([key, Icon]: any) => {
-             const active =
-               moment.reaction === key
 
-             const count = Number(
-               moment.reaction_counts?.[key] || 0
-             )
-
-             return (
-               <ParentReactionFXButton
-                 key={key}
-                 moment={moment}
-                 reactionKey={key}
-                 Icon={Icon}
-                 active={active}
-                 count={count}
-                 reacting={reactingId === moment.id}
-                 onReact={onReact}
-               />
-             )
-           })}
-         </div>
        </div>
 
        {olderMoments.map((item: any) => (
@@ -2080,8 +2370,6 @@ function MomentViewerScrollItem({
  bursts = [],
  hideTopDivider = false,
 }: any) {
- const [captionOpen, setCaptionOpen] = useState(false)
-
  const teacherName =
    moment.teacher?.name || 'Teacher'
 
@@ -2101,14 +2389,10 @@ function MomentViewerScrollItem({
 
  const note = String(moment.note || '').trim()
 
- const hasLongCaption =
-   note.length > 135 ||
-   note.split('\n').length > 3
-
  return (
    <section style={{
-     marginTop: hideTopDivider ? 0 : 16,
-     paddingTop: hideTopDivider ? 0 : 16,
+     marginTop: hideTopDivider ? 0 : 26,
+     paddingTop: 0,
      borderTop: 'none',
    }}>
      {/* next photo */}
@@ -2141,160 +2425,142 @@ function MomentViewerScrollItem({
        />
      </div>
 
-     {/* teacher + date */}
+     {/* compact identity + reactions */}
      <div style={{
        display: 'flex',
        alignItems: 'center',
+       justifyContent: 'space-between',
        gap: 10,
-       padding: '17px 4px 0',
+       padding: '12px 4px 0',
      }}>
        <div style={{
-         width: 36,
-         height: 36,
-         borderRadius: '50%',
-         flexShrink: 0,
-         background: teacherPhoto
-           ? `url(${teacherPhoto}) center/cover`
-           : T.soft,
          display: 'flex',
          alignItems: 'center',
-         justifyContent: 'center',
-         color: T.ink2,
-         fontSize: 11,
-         fontWeight: 650,
-         overflow: 'hidden',
-       }}>
-         {!teacherPhoto
-           ? initials(teacherName)
-           : null}
-       </div>
-
-       <div style={{
+         gap: 9,
          flex: 1,
          minWidth: 0,
        }}>
          <div style={{
+           width: 34,
+           height: 34,
+           borderRadius: '50%',
+           flexShrink: 0,
+           background: teacherPhoto
+             ? `url(${teacherPhoto}) center/cover`
+             : T.soft,
            display: 'flex',
-           alignItems: 'baseline',
-           gap: 5,
-           minWidth: 0,
+           alignItems: 'center',
+           justifyContent: 'center',
+           color: T.ink2,
+           fontSize: 11,
+           fontWeight: 650,
+           overflow: 'hidden',
          }}>
-           <span style={{
-             color: T.ink,
-             fontSize: 14,
-             fontWeight: 660,
-             overflow: 'hidden',
-             textOverflow: 'ellipsis',
-             whiteSpace: 'nowrap',
-           }}>
-             {teacherName}
-           </span>
-
-           <span style={{
-             color: T.ink3,
-             fontSize: 11.3,
-             whiteSpace: 'nowrap',
-           }}>
-             · {formatTimeAgo(moment.created_at)}
-           </span>
+           {!teacherPhoto
+             ? initials(teacherName)
+             : null}
          </div>
 
-         <span style={{
-           color: T.ink3,
-           fontSize: 10.8,
-           display: 'block',
-           marginTop: 2,
-           lineHeight: 1.25,
+         <div style={{
+           flex: 1,
+           minWidth: 0,
          }}>
-           {shareLabel}
-         </span>
+           <div style={{
+             display: 'flex',
+             alignItems: 'baseline',
+             gap: 5,
+             minWidth: 0,
+           }}>
+             <span style={{
+               color: T.ink,
+               fontSize: 13.4,
+               fontWeight: 600,
+               overflow: 'hidden',
+               textOverflow: 'ellipsis',
+               whiteSpace: 'nowrap',
+             }}>
+               {teacherName}
+             </span>
+
+             <span style={{
+               color: '#74777D',
+               fontSize: 11.1,
+               fontWeight: 400,
+               whiteSpace: 'nowrap',
+             }}>
+               · {formatTimeAgo(moment.created_at)}
+             </span>
+           </div>
+
+           <span style={{
+             color: '#74777D',
+             fontSize: 10.7,
+             fontWeight: 400,
+             display: 'block',
+             marginTop: 2,
+             lineHeight: 1.25,
+           }}>
+             {shareLabel}
+           </span>
+         </div>
+       </div>
+
+       <div style={{
+         position: 'relative',
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'flex-end',
+         gap: 6,
+         flexShrink: 0,
+         padding: 0,
+       }}>
+         {[
+           ['heart', Heart],
+           ['like', ThumbsUp],
+           ['smile', Smile],
+         ].map(([key, Icon]: any) => {
+           const active =
+             moment.reaction === key
+
+           const count = Number(
+             moment.reaction_counts?.[key] || 0
+           )
+
+           return (
+             <ParentReactionFXButton
+               key={key}
+               moment={moment}
+               reactionKey={key}
+               Icon={Icon}
+               active={active}
+               count={count}
+               reacting={reacting}
+               onReact={onReact}
+             />
+           )
+         })}
        </div>
      </div>
 
      {/* caption */}
      {note ? (
        <div style={{
-         margin: '14px 4px 0',
+         margin: '10px 4px 0',
        }}>
          <p style={{
            margin: 0,
-           color: T.ink,
-           fontSize: 13.8,
-           lineHeight: 1.52,
+           color: '#303236',
+           fontSize: 12.9,
+           fontWeight: 400,
+           lineHeight: 1.46,
            whiteSpace: 'pre-wrap',
-           ...(captionOpen
-             ? {}
-             : {
-                 display: '-webkit-box',
-                 WebkitLineClamp: 3,
-                 WebkitBoxOrient: 'vertical',
-                 overflow: 'hidden',
-               }),
          }}>
            {note}
          </p>
-
-         {hasLongCaption ? (
-           <button
-             type="button"
-             onClick={() =>
-               setCaptionOpen(current => !current)
-             }
-             style={{
-               marginTop: 5,
-               padding: 0,
-               border: 'none',
-               background: 'transparent',
-               color: T.ink2,
-               fontFamily: 'inherit',
-               fontSize: 12.2,
-               fontWeight: 650,
-               cursor: 'pointer',
-             }}
-           >
-             {captionOpen
-               ? 'Show less'
-               : 'Read more'}
-           </button>
-         ) : null}
        </div>
      ) : null}
 
-     {/* reactions stay connected to caption */}
-     <div style={{
-       position: 'relative',
-       display: 'flex',
-       alignItems: 'center',
-       gap: 10,
-       marginTop: 12,
-       padding: '4px 4px 6px',
-     }}>
-       {[
-         ['heart', Heart],
-         ['like', ThumbsUp],
-         ['smile', Smile],
-       ].map(([key, Icon]: any) => {
-         const active =
-           moment.reaction === key
 
-         const count = Number(
-           moment.reaction_counts?.[key] || 0
-         )
-
-         return (
-           <ParentReactionFXButton
-             key={key}
-             moment={moment}
-             reactionKey={key}
-             Icon={Icon}
-             active={active}
-             count={count}
-             reacting={reacting}
-             onReact={onReact}
-           />
-         )
-       })}
-     </div>
    </section>
  )
 }
@@ -2364,7 +2630,6 @@ function MomentGalleryTile({
        textAlign: 'left',
        boxSizing: 'border-box',
        WebkitTapHighlightColor: 'transparent',
-       boxShadow: 'none',
      }}
    >
      {hasDimensions ? (

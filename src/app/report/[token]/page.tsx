@@ -1253,11 +1253,17 @@ export default function ParentMagicReportPage() {
           flexShrink: 0,
           padding: 'calc(8px + env(safe-area-inset-top, 0px)) 16px 8px',
           background: '#FFFFFF',
-          display: 'flex',
+          display: parentView === 'moments' ? 'none' : 'flex',
           alignItems: 'center',
-          justifyContent: parentView === 'moments' ? 'space-between' : 'flex-end',
+          justifyContent: 'flex-end',
           position: 'relative',
           zIndex: 10,
+          visibility: parentView === 'moments'
+            ? 'hidden'
+            : 'visible',
+          pointerEvents: parentView === 'moments'
+            ? 'none'
+            : 'auto',
         }}>
           {parentView === 'moments' ? (
             <div style={{
