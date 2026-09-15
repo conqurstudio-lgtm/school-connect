@@ -979,12 +979,14 @@ export default function ParentMagicReportPage() {
       bodyTouchAction: body.style.touchAction,
     }
 
-    html.style.overflow = 'hidden'
-    html.style.overscrollBehavior = 'none'
+    const momentsUseDocumentScroll = parentView === 'moments'
+
+    html.style.overflow = momentsUseDocumentScroll ? '' : 'hidden'
+    html.style.overscrollBehavior = momentsUseDocumentScroll ? '' : 'none'
     html.style.background = '#FFFFFF'
 
-    body.style.overflow = 'hidden'
-    body.style.overscrollBehavior = 'none'
+    body.style.overflow = momentsUseDocumentScroll ? '' : 'hidden'
+    body.style.overscrollBehavior = momentsUseDocumentScroll ? '' : 'none'
     body.style.background = '#FFFFFF'
     body.style.touchAction = 'pan-y'
 
@@ -998,7 +1000,7 @@ export default function ParentMagicReportPage() {
       body.style.background = previous.bodyBackground
       body.style.touchAction = previous.bodyTouchAction
     }
-  }, [])
+  }, [parentView])
 
 
   useEffect(() => {

@@ -78,7 +78,6 @@ function SafeStyle() {
       html,
       body {
         background: #FFFFFF !important;
-        overflow: hidden;
       }
 
       @keyframes parentMomentDotBounce {
@@ -873,12 +872,12 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  return (
  <main className="sc-screen-enter" style={{
  minHeight: '100dvh',
- height: '100dvh',
- overflow: 'hidden',
+ height: insideReportShell ? 'auto' : '100dvh',
+ overflow: insideReportShell ? 'visible' : 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
  color: T.ink,
- overscrollBehavior: 'none',
+ overscrollBehavior: insideReportShell ? 'auto' : 'none',
  touchAction: 'pan-y',
  }}>
  <SafeStyle />
@@ -1024,8 +1023,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  <div style={{
  maxWidth: 520,
- height: insideReportShell ? '100%' : '100dvh',
- minHeight: 0,
+ height: insideReportShell ? 'auto' : '100dvh',
+ minHeight: insideReportShell ? '100dvh' : 0,
  margin: '0 auto',
  display: 'flex',
  flexDirection: 'column',
@@ -1049,12 +1048,12 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  <section
  ref={momentsScrollRef}
  style={{
- flex: 1,
+ flex: insideReportShell ? 'none' : 1,
  minHeight: 0,
- overflowY: 'auto',
+ overflowY: insideReportShell ? 'visible' : 'auto',
  overflowX: 'hidden',
- WebkitOverflowScrolling: 'touch',
- overscrollBehaviorY: 'contain',
+ WebkitOverflowScrolling: insideReportShell ? 'auto' : 'touch',
+ overscrollBehaviorY: insideReportShell ? 'auto' : 'contain',
  touchAction: 'pan-y',
  padding: insideReportShell ? '6px 0 calc(26px + env(safe-area-inset-bottom, 0px))' : '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
