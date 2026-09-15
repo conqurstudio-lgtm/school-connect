@@ -1187,9 +1187,9 @@ export default function ParentMagicReportPage() {
     return (
       <ParentMomentsPage
         token={token || ''}
-        embedded={false}
+        embedded={true}
         onClose={openReportView}
-        insideReportShell={false}
+        insideReportShell={true}
       />
     )
   }
