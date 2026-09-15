@@ -12,8 +12,8 @@ export default function ReportTokenLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="sc-report-token-layout">
+    <>
       {children}
-    </div>
+    </>
   )
 }
