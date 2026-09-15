@@ -890,10 +890,11 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  color: T.ink,
  overscrollBehavior: insideReportShell ? 'auto' : 'none',
  touchAction: 'pan-y',
+ visibility: momentViewer ? 'hidden' : 'visible',
  }}>
  <SafeStyle />
 
-{insideReportShell && typeof document !== 'undefined' ? createPortal(
+{insideReportShell && !momentViewer && typeof document !== 'undefined' ? createPortal(
   <div
     style={{
       position: 'fixed',
