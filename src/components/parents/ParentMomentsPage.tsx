@@ -898,8 +898,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: visibleViewport.height ? `${visibleViewport.height}px` : '100dvh',
- height: visibleViewport.height ? `${visibleViewport.height}px` : '100dvh',
+ minHeight: '100svh',
+ height: '100svh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
@@ -2041,13 +2041,12 @@ function MomentWhiteViewer({
      aria-label="Moment viewer"
      style={{
        position: 'fixed',
-       top: visibleViewport.top,
+       top: 'env(safe-area-inset-top, 0px)',
        right: 0,
        bottom: 'auto',
        left: 0,
-       height: visibleViewport.height
-         ? `${visibleViewport.height}px`
-         : '100dvh',
+       height:
+         'calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
        zIndex: 2147483000,
        background: '#FFFFFF',
        overflowY: 'auto',
@@ -2064,7 +2063,7 @@ function MomentWhiteViewer({
        minHeight: '100%',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) 28px',
+         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
