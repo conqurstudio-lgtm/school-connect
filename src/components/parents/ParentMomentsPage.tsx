@@ -1367,6 +1367,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          )}
          origin={momentViewer.origin}
          closeImmediately={momentViewer?.source === 'feed'}
+         visibleViewport={visibleViewport}
          onShowGrid={() => {
            gridReturnMomentIdRef.current =
              momentViewer?.momentId || null
@@ -1886,6 +1887,7 @@ function MomentWhiteViewer({
  onReact,
  reactingId,
  bursts = [],
+ visibleViewport,
 }: any) {
  const [phase, setPhase] =
    useState<'opening' | 'open' | 'closing'>('opening')
