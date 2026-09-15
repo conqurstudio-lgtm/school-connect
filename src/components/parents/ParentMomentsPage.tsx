@@ -1935,20 +1935,11 @@ function MomentWhiteViewer({
      }
 
      if (selectedIndex > 0) {
-       const firstRect = target.getBoundingClientRect()
+       target.style.scrollMarginTop =
+         'calc(66px + env(safe-area-inset-top, 0px))'
 
-       const absoluteTargetTop =
-         window.scrollY + firstRect.top
-
-       // The preview now uses Safari's real document scroll,
-       // matching the browser-safe Moments/Grid page.
-       const selectedTopOffset = 8
-
-       window.scrollTo({
-         top: Math.max(
-           0,
-           absoluteTargetTop - selectedTopOffset
-         ),
+       target.scrollIntoView({
+         block: 'start',
          behavior: 'auto',
        })
      }
@@ -2049,7 +2040,7 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         'calc(66px + env(safe-area-inset-top, 0px)) clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
