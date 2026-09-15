@@ -333,6 +333,34 @@ export function ParentMomentsPage(props: {
 
 
 function ParentMomentsPageInner({ token, embedded = false, onClose, insideReportShell = false }: { token: string, embedded?: boolean, onClose?: () => void, insideReportShell?: boolean }) {
+  const [visibleViewport, setVisibleViewport] = useState({
+    top: 0,
+    height: 0,
+  })
+
+  useEffect(() => {
+    const updateVisibleViewport = () => {
+      const vv = window.visualViewport
+
+      setVisibleViewport({
+        top: vv?.offsetTop ?? 0,
+        height: vv?.height ?? window.innerHeight,
+      })
+    }
+
+    updateVisibleViewport()
+
+    window.visualViewport?.addEventListener('resize', updateVisibleViewport)
+    window.visualViewport?.addEventListener('scroll', updateVisibleViewport)
+    window.addEventListener('resize', updateVisibleViewport)
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateVisibleViewport)
+      window.visualViewport?.removeEventListener('scroll', updateVisibleViewport)
+      window.removeEventListener('resize', updateVisibleViewport)
+    }
+  }, [])
+
  useEffect(() => {
  if (insideReportShell) return
  const html = document.documentElement
@@ -870,8 +898,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: insideReportShell ? '100dvh' : '100dvh',
- height: insideReportShell ? '100dvh' : '100dvh',
+ minHeight: visibleViewport.height ? `${visibleViewport.height}px` : '100dvh',
+ height: visibleViewport.height ? `${visibleViewport.height}px` : '100dvh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
@@ -1022,7 +1050,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  <div style={{
  maxWidth: 520,
- height: insideReportShell ? '100%' : '100dvh',
+ height: '100%',
  minHeight: 0,
  margin: '0 auto',
  display: 'flex',
@@ -2011,10 +2039,13 @@ function MomentWhiteViewer({
      aria-label="Moment viewer"
      style={{
        position: 'fixed',
-       top: 'env(safe-area-inset-top, 0px)',
+       top: visibleViewport.top,
        right: 0,
-       bottom: 'env(safe-area-inset-bottom, 0px)',
+       bottom: 'auto',
        left: 0,
+       height: visibleViewport.height
+         ? `${visibleViewport.height}px`
+         : '100dvh',
        zIndex: 2147483000,
        background: '#FFFFFF',
        overflowY: 'auto',
