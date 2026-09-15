@@ -1183,6 +1183,28 @@ export default function ParentMagicReportPage() {
       display_position: index === 0 ? 'latest' : 'previous',
     }))
 
+  if (parentView === 'moments') {
+    return (
+      <ParentMomentsPage
+        token={token || ''}
+        embedded={false}
+        onClose={openReportView}
+        insideReportShell={false}
+      />
+    )
+  }
+
+  if (parentView === 'moments') {
+    return (
+      <ParentMomentsPage
+        token={token || ''}
+        embedded={false}
+        onClose={openReportView}
+        insideReportShell={false}
+      />
+    )
+  }
+
   return (
     <main className="sc-parent-report-page sc-report-clean-page-v276" style={{
       minHeight: '100dvh',
