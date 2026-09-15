@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState, useRef} from 'react'
+import { AdaptiveGlassProvider, useAdaptiveGlass } from '@/components/ui/AdaptiveGlass'
 import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -295,7 +296,43 @@ function ParentMomentsBackButton({ onClick, href, label = 'Back' }: any) {
  )
 }
 
-export function ParentMomentsPage({ token, embedded = false, onClose, insideReportShell = false }: { token: string, embedded?: boolean, onClose?: () => void, insideReportShell?: boolean }) {
+function AdaptiveMomentNavContent({
+  children,
+  style = {},
+}: any) {
+  const { ref, sense } = useAdaptiveGlass()
+
+  return (
+    <span
+      ref={ref as any}
+      style={{
+        color: sense.onLight
+          ? '#202124'
+          : '#FFFFFF',
+        transition: 'color 180ms ease',
+        ...style,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+export function ParentMomentsPage(props: {
+  token: string
+  embedded?: boolean
+  onClose?: () => void
+  insideReportShell?: boolean
+}) {
+  return (
+    <AdaptiveGlassProvider>
+      <ParentMomentsPageInner {...props} />
+    </AdaptiveGlassProvider>
+  )
+}
+
+
+function ParentMomentsPageInner({ token, embedded = false, onClose, insideReportShell = false }: { token: string, embedded?: boolean, onClose?: () => void, insideReportShell?: boolean }) {
  useEffect(() => {
  if (insideReportShell) return
  const html = document.documentElement
@@ -346,6 +383,8 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
  const momentsScrollRef = useRef<HTMLElement | null>(null)
  const loadMoreRef = useRef<HTMLDivElement | null>(null)
  const directFeedOpenedRef = useRef(false)
+ const [initialFeedBoot, setInitialFeedBoot] =
+   useState(insideReportShell)
  const gridReturnMomentIdRef = useRef<string | null>(null)
  const returningFromGridRef = useRef(false)
  const gridRevealRef = useRef<HTMLDivElement | null>(null)
@@ -589,10 +628,15 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
    const firstMoment = galleryImageMoments[0]
 
    if (!firstMoment || typeof window === 'undefined') {
+     if (!firstMoment) {
+       setInitialFeedBoot(false)
+     }
+
      return
    }
 
    directFeedOpenedRef.current = true
+   setInitialFeedBoot(false)
 
    const viewportWidth = Math.max(
      320,
@@ -876,6 +920,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
             key={key}
             type="button"
             role="tab"
+            data-sc-adaptive-glass
             aria-selected={active}
             onClick={() =>
               setMomentScope(key)
@@ -886,7 +931,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
               padding: '0 14px',
               borderRadius: 15,
               border: 'none',
-              background: 'rgba(24,26,30,0.085)',
+              background: 'rgba(24,26,30,0.065)',
               color: '#FFFFFF',
               fontFamily: 'inherit',
               fontSize: 12.5,
@@ -894,20 +939,21 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
               opacity: 1,
               letterSpacing: '-0.01em',
               cursor: 'pointer',
-              boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+              boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
               backdropFilter: 'blur(16px) saturate(1.16)',
               WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
               WebkitTapHighlightColor: 'transparent',
             }}
           >
-            <span
+            <AdaptiveMomentNavContent
               style={{
-                color: '#FFFFFF',
-                mixBlendMode: 'difference',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               {label}
-            </span>
+            </AdaptiveMomentNavContent>
           </button>
         )
       })}
@@ -917,12 +963,13 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
       type="button"
       onClick={returnGridToFeed}
       aria-label="Close grid and return to Moments"
+      data-sc-adaptive-glass
       style={{
         width: 44,
         height: 44,
         borderRadius: 15,
         border: 'none',
-        background: 'rgba(24,26,30,0.085)',
+        background: 'rgba(24,26,30,0.065)',
         color: 'rgba(255,255,255,0.96)',
         display: 'inline-flex',
         alignItems: 'center',
@@ -931,22 +978,19 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
         padding: 0,
         cursor: 'pointer',
         pointerEvents: 'auto',
-        boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+        boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
         backdropFilter: 'blur(16px) saturate(1.16)',
         WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
         WebkitTapHighlightColor:
           'transparent',
       }}
     >
-      <span
-        aria-hidden="true"
+      <AdaptiveMomentNavContent
         style={{
           position: 'relative',
           width: 17,
           height: 17,
           display: 'block',
-          color: '#FFFFFF',
-          mixBlendMode: 'difference',
         }}
       >
         <span style={{
@@ -970,7 +1014,7 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
           background: 'currentColor',
           transform: 'rotate(-45deg)',
         }} />
-      </span>
+      </AdaptiveMomentNavContent>
     </button>
   </div>,
   document.body
@@ -1204,6 +1248,9 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
      style={{
        width: '100%',
        boxSizing: 'border-box',
+       visibility: initialFeedBoot
+         ? 'hidden'
+         : 'visible',
      }}
    >
      {galleryImageMoments.length > 0 ? (
@@ -1313,10 +1360,10 @@ export function ParentMomentsPage({ token, embedded = false, onClose, insideRepo
                  gridRevealRef.current?.animate(
                    [
                      {
-                       opacity: 0,
+                       opacity: 1,
                        transform:
-                         'scale(1.025) translateY(6px)',
-                       filter: 'blur(3px)',
+                         'scale(1.018) translateY(4px)',
+                       filter: 'blur(1.5px)',
                      },
                      {
                        opacity: 1,
@@ -2000,69 +2047,68 @@ function MomentWhiteViewer({
            type="button"
            onClick={closeViewer}
            aria-label="Back to Moments"
+           data-sc-adaptive-glass
            style={{
              width: 44,
              height: 44,
              marginLeft: 12,
              borderRadius: 15,
              border: 'none',
-             background: 'rgba(24,26,30,0.085)',
+             background: 'rgba(24,26,30,0.065)',
              color: 'rgba(255,255,255,0.96)',
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
              padding: 0,
              cursor: 'pointer',
-             boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+             boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
              backdropFilter: 'blur(16px) saturate(1.16)',
              WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
              pointerEvents: 'auto',
            }}
          >
-           <span
+           <AdaptiveMomentNavContent
              style={{
                display: 'flex',
-               color: '#FFFFFF',
-               mixBlendMode: 'difference',
+               alignItems: 'center',
+               justifyContent: 'center',
              }}
            >
              <ChevronLeft size={24} strokeWidth={2.15} />
-           </span>
+           </AdaptiveMomentNavContent>
          </button>
 
          <button
            type="button"
            onClick={onShowGrid}
            aria-label="View Moments grid"
+           data-sc-adaptive-glass
            style={{
              width: 44,
              height: 44,
              marginRight: 12,
              borderRadius: 15,
              border: 'none',
-             background: 'rgba(24,26,30,0.085)',
+             background: 'rgba(24,26,30,0.065)',
              color: 'rgba(255,255,255,0.96)',
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
              padding: 0,
              cursor: 'pointer',
-             boxShadow: '0 7px 24px rgba(15,23,42,0.10)',
+             boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
              backdropFilter: 'blur(16px) saturate(1.16)',
              WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
              pointerEvents: 'auto',
              WebkitTapHighlightColor: 'transparent',
            }}
          >
-           <span
-             aria-hidden="true"
+           <AdaptiveMomentNavContent
              style={{
                width: 18,
                height: 18,
                position: 'relative',
                display: 'block',
-               color: '#FFFFFF',
-               mixBlendMode: 'difference',
              }}
            >
              <span style={{
@@ -2108,7 +2154,7 @@ function MomentWhiteViewer({
                borderRadius: 3.2,
                boxSizing: 'border-box',
              }} />
-           </span>
+           </AdaptiveMomentNavContent>
          </button>
        </div>
 
