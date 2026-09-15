@@ -1865,6 +1865,9 @@ function MomentWhiteViewer({
 
  const [heroDone, setHeroDone] = useState(false)
  const [targetRect, setTargetRect] = useState(origin)
+ const viewerStartScrollY = useRef(
+   typeof window !== 'undefined' ? window.scrollY : 0
+ )
 
  const teacherName = moment.teacher?.name || 'Teacher'
 
@@ -1920,25 +1923,23 @@ function MomentWhiteViewer({
        return
      }
 
-     const scrollRoot = target.closest('[role="dialog"]') as HTMLElement | null
-
-     if (scrollRoot && selectedIndex > 0) {
-       const rootRect = scrollRoot.getBoundingClientRect()
+     if (selectedIndex > 0) {
        const firstRect = target.getBoundingClientRect()
 
        const absoluteTargetTop =
-         scrollRoot.scrollTop +
-         (firstRect.top - rootRect.top)
+         window.scrollY + firstRect.top
 
-       // Open the tapped Moment near the top of the viewer instead
-       // of centering it. Newer Moments remain above and can still
-       // be reached by scrolling upward.
+       // The preview now uses Safari's real document scroll,
+       // matching the browser-safe Moments/Grid page.
        const selectedTopOffset = 8
 
-       scrollRoot.scrollTop = Math.max(
-         0,
-         absoluteTargetTop - selectedTopOffset
-       )
+       window.scrollTo({
+         top: Math.max(
+           0,
+           absoluteTargetTop - selectedTopOffset
+         ),
+         behavior: 'auto',
+       })
      }
 
      frame2 = window.requestAnimationFrame(() => {
@@ -1989,6 +1990,11 @@ function MomentWhiteViewer({
 
    setHeroDone(false)
 
+   window.scrollTo({
+     top: viewerStartScrollY.current,
+     behavior: 'auto',
+   })
+
    window.requestAnimationFrame(() => {
      window.requestAnimationFrame(() => {
        setPhase('closing')
@@ -2011,13 +2017,16 @@ function MomentWhiteViewer({
      aria-modal="true"
      aria-label="Moment viewer"
      style={{
-       position: 'fixed',
-       inset: 0,
+       position: 'absolute',
+       top: 0,
+       left: 0,
+       right: 0,
+       width: '100%',
+       minHeight: '100dvh',
        zIndex: 2147483000,
        background: '#FFFFFF',
-       overflowY: 'auto',
-       overscrollBehavior: 'contain',
-       WebkitOverflowScrolling: 'touch',
+       overflow: 'visible',
+       overscrollBehavior: 'auto',
        opacity: phase === 'closing' ? 0 : 1,
        transition: 'opacity 220ms ease',
        isolation: 'isolate',
