@@ -78,6 +78,7 @@ function SafeStyle() {
       html,
       body {
         background: #FFFFFF !important;
+        overflow: hidden;
       }
 
       @keyframes parentMomentDotBounce {
@@ -333,33 +334,6 @@ export function ParentMomentsPage(props: {
 
 
 function ParentMomentsPageInner({ token, embedded = false, onClose, insideReportShell = false }: { token: string, embedded?: boolean, onClose?: () => void, insideReportShell?: boolean }) {
-  const [visibleViewport, setVisibleViewport] = useState({
-    top: 0,
-    height: 0,
-  })
-
-  useEffect(() => {
-    const updateVisibleViewport = () => {
-      const vv = window.visualViewport
-
-      setVisibleViewport({
-        top: vv?.offsetTop ?? 0,
-        height: vv?.height ?? window.innerHeight,
-      })
-    }
-
-    updateVisibleViewport()
-
-    window.visualViewport?.addEventListener('resize', updateVisibleViewport)
-    window.visualViewport?.addEventListener('scroll', updateVisibleViewport)
-    window.addEventListener('resize', updateVisibleViewport)
-
-    return () => {
-      window.visualViewport?.removeEventListener('resize', updateVisibleViewport)
-      window.visualViewport?.removeEventListener('scroll', updateVisibleViewport)
-      window.removeEventListener('resize', updateVisibleViewport)
-    }
-  }, [])
 
  useEffect(() => {
  if (insideReportShell) return
@@ -898,8 +872,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  return (
  <main className="sc-screen-enter" style={{
- minHeight: '100svh',
- height: '100svh',
+ minHeight: '100dvh',
+ height: '100dvh',
  overflow: 'hidden',
  background: T.bg,
  fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
@@ -1050,7 +1024,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
  <div style={{
  maxWidth: 520,
- height: '100%',
+ height: insideReportShell ? '100%' : '100dvh',
  minHeight: 0,
  margin: '0 auto',
  display: 'flex',
@@ -1367,7 +1341,6 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          )}
          origin={momentViewer.origin}
          closeImmediately={momentViewer?.source === 'feed'}
-         visibleViewport={visibleViewport}
          onShowGrid={() => {
            gridReturnMomentIdRef.current =
              momentViewer?.momentId || null
@@ -1887,7 +1860,6 @@ function MomentWhiteViewer({
  onReact,
  reactingId,
  bursts = [],
- visibleViewport,
 }: any) {
  const [phase, setPhase] =
    useState<'opening' | 'open' | 'closing'>('opening')
@@ -2041,12 +2013,7 @@ function MomentWhiteViewer({
      aria-label="Moment viewer"
      style={{
        position: 'fixed',
-       top: 'env(safe-area-inset-top, 0px)',
-       right: 0,
-       bottom: 'auto',
-       left: 0,
-       height:
-         'calc(100svh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))',
+       inset: 0,
        zIndex: 2147483000,
        background: '#FFFFFF',
        overflowY: 'auto',
@@ -2060,17 +2027,17 @@ function MomentWhiteViewer({
      <div style={{
        width: '100%',
        maxWidth: 520,
-       minHeight: '100%',
+       minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         'env(safe-area-inset-top, 0px) clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
 
        <div style={{
          position: 'sticky',
-         top: 14,
+         top: 'calc(14px + env(safe-area-inset-top, 0px))',
          zIndex: 100,
          height: 0,
          pointerEvents: 'none',
