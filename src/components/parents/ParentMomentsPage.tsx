@@ -2044,14 +2044,17 @@ function MomentWhiteViewer({
      }}>
 
        <div style={{
-         position: 'sticky',
+         position: 'fixed',
          top: 'calc(14px + env(safe-area-inset-top, 0px))',
+         left: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
+         right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
          zIndex: 100,
-         height: 0,
-         pointerEvents: 'none',
+         height: 44,
          display: 'flex',
-         alignItems: 'flex-start',
+         alignItems: 'center',
          justifyContent: 'space-between',
+         gap: 12,
+         pointerEvents: 'none',
        }}>
          <button
            type="button"
@@ -2061,7 +2064,6 @@ function MomentWhiteViewer({
            style={{
              width: 44,
              height: 44,
-             marginLeft: 12,
              borderRadius: 15,
              border: 'none',
              background: 'rgba(24,26,30,0.065)',
@@ -2096,7 +2098,6 @@ function MomentWhiteViewer({
            style={{
              width: 44,
              height: 44,
-             marginRight: 12,
              borderRadius: 15,
              border: 'none',
              background: 'rgba(24,26,30,0.065)',
