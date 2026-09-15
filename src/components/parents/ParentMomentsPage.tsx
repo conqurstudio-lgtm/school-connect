@@ -349,6 +349,16 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  bodyTouchAction: body.style.touchAction,
  }
 
+ if (insideReportShell) {
+ html.style.overflow = 'auto'
+ html.style.overscrollBehavior = 'auto'
+ html.style.background = '#FFFFFF'
+
+ body.style.overflow = 'auto'
+ body.style.overscrollBehavior = 'auto'
+ body.style.background = '#FFFFFF'
+ body.style.touchAction = 'pan-y'
+ } else {
  html.style.overflow = 'hidden'
  html.style.overscrollBehavior = 'none'
  html.style.background = '#FFFFFF'
@@ -357,6 +367,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  body.style.overscrollBehavior = 'none'
  body.style.background = '#FFFFFF'
  body.style.touchAction = 'pan-y'
+ }
 
  return () => {
  html.style.overflow = previous.htmlOverflow
