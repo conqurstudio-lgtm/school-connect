@@ -2011,7 +2011,10 @@ function MomentWhiteViewer({
      aria-label="Moment viewer"
      style={{
        position: 'fixed',
-       inset: 0,
+       top: 'env(safe-area-inset-top, 0px)',
+       right: 0,
+       bottom: 'env(safe-area-inset-bottom, 0px)',
+       left: 0,
        zIndex: 2147483000,
        background: '#FFFFFF',
        overflowY: 'auto',
@@ -2025,17 +2028,17 @@ function MomentWhiteViewer({
      <div style={{
        width: '100%',
        maxWidth: 520,
-       minHeight: '100dvh',
+       minHeight: '100%',
        margin: '0 auto',
        padding:
-         'env(safe-area-inset-top, 0px) clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) 28px',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
 
        <div style={{
          position: 'sticky',
-         top: 'calc(14px + env(safe-area-inset-top, 0px))',
+         top: 14,
          zIndex: 100,
          height: 0,
          pointerEvents: 'none',
