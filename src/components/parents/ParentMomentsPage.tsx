@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useEffect, useLayoutEffect, useState, useRef} from 'react'
+import { useEffect, useState, useRef} from 'react'
 import { AdaptiveGlassProvider, useAdaptiveGlass } from '@/components/ui/AdaptiveGlass'
 import { createPortal } from 'react-dom'
 import { ArrowLeft, FileText, Heart, Smile, ThumbsUp, X, ChevronLeft } from 'lucide-react'
@@ -881,6 +881,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  }
 
  return (
+ <>
+ <div id="sc-parent-moments-preview-host" />
  <main className="sc-screen-enter" style={{
  minHeight: '100dvh',
  height: insideReportShell ? 'auto' : '100dvh',
@@ -890,7 +892,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  color: T.ink,
  overscrollBehavior: insideReportShell ? 'auto' : 'none',
  touchAction: 'pan-y',
- visibility: momentViewer ? 'hidden' : 'visible',
+ display: momentViewer ? 'none' : 'block',
  }}>
  <SafeStyle />
 
@@ -1341,7 +1343,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  {insideReportShell &&
  viewerMoment &&
  momentViewer?.origin &&
- typeof document !== 'undefined'
+ typeof document !== 'undefined' &&
+ document.getElementById('sc-parent-moments-preview-host')
    ? createPortal(
        <MomentWhiteViewer
          moment={viewerMoment}
@@ -1410,7 +1413,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          reactingId={reacting}
          bursts={reactionBursts}
        />,
-       document.body
+       document.getElementById('sc-parent-moments-preview-host') as HTMLElement
      )
    : null}
 
@@ -1482,6 +1485,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  document.body
  )}
  </main>
+ </>
  )
 }
 
@@ -1919,58 +1923,55 @@ function MomentWhiteViewer({
          (item: any) => item.id !== moment.id
        )
 
- useLayoutEffect(() => {
-   const target = document.getElementById(
-     'sc-moment-viewer-image-target-v2'
-   )
+ useEffect(() => {
+   let heroTimer = 0
+   let frame1 = 0
+   let frame2 = 0
 
-   if (!target) {
-     setHeroDone(true)
-     setPhase('open')
-     return
-   }
+   frame1 = window.requestAnimationFrame(() => {
+     const target = document.getElementById(
+       'sc-moment-viewer-image-target-v2'
+     )
 
-   const html = document.documentElement
-   const body = document.body
+     if (!target) {
+       setPhase('open')
+       setHeroDone(true)
+       return
+     }
 
-   const previousHtmlScrollBehavior =
-     html.style.scrollBehavior
+     if (selectedIndex > 0) {
+       target.style.scrollMarginTop =
+         'calc(66px + env(safe-area-inset-top, 0px))'
 
-   const previousBodyScrollBehavior =
-     body.style.scrollBehavior
+       target.scrollIntoView({
+         block: 'start',
+         behavior: 'auto',
+       })
+     }
 
-   html.style.scrollBehavior = 'auto'
-   body.style.scrollBehavior = 'auto'
+     frame2 = window.requestAnimationFrame(() => {
+       const rect = target.getBoundingClientRect()
 
-   if (selectedIndex > 0) {
-     target.style.scrollMarginTop =
-       'calc(66px + env(safe-area-inset-top, 0px))'
+       setTargetRect({
+         top: rect.top,
+         left: rect.left,
+         width: rect.width,
+         height: rect.height,
+       })
 
-     target.scrollIntoView({
-       block: 'start',
-       behavior: 'auto',
+       setPhase('open')
+
+       heroTimer = window.setTimeout(() => {
+         setHeroDone(true)
+       }, 250)
      })
+   })
+
+   return () => {
+     window.cancelAnimationFrame(frame1)
+     window.cancelAnimationFrame(frame2)
+     window.clearTimeout(heroTimer)
    }
-
-   const rect = target.getBoundingClientRect()
-
-   setTargetRect({
-     top: rect.top,
-     left: rect.left,
-     width: rect.width,
-     height: rect.height,
-   })
-
-   setHeroDone(true)
-   setPhase('open')
-
-   window.requestAnimationFrame(() => {
-     html.style.scrollBehavior =
-       previousHtmlScrollBehavior
-
-     body.style.scrollBehavior =
-       previousBodyScrollBehavior
-   })
  }, [])
 
  const closeViewer = () => {
@@ -2023,10 +2024,7 @@ function MomentWhiteViewer({
      aria-modal="true"
      aria-label="Moment viewer"
      style={{
-       position: 'absolute',
-       top: 0,
-       left: 0,
-       right: 0,
+       position: 'relative',
        width: '100%',
        minHeight: '100dvh',
        zIndex: 2147483000,
@@ -2047,11 +2045,13 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         '6px clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
 
+       {typeof document !== 'undefined'
+         ? createPortal(
        <div style={{
          position: 'fixed',
          top: 'calc(14px + env(safe-area-inset-top, 0px))',
@@ -2176,9 +2176,10 @@ function MomentWhiteViewer({
              }} />
            </AdaptiveMomentNavContent>
          </button>
-       </div>
-
-       <div style={{ height: 8 }} />
+       </div>,
+             document.body
+           )
+         : null}
 
        {newerMoments.map((item: any, index: number) => (
          <MomentViewerScrollItem
