@@ -2015,7 +2015,6 @@ function MomentWhiteViewer({
        position: 'fixed',
        inset: 0,
        width: '100%',
-       height: '100dvh',
        zIndex: 2147483000,
        background: '#FFFFFF',
        overflowY: 'auto',
@@ -2038,7 +2037,7 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) 28px',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
