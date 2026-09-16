@@ -768,15 +768,18 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  }
 
  useEffect(() => {
-   const root = momentsScrollRef.current
    const target = loadMoreRef.current
 
    if (
-     !root ||
      !target ||
      !hasMoreMoments ||
      !nextCursor
    ) return
+
+   const observerRoot =
+     insideReportShell
+       ? null
+       : momentsScrollRef.current
 
    const observer = new IntersectionObserver(
      entries => {
@@ -785,8 +788,10 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
        }
      },
      {
-       root,
-       rootMargin: '500px 0px',
+       root: observerRoot,
+       rootMargin: insideReportShell
+         ? '1200px 0px'
+         : '500px 0px',
        threshold: 0.01,
      }
    )
@@ -795,6 +800,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
    return () => observer.disconnect()
  }, [
+   insideReportShell,
    hasMoreMoments,
    nextCursor,
    loadingMore,
