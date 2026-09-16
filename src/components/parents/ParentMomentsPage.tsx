@@ -1877,9 +1877,6 @@ function MomentWhiteViewer({
 
  const [heroDone, setHeroDone] = useState(false)
  const [targetRect, setTargetRect] = useState(origin)
- const viewerStartScrollY = useRef(
-   typeof window !== 'undefined' ? window.scrollY : 0
- )
 
  const teacherName = moment.teacher?.name || 'Teacher'
 
@@ -1993,11 +1990,6 @@ function MomentWhiteViewer({
 
    setHeroDone(false)
 
-   window.scrollTo({
-     top: viewerStartScrollY.current,
-     behavior: 'auto',
-   })
-
    window.requestAnimationFrame(() => {
      window.requestAnimationFrame(() => {
        setPhase('closing')
@@ -2020,18 +2012,23 @@ function MomentWhiteViewer({
      aria-modal="true"
      aria-label="Moment viewer"
      style={{
-       position: 'absolute',
-       top: 0,
-       left: 0,
-       right: 0,
+       position: 'fixed',
+       inset: 0,
        width: '100%',
-       minHeight: '100dvh',
+       height: '100dvh',
        zIndex: 2147483000,
        background: '#FFFFFF',
-       overflow: 'visible',
-       overscrollBehavior: 'auto',
-       opacity: phase === 'closing' ? 0 : 1,
-       transition: 'opacity 220ms ease',
+       overflowY: 'auto',
+       overflowX: 'hidden',
+       overscrollBehavior: 'contain',
+       WebkitOverflowScrolling: 'touch',
+       scrollPaddingTop:
+         'calc(66px + env(safe-area-inset-top, 0px))',
+       opacity: phase === 'open' ? 1 : 0,
+       transition:
+         phase === 'opening'
+           ? 'none'
+           : 'opacity 180ms ease',
        isolation: 'isolate',
      }}
    >
@@ -2041,7 +2038,7 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         'calc(66px + env(safe-area-inset-top, 0px)) clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
