@@ -2034,10 +2034,10 @@ function MomentWhiteViewer({
      <div style={{
        width: '100%',
        maxWidth: 520,
-       minHeight: '100dvh',
+       minHeight: '100%',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) 28px',
+         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px)',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
