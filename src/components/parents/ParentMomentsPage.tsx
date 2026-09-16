@@ -881,6 +881,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  }
 
  return (
+ <>
+ <div id="sc-parent-moments-preview-host" />
  <main className="sc-screen-enter" style={{
  minHeight: '100dvh',
  height: insideReportShell ? 'auto' : '100dvh',
@@ -1341,7 +1343,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  {insideReportShell &&
  viewerMoment &&
  momentViewer?.origin &&
- typeof document !== 'undefined'
+ typeof document !== 'undefined' &&
+ document.getElementById('sc-parent-moments-preview-host')
    ? createPortal(
        <MomentWhiteViewer
          moment={viewerMoment}
@@ -1410,7 +1413,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          reactingId={reacting}
          bursts={reactionBursts}
        />,
-       document.body
+       document.getElementById('sc-parent-moments-preview-host') as HTMLElement
      )
    : null}
 
@@ -1482,6 +1485,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  document.body
  )}
  </main>
+ </>
  )
 }
 
@@ -2041,11 +2045,13 @@ function MomentWhiteViewer({
        minHeight: '100dvh',
        margin: '0 auto',
        padding:
-         '0 clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
+         '6px clamp(4px, calc(4px + (100vw - 390px) * 0.12), 12px) calc(28px + env(safe-area-inset-bottom, 0px))',
        boxSizing: 'border-box',
        background: '#FFFFFF',
      }}>
 
+       {typeof document !== 'undefined'
+         ? createPortal(
        <div style={{
          position: 'fixed',
          top: 'calc(14px + env(safe-area-inset-top, 0px))',
@@ -2170,7 +2176,10 @@ function MomentWhiteViewer({
              }} />
            </AdaptiveMomentNavContent>
          </button>
-       </div>
+       </div>,
+             document.body
+           )
+         : null}
 
        {newerMoments.map((item: any, index: number) => (
          <MomentViewerScrollItem
