@@ -890,7 +890,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  color: T.ink,
  overscrollBehavior: insideReportShell ? 'auto' : 'none',
  touchAction: 'pan-y',
- visibility: momentViewer ? 'hidden' : 'visible',
+ display: momentViewer ? 'none' : 'block',
  }}>
  <SafeStyle />
 
@@ -2020,10 +2020,7 @@ function MomentWhiteViewer({
      aria-modal="true"
      aria-label="Moment viewer"
      style={{
-       position: 'absolute',
-       top: 0,
-       left: 0,
-       right: 0,
+       position: 'relative',
        width: '100%',
        minHeight: '100dvh',
        zIndex: 2147483000,
