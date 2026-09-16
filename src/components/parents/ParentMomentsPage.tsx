@@ -2175,8 +2175,6 @@ function MomentWhiteViewer({
          </button>
        </div>
 
-       <div style={{ height: 8 }} />
-
        {newerMoments.map((item: any, index: number) => (
          <MomentViewerScrollItem
            key={item.id}
