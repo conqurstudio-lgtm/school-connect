@@ -652,13 +652,22 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
    if (!moment) return
 
+   let returnScrollY = 0
+
    if (typeof window !== 'undefined') {
-     gridScrollYRef.current = window.scrollY
+     returnScrollY = window.scrollY
+     gridScrollYRef.current = returnScrollY
+
+     window.scrollTo({
+       top: 0,
+       behavior: 'auto',
+     })
    }
 
    setMomentViewer({
      momentId,
      source: 'grid',
+     returnScrollY,
      origin: {
        top: rect.top,
        left: rect.left,
@@ -1407,6 +1416,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          origin={momentViewer.origin}
          closeImmediately={momentViewer?.source === 'feed'}
          quickView={momentViewer?.source === 'grid'}
+         returnScrollY={momentViewer?.returnScrollY}
          onShowGrid={() => {
            gridReturnMomentIdRef.current =
              momentViewer?.momentId || null
@@ -1936,6 +1946,7 @@ function MomentWhiteViewer({
  origin,
  closeImmediately = false,
  quickView = false,
+ returnScrollY,
  onClosed,
  onShowGrid,
  onReact,
@@ -1945,11 +1956,13 @@ function MomentWhiteViewer({
  const [phase, setPhase] =
    useState<'opening' | 'open' | 'closing'>('opening')
 
- const [heroDone, setHeroDone] = useState(false)
+ const [heroDone, setHeroDone] = useState(quickView)
  const [targetRect, setTargetRect] = useState(origin)
  const [navAtTop, setNavAtTop] = useState(true)
  const viewerStartScrollY = useRef(
-   typeof window !== 'undefined' ? window.scrollY : 0
+   typeof returnScrollY === 'number'
+     ? returnScrollY
+     : (typeof window !== 'undefined' ? window.scrollY : 0)
  )
 
  const teacherName = moment.teacher?.name || 'Teacher'
@@ -2037,6 +2050,16 @@ function MomentWhiteViewer({
    let frame1 = 0
    let frame2 = 0
 
+   if (quickView) {
+     frame1 = window.requestAnimationFrame(() => {
+       setPhase('open')
+     })
+
+     return () => {
+       window.cancelAnimationFrame(frame1)
+     }
+   }
+
    frame1 = window.requestAnimationFrame(() => {
      const target = document.getElementById(
        'sc-moment-viewer-image-target-v2'
@@ -2048,7 +2071,7 @@ function MomentWhiteViewer({
        return
      }
 
-     if (selectedIndex > 0 || quickView) {
+     if (selectedIndex > 0) {
        target.style.scrollMarginTop =
          'calc(66px + env(safe-area-inset-top, 0px))'
 
@@ -2140,11 +2163,25 @@ function MomentWhiteViewer({
        background: '#FFFFFF',
        overflow: 'visible',
        overscrollBehavior: 'auto',
-       opacity: phase === 'open' ? 1 : 0,
-       transition:
-         phase === 'opening'
-           ? 'none'
-           : 'opacity 180ms ease',
+       opacity: quickView
+         ? (phase === 'closing' ? 0 : 1)
+         : (phase === 'open' ? 1 : 0),
+       transform: quickView
+         ? (
+             phase === 'opening'
+               ? 'translateY(4px) scale(0.998)'
+               : phase === 'closing'
+                 ? 'translateY(2px) scale(0.998)'
+                 : 'translateY(0) scale(1)'
+           )
+         : 'none',
+       transition: quickView
+         ? 'opacity 170ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)'
+         : (
+             phase === 'opening'
+               ? 'none'
+               : 'opacity 180ms ease'
+           ),
        isolation: 'isolate',
      }}
    >
