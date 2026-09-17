@@ -403,6 +403,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  const gridRevealRef = useRef<HTMLDivElement | null>(null)
  const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
  const [gridAtTop, setGridAtTop] = useState(true)
+ const [gridNavVisible, setGridNavVisible] = useState(true)
 
  const load = async (quiet = false) => {
  if (!quiet) setLoading(true)
@@ -589,30 +590,45 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
    ) return
 
    let ticking = false
+   let hideTimer = 0
 
-   const updateGridAtTop = () => {
+   const updateGridNavigation = () => {
      if (ticking) return
 
      ticking = true
 
      window.requestAnimationFrame(() => {
-       setGridAtTop(window.scrollY <= 24)
+       const atTop = window.scrollY <= 24
+
+       setGridAtTop(atTop)
+       setGridNavVisible(true)
+
+       window.clearTimeout(hideTimer)
+
+       if (!atTop) {
+         hideTimer = window.setTimeout(() => {
+           setGridNavVisible(false)
+         }, 1200)
+       }
+
        ticking = false
      })
    }
 
-   updateGridAtTop()
+   updateGridNavigation()
 
    window.addEventListener(
      'scroll',
-     updateGridAtTop,
+     updateGridNavigation,
      { passive: true }
    )
 
    return () => {
+     window.clearTimeout(hideTimer)
+
      window.removeEventListener(
        'scroll',
-       updateGridAtTop
+       updateGridNavigation
      )
    }
  }, [insideReportShell, momentViewer])
@@ -962,6 +978,17 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
       justifyContent: 'space-between',
       gap: 12,
       pointerEvents: 'none',
+      opacity:
+        gridAtTop || gridNavVisible
+          ? 1
+          : 0,
+      transform:
+        gridAtTop || gridNavVisible
+          ? 'translateY(0)'
+          : 'translateY(-2px)',
+      transition:
+        'opacity 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+      willChange: 'opacity, transform',
     }}
   >
     <div
@@ -972,7 +999,10 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
         display: 'inline-flex',
         alignItems: 'center',
         gap: 8,
-        pointerEvents: 'auto',
+        pointerEvents:
+          gridAtTop || gridNavVisible
+            ? 'auto'
+            : 'none',
       }}
     >
       {[
@@ -1044,7 +1074,10 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
         flexShrink: 0,
         padding: 0,
         cursor: 'pointer',
-        pointerEvents: 'auto',
+        pointerEvents:
+          gridAtTop || gridNavVisible
+            ? 'auto'
+            : 'none',
         boxShadow: gridAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
         backdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
         WebkitBackdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
@@ -1959,6 +1992,7 @@ function MomentWhiteViewer({
  const [heroDone, setHeroDone] = useState(quickView)
  const [targetRect, setTargetRect] = useState(origin)
  const [navAtTop, setNavAtTop] = useState(true)
+ const [navVisible, setNavVisible] = useState(true)
  const viewerStartScrollY = useRef(
    typeof returnScrollY === 'number'
      ? returnScrollY
@@ -2017,30 +2051,45 @@ function MomentWhiteViewer({
 
  useEffect(() => {
    let ticking = false
+   let hideTimer = 0
 
-   const updateNavAtTop = () => {
+   const updateNavigation = () => {
      if (ticking) return
 
      ticking = true
 
      window.requestAnimationFrame(() => {
-       setNavAtTop(window.scrollY <= 24)
+       const atTop = window.scrollY <= 24
+
+       setNavAtTop(atTop)
+       setNavVisible(true)
+
+       window.clearTimeout(hideTimer)
+
+       if (!atTop) {
+         hideTimer = window.setTimeout(() => {
+           setNavVisible(false)
+         }, 1200)
+       }
+
        ticking = false
      })
    }
 
-   updateNavAtTop()
+   updateNavigation()
 
    window.addEventListener(
      'scroll',
-     updateNavAtTop,
+     updateNavigation,
      { passive: true }
    )
 
    return () => {
+     window.clearTimeout(hideTimer)
+
      window.removeEventListener(
        'scroll',
-       updateNavAtTop
+       updateNavigation
      )
    }
  }, [])
@@ -2210,6 +2259,17 @@ function MomentWhiteViewer({
          justifyContent: 'space-between',
          gap: 12,
          pointerEvents: 'none',
+         opacity:
+           navAtTop || navVisible
+             ? 1
+             : 0,
+         transform:
+           navAtTop || navVisible
+             ? 'translateY(0)'
+             : 'translateY(-2px)',
+         transition:
+           'opacity 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+         willChange: 'opacity, transform',
        }}>
          <button
            type="button"
@@ -2231,7 +2291,10 @@ function MomentWhiteViewer({
              boxShadow: navAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
              backdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
              WebkitBackdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
-             pointerEvents: 'auto',
+             pointerEvents:
+               navAtTop || navVisible
+                 ? 'auto'
+                 : 'none',
            }}
          >
            <AdaptiveMomentNavContent
@@ -2265,7 +2328,10 @@ function MomentWhiteViewer({
              boxShadow: navAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
              backdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
              WebkitBackdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
-             pointerEvents: 'auto',
+             pointerEvents:
+               navAtTop || navVisible
+                 ? 'auto'
+                 : 'none',
              WebkitTapHighlightColor: 'transparent',
            }}
          >
