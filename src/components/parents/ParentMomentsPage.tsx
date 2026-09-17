@@ -398,9 +398,11 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
  const [initialFeedBoot, setInitialFeedBoot] =
    useState(insideReportShell)
  const gridReturnMomentIdRef = useRef<string | null>(null)
+ const gridScrollYRef = useRef(0)
  const returningFromGridRef = useRef(false)
  const gridRevealRef = useRef<HTMLDivElement | null>(null)
  const [momentsMenuOpen, setMomentsMenuOpen] = useState(false)
+ const [gridAtTop, setGridAtTop] = useState(true)
 
  const load = async (quiet = false) => {
  if (!quiet) setLoading(true)
@@ -580,6 +582,41 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
 
 
 
+ useEffect(() => {
+   if (
+     !insideReportShell ||
+     typeof window === 'undefined'
+   ) return
+
+   let ticking = false
+
+   const updateGridAtTop = () => {
+     if (ticking) return
+
+     ticking = true
+
+     window.requestAnimationFrame(() => {
+       setGridAtTop(window.scrollY <= 24)
+       ticking = false
+     })
+   }
+
+   updateGridAtTop()
+
+   window.addEventListener(
+     'scroll',
+     updateGridAtTop,
+     { passive: true }
+   )
+
+   return () => {
+     window.removeEventListener(
+       'scroll',
+       updateGridAtTop
+     )
+   }
+ }, [insideReportShell, momentViewer])
+
  const childMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'child')
  const classMoments = moments.filter((moment: any) => parentMomentScope(moment) === 'class')
  const visibleMoments = momentScope === 'recent' ? moments : (momentScope === 'child' ? childMoments : classMoments)
@@ -614,6 +651,10 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
    )
 
    if (!moment) return
+
+   if (typeof window !== 'undefined') {
+     gridScrollYRef.current = window.scrollY
+   }
 
    setMomentViewer({
      momentId,
@@ -810,6 +851,8 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
      return
    }
 
+   gridScrollYRef.current = window.scrollY
+
    const imageMoments = moments.filter(
      (item: any) =>
        item.file_type === 'image' &&
@@ -946,7 +989,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
               padding: '0 14px',
               borderRadius: 15,
               border: 'none',
-              background: 'rgba(24,26,30,0.065)',
+              background: gridAtTop ? 'transparent' : 'rgba(24,26,30,0.065)',
               color: '#FFFFFF',
               fontFamily: 'inherit',
               fontSize: 12.5,
@@ -954,9 +997,9 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
               opacity: 1,
               letterSpacing: '-0.01em',
               cursor: 'pointer',
-              boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
-              backdropFilter: 'blur(16px) saturate(1.16)',
-              WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+              boxShadow: gridAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
+              backdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
+              WebkitBackdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
               WebkitTapHighlightColor: 'transparent',
             }}
           >
@@ -984,7 +1027,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
         height: 44,
         borderRadius: 15,
         border: 'none',
-        background: 'rgba(24,26,30,0.065)',
+        background: gridAtTop ? 'transparent' : 'rgba(24,26,30,0.065)',
         color: 'rgba(255,255,255,0.96)',
         display: 'inline-flex',
         alignItems: 'center',
@@ -993,9 +1036,9 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
         padding: 0,
         cursor: 'pointer',
         pointerEvents: 'auto',
-        boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
-        backdropFilter: 'blur(16px) saturate(1.16)',
-        WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+        boxShadow: gridAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
+        backdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
+        WebkitBackdropFilter: gridAtTop ? 'none' : 'blur(16px) saturate(1.16)',
         WebkitTapHighlightColor:
           'transparent',
       }}
@@ -1268,6 +1311,14 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          : 'visible',
      }}
    >
+     <div
+       aria-hidden="true"
+       style={{
+         height: 'calc(58px + env(safe-area-inset-top, 0px))',
+         flexShrink: 0,
+       }}
+     />
+
      {galleryImageMoments.length > 0 ? (
        <MomentGalleryGrid
          moments={galleryImageMoments}
@@ -1364,6 +1415,17 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
            }
 
            setMomentViewer(null)
+
+           if (typeof window !== 'undefined') {
+             window.requestAnimationFrame(() => {
+               window.requestAnimationFrame(() => {
+                 window.scrollTo({
+                   top: gridScrollYRef.current,
+                   behavior: 'auto',
+                 })
+               })
+             })
+           }
 
            if (
              typeof window !== 'undefined' &&
@@ -1542,7 +1604,7 @@ function ParentReactionFXButton({
  >
  <Icon
  size={17}
- strokeWidth={active ? 1.85 : 1.55}
+ strokeWidth={1.85}
  fill={active && reactionKey !== 'like' ? color : 'none'}
  fillOpacity={active && reactionKey === 'smile' ? 0.18 : 1}
  />
@@ -2128,7 +2190,7 @@ function MomentWhiteViewer({
                justifyContent: 'center',
              }}
            >
-             <ChevronLeft size={24} strokeWidth={2.15} />
+             <ChevronLeft size={24} strokeWidth={1.85} />
            </AdaptiveMomentNavContent>
          </button>
 
@@ -2170,7 +2232,7 @@ function MomentWhiteViewer({
                top: 0,
                width: 7.5,
                height: 10.5,
-               border: '1.6px solid currentColor',
+               border: '1.85px solid currentColor',
                borderRadius: 3.2,
                boxSizing: 'border-box',
              }} />
@@ -2181,7 +2243,7 @@ function MomentWhiteViewer({
                top: 0,
                width: 8,
                height: 5.5,
-               border: '1.6px solid currentColor',
+               border: '1.85px solid currentColor',
                borderRadius: 3.2,
                boxSizing: 'border-box',
              }} />
@@ -2192,7 +2254,7 @@ function MomentWhiteViewer({
                bottom: 0,
                width: 7.5,
                height: 5.5,
-               border: '1.6px solid currentColor',
+               border: '1.85px solid currentColor',
                borderRadius: 3.2,
                boxSizing: 'border-box',
              }} />
@@ -2203,7 +2265,7 @@ function MomentWhiteViewer({
                bottom: 0,
                width: 8,
                height: 10.5,
-               border: '1.6px solid currentColor',
+               border: '1.85px solid currentColor',
                borderRadius: 3.2,
                boxSizing: 'border-box',
              }} />
