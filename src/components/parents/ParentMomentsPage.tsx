@@ -2361,7 +2361,7 @@ function MomentWhiteViewer({
            width: '100%',
            height: 'min(58dvh, 520px)',
            minHeight: 300,
-           borderRadius: 26,
+           borderRadius: 24,
            overflow: 'hidden',
            background: '#F7F6F3',
            visibility: heroDone ? 'visible' : 'hidden',
@@ -2441,7 +2441,7 @@ function MomentWhiteViewer({
                <div style={{
                  display: 'flex',
                  alignItems: 'baseline',
-                 gap: 5,
+                 gap: 7,
                  minWidth: 0,
                }}>
                  <span style={{
@@ -2470,7 +2470,7 @@ function MomentWhiteViewer({
                  fontSize: 10.7,
                  fontWeight: 400,
                  display: 'block',
-                 marginTop: 2,
+                 marginTop: 3,
                  lineHeight: 1.25,
                }}>
                  {shareLabel}
@@ -2518,14 +2518,14 @@ function MomentWhiteViewer({
          {/* caption below identity */}
          {note ? (
            <div style={{
-             margin: '10px 4px 0',
+             margin: '12px 4px 0',
            }}>
              <p style={{
                margin: 0,
-               color: '#303236',
-               fontSize: 12.9,
+               color: '#3D4045',
+               fontSize: 12.6,
                fontWeight: 400,
-               lineHeight: 1.46,
+               lineHeight: 1.52,
                whiteSpace: 'pre-wrap',
              }}>
                {note}
@@ -2612,7 +2612,7 @@ function MomentViewerScrollItem({
 
  return (
    <section style={{
-     marginTop: hideTopDivider ? 0 : 26,
+     marginTop: hideTopDivider ? 0 : 34,
      paddingTop: 0,
      borderTop: 'none',
    }}>
@@ -2621,7 +2621,7 @@ function MomentViewerScrollItem({
        width: '100%',
        height: 'min(58dvh, 520px)',
        minHeight: 300,
-       borderRadius: 26,
+       borderRadius: 24,
        overflow: 'hidden',
        background: '#F7F6F3',
        position: 'relative',
@@ -2689,7 +2689,7 @@ function MomentViewerScrollItem({
            <div style={{
              display: 'flex',
              alignItems: 'baseline',
-             gap: 5,
+             gap: 7,
              minWidth: 0,
            }}>
              <span style={{
@@ -2718,7 +2718,7 @@ function MomentViewerScrollItem({
              fontSize: 10.7,
              fontWeight: 400,
              display: 'block',
-             marginTop: 2,
+             marginTop: 3,
              lineHeight: 1.25,
            }}>
              {shareLabel}
@@ -2766,14 +2766,14 @@ function MomentViewerScrollItem({
      {/* caption */}
      {note ? (
        <div style={{
-         margin: '10px 4px 0',
+         margin: '12px 4px 0',
        }}>
          <p style={{
            margin: 0,
-           color: '#303236',
-           fontSize: 12.9,
+           color: '#3D4045',
+           fontSize: 12.6,
            fontWeight: 400,
-           lineHeight: 1.46,
+           lineHeight: 1.52,
            whiteSpace: 'pre-wrap',
          }}>
            {note}
