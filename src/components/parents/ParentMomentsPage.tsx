@@ -1883,6 +1883,7 @@ function MomentWhiteViewer({
 
  const [heroDone, setHeroDone] = useState(false)
  const [targetRect, setTargetRect] = useState(origin)
+ const [navAtTop, setNavAtTop] = useState(true)
  const viewerStartScrollY = useRef(
    typeof window !== 'undefined' ? window.scrollY : 0
  )
@@ -1924,6 +1925,36 @@ function MomentWhiteViewer({
      : sourceMoments.filter(
          (item: any) => item.id !== moment.id
        )
+
+ useEffect(() => {
+   let ticking = false
+
+   const updateNavAtTop = () => {
+     if (ticking) return
+
+     ticking = true
+
+     window.requestAnimationFrame(() => {
+       setNavAtTop(window.scrollY <= 24)
+       ticking = false
+     })
+   }
+
+   updateNavAtTop()
+
+   window.addEventListener(
+     'scroll',
+     updateNavAtTop,
+     { passive: true }
+   )
+
+   return () => {
+     window.removeEventListener(
+       'scroll',
+       updateNavAtTop
+     )
+   }
+ }, [])
 
  useEffect(() => {
    let heroTimer = 0
@@ -2077,16 +2108,16 @@ function MomentWhiteViewer({
              height: 44,
              borderRadius: 15,
              border: 'none',
-             background: 'rgba(24,26,30,0.065)',
+             background: navAtTop ? 'transparent' : 'rgba(24,26,30,0.065)',
              color: 'rgba(255,255,255,0.96)',
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
              padding: 0,
              cursor: 'pointer',
-             boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
-             backdropFilter: 'blur(16px) saturate(1.16)',
-             WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+             boxShadow: navAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
+             backdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
+             WebkitBackdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
              pointerEvents: 'auto',
            }}
          >
@@ -2111,16 +2142,16 @@ function MomentWhiteViewer({
              height: 44,
              borderRadius: 15,
              border: 'none',
-             background: 'rgba(24,26,30,0.065)',
+             background: navAtTop ? 'transparent' : 'rgba(24,26,30,0.065)',
              color: 'rgba(255,255,255,0.96)',
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
              padding: 0,
              cursor: 'pointer',
-             boxShadow: '0 6px 22px rgba(15,23,42,0.085)',
-             backdropFilter: 'blur(16px) saturate(1.16)',
-             WebkitBackdropFilter: 'blur(16px) saturate(1.16)',
+             boxShadow: navAtTop ? 'none' : '0 6px 22px rgba(15,23,42,0.085)',
+             backdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
+             WebkitBackdropFilter: navAtTop ? 'none' : 'blur(16px) saturate(1.16)',
              pointerEvents: 'auto',
              WebkitTapHighlightColor: 'transparent',
            }}
