@@ -1406,6 +1406,7 @@ function ParentMomentsPageInner({ token, embedded = false, onClose, insideReport
          )}
          origin={momentViewer.origin}
          closeImmediately={momentViewer?.source === 'feed'}
+         quickView={momentViewer?.source === 'grid'}
          onShowGrid={() => {
            gridReturnMomentIdRef.current =
              momentViewer?.momentId || null
@@ -1934,6 +1935,7 @@ function MomentWhiteViewer({
  moments = [],
  origin,
  closeImmediately = false,
+ quickView = false,
  onClosed,
  onShowGrid,
  onReact,
@@ -1968,9 +1970,21 @@ function MomentWhiteViewer({
 
  const note = String(moment.note || '').trim()
 
- const sourceMoments = Array.isArray(moments)
+ const rawSourceMoments = Array.isArray(moments)
    ? moments
    : []
+
+ const rawSelectedIndex = rawSourceMoments.findIndex(
+   (item: any) => item.id === moment.id
+ )
+
+ const sourceMoments =
+   quickView && rawSelectedIndex >= 0
+     ? [
+         ...rawSourceMoments.slice(rawSelectedIndex),
+         ...rawSourceMoments.slice(0, rawSelectedIndex),
+       ]
+     : rawSourceMoments
 
  const selectedIndex = sourceMoments.findIndex(
    (item: any) => item.id === moment.id
@@ -2034,7 +2048,7 @@ function MomentWhiteViewer({
        return
      }
 
-     if (selectedIndex > 0) {
+     if (selectedIndex > 0 || quickView) {
        target.style.scrollMarginTop =
          'calc(66px + env(safe-area-inset-top, 0px))'
 
