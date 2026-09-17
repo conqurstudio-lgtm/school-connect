@@ -1661,6 +1661,8 @@ function MomentGalleryGrid({
      gap: 'clamp(4px, calc(4px + (100vw - 390px) * 0.05), 7px)',
      alignItems: 'start',
      width: '100%',
+      padding: '0 8px',
+      boxSizing: 'border-box',
    }}>
      {renderColumn(left)}
      {renderColumn(right)}
@@ -2180,6 +2182,14 @@ function MomentWhiteViewer({
              document.body
            )
          : null}
+
+       <div
+         aria-hidden="true"
+         style={{
+           height: 'calc(58px + env(safe-area-inset-top, 0px))',
+           flexShrink: 0,
+         }}
+       />
 
        {newerMoments.map((item: any, index: number) => (
          <MomentViewerScrollItem
