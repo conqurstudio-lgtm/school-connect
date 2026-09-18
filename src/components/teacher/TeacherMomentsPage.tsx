@@ -4,6 +4,8 @@
 // school-connect-v1-moments-instant-v2
 
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { AdaptiveGlassProvider, useAdaptiveGlass } from '@/components/ui/AdaptiveGlass'
 import { FileText, Heart, Smile, ThumbsUp, X, Plus, Pencil, Trash2, MoreHorizontal, ChevronLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { TeacherMomentComposer } from '@/components/teacher/TeacherMomentComposer'
@@ -178,7 +180,37 @@ function LoadingDots() {
  )
 }
 
-export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }: any) {
+function AdaptiveTeacherMomentNavContent({
+ children,
+ style = {},
+}: any) {
+ const { ref, sense } = useAdaptiveGlass()
+
+ return (
+   <span
+     ref={ref as any}
+     style={{
+       color: sense.onLight
+         ? '#202124'
+         : '#FFFFFF',
+       transition: 'color 180ms ease',
+       ...style,
+     }}
+   >
+     {children}
+   </span>
+ )
+}
+
+export function TeacherMomentsPage(props: any) {
+ return (
+   <AdaptiveGlassProvider>
+     <TeacherMomentsPageInner {...props} />
+   </AdaptiveGlassProvider>
+ )
+}
+
+function TeacherMomentsPageInner({ teacher, learners = [], onBack, onChanged }: any) {
  const [momentsReady, setMomentsReady] = useState(false)
  const [moments, setMoments] = useState<any[]>([])
  const [openImage, setOpenImage] = useState('')
@@ -189,6 +221,9 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  const [momentDraft, setMomentDraft] = useState<any>(null)
  const momentFileRef = useRef<HTMLInputElement | null>(null)
  const momentsScrollRef = useRef<HTMLDivElement | null>(null)
+ const [teacherNavAtTop, setTeacherNavAtTop] = useState(true)
+ const [teacherNavVisible, setTeacherNavVisible] = useState(true)
+
  const safeTeacherAvatarUrl =
  teacher?.photo_url ||
  teacher?.avatar_url ||
@@ -196,6 +231,54 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  teacher?.teacher_photo_url ||
  teacher?.profile_photo_url ||
  ''
+
+ useEffect(() => {
+   const root = momentsScrollRef.current
+   if (!root) return
+
+   let ticking = false
+   let hideTimer = 0
+
+   const updateTeacherNavigation = () => {
+     if (ticking) return
+
+     ticking = true
+
+     window.requestAnimationFrame(() => {
+       const atTop = root.scrollTop <= 24
+
+       setTeacherNavAtTop(atTop)
+       setTeacherNavVisible(true)
+
+       window.clearTimeout(hideTimer)
+
+       if (!atTop) {
+         hideTimer = window.setTimeout(() => {
+           setTeacherNavVisible(false)
+         }, 1200)
+       }
+
+       ticking = false
+     })
+   }
+
+   updateTeacherNavigation()
+
+   root.addEventListener(
+     'scroll',
+     updateTeacherNavigation,
+     { passive: true }
+   )
+
+   return () => {
+     window.clearTimeout(hideTimer)
+
+     root.removeEventListener(
+       'scroll',
+       updateTeacherNavigation
+     )
+   }
+ }, [])
 
  const classLabel = [teacher?.grade, teacher?.class_name].filter(Boolean).join(' · ') || 'Your class'
  const learnerCount = Array.isArray(learners) ? learners.length : 0
@@ -393,75 +476,126 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  WebkitOverflowScrolling: 'touch',
  }}
  >
- <SCTopBar
- title="Moments"
- align="left"
- compact
- left={
- <button
- type="button"
- onClick={onBack}
- aria-label="Back to reports"
- style={{
- width: 38,
- height: 38,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: '#222222',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- flexShrink: 0,
- padding: 0,
- textDecoration: 'none',
- appearance: 'none',
- WebkitAppearance: 'none',
- WebkitTapHighlightColor: 'transparent',
- }}
- >
- <span
- style={{
- width: 13,
- height: 13,
- borderLeft: '2.6px solid currentColor',
- borderBottom: '2.6px solid currentColor',
- borderRadius: 1.5,
- transform: 'rotate(45deg) translate(1px, -1px)',
- display: 'block',
- }}
- />
- </button>
- }
- right={
- <button
- type="button"
- onClick={() => momentFileRef.current?.click()}
- aria-label="Add Moment"
- style={{
- width: 38,
- height: 38,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: '#222222',
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- padding: 0,
- flexShrink: 0,
- boxShadow: 'none',
- appearance: 'none',
- WebkitAppearance: 'none',
- WebkitTapHighlightColor: 'transparent',
- }}
- >
- <Plus size={22} strokeWidth={2.1} color="#222222" />
- </button>
- }
-/>
+ {typeof document !== 'undefined'
+ ? createPortal(
+   <div
+     style={{
+       position: 'fixed',
+       top: 'calc(14px + env(safe-area-inset-top, 0px))',
+       left: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
+       right: 'max(16px, calc((100vw - 520px) / 2 + 16px))',
+       zIndex: 100,
+       height: 44,
+       display: 'flex',
+       alignItems: 'center',
+       justifyContent: 'space-between',
+       gap: 12,
+       pointerEvents: 'none',
+       opacity:
+         teacherNavAtTop || teacherNavVisible
+           ? 1
+           : 0,
+       transform:
+         teacherNavAtTop || teacherNavVisible
+           ? 'translateY(0)'
+           : 'translateY(-2px)',
+       transition:
+         'opacity 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+       willChange: 'opacity, transform',
+     }}
+   >
+     <button
+       type="button"
+       onClick={onBack}
+       aria-label="Back to reports"
+       data-sc-adaptive-glass
+       style={{
+         width: 44,
+         height: 44,
+         borderRadius: 15,
+         border: 'none',
+         background: teacherNavAtTop
+           ? 'transparent'
+           : 'rgba(24,26,30,0.065)',
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+         padding: 0,
+         cursor: 'pointer',
+         boxShadow: teacherNavAtTop
+           ? 'none'
+           : '0 6px 22px rgba(15,23,42,0.085)',
+         backdropFilter: teacherNavAtTop
+           ? 'none'
+           : 'blur(16px) saturate(1.16)',
+         WebkitBackdropFilter: teacherNavAtTop
+           ? 'none'
+           : 'blur(16px) saturate(1.16)',
+         pointerEvents:
+           teacherNavAtTop || teacherNavVisible
+             ? 'auto'
+             : 'none',
+       }}
+     >
+       <AdaptiveTeacherMomentNavContent
+         style={{
+           display: 'flex',
+           alignItems: 'center',
+           justifyContent: 'center',
+         }}
+       >
+         <ChevronLeft size={24} strokeWidth={1.85} />
+       </AdaptiveTeacherMomentNavContent>
+     </button>
+
+     <button
+       type="button"
+       onClick={() => momentFileRef.current?.click()}
+       aria-label="Add Moment"
+       data-sc-adaptive-glass
+       style={{
+         width: 44,
+         height: 44,
+         borderRadius: 15,
+         border: 'none',
+         background: teacherNavAtTop
+           ? 'transparent'
+           : 'rgba(24,26,30,0.065)',
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+         padding: 0,
+         cursor: 'pointer',
+         boxShadow: teacherNavAtTop
+           ? 'none'
+           : '0 6px 22px rgba(15,23,42,0.085)',
+         backdropFilter: teacherNavAtTop
+           ? 'none'
+           : 'blur(16px) saturate(1.16)',
+         WebkitBackdropFilter: teacherNavAtTop
+           ? 'none'
+           : 'blur(16px) saturate(1.16)',
+         pointerEvents:
+           teacherNavAtTop || teacherNavVisible
+             ? 'auto'
+             : 'none',
+       }}
+     >
+       <AdaptiveTeacherMomentNavContent
+         style={{
+           display: 'flex',
+           alignItems: 'center',
+           justifyContent: 'center',
+         }}
+       >
+         <Plus size={23} strokeWidth={1.85} />
+       </AdaptiveTeacherMomentNavContent>
+     </button>
+   </div>,
+   document.body
+ )
+ : null}
+
 <section
  ref={momentsScrollRef}
  style={{
@@ -472,10 +606,17 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  WebkitOverflowScrolling: 'touch',
  overscrollBehaviorY: 'contain',
  touchAction: 'pan-y',
- padding: '16px 16px calc(20px + env(safe-area-inset-bottom, 0px))',
+ padding: '6px 6px calc(20px + env(safe-area-inset-bottom, 0px))',
  background: T.bg,
  }}
 >
+ <div
+   aria-hidden="true"
+   style={{
+     height: 'calc(58px + env(safe-area-inset-top, 0px))',
+     flexShrink: 0,
+   }}
+ />
  <div style={{ animation: 'teacherTabContentIn 150ms ease-out both' }}>
  {!momentsReady ? null : moments.length === 0 ? (
  <SCEmptyState
@@ -483,7 +624,7 @@ export function TeacherMomentsPage({ teacher, learners = [], onBack, onChanged }
  text="Create a Moment from the plus button when there is something worth sharing."
  />
  ) : (
- <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+ <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
  {moments.map((moment, index) => (
  <TeacherPreviewMomentPost
  key={moment.id}
@@ -670,376 +811,446 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  const isSyncingMoment = Boolean(moment?.__pending || moment?.__syncing)
 
  useEffect(() => {
- if (!menuOpen) return
+   if (!menuOpen) return
 
- const close = () => setMenuOpen(false)
- const onKeyDown = (event: KeyboardEvent) => {
- if (event.key === 'Escape') close()
- }
+   const close = () => setMenuOpen(false)
 
- window.addEventListener('click', close)
- window.addEventListener('scroll', close, true)
- window.addEventListener('resize', close)
- window.addEventListener('keydown', onKeyDown)
+   const onKeyDown = (event: KeyboardEvent) => {
+     if (event.key === 'Escape') close()
+   }
 
- return () => {
- window.removeEventListener('click', close)
- window.removeEventListener('scroll', close, true)
- window.removeEventListener('resize', close)
- window.removeEventListener('keydown', onKeyDown)
- }
+   window.addEventListener('click', close)
+   window.addEventListener('scroll', close, true)
+   window.addEventListener('resize', close)
+   window.addEventListener('keydown', onKeyDown)
+
+   return () => {
+     window.removeEventListener('click', close)
+     window.removeEventListener('scroll', close, true)
+     window.removeEventListener('resize', close)
+     window.removeEventListener('keydown', onKeyDown)
+   }
  }, [menuOpen])
 
  return (
- <article style={{
- position: 'relative',
- display: 'grid',
- gridTemplateColumns: '38px 1fr',
- gap: 10,
- padding: '0 0 22px',
- borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.035)',
- background: 'transparent',
- }}>
+   <article
+     style={{
+       position: 'relative',
+       padding: 0,
+       marginBottom: isLast ? 0 : 34,
+       background: 'transparent',
+     }}
+   >
+     <style>{`
+       @keyframes scMomentSyncBar {
+         from { transform: translateX(0); opacity: 0.45; }
+         to { transform: translateX(160%); opacity: 0.9; }
+       }
+     `}</style>
 
- <style>{`
- @keyframes scMomentSyncBar {
-  from { transform: translateX(0); opacity: 0.45; }
-  to { transform: translateX(160%); opacity: 0.9; }
- }
- `}</style>
+     {isSyncingMoment ? (
+       <div
+         aria-hidden="true"
+         style={{
+           position: 'absolute',
+           top: -2,
+           left: 4,
+           right: 4,
+           height: 3,
+           borderRadius: 999,
+           overflow: 'hidden',
+           pointerEvents: 'none',
+           zIndex: 2,
+           opacity: 0.8,
+         }}
+       >
+         <div
+           style={{
+             width: '38%',
+             height: '100%',
+             borderRadius: 999,
+             background: '#D7D7D7',
+             animation:
+               'scMomentSyncBar 900ms ease-in-out infinite alternate',
+           }}
+         />
+       </div>
+     ) : null}
 
- {isSyncingMoment ? (
-  <div
-   aria-hidden="true"
-   style={{
-    position: 'absolute',
-    inset: '-2px 0 auto 48px',
-    height: 3,
-    borderRadius: 999,
-    overflow: 'hidden',
-    pointerEvents: 'none',
-    zIndex: 2,
-    opacity: 0.8,
-   }}
-  >
-   <div
-    style={{
-     width: '38%',
-     height: '100%',
-     borderRadius: 999,
-     background: '#D7D7D7',
-     animation: 'scMomentSyncBar 900ms ease-in-out infinite alternate',
-    }}
-   />
-  </div>
- ) : null}
- <div style={{
- width: 38,
- height: 38,
- borderRadius: '50%',
- background: teacher?.photo_url ? `url(${teacher.photo_url}) center/cover` : T.accentSoft,
- color: T.accent,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- fontSize: 12,
- fontWeight: 560,
- overflow: 'hidden',
- flexShrink: 0,
- }}>
- {!teacher?.photo_url && initials(teacherName)}
- </div>
+     {isImage ? (
+       <button
+         type="button"
+         onClick={() => onImage(moment.file_url)}
+         style={{
+           display: 'block',
+           width: '100%',
+           padding: 0,
+           border: 'none',
+           background: 'transparent',
+           cursor: 'zoom-in',
+           fontFamily: 'inherit',
+         }}
+       >
+         <img
+           src={moment.file_url}
+           alt=""
+           style={{
+             width: '100%',
+             maxWidth: '100%',
+             height: 'auto',
+             maxHeight: 520,
+             objectFit: 'cover',
+             display: 'block',
+             borderRadius: 24,
+             background: '#F7F7F7',
+           }}
+         />
+       </button>
+     ) : (
+       <a
+         href={moment.file_url}
+         target="_blank"
+         rel="noreferrer"
+         style={{
+           width: '100%',
+           padding: 13,
+           borderRadius: 20,
+           background: T.soft,
+           display: 'flex',
+           alignItems: 'center',
+           gap: 12,
+           color: T.ink,
+           textDecoration: 'none',
+           boxSizing: 'border-box',
+         }}
+       >
+         <div
+           style={{
+             width: 38,
+             height: 38,
+             borderRadius: 16,
+             background: T.accentSoft,
+             color: T.accent,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             flexShrink: 0,
+           }}
+         >
+           <FileText size={18} strokeWidth={1.8} />
+         </div>
 
- <div style={{ minWidth: 0 }}>
- <div style={{
- display: 'flex',
- alignItems: 'flex-start',
- justifyContent: 'space-between',
- gap: 10,
- }}>
- <p style={{
- flex: 1,
- minWidth: 0,
- fontSize: 13.8,
- fontWeight: 560,
- color: T.ink,
- margin: 0,
- overflow: 'hidden',
- textOverflow: 'ellipsis',
- whiteSpace: 'nowrap',
- }}>
- {teacherName}
- <span style={{
- color: T.ink3,
- fontSize: 11.5,
- fontWeight: 520,
- marginLeft: 5,
- }}>
- · {shareLabel}
- </span>&nbsp;</p>
+         <div style={{ minWidth: 0 }}>
+           <p
+             style={{
+               fontSize: 13.5,
+               fontWeight: 560,
+               color: T.ink,
+               margin: 0,
+               overflow: 'hidden',
+               textOverflow: 'ellipsis',
+               whiteSpace: 'nowrap',
+             }}
+           >
+             {moment.file_name || 'Document'}
+           </p>
 
- <p style={{
- margin: '3px 0 0',
- color: T.ink3,
- fontSize: 11.2,
- fontWeight: 500,
- lineHeight: 1.25,
- letterSpacing: '-0.006em',
- }}>
- {formatTimeAgo(moment.created_at)}
- </p>
+           <p
+             style={{
+               fontSize: 12.5,
+               color: T.ink3,
+               margin: '2px 0 0',
+             }}
+           >
+             Open document
+           </p>
+         </div>
+       </a>
+     )}
 
- <div style={{
- display: 'flex',
- alignItems: 'center',
- gap: 4,
- flexShrink: 0,
- position: 'relative',
- marginTop: -2,
- }}>
- <button
- type="button"
- aria-label="Moment options"
- onClick={(event) => {
- event.stopPropagation()
- setMenuOpen(open => !open)
- }}
- style={{
- width: 28,
- height: 28,
- borderRadius: 999,
- border: 'none',
- background: 'transparent',
- color: T.ink3,
- display: 'inline-flex',
- alignItems: 'center',
- justifyContent: 'center',
- cursor: 'pointer',
- padding: 0,
- }}
- >
- <MoreHorizontal size={18} strokeWidth={2} />
- </button>
+     <div
+       style={{
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'space-between',
+         gap: 10,
+         padding: '12px 8px 0',
+       }}
+     >
+       <div
+         style={{
+           display: 'flex',
+           alignItems: 'center',
+           gap: 9,
+           flex: 1,
+           minWidth: 0,
+         }}
+       >
+         <div
+           style={{
+             width: 34,
+             height: 34,
+             borderRadius: '50%',
+             background: teacher?.photo_url
+               ? `url(${teacher.photo_url}) center/cover`
+               : T.accentSoft,
+             color: T.accent,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             fontSize: 11.5,
+             fontWeight: 560,
+             overflow: 'hidden',
+             flexShrink: 0,
+           }}
+         >
+           {!teacher?.photo_url && initials(teacherName)}
+         </div>
 
- {menuOpen && (
- <>
- <div
- onClick={() => setMenuOpen(false)}
- style={{
- position: 'fixed',
- inset: 0,
- zIndex: 9000,
- background: 'transparent',
- }}
- />
+         <div style={{ minWidth: 0 }}>
+           <div
+             style={{
+               display: 'flex',
+               alignItems: 'baseline',
+               gap: 7,
+               minWidth: 0,
+             }}
+           >
+             <span
+               style={{
+                 color: T.ink,
+                 fontSize: 13.4,
+                 fontWeight: 600,
+                 overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+               }}
+             >
+               {teacherName}
+             </span>
 
- <div
- onClick={event => event.stopPropagation()}
- style={{
- position: 'absolute',
- top: 34,
- right: 0,
- zIndex: 9001,
- minWidth: 164,
- borderRadius: 16,
- background: T.white,
- boxShadow: '0 12px 30px rgba(15,23,42,0.06)',
- border: `1px solid ${T.border}`,
- padding: 6,
- }}
- >
- <button
- type="button"
- onClick={() => {
- setMenuOpen(false)
- onEdit?.()
- }}
- style={{
- width: '100%',
- minHeight: 36,
- borderRadius: 12,
- border: 'none',
- background: 'transparent',
- color: T.ink2,
- display: 'flex',
- alignItems: 'center',
- gap: 9,
- fontFamily: 'inherit',
- fontSize: 12.8,
- fontWeight: 520,
- cursor: 'pointer',
- padding: '0 10px',
- textAlign: 'left',
- }}
- >
- <Pencil size={14} strokeWidth={1.9} />
- Edit Moment
- </button>
+             <span
+               style={{
+                 color: '#74777D',
+                 fontSize: 11.1,
+                 fontWeight: 400,
+                 whiteSpace: 'nowrap',
+               }}
+             >
+               · {formatTimeAgo(moment.created_at)}
+             </span>
+           </div>
 
- <div style={{ height: 1, background: 'var(--sc-border-soft)', margin: '5px 6px' }} />
+           <span
+             style={{
+               color: '#74777D',
+               fontSize: 10.7,
+               fontWeight: 400,
+               display: 'block',
+               marginTop: 3,
+               lineHeight: 1.25,
+             }}
+           >
+             {shareLabel}
+           </span>
+         </div>
+       </div>
 
- <button
- type="button"
- onClick={() => {
- setMenuOpen(false)
- onDelete?.()
- }}
- style={{
- width: '100%',
- minHeight: 36,
- borderRadius: 12,
- border: 'none',
- background: 'transparent',
- color: T.red,
- display: 'flex',
- alignItems: 'center',
- gap: 9,
- fontFamily: 'inherit',
- fontSize: 12.8,
- fontWeight: 520,
- cursor: 'pointer',
- padding: '0 10px',
- textAlign: 'left',
- }}
- >
- <Trash2 size={14} strokeWidth={1.9} />
- Delete Moment
- </button>
- </div>
- </>
- )}
- </div>
- </div>
- {/* moments-caption-above-image-v429 */}
-{moment.note && (
- <p style={{
- fontSize: 13.6,
- color: T.ink,
- lineHeight: 1.5,
- margin: '12px 0 0',
- whiteSpace: 'pre-wrap',
- }}>
- {moment.note}
- </p>
- )}
+       <div
+         style={{
+           position: 'relative',
+           flexShrink: 0,
+         }}
+       >
+         <button
+           type="button"
+           aria-label="Moment options"
+           onClick={(event) => {
+             event.stopPropagation()
+             setMenuOpen(open => !open)
+           }}
+           style={{
+             width: 32,
+             height: 32,
+             borderRadius: 999,
+             border: 'none',
+             background: 'transparent',
+             color: T.ink3,
+             display: 'inline-flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             cursor: 'pointer',
+             padding: 0,
+           }}
+         >
+           <MoreHorizontal size={18} strokeWidth={1.85} />
+         </button>
 
- <div style={{ marginTop: 12 }}>
- {isImage ? (
- <button
- type="button"
- onClick={() => onImage(moment.file_url)}
- style={{
- display: 'inline-flex',
- width: 'fit-content',
- maxWidth: '100%',
- padding: 0,
- border: 'none',
- background: 'transparent',
- cursor: 'zoom-in',
- fontFamily: 'inherit',
- textAlign: 'left',
- alignItems: 'flex-start',
- justifyContent: 'flex-start',
- }}
- >
- <img
- src={moment.file_url}
- alt=""
- style={{
- width: 'auto',
- maxWidth: '100%',
- height: 'auto',
- maxHeight: 360,
- objectFit: 'contain',
- objectPosition: 'left center',
- display: 'block',
- borderRadius: 16,
- background: 'transparent',
- }}
- />
- </button>
- ) : (
- <a
- href={moment.file_url}
- target="_blank"
- rel="noreferrer"
- style={{
- width: '100%',
- maxWidth: 390,
- padding: 13,
- borderRadius: 20,
- background: T.soft,
- display: 'flex',
- alignItems: 'center',
- gap: 12,
- color: T.ink,
- textDecoration: 'none',
- boxSizing: 'border-box',
- }}
- >
- <div style={{
- width: 38,
- height: 38,
- borderRadius: 16,
- background: T.accentSoft,
- color: T.accent,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- flexShrink: 0,
- }}>
- <FileText size={18} strokeWidth={1.8} />
- </div>
+         {menuOpen ? (
+           <>
+             <div
+               onClick={() => setMenuOpen(false)}
+               style={{
+                 position: 'fixed',
+                 inset: 0,
+                 zIndex: 9000,
+                 background: 'transparent',
+               }}
+             />
 
- <div style={{ minWidth: 0 }}>
- <p style={{
- fontSize: 13.5,
- fontWeight: 560,
- color: T.ink,
- margin: 0,
- overflow: 'hidden',
- textOverflow: 'ellipsis',
- whiteSpace: 'nowrap',
- }}>
- {moment.file_name || 'Document'}
- </p>
- <p style={{ fontSize: 12.5, color: T.ink3, margin: '2px 0 0' }}>
- Open document
- </p>
- </div>
- </a>
- )}
- </div>
- <button
- type="button"
- onClick={onReactions}
- style={{
- display: 'inline-flex',
- alignItems: 'center',
- gap: 8,
- marginTop: 13,
- border: 'none',
- background: 'transparent',
- padding: 0,
- cursor: 'pointer',
- fontFamily: 'inherit',
- color: T.ink3,
- }}
- >
- <ReactionCount Icon={Heart} value={moment.reaction_counts?.heart || 0} active={moment.reaction_counts?.heart > 0} tone="#E25563" />
- <ReactionCount Icon={ThumbsUp} value={moment.reaction_counts?.like || 0} active={moment.reaction_counts?.like > 0} tone="#3B82F6" />
- <ReactionCount Icon={Smile} value={moment.reaction_counts?.smile || 0} active={moment.reaction_counts?.smile > 0} tone="#F59E0B" fillOpacity={0.18} />
+             <div
+               onClick={event => event.stopPropagation()}
+               style={{
+                 position: 'absolute',
+                 top: 36,
+                 right: 0,
+                 zIndex: 9001,
+                 minWidth: 164,
+                 borderRadius: 16,
+                 background: T.white,
+                 boxShadow:
+                   '0 12px 30px rgba(15,23,42,0.06)',
+                 border: `1px solid ${T.border}`,
+                 padding: 6,
+               }}
+             >
+               <button
+                 type="button"
+                 onClick={() => {
+                   setMenuOpen(false)
+                   onEdit?.()
+                 }}
+                 style={{
+                   width: '100%',
+                   minHeight: 36,
+                   borderRadius: 12,
+                   border: 'none',
+                   background: 'transparent',
+                   color: T.ink2,
+                   display: 'flex',
+                   alignItems: 'center',
+                   gap: 9,
+                   fontFamily: 'inherit',
+                   fontSize: 12.8,
+                   fontWeight: 520,
+                   cursor: 'pointer',
+                   padding: '0 10px',
+                   textAlign: 'left',
+                 }}
+               >
+                 <Pencil size={14} strokeWidth={1.9} />
+                 Edit Moment
+               </button>
 
- <span style={{
- fontSize: 12.2,
- color: T.ink3,
- marginLeft: 2,
- }}>
- {reactionTotal > 0 ? `${reactionTotal} reactions` : ''}
- </span>
- </button>
- </div>
- </article>
+               <div
+                 style={{
+                   height: 1,
+                   background: 'var(--sc-border-soft)',
+                   margin: '5px 6px',
+                 }}
+               />
+
+               <button
+                 type="button"
+                 onClick={() => {
+                   setMenuOpen(false)
+                   onDelete?.()
+                 }}
+                 style={{
+                   width: '100%',
+                   minHeight: 36,
+                   borderRadius: 12,
+                   border: 'none',
+                   background: 'transparent',
+                   color: T.red,
+                   display: 'flex',
+                   alignItems: 'center',
+                   gap: 9,
+                   fontFamily: 'inherit',
+                   fontSize: 12.8,
+                   fontWeight: 520,
+                   cursor: 'pointer',
+                   padding: '0 10px',
+                   textAlign: 'left',
+                 }}
+               >
+                 <Trash2 size={14} strokeWidth={1.9} />
+                 Delete Moment
+               </button>
+             </div>
+           </>
+         ) : null}
+       </div>
+     </div>
+
+     {moment.note ? (
+       <div style={{ margin: '12px 8px 0' }}>
+         <p
+           style={{
+             margin: 0,
+             color: '#3D4045',
+             fontSize: 12.6,
+             fontWeight: 400,
+             lineHeight: 1.52,
+             whiteSpace: 'pre-wrap',
+           }}
+         >
+           {moment.note}
+         </p>
+       </div>
+     ) : null}
+
+     <button
+       type="button"
+       onClick={onReactions}
+       style={{
+         display: 'inline-flex',
+         alignItems: 'center',
+         gap: 8,
+         margin: '12px 8px 0',
+         border: 'none',
+         background: 'transparent',
+         padding: 0,
+         cursor: 'pointer',
+         fontFamily: 'inherit',
+         color: T.ink3,
+       }}
+     >
+       <ReactionCount
+         Icon={Heart}
+         value={moment.reaction_counts?.heart || 0}
+         active={moment.reaction_counts?.heart > 0}
+         tone="#E25563"
+       />
+
+       <ReactionCount
+         Icon={ThumbsUp}
+         value={moment.reaction_counts?.like || 0}
+         active={moment.reaction_counts?.like > 0}
+         tone="#3B82F6"
+       />
+
+       <ReactionCount
+         Icon={Smile}
+         value={moment.reaction_counts?.smile || 0}
+         active={moment.reaction_counts?.smile > 0}
+         tone="#F59E0B"
+         fillOpacity={0.18}
+       />
+
+       {reactionTotal > 0 ? (
+         <span
+           style={{
+             fontSize: 12.2,
+             color: T.ink3,
+             marginLeft: 2,
+           }}
+         >
+           {reactionTotal} reactions
+         </span>
+       ) : null}
+     </button>
+   </article>
  )
 }
 

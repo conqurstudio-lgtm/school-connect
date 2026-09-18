@@ -2,10 +2,10 @@
 'use client'
 // school-connect-v1-moments-instant-v2
 
-import { useEffect, useMemo, useState } from 'react'
-import { Check, FileText, Send, ShieldAlert, X } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Check, FileText, Send, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { SCBottomSheet, SCButton, SCIconButton, SCTextArea } from '@/components/ui'
+import { SCBottomSheet, SCButton, SCTextArea } from '@/components/ui'
 
 const T = {
   ink: 'var(--sc-ink)',
@@ -80,12 +80,6 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
 
   const isImage = String(file?.type || '').startsWith('image/')
   const selectedCount = shareMode === 'all' ? learners.length : selectedIds.length
-
-  const selectedLabel = useMemo(() => {
-    if (shareMode === 'all') return learners.length ? `${learners.length} parents` : 'All parents'
-    if (!selectedIds.length) return 'Choose parents'
-    return `${selectedIds.length} selected`
-  }, [learners.length, selectedIds.length, shareMode])
 
   const toggleChild = (id: string) => {
     setShareMode('child')
@@ -199,18 +193,71 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
   return (
     <SCBottomSheet open={Boolean(draft)} onClose={onClose} maxWidth={520}>
       <div style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-          <h2 style={{ fontSize: 17, fontWeight: 620, color: T.ink, margin: 0, letterSpacing: '-.02em' }}>
-            New Moment
-          </h2>
-          <SCIconButton label="Close" onClick={onClose} tone="quiet" size={34}>
-            <X size={17} strokeWidth={1.9} />
-          </SCIconButton>
+        <style>{`
+          @keyframes scComposerMediaIn {
+            from {
+              opacity: 0;
+              transform: scale(0.992);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          @keyframes scComposerLearnersIn {
+            from {
+              opacity: 0;
+              transform: translateY(-4px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginBottom: 10,
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close composer"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: 'none',
+              background: T.soft,
+              color: T.ink2,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+              cursor: 'pointer',
+            }}
+          >
+            <X size={18} strokeWidth={1.85} />
+          </button>
         </div>
 
         <div style={{ borderRadius: 22, background: T.soft, overflow: 'hidden', marginBottom: 14 }}>
           {isImage && previewUrl ? (
-            <img src={previewUrl} alt="" style={{ width: '100%', maxHeight: 330, objectFit: 'cover', display: 'block' }} />
+            <img
+              src={previewUrl}
+              alt=""
+              style={{
+                width: '100%',
+                height: 220,
+                objectFit: 'cover',
+                display: 'block',
+                animation: 'scComposerMediaIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both',
+              }}
+            />
           ) : (
             <div style={{ padding: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 46, height: 46, borderRadius: 16, background: T.soft2, color: T.ink2, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -227,83 +274,219 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
         </div>
 
         <SCTextArea
-          label="Short note optional"
+          label="Caption"
           value={note}
           onChange={setNote}
-          rows={4}
-          placeholder="Add a short update for the parent..."
+          rows={3}
+          placeholder="Add a short update..."
           style={{ marginBottom: 14 }}
         />
 
-        <section style={{ borderRadius: 22, background: T.white, border: `1px solid ${T.border}`, overflow: 'hidden', marginBottom: 14 }}>
-          <div style={{ padding: '13px 14px', borderBottom: `1px solid ${T.border}` }}>
-            <p style={{ fontSize: 14, fontWeight: 580, color: T.ink, margin: 0 }}>Share to</p>
-            <p style={{ fontSize: 12.4, color: T.ink3, margin: '2px 0 0' }}>{selectedLabel}</p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => { setShareMode('all'); setSelectedIds([]) }}
-            className="sc-action-row"
+        <section style={{ marginBottom: 14 }}>
+          <div
             style={{
-              width: '100%',
-              minHeight: 50,
-              border: 'none',
-              borderBottom: `1px solid ${T.border}`,
-              background: shareMode === 'all' ? T.soft : T.white,
-              color: T.ink,
               display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '0 14px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              textAlign: 'left',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              gap: 12,
+              marginBottom: 9,
+              padding: '0 2px',
             }}
           >
-            <SelectMark active={shareMode === 'all'}>
-              <ShieldAlert size={14} strokeWidth={1.9} />
-            </SelectMark>
-            <span style={{ fontSize: 13.5, fontWeight: 560 }}>All parents</span>
-          </button>
+            <div>
+              <p
+                style={{
+                  fontSize: 13.5,
+                  fontWeight: 580,
+                  color: T.ink,
+                  margin: 0,
+                }}
+              >
+                Share with
+              </p>
 
-          <div style={{ maxHeight: 230, overflowY: 'auto' }}>
-            {!learners.length && (
-              <div style={{ padding: '16px 14px', fontSize: 13, color: T.ink3, lineHeight: 1.45 }}>
-                No learners found yet. Add learners before sharing a Moment.
-              </div>
-            )}
 
-            {learners.map((child: any, index: number) => {
-              const selected = shareMode === 'child' && selectedIds.includes(child.id)
-              return (
-                <button
-                  key={child.id}
-                  type="button"
-                  onClick={() => toggleChild(child.id)}
-                  className="sc-action-row"
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 8,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setShareMode('all')}
+              style={{
+                minHeight: 44,
+                borderRadius: 15,
+                border: shareMode === 'all'
+                  ? '1px solid #222222'
+                  : `1px solid ${T.border}`,
+                background: shareMode === 'all'
+                  ? '#222222'
+                  : T.soft,
+                color: shareMode === 'all'
+                  ? '#FFFFFF'
+                  : T.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                padding: '0 12px',
+                fontFamily: 'inherit',
+                fontSize: 13,
+                fontWeight: 580,
+                cursor: 'pointer',
+                transition:
+                  'background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease',
+              }}
+            >
+              {shareMode === 'all' ? (
+                <Check size={14} strokeWidth={2} />
+              ) : null}
+              All parents
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShareMode('child')}
+              style={{
+                minHeight: 44,
+                borderRadius: 15,
+                border: shareMode === 'child'
+                  ? '1px solid #222222'
+                  : `1px solid ${T.border}`,
+                background: shareMode === 'child'
+                  ? '#222222'
+                  : T.soft,
+                color: shareMode === 'child'
+                  ? '#FFFFFF'
+                  : T.ink,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                padding: '0 12px',
+                fontFamily: 'inherit',
+                fontSize: 13,
+                fontWeight: 580,
+                cursor: 'pointer',
+                transition:
+                  'background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease',
+              }}
+            >
+              {shareMode === 'child' ? (
+                <Check size={14} strokeWidth={2} />
+              ) : null}
+              Specific learners
+            </button>
+          </div>
+
+          <div
+            style={{
+              height: 222,
+              marginTop: 12,
+              position: 'relative',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                opacity: shareMode === 'child' ? 1 : 0,
+                transform:
+                  shareMode === 'child'
+                    ? 'translateY(0)'
+                    : 'translateY(4px)',
+                pointerEvents:
+                  shareMode === 'child'
+                    ? 'auto'
+                    : 'none',
+                transition:
+                  'opacity 180ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <div
+                style={{
+                  animation:
+                    shareMode === 'child'
+                      ? 'scComposerLearnersIn 200ms cubic-bezier(0.16, 1, 0.3, 1) both'
+                      : 'none',
+                }}
+              >
+              <div
+                style={{
+                  maxHeight: 210,
+                  overflowY: 'auto',
+                  borderRadius: 18,
+                  border: `1px solid ${T.border}`,
+                  background: T.white,
+                }}
+              >
+              {!learners.length ? (
+                <div
                   style={{
-                    width: '100%',
-                    minHeight: 50,
-                    border: 'none',
-                    borderBottom: index === learners.length - 1 ? 'none' : `1px solid ${T.border}`,
-                    background: selected ? T.soft : T.white,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '0 14px',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    textAlign: 'left',
+                    padding: '16px 14px',
+                    fontSize: 13,
+                    color: T.ink3,
+                    lineHeight: 1.45,
                   }}
                 >
-                  <SelectMark active={selected}>{initials(child.name)}</SelectMark>
-                  <span style={{ fontSize: 13.5, fontWeight: 560, color: T.ink, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                    {child.name}
-                  </span>
-                </button>
-              )
-            })}
+                  No learners found yet.
+                </div>
+              ) : null}
+
+              {learners.map((child: any, index: number) => {
+                const selected = selectedIds.includes(child.id)
+
+                return (
+                  <button
+                    key={child.id}
+                    type="button"
+                    onClick={() => toggleChild(child.id)}
+                    style={{
+                      width: '100%',
+                      minHeight: 50,
+                      border: 'none',
+                      borderBottom:
+                        index === learners.length - 1
+                          ? 'none'
+                          : `1px solid ${T.border}`,
+                      background: selected ? T.soft : T.white,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '0 14px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <SelectMark active={selected}>
+                      {initials(child.name)}
+                    </SelectMark>
+
+                    <span
+                      style={{
+                        fontSize: 13.5,
+                        fontWeight: 560,
+                        color: T.ink,
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {child.name}
+                    </span>
+                  </button>
+                )
+              })}
+              </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -313,7 +496,7 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
           disabled={sending || !file || !selectedCount}
           leading={<Send size={15} strokeWidth={1.9} />}
         >
-          {sending ? 'Sharing...' : 'Send Moment'}
+          {sending ? 'Sharing...' : 'Share Moment'}
         </SCButton>
       </div>
     </SCBottomSheet>
