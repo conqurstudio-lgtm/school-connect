@@ -808,6 +808,10 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
  const shareLabel = isPrivate ? 'Shared with parent' : 'Shared with class'
  const reactionTotal = Number(moment.reaction_count || 0)
  const [menuOpen, setMenuOpen] = useState(false)
+ const [menuAnchor, setMenuAnchor] = useState({
+   top: 0,
+   right: 12,
+ })
  const isSyncingMoment = Boolean(moment?.__pending || moment?.__syncing)
 
  useEffect(() => {
@@ -878,17 +882,10 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
      ) : null}
 
      {isImage ? (
-       <button
-         type="button"
-         onClick={() => onImage(moment.file_url)}
+       <div
          style={{
            display: 'block',
            width: '100%',
-           padding: 0,
-           border: 'none',
-           background: 'transparent',
-           cursor: 'zoom-in',
-           fontFamily: 'inherit',
          }}
        >
          <img
@@ -905,7 +902,7 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
              background: '#F7F7F7',
            }}
          />
-       </button>
+       </div>
      ) : (
        <a
          href={moment.file_url}
@@ -1067,6 +1064,21 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
            aria-label="Moment options"
            onClick={(event) => {
              event.stopPropagation()
+
+             const rect =
+               event.currentTarget.getBoundingClientRect()
+
+             setMenuAnchor({
+               top: Math.min(
+                 window.innerHeight - 112,
+                 rect.bottom + 6
+               ),
+               right: Math.max(
+                 12,
+                 window.innerWidth - rect.right
+               ),
+             })
+
              setMenuOpen(open => !open)
            }}
            style={{
@@ -1086,14 +1098,15 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
            <MoreHorizontal size={18} strokeWidth={1.85} />
          </button>
 
-         {menuOpen ? (
+         {menuOpen && typeof document !== 'undefined'
+           ? createPortal(
            <>
              <div
                onClick={() => setMenuOpen(false)}
                style={{
                  position: 'fixed',
                  inset: 0,
-                 zIndex: 9000,
+                 zIndex: 2147483199,
                  background: 'transparent',
                }}
              />
@@ -1101,10 +1114,10 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
              <div
                onClick={event => event.stopPropagation()}
                style={{
-                 position: 'absolute',
-                 top: 36,
-                 right: 0,
-                 zIndex: 9001,
+                 position: 'fixed',
+                 top: menuAnchor.top,
+                 right: menuAnchor.right,
+                 zIndex: 2147483200,
                  minWidth: 164,
                  borderRadius: 16,
                  background: T.white,
@@ -1178,8 +1191,10 @@ function TeacherPreviewMomentPost({ moment, teacher, isLast, onImage, onReaction
                  Delete Moment
                </button>
              </div>
-           </>
-         ) : null}
+           </>,
+           document.body
+         )
+         : null}
        </div>
      </div>
 

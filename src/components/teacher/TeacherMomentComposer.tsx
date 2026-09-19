@@ -192,7 +192,12 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
 
   return (
     <SCBottomSheet open={Boolean(draft)} onClose={onClose} maxWidth={520}>
-      <div style={{ fontFamily: 'Inter, -apple-system, system-ui, sans-serif' }}>
+      <div
+        className="sc-moment-composer-shell"
+        style={{
+          fontFamily: 'Inter, -apple-system, system-ui, sans-serif',
+        }}
+      >
         <style>{`
           @keyframes scComposerMediaIn {
             from {
@@ -215,7 +220,42 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
               transform: translateY(0);
             }
           }
+
+          .sc-moment-composer-body {
+            min-height: 0;
+          }
+
+          .sc-moment-composer-footer {
+            background: #FFFFFF;
+          }
+
+          @media (max-height: 760px) {
+            .sc-moment-composer-shell {
+              max-height: calc(100dvh - 86px);
+              display: flex;
+              flex-direction: column;
+              min-height: 0;
+            }
+
+            .sc-moment-composer-body {
+              flex: 1;
+              min-height: 0;
+              overflow-y: auto;
+              overflow-x: hidden;
+              -webkit-overflow-scrolling: touch;
+              overscroll-behavior-y: contain;
+              padding-right: 1px;
+            }
+
+            .sc-moment-composer-footer {
+              flex-shrink: 0;
+              padding-top: 12px;
+              background: #FFFFFF;
+            }
+          }
         `}</style>
+
+        <div className="sc-moment-composer-body">
         <div
           style={{
             display: 'flex',
@@ -230,9 +270,8 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
             style={{
               width: 36,
               height: 36,
-              borderRadius: 999,
               border: 'none',
-              background: T.soft,
+              background: 'transparent',
               color: T.ink2,
               display: 'inline-flex',
               alignItems: 'center',
@@ -489,15 +528,18 @@ export function TeacherMomentComposer({ draft, learners = [], onClose, onCreated
             </div>
           </div>
         </section>
+        </div>
 
-        <SCButton
-          fullWidth
-          onClick={sendMoment}
-          disabled={sending || !file || !selectedCount}
-          leading={<Send size={15} strokeWidth={1.9} />}
-        >
-          {sending ? 'Sharing...' : 'Share Moment'}
-        </SCButton>
+        <div className="sc-moment-composer-footer">
+          <SCButton
+            fullWidth
+            onClick={sendMoment}
+            disabled={sending || !file || !selectedCount}
+            leading={<Send size={15} strokeWidth={1.9} />}
+          >
+            {sending ? 'Sharing...' : 'Share Moment'}
+          </SCButton>
+        </div>
       </div>
     </SCBottomSheet>
   )
